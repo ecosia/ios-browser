@@ -1,0 +1,73 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Frontend/Browser/SearchEngines/OpenSearchEngineTests.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Frontend/Browser/SearchEngines/OpenSearchEngineTests.swift
+index c30ab505b5..566982bb9c 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Frontend/Browser/SearchEngines/OpenSearchEngineTests.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Frontend/Browser/SearchEngines/OpenSearchEngineTests.swift
+@@ -89,41 +89,6 @@ class OpenSearchEngineTests: XCTestCase {
+         )
+     }
+ 
+-    func test_trendingURLForEngine_returnsExpectedURL() throws {
+-        let searchEngine = OpenSearchEngine(
+-            engineID: "Bing_Test",
+-            shortName: "Bing",
+-            telemetrySuffix: nil,
+-            image: UIImage(),
+-            searchTemplate: "some link",
+-            suggestTemplate: nil,
+-            trendingTemplate: "www.example.com",
+-            isCustomEngine: true
+-        )
+-
+-        let url = searchEngine.trendingURLForEngine()
+-
+-        XCTAssertNotNil(url)
+-        XCTAssertEqual(url?.absoluteString, "www.example.com")
+-    }
+-
+-    func test_trendingURLForEngine_withNoTrendingTemplate_returnsNil() throws {
+-        let searchEngine = OpenSearchEngine(
+-            engineID: "Bing_Test",
+-            shortName: "Bing",
+-            telemetrySuffix: nil,
+-            image: UIImage(),
+-            searchTemplate: "some link",
+-            suggestTemplate: nil,
+-            trendingTemplate: nil,
+-            isCustomEngine: true
+-        )
+-
+-        let url = searchEngine.trendingURLForEngine()
+-
+-        XCTAssertNil(url)
+-    }
+-
+     /// For generating test `OpenSearchEngine` data.
+     public enum TestSearchEngine {
+         case youtube, wikipedia
+@@ -174,11 +139,16 @@ class OpenSearchEngineTests: XCTestCase {
+             image: testImage,
+             searchTemplate: "some link",
+             suggestTemplate: nil,
+-            trendingTemplate: nil,
+             isCustomEngine: true
+         )
+     }
+ 
++    // Ecosia: Use concrete FileAccessor class for v147
++    private class SimpleFileAccessor: FileAccessor {
++        var rootPath: String
++        init(rootPath: String) { self.rootPath = rootPath }
++    }
++
+     private var customFileEnginePath: String {
+         get throws {
+             let sharedContainerIdentifier = "group.org.mozilla.ios.Fennec"
+@@ -194,7 +164,7 @@ class OpenSearchEngineTests: XCTestCase {
+                 directoryPath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
+             }
+ 
+-            let fileAccessor = MockFiles(rootPath: directoryPath)
++            let fileAccessor = SimpleFileAccessor(rootPath: directoryPath)
+             let profilePath = try fileAccessor.getAndEnsureDirectory() as NSString
+             return profilePath.appendingPathComponent(customSearchEnginesFileName)
+         }

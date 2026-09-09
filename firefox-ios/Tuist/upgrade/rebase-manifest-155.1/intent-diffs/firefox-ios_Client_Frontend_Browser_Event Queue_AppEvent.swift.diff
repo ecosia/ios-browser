@@ -1,0 +1,13 @@
+diff --git a/firefox-ios/Client/Frontend/Browser/Event Queue/AppEvent.swift b/firefox-ios/Client/Frontend/Browser/Event Queue/AppEvent.swift
+index 51a0077e52..deb57e101a 100644
+--- a/firefox-ios/Client/Frontend/Browser/Event Queue/AppEvent.swift	
++++ b/firefox-ios/Client/Frontend/Browser/Event Queue/AppEvent.swift	
+@@ -20,6 +20,8 @@ public enum AppEvent: AppEventType {
+     case postLaunchDependenciesComplete
+     case accountManagerInitialized
+     case browserIsReady
++    // Ecosia: Add Feature Management event
++    case featureManagementInitialized
+ 
+     // Events: Open Deeplink startup time record
+     case recordStartupTimeOpenDeeplinkComplete

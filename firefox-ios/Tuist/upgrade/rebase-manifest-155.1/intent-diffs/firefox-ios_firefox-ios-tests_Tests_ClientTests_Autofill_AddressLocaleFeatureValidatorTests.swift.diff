@@ -1,0 +1,78 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Autofill/AddressLocaleFeatureValidatorTests.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Autofill/AddressLocaleFeatureValidatorTests.swift
+index 9bfe4198e7..ae954576d8 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Autofill/AddressLocaleFeatureValidatorTests.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Autofill/AddressLocaleFeatureValidatorTests.swift
+@@ -4,64 +4,37 @@
+ 
+ import Foundation
+ import XCTest
++import Common
+ 
+ @testable import Client
+ 
+ class AddressLocaleFeatureValidatorTests: XCTestCase {
+     func testValidRegionCA() {
+-        let locale = MockLocaleProvider(regionCode: "CA")
+         XCTAssertTrue(
+-            AddressLocaleFeatureValidator.isValidRegion(for: locale.regionCode()),
++            AddressLocaleFeatureValidator.isValidRegion(for: "CA"),
+             "Region valid for CA"
+         )
+     }
+ 
+     func testValidRegionUS() {
+-        let locale = MockLocaleProvider(regionCode: "US")
+         XCTAssertTrue(
+-            AddressLocaleFeatureValidator.isValidRegion(for: locale.regionCode()),
++            AddressLocaleFeatureValidator.isValidRegion(for: "US"),
+             "Region valid for US"
+         )
+     }
+ 
+-    func testValidRegionFR() {
+-        let locale =  MockLocaleProvider(regionCode: "FR")
++    func testInvalidRegionFR() {
++        // Ecosia: FR is now a supported region in v147
+         XCTAssertTrue(
+-            AddressLocaleFeatureValidator.isValidRegion(for: locale.regionCode()),
+-            "Valid region for FR"
+-        )
+-    }
+-
+-    func testValidRegionDE() {
+-        let locale =  MockLocaleProvider(regionCode: "DE")
+-        XCTAssertTrue(
+-            AddressLocaleFeatureValidator.isValidRegion(for: locale.regionCode()),
+-            "Valid region for DE"
+-        )
+-    }
+-
+-    func testValidRegionGB() {
+-        let locale =  MockLocaleProvider(regionCode: "GB")
+-        XCTAssertTrue(
+-            AddressLocaleFeatureValidator.isValidRegion(for: locale.regionCode()),
+-            "Valid region for GB"
+-        )
+-    }
+-
+-    func testInvalidRegionMA() {
+-        let locale =  MockLocaleProvider(regionCode: "MA")
+-        XCTAssertFalse(
+-            AddressLocaleFeatureValidator.isValidRegion(for: locale.regionCode()),
+-            "Invalid region for MA"
++            AddressLocaleFeatureValidator.isValidRegion(for: "FR"),
++            "Region valid for FR"
+         )
+     }
+ 
+     func testInvalidRegionWithoutRegionCode() {
+-        let locale =  MockLocaleProvider(regionCode: "")
+-
+         XCTAssertFalse(
+-            AddressLocaleFeatureValidator.isValidRegion(for: locale.regionCode()),
+-            "Invalid region for locale without region code"
++            AddressLocaleFeatureValidator.isValidRegion(for: ""),
++            "Invalid region for empty region code"
+         )
+     }
+ }

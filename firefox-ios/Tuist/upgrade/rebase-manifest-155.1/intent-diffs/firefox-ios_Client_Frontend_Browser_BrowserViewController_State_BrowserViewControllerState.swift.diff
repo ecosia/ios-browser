@@ -1,0 +1,59 @@
+diff --git a/firefox-ios/Client/Frontend/Browser/BrowserViewController/State/BrowserViewControllerState.swift b/firefox-ios/Client/Frontend/Browser/BrowserViewController/State/BrowserViewControllerState.swift
+index 2e7e857417..625b6035cd 100644
+--- a/firefox-ios/Client/Frontend/Browser/BrowserViewController/State/BrowserViewControllerState.swift
++++ b/firefox-ios/Client/Frontend/Browser/BrowserViewController/State/BrowserViewControllerState.swift
+@@ -36,6 +36,10 @@ struct BrowserViewControllerState: ScreenState {
+         case passwordGenerator
+         // TODO: FXIOS-13118 Clean up and remove as we should have one navigation entry point
+         case summarizer(config: SummarizerConfig?)
++        // Ecosia: QR code scanner display type
++        case qrCode
++        // Ecosia: History panel display type triggered from the NTP toolbar button
++        case history
+     }
+ 
+     let windowUUID: WindowUUID
+@@ -338,6 +342,12 @@ struct BrowserViewControllerState: ScreenState {
+             return handleShowPasswordGeneratorAction(state: state, action: action)
+         case GeneralBrowserActionType.showSummarizer:
+             return handleShowSummarizerAction(state: state, action: action)
++        // Ecosia: Handle QR code scanner action
++        case GeneralBrowserActionType.showQRCode:
++            return handleShowQRCodeAction(state: state, action: action)
++        // Ecosia: Handle history panel action from the NTP toolbar button
++        case GeneralBrowserActionType.showHistory:
++            return handleShowHistoryAction(state: state, action: action)
+         default:
+             return passthroughState(from: state, action: action)
+         }
+@@ -683,4 +693,30 @@ struct BrowserViewControllerState: ScreenState {
+             browserViewType: state.browserViewType,
+             microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
+     }
++
++    // MARK: - Ecosia
++
++    @MainActor
++    private static func handleShowQRCodeAction(state: BrowserViewControllerState,
++                                              action: GeneralBrowserAction) -> BrowserViewControllerState {
++        return BrowserViewControllerState(
++            searchScreenState: state.searchScreenState,
++            toast: state.toast,
++            windowUUID: state.windowUUID,
++            browserViewType: state.browserViewType,
++            displayView: .qrCode,
++            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
++    }
++
++    @MainActor
++    private static func handleShowHistoryAction(state: BrowserViewControllerState,
++                                                action: GeneralBrowserAction) -> BrowserViewControllerState {
++        return BrowserViewControllerState(
++            searchScreenState: state.searchScreenState,
++            toast: state.toast,
++            windowUUID: state.windowUUID,
++            browserViewType: state.browserViewType,
++            displayView: .history,
++            microsurveyState: MicrosurveyPromptState.reducer(state.microsurveyState, action))
++    }
+ }

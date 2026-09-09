@@ -1,0 +1,64 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockLaunchScreenManager.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockLaunchScreenManager.swift
+index 9167d85bea..c9ec86aa5b 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockLaunchScreenManager.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockLaunchScreenManager.swift
+@@ -7,45 +7,14 @@ import Foundation
+ import Common
+ 
+ class MockLaunchScreenViewModel: LaunchScreenViewModel {
+-    // MARK: - Properties
+-    var introScreenManager: IntroScreenManager
+-    var updateViewModel: UpdateViewModel
+-    var surveySurfaceManager: SurveySurfaceManager
+     var startLoadingCalled = 0
+     var loadNextLaunchTypeCalled = 0
+     var mockLaunchType: LaunchType?
+-    var mockAppVersion: String?
+-    let windowUUID: WindowUUID = .XCTestDefaultUUID
+-
+-    // MARK: - Call Tracking
+-    private var startLoadingCallHistory: [String] = []
+-    private var loadNextLaunchTypeCallHistory: [Date] = []
+-
+-    override init(
+-        windowUUID: WindowUUID,
+-        profile: Profile = AppContainer.shared.resolve(),
+-        messageManager: GleanPlumbMessageManagerProtocol = Experiments.messaging,
+-        onboardingModel: OnboardingKitViewModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .upgrade),
+-        introScreenManager: IntroScreenManagerProtocol? = nil
+-    ) {
+-        self.introScreenManager = IntroScreenManager(prefs: profile.prefs)
+-        let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
+-        self.updateViewModel = UpdateViewModel(profile: profile,
+-                                               model: onboardingModel,
+-                                               telemetryUtility: telemetryUtility,
+-                                               windowUUID: windowUUID)
+-        self.surveySurfaceManager = SurveySurfaceManager(windowUUID: windowUUID, and: messageManager)
+-        super.init(windowUUID: windowUUID,
+-                   profile: profile,
+-                   messageManager: messageManager,
+-                   onboardingModel: onboardingModel,
+-                   introScreenManager: introScreenManager)
+-    }
+ 
+     override func startLoading(appVersion: String) {
+         startLoadingCalled += 1
+-        startLoadingCallHistory.append(appVersion)
+-        mockAppVersion = appVersion
++        // Ecosia: startLoading must NOT bump loadNextLaunchTypeCalled — the VC defers loadNextLaunchType to
++        // viewWillAppear/finishedLoadingLaunchOrder. Track it in the dedicated override below. (MOB-4384)
+         if let mockLaunchType = mockLaunchType {
+             delegate?.launchWith(launchType: mockLaunchType)
+         } else {
+@@ -55,11 +24,5 @@ class MockLaunchScreenViewModel: LaunchScreenViewModel {
+ 
+     override func loadNextLaunchType() {
+         loadNextLaunchTypeCalled += 1
+-        loadNextLaunchTypeCallHistory.append(Date())
+-        if let mockLaunchType = mockLaunchType {
+-            delegate?.launchWith(launchType: mockLaunchType)
+-        } else {
+-            delegate?.launchBrowser()
+-        }
+     }
+ }

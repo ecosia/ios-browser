@@ -1,0 +1,109 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/OnboardingTests/UpdateViewModelTests.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/OnboardingTests/UpdateViewModelTests.swift
+index 3b3cac2e07..9e01e097ef 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/OnboardingTests/UpdateViewModelTests.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/OnboardingTests/UpdateViewModelTests.swift
+@@ -10,27 +10,19 @@ import Common
+ import OnboardingKit
+ 
+ @MainActor
+-final class UpdateViewModelTests: XCTestCase {
++class UpdateViewModelTests: XCTestCase {
+     private var profile: MockProfile!
+     let windowUUID: WindowUUID = .XCTestDefaultUUID
+ 
+-    override func setUp() async throws {
+-        try await super.setUp()
++    override func setUp() {
++        super.setUp()
+         DependencyHelperMock().bootstrapDependencies()
+         profile = MockProfile()
+     }
+ 
+-    override func tearDown() async throws {
++    override func tearDown() {
++        super.tearDown()
+         profile = nil
+-        UserDefaults.standard.removeObject(forKey: PrefsKeys.NimbusUserEnabledFeatureTestsOverride)
+-        try await super.tearDown()
+-    }
+-
+-    func testContainsSyncableAccounts_returnsMockValue() {
+-        profile.hasSyncableAccountMock = true
+-        let subject = createSubject()
+-
+-        XCTAssertTrue(subject.containsSyncableAccount())
+     }
+ 
+     // MARK: Enable cards
+@@ -40,7 +32,7 @@ final class UpdateViewModelTests: XCTestCase {
+         let expectation = expectation(description: "The hasAccount var has value")
+ 
+         subject.hasSyncableAccount {
+-            subject.setupViewControllerDelegates(with: MockOnboardingCardDelegateController(),
++            subject.setupViewControllerDelegates(with: MockOnboardinCardDelegateController(),
+                                                  for: self.windowUUID)
+ 
+             XCTAssertEqual(subject.availableCards.count, 2)
+@@ -57,7 +49,7 @@ final class UpdateViewModelTests: XCTestCase {
+         let expectation = expectation(description: "The hasAccount var has value")
+ 
+         subject.hasSyncableAccount {
+-            subject.setupViewControllerDelegates(with: MockOnboardingCardDelegateController(),
++            subject.setupViewControllerDelegates(with: MockOnboardinCardDelegateController(),
+                                                  for: self.windowUUID)
+ 
+             XCTAssertEqual(subject.availableCards.count, 2)
+@@ -75,7 +67,7 @@ final class UpdateViewModelTests: XCTestCase {
+         let expectation = expectation(description: "The hasAccount var has value")
+ 
+         subject.hasSyncableAccount {
+-            subject.setupViewControllerDelegates(with: MockOnboardingCardDelegateController(),
++            subject.setupViewControllerDelegates(with: MockOnboardinCardDelegateController(),
+                                                  for: self.windowUUID)
+ 
+             XCTAssertEqual(subject.shouldShowSingleCard, false)
+@@ -87,7 +79,7 @@ final class UpdateViewModelTests: XCTestCase {
+     func testHasSingleCard_ForSyncAccountDisabled() {
+         profile.hasSyncableAccountMock = false
+         let subject = createSubject()
+-        subject.setupViewControllerDelegates(with: MockOnboardingCardDelegateController(),
++        subject.setupViewControllerDelegates(with: MockOnboardinCardDelegateController(),
+                                              for: self.windowUUID)
+ 
+         XCTAssertEqual(subject.shouldShowSingleCard, false)
+@@ -114,7 +106,7 @@ final class UpdateViewModelTests: XCTestCase {
+     func testShouldNotShowCoverSheetForSameVersion() {
+         let subject = createSubject()
+         let currentTestAppVersion = "22.0"
+-        UserDefaults.standard.set(true, forKey: PrefsKeys.NimbusUserEnabledFeatureTestsOverride)
++        // Ecosia: PrefsKeys.NimbusFeatureTestsOverride removed in v147
+ 
+         // Setting clean install to false
+         profile.prefs.setString(currentTestAppVersion, forKey: PrefsKeys.AppVersion.Latest)
+@@ -182,7 +174,7 @@ final class UpdateViewModelTests: XCTestCase {
+     // MARK: - Private Helpers
+     func createSubject(
+         hasOnboardingCards: Bool = true,
+-        file: StaticString = #filePath,
++        file: StaticString = #file,
+         line: UInt = #line
+     ) -> UpdateViewModel {
+         let onboardingModel = createOnboardingViewModel(withCards: hasOnboardingCards)
+@@ -208,7 +200,7 @@ final class UpdateViewModelTests: XCTestCase {
+     }
+ 
+     func createCard(index: Int) -> OnboardingKitCardInfoModel {
+-        let buttons = OnboardingButtons<OnboardingActions>(
++        let buttons = OnboardingKit.OnboardingButtons<OnboardingActions>(
+             primary: OnboardingButtonInfoModel<OnboardingActions>(
+                 title: "Button title \(index)",
+                 action: .forwardOneCard))
+@@ -224,7 +216,6 @@ final class UpdateViewModelTests: XCTestCase {
+             onboardingType: .upgrade,
+             a11yIdRoot: "A11y id \(index)",
+             imageID: "Image id \(index)",
+-            instructionsPopup: nil,
+-            embededLinkText: [])
++            instructionsPopup: nil)
+     }
+ }

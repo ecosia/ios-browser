@@ -1,0 +1,60 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Settings/ThemeSettingsControllerTests.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Settings/ThemeSettingsControllerTests.swift
+index 1a1ab9806d..5ad672096d 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Settings/ThemeSettingsControllerTests.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Settings/ThemeSettingsControllerTests.swift
+@@ -8,21 +8,29 @@ import XCTest
+ 
+ @testable import Client
+ 
++// Ecosia: Synced to upstream v147.5. This test now wires a reducer-backed test store with the
++// ThemeManagerMiddleware so the dispatched theme actions flow through Redux and call the controller's
++// newState. The previous (stale) version had no store setup, so the tests that assert a CHANGED state
++// (toggle system appearance ON, select Dark) never observed it — only the default-asserting tests
++// passed. Adapted to Ecosia's StoreTestUtility helper API (setupTestingStore(with:middlewares:) /
++// resetTestingStore()), mirroring MicrosurveyMiddlewareIntegrationTests. (MOB-4384)
++@MainActor
+ class ThemeSettingsControllerTests: XCTestCase, StoreTestUtility {
++    let storeUtilityHelper = StoreTestUtilityHelper()
+     let windowUUID: WindowUUID = .XCTestDefaultUUID
+-    var mockStore: MockStoreForMiddleware<AppState>!
++    // swiftlint:disable:next implicitly_unwrapped_optional
+     var appState: AppState!
+ 
+-    override func setUp() async throws {
+-        try await super.setUp()
++    override func setUp() {
++        super.setUp()
+         DependencyHelperMock().bootstrapDependencies()
+-        setupStore()
++        setupTestingStore()
+     }
+ 
+-    override func tearDown() async throws {
++    override func tearDown() {
+         DependencyHelperMock().reset()
+-        resetStore()
+-        try await super.tearDown()
++        resetTestingStore()
++        super.tearDown()
+     }
+ 
+     func testUseSystemAppearance_WithRedux() {
+@@ -157,14 +165,14 @@ class ThemeSettingsControllerTests: XCTestCase, StoreTestUtility {
+         return appState
+     }
+ 
+-    func setupStore() {
+-        StoreTestUtilityHelper.setupStore(
++    func setupTestingStore() {
++        storeUtilityHelper.setupTestingStore(
+             with: setupAppState(),
+             middlewares: [ThemeManagerMiddleware().themeManagerProvider]
+         )
+     }
+ 
+-    func resetStore() {
+-        StoreTestUtilityHelper.resetStore()
++    func resetTestingStore() {
++        storeUtilityHelper.resetTestingStore()
+     }
+ }

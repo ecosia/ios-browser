@@ -1,0 +1,82 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Utils/StoreTestUtility.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Utils/StoreTestUtility.swift
+index 3886f64b9a..84072144d5 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Utils/StoreTestUtility.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Utils/StoreTestUtility.swift
+@@ -5,43 +5,60 @@
+ import Foundation
+ import Redux
+ @testable import Client
+-import XCTest
+ 
+ @MainActor
+ protocol StoreTestUtility {
+     func setupAppState() -> AppState
+-    func setupStore()
+-    func resetStore()
++    func setupTestingStore()
++    func resetTestingStore()
++}
++
++extension StoreTestUtility {
++    func setupTestingStore() {}
++    func resetTestingStore() {}
+ }
+ 
+ /// Utility class used when replacing the global store for testing purposes
+ class StoreTestUtilityHelper {
++    /// Replace the global store with a mock store (e.g. MockStoreForMiddleware) for isolated middleware testing.
++    @MainActor
++    static func setupStore(with mockStore: any DefaultDispatchStore<AppState>) {
++        store = mockStore
++    }
++
++    /// Reset the global store back to a default production-like state.
++    @MainActor
++    static func resetStore() {
++        // Ecosia: Mirror the same guard used in AppState.swift — evaluating the global `middlewares`
++        // array in unit tests would initialise all middleware objects (including those that resolve
++        // Profile / SearchEnginesManager from AppContainer), which can crash when the container is
++        // in the brief empty window after AppContainer.shared.reset() in a test setUp.
++        // Use the same inline check as AppConstants.isRunningUnitTest to avoid importing Common here.
++        let isUnitTest = NSClassFromString("XCTestCase") != nil
++        let activeMiddlewares: [Middleware<AppState>] = isUnitTest ? [] : middlewares
++        store = Store(state: AppState(), reducer: AppState.reducer, middlewares: activeMiddlewares)
++    }
++
+     @MainActor
+-    static func setupStore(with appState: AppState, middlewares: [Middleware<AppState>]) {
+-#if TESTING
++    func setupTestingStore(with appState: AppState, middlewares: [Middleware<AppState>]) {
+         store = Store(
+             state: appState,
+             reducer: AppState.reducer,
+             middlewares: middlewares
+         )
+-#endif
+-    }
+-    @MainActor
+-    static func setupStore(with mockStore: any DefaultDispatchStore<AppState>) {
+-#if TESTING
+-        store = mockStore
+-#endif
+     }
+ 
+-    /// In order to avoid flaky tests, we should reset the store similar to production
++    /// In order to avoid flaky tests, we should reset the store
++    /// similar to production
+     @MainActor
+-    static func resetStore() {
+-#if TESTING
++    func resetTestingStore() {
++        // Ecosia: See note in resetStore() above — avoid evaluating the global middlewares in unit tests.
++        let isUnitTest = NSClassFromString("XCTestCase") != nil
++        let activeMiddlewares: [Middleware<AppState>] = isUnitTest ? [] : middlewares
+         store = Store(
+             state: AppState(),
+             reducer: AppState.reducer,
+-            middlewares: []
++            middlewares: activeMiddlewares
+         )
+-#endif
+     }
+ }

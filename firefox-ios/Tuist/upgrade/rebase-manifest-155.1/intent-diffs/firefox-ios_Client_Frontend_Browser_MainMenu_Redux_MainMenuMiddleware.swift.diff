@@ -1,0 +1,14 @@
+diff --git a/firefox-ios/Client/Frontend/Browser/MainMenu/Redux/MainMenuMiddleware.swift b/firefox-ios/Client/Frontend/Browser/MainMenu/Redux/MainMenuMiddleware.swift
+index d740d5bdbf..33442cf58a 100644
+--- a/firefox-ios/Client/Frontend/Browser/MainMenu/Redux/MainMenuMiddleware.swift
++++ b/firefox-ios/Client/Frontend/Browser/MainMenu/Redux/MainMenuMiddleware.swift
+@@ -201,6 +201,9 @@ final class MainMenuMiddleware: FeatureFlaggable {
+         case .passwords:
+             telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.passwords)
+ 
++        // Ecosia: Reading List, Help, and Report Issue telemetry — no-op for now
++        case .readingList, .help, .reportIssue: break
++
+         case .settings:
+             telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.settings)
+ 

@@ -1,0 +1,15 @@
+diff --git a/firefox-ios/Client/Telemetry/HomepageTelemetry.swift b/firefox-ios/Client/Telemetry/HomepageTelemetry.swift
+index c7107f3371..c6795925bc 100644
+--- a/firefox-ios/Client/Telemetry/HomepageTelemetry.swift
++++ b/firefox-ios/Client/Telemetry/HomepageTelemetry.swift
+@@ -2,6 +2,10 @@
+ // License, v. 2.0. If a copy of the MPL was not distributed with this
+ // file, You can obtain one at http://mozilla.org/MPL/2.0/
+ 
++// Ecosia: This file contains Firefox's telemetry code which is kept intact for easier upgrades.
++// All telemetry calls are silenced via NoOpGleanWrapper - see Client/Ecosia/Telemetry/NoOpGleanWrapper.swift
++// No need to comment out individual calls; they compile successfully but do nothing at runtime.
++
+ import Foundation
+ import Glean
+ 

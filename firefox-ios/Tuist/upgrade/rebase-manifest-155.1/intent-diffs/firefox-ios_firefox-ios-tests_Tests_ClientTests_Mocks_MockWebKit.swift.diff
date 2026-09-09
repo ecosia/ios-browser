@@ -1,0 +1,163 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockWebKit.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockWebKit.swift
+index 575bf07292..009c974204 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockWebKit.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockWebKit.swift
+@@ -5,17 +5,38 @@
+ import Foundation
+ import WebKit
+ 
+-// TODO: FXIOS-14534 - Merge all existing MockFrameInfo
+-// MARK: MockWKFrameInfo
+-class MockWKFrameInfo: WKFrameInfo {
+-    let overridenSecurityOrigin: WKSecurityOrigin
+-    let overridenWebView: WKWebView?
+-    let overridenTargetFrame: Bool
+-
+-    init(webView: MockWKWebView? = nil, frameURL: URL? = nil, isMainFrame: Bool? = false) {
+-        overridenSecurityOrigin = WKSecurityOriginMock.new(frameURL)
+-        overridenWebView = webView
+-        overridenTargetFrame = isMainFrame ?? false
++// MARK: WKNavigationActionMock
++class WKNavigationActionMock: WKNavigationAction {
++    var overridenTargetFrame: WKFrameInfoMock?
++
++    override var targetFrame: WKFrameInfo? {
++        return overridenTargetFrame
++    }
++}
++
++// MARK: WKFrameInfoMock
++class WKFrameInfoMock: WKFrameInfo {
++    private var overridenSecurityOrigin: WKSecurityOrigin?
++    private var overridenWebView: WKWebView?
++    private var overridenTargetFrame = false
++
++    // Ecosia: Allocate via the objc runtime instead of a Swift initializer. WKFrameInfo's initializer is
++    // unavailable, and on the iOS 26.5 SDK calling it (via subclass init -> super.init()) crashes the process,
++    // which crashed every test that built a frame mock (WKFrameInfoExtensions, BrowserCoordinator,
++    // PasswordGenerator, and formerly FormAutofill/WebViewNavigationHandler before those were synced to
++    // upstream's mock-free APIs). This mirrors WKSecurityOriginMock.new below. (MOB-4384)
++    class func new(webView: WKWebViewMock? = nil,
++                   frameURL: URL? = nil,
++                   isMainFrame: Bool? = false) -> WKFrameInfoMock {
++        guard let instance = self.perform(NSSelectorFromString("alloc"))?.takeUnretainedValue()
++                as? WKFrameInfoMock
++        else {
++            fatalError("Could not allocate WKFrameInfoMock instance")
++        }
++        instance.overridenSecurityOrigin = WKSecurityOriginMock.new(frameURL)
++        instance.overridenWebView = webView
++        instance.overridenTargetFrame = isMainFrame ?? false
++        return instance
+     }
+ 
+     override var isMainFrame: Bool {
+@@ -23,7 +44,7 @@ class MockWKFrameInfo: WKFrameInfo {
+     }
+ 
+     override var securityOrigin: WKSecurityOrigin {
+-        return overridenSecurityOrigin
++        return overridenSecurityOrigin ?? WKSecurityOriginMock.new(nil)
+     }
+ 
+     override var webView: WKWebView? {
+@@ -38,7 +59,7 @@ class WKSecurityOriginMock: WKSecurityOrigin {
+     var overridenPort: Int!
+ 
+     class func new(_ url: URL?) -> WKSecurityOriginMock {
+-        // Dynamically allocate a WKSecurityOriginMock instance because
++        // Dynamically allocate a WKSecurityOriginMock instance because 
+         // the initializer for WKSecurityOrigin is unavailable
+         //  https://github.com/WebKit/WebKit/blob/52222cf447b7215dd9bcddee659884f704001827/Source/WebKit/UIProcess/API/Cocoa/WKSecurityOrigin.h#L40
+         guard let instance = self.perform(NSSelectorFromString("alloc"))?.takeUnretainedValue()
+@@ -57,10 +78,9 @@ class WKSecurityOriginMock: WKSecurityOrigin {
+     override var port: Int { overridenPort }
+ }
+ 
+-// MARK: MockWKWebView
+-class MockWKWebView: WKWebView {
++// MARK: WKWebViewMock
++class WKWebViewMock: WKWebView {
+     var overridenURL: URL
+-    var didLoad: (() -> Void)?
+ 
+     init(_ url: URL) {
+         self.overridenURL = url
+@@ -74,19 +94,10 @@ class MockWKWebView: WKWebView {
+     override var url: URL {
+         return overridenURL
+     }
+-
+-    // Simulate async load behavior
+-    override func load(_ request: URLRequest) -> WKNavigation? {
+-        DispatchQueue.main.async {
+-            self.overridenURL = request.url ?? self.overridenURL
+-            self.didLoad?()
+-        }
+-        return nil
+-    }
+ }
+ 
+ // MARK: - WKScriptMessageMock
+-class MockWKScriptMessage: WKScriptMessage {
++class WKScriptMessageMock: WKScriptMessage {
+     let overridenBody: Any
+     let overridenName: String
+     let overridenFrameInfo: WKFrameInfo
+@@ -108,46 +119,16 @@ class MockWKScriptMessage: WKScriptMessage {
+     override var frameInfo: WKFrameInfo {
+         return overridenFrameInfo
+     }
+-}
+-
+-// MARK: - WKURLSchemeTaskMock
+-
+-/// Minimal fake WKURLSchemeTask used to capture callbacks.
+-final class MockWKURLSchemeTask: NSObject, WKURLSchemeTask {
+-    private let _request: URLRequest
+-    var request: URLRequest { _request }
+-
+-    init(request: URLRequest) {
+-        self._request = request
+-    }
+-
+-    private(set) var receivedResponses: [URLResponse] = []
+-    private(set) var receivedBodies: [Data] = []
+-    private(set) var finishCallCount = 0
+-    private(set) var failedErrors: [Error] = []
+-
+-    var onResponse: (() -> Void)?
+-    var onBody: (() -> Void)?
+-    var onFinish: (() -> Void)?
+-    var onFail: (() -> Void)?
+-
+-    func didReceive(_ response: URLResponse) {
+-        receivedResponses.append(response)
+-        onResponse?()
+-    }
+-
+-    func didReceive(_ data: Data) {
+-        receivedBodies.append(data)
+-        onBody?()
+-    }
+ 
+-    func didFinish() {
+-        finishCallCount += 1
+-        onFinish?()
+-    }
+-
+-    func didFailWithError(_ error: Error) {
+-        failedErrors.append(error)
+-        onFail?()
++    // Ecosia: decodeBody extension on WKScriptMessage removed in v147; replicate inline for tests
++    func decodeBody<T: Decodable>(as type: T.Type) -> T? {
++        if let dict = body as? [String: Any],
++           let data = try? JSONSerialization.data(withJSONObject: dict, options: []) {
++            return try? JSONDecoder().decode(type, from: data)
++        } else if let bodyString = body as? String,
++                  let data = bodyString.data(using: .utf8) {
++            return try? JSONDecoder().decode(type, from: data)
++        }
++        return nil
+     }
+ }

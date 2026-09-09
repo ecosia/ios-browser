@@ -1,0 +1,90 @@
+diff --git a/firefox-ios/Client/Frontend/Browser/Toolbars/Redux/NavigationBarState.swift b/firefox-ios/Client/Frontend/Browser/Toolbars/Redux/NavigationBarState.swift
+index c5bb4028f4..aa019b7da3 100644
+--- a/firefox-ios/Client/Frontend/Browser/Toolbars/Redux/NavigationBarState.swift
++++ b/firefox-ios/Client/Frontend/Browser/Toolbars/Redux/NavigationBarState.swift
+@@ -3,6 +3,7 @@
+ // file, You can obtain one at http://mozilla.org/MPL/2.0/
+ 
+ import Common
++import Ecosia
+ import Redux
+ 
+ enum NavigationBarMiddleButtonType: String, Equatable, CaseIterable {
+@@ -56,12 +57,29 @@ struct NavigationBarState: StateType, Equatable {
+         a11yLabel: .TabToolbarDataClearanceAccessibilityLabel,
+         a11yId: AccessibilityIdentifiers.Toolbar.fireButton)
+ 
++    /* Ecosia: Use Ecosia-owned nav-add icon instead of Firefox plusLarge
+     private static let newTabAction = ToolbarActionConfiguration(
+         actionType: .newTab,
+         iconName: StandardImageIdentifiers.Large.plus,
+         isEnabled: true,
+         a11yLabel: .Toolbars.NewTabButton,
+         a11yId: AccessibilityIdentifiers.Toolbar.addNewTabButton)
++    */
++    // Ecosia: nav-add lives in Client/Ecosia/UI/Ecosia.xcassets/TabToolbar/nav-add.imageset
++    private static let newTabAction = ToolbarActionConfiguration(
++        actionType: .newTab,
++        iconName: "nav-add",
++        isEnabled: true,
++        a11yLabel: .Toolbars.NewTabButton,
++        a11yId: AccessibilityIdentifiers.Toolbar.addNewTabButton)
++
++    // Ecosia: History button shown on NTP instead of new-tab
++    private static let historyAction = ToolbarActionConfiguration(
++        actionType: .history,
++        iconName: StandardImageIdentifiers.Large.history,
++        isEnabled: true,
++        a11yLabel: .TabToolbarHistoryAccessibilityLabel,
++        a11yId: AccessibilityIdentifiers.Toolbar.historyButton)
+ 
+     init(windowUUID: WindowUUID) {
+         self.init(windowUUID: windowUUID,
+@@ -255,6 +273,7 @@ struct NavigationBarState: StateType, Equatable {
+             forwardAction(enabled: canGoForward)
+         ]
+ 
++        /* Ecosia: Always use version2 order (back, forward, middle, tabs, menu) with custom ellipsis icon
+         switch layout {
+         case .version1, .none:
+             actions.append(middleAction)
+@@ -267,6 +286,10 @@ struct NavigationBarState: StateType, Equatable {
+             actions.append(menuAction(iconName: StandardImageIdentifiers.Large.moreHorizontalRound,
+                                       showWarningBadge: showWarningBadge))
+         }
++        */
++        actions.append(middleAction)
++        actions.append(tabsAction(numberOfTabs: numberOfTabs, isPrivateMode: toolbarState.isPrivateMode))
++        actions.append(menuAction(iconName: "elipsis", showWarningBadge: showWarningBadge))
+ 
+         return actions
+     }
+@@ -283,8 +306,11 @@ struct NavigationBarState: StateType, Equatable {
+         }
+         let canShowDataClearanceAction = canShowDataClearanceAction && isPrivateMode
+         let middleActionForWebpage = canShowDataClearanceAction ? dataClearanceAction : customizedMiddleButton
++        /* Ecosia: Show history on NTP, new tab on SERP/webpage
+         let middleActionForHomepage = searchAction
+         let middleAction = url == nil ? middleActionForHomepage : middleActionForWebpage
++        */
++        let middleAction = url == nil ? historyAction : middleActionForWebpage
+ 
+         return middleAction
+     }
+@@ -320,8 +346,16 @@ struct NavigationBarState: StateType, Equatable {
+         return ToolbarActionConfiguration(
+             actionType: .tabs,
+             iconName: StandardImageIdentifiers.Large.tab,
++            /* Ecosia: Replace purple private-mode badge with the Ecosia incognito icon
+             badgeImageName: isPrivateMode ? StandardImageIdentifiers.Medium.privateModeCircleFillPurple : nil,
+             maskImageName: isPrivateMode ? ImageIdentifiers.badgeMask : nil,
++             */
++            badgeImageName: isPrivateMode ? "incognito" : nil,
++            badgeBundle: isPrivateMode ? .ecosia : nil,
++            badgeSize: isPrivateMode ? CGSize(width: 12, height: 12) : nil,
++            badgeXOffset: isPrivateMode ? 6 : nil,
++            badgeYOffset: isPrivateMode ? -4 : nil,
++            maskImageName: nil,
+             numberOfTabs: numberOfTabs,
+             isEnabled: true,
+             largeContentTitle: largeContentTitle,

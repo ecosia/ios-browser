@@ -1,0 +1,226 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockProfile.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockProfile.swift
+index 6fe4bc24aa..ce28d20f7f 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockProfile.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockProfile.swift
+@@ -6,20 +6,18 @@ import Account
+ import Foundation
+ import Shared
+ import Storage
++import Sync
+ import XCTest
+-import Common
+ 
+ @testable import Client
+ 
+-import enum MozillaAppServices.SyncReason
+-import struct MozillaAppServices.SyncResult
+-import class MozillaAppServices.RemoteSettingsService
++import MozillaAppServices
+ 
+ public typealias ClientSyncManager = Client.SyncManager
+ 
+ open class ClientSyncManagerSpy: ClientSyncManager, @unchecked Sendable {
+     open var isSyncing = false
+-    open var lastSyncFinishTime: Timestamp?
++    open var lastSyncFinishTime: Shared.Timestamp?
+     open var syncDisplayState: SyncDisplayState?
+ 
+     private var mockDeclinedEngines: [String]?
+@@ -35,16 +33,14 @@ open class ClientSyncManagerSpy: ClientSyncManager, @unchecked Sendable {
+     open func syncTabs() -> Deferred<Maybe<SyncResult>> { return emptySyncResult }
+     open func syncHistory() -> Deferred<Maybe<SyncResult>> { return emptySyncResult }
+     open func syncEverything(why: SyncReason) -> Success { return succeed() }
++    open func updateCreditCardAutofillStatus(value: Bool) {}
+ 
+     var syncNamedCollectionsCalled = 0
+     open func syncNamedCollections(why: SyncReason, names: [String]) -> Deferred<Maybe<SyncResult>> {
+         syncNamedCollectionsCalled += 1
+         return emptySyncResult
+     }
+-    var syncPostSyncSettingsChangeCalled = 0
+-    open func syncPostSyncSettingsChange(why: SyncReason, names: [String]) {
+-        syncPostSyncSettingsChangeCalled += 1
+-    }
++    open func syncPostSyncSettingsChange(why: SyncReason, names: [String]) {}
+     open func reportOpenSyncSettingsMenuTelemetry() {}
+     open func beginTimedSyncs() {}
+     open func endTimedSyncs() {}
+@@ -91,10 +87,9 @@ final class MockTabQueue: TabQueue, @unchecked Sendable {
+     }
+ 
+     func getQueuedTabs(completion: @MainActor @escaping ([ShareItem]) -> Void) {
+-        Task { @MainActor in
+-            completion(queuedTabs)
+-            getQueuedTabsCalled += 1
+-        }
++        getQueuedTabsCalled += 1
++        let tabs = queuedTabs
++        Task { @MainActor in completion(tabs) }
+     }
+ 
+     func clearQueuedTabs() -> Success {
+@@ -106,48 +101,43 @@ final class MockTabQueue: TabQueue, @unchecked Sendable {
+ class MockFiles: FileAccessor {
+     var rootPath: String
+ 
+-    init(rootPath: String? = nil) {
+-        guard let rootPath else {
+-            let docPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+-            self.rootPath = (docPath as NSString).appendingPathComponent("testing")
+-            return
+-        }
+-
+-        self.rootPath = rootPath
++    init() {
++        let docPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
++        rootPath = (docPath as NSString).appendingPathComponent("testing")
+     }
+ }
+ 
+-// TODO: FXIOS-12610 Profile should be refactored so it is **not** `Sendable`.
+-final class MockProfile: Client.Profile, @unchecked Sendable {
+-    public var rustFxA: RustFirefoxAccounts {
+-        return RustFirefoxAccounts.shared
++open class MockProfile: Client.Profile, @unchecked Sendable {
++    public var rustFxA: Client.RustFirefoxAccounts {
++        return Client.RustFirefoxAccounts.shared
+     }
+ 
+     // Read/Writeable properties for mocking
+ 
+     public let files: FileAccessor
+-    public let syncManager: ClientSyncManager?
+-    public let firefoxSuggest: RustFirefoxSuggestProtocol?
+-    public let remoteSettingsService: RemoteSettingsService
+-    public let mockNotificationCenter: NotificationProtocol = MockNotificationCenter()
++    public var syncManager: (any Client.SyncManager)?
++    public var firefoxSuggest: RustFirefoxSuggestProtocol?
+ 
+-    fileprivate let name = "mockaccount"
++    fileprivate let name: String = "mockaccount"
+ 
+     private let directory: String
+     private let databasePrefix: String
+-    private let injectedPinnedSites: MockablePinnedSites?
+-
+-    init(
+-        databasePrefix: String = "mock",
+-        firefoxSuggest: RustFirefoxSuggestProtocol? = nil,
+-        remoteSettingsService: RemoteSettingsService = RemoteSettingsService(noPointer: .init()),
+-        injectedPinnedSites: MockablePinnedSites? = nil
+-    ) {
++    private var injectedPinnedSites: PinnedSites?
++
++    // Ecosia: Default to a UNIQUE database prefix per instance. Previously every MockProfile() shared the
++    // "mock" prefix, so they all opened the SAME "mock_places.db". Rust keeps a Places connection open
++    // process-globally; when a profile is deallocated without shutdown() (most tests), the connection leaks and
++    // the next MockProfile() opening the same path crashes with "A connection of this type is already open".
++    // That collision cascaded into dozens of test-runner restarts when the whole suite ran. A unique prefix
++    // gives each profile its own isolated DB files, so connections never collide across tests. Tests that need a
++    // shared/known path still pass an explicit databasePrefix. (MOB-4384)
++    init(databasePrefix: String = "mock-\(UUID().uuidString)",
++         firefoxSuggest: RustFirefoxSuggestProtocol? = nil,
++         injectedPinnedSites: PinnedSites? = nil) {
+         files = MockFiles()
+-        syncManager = ClientSyncManagerSpy()
++        syncManager = ClientSyncManagerSpy() as any Client.SyncManager
+         self.databasePrefix = databasePrefix
+         self.firefoxSuggest = firefoxSuggest
+-        self.remoteSettingsService = remoteSettingsService
+         self.injectedPinnedSites = injectedPinnedSites
+ 
+         do {
+@@ -158,6 +148,11 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
+         }
+     }
+ 
++    // Ecosia: Restore upstream v147.5's deinit. Without it, each MockProfile's Rust DB connections (notably
++    // places at "<prefix>_places.db", default prefix "mock") stay open process-globally after the profile is
++    // deallocated. Because the default prefix is shared, the NEXT MockProfile that opens places hits
++    // "A connection of this type is already open", which crashes the host and cascades into many test-runner
++    // restarts when the whole suite runs. Closing on deinit (as upstream does) isolates each test. (MOB-4384)
+     deinit {
+         shutdown()
+     }
+@@ -198,6 +193,16 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
+         return CertStore()
+     }()
+ 
++    @MainActor
++    public lazy var searchEnginesManager: SearchEnginesManager = {
++        return SearchEnginesManager(prefs: self.prefs, files: self.files)
++    }()
++
++    public lazy var remoteSettingsService: RemoteSettingsService = {
++        let config = RemoteSettingsConfig2(server: .prod, bucketName: "main", appContext: nil)
++        return RemoteSettingsService(storageDir: directory, config: config)
++    }()
++
+     public lazy var prefs: Prefs = {
+         return MockProfilePrefs()
+     }()
+@@ -246,7 +251,7 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
+         ).appendingPathComponent("\(databasePrefix)_places.db").path
+         try? files.remove("\(databasePrefix)_places.db")
+ 
+-        let places = RustPlaces(databasePath: placesDatabasePath, notificationCenter: mockNotificationCenter)
++        let places = RustPlaces(databasePath: placesDatabasePath)
+         _ = places.reopenIfClosed()
+ 
+         return places
+@@ -286,7 +291,7 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
+     public func flushAccount() {}
+ 
+     public func removeAccount() {
+-        self.syncManager?.onRemovedAccount()
++        _ = self.syncManager?.onRemovedAccount()
+     }
+ 
+     public func getCachedClientsAndTabs() -> Deferred<Maybe<[ClientAndTabs]>> {
+@@ -299,32 +304,37 @@ final class MockProfile: Client.Profile, @unchecked Sendable {
+ 
+     var mockClientAndTabs = [ClientAndTabs]()
+ 
+-    public func getCachedClientsAndTabs(completion: @escaping ([ClientAndTabs]?) -> Void) {
++    public func getCachedClientsAndTabs(completion: @escaping @Sendable ([ClientAndTabs]?) -> Void) {
+         completion(mockClientAndTabs)
+     }
+ 
+-    public func getClientsAndTabs(completion: @escaping ([ClientAndTabs]?) -> Void) {
++    public func getClientsAndTabs(completion: @escaping @Sendable ([ClientAndTabs]?) -> Void) {
+         completion(mockClientAndTabs)
+     }
+ 
+     public func cleanupHistoryIfNeeded() {}
+ 
++    public func storeTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>> {
++        return deferMaybe(0)
++    }
++
++    // Ecosia: spy counter so AccountSyncHandler tests can verify the (debounced) sync was triggered. (MOB-4384)
+     var storeAndSyncTabsCalled = 0
+     public func storeAndSyncTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>> {
+         storeAndSyncTabsCalled += 1
+         return deferMaybe(0)
+     }
+ 
+-    public func addTabToCommandQueue(_ deviceId: String, url: URL) {
+-        return
+-    }
++    public func addTabToCommandQueue(_ deviceId: String, url: URL) {}
++    public func removeTabFromCommandQueue(_ deviceId: String, url: URL) {}
++    public func flushTabCommands(toDeviceId: String?) {}
+ 
+-    public func removeTabFromCommandQueue(_ deviceId: String, url: URL) {
+-        return
++    public func updateCredentialIdentities() -> Deferred<Result<Void, Error>> {
++        return Deferred(value: .success(()))
+     }
+ 
+-    public func flushTabCommands(toDeviceId: String?) {
+-        return
++    public func clearCredentialStore() -> Deferred<Result<Void, Error>> {
++        return Deferred(value: .success(()))
+     }
+ 
+     public func sendItem(_ item: ShareItem, toDevices devices: [RemoteDevice]) -> Success {

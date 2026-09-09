@@ -1,0 +1,81 @@
+diff --git a/firefox-ios/Client/Coordinators/Scene/SceneCoordinator.swift b/firefox-ios/Client/Coordinators/Scene/SceneCoordinator.swift
+index 4027b6b0fa..c830e5e6b9 100644
+--- a/firefox-ios/Client/Coordinators/Scene/SceneCoordinator.swift
++++ b/firefox-ios/Client/Coordinators/Scene/SceneCoordinator.swift
+@@ -134,15 +134,32 @@ class SceneCoordinator: BaseCoordinator,
+     private func startBrowser(with launchType: LaunchType?) {
+         guard !childCoordinators.contains(where: { $0 is BrowserCoordinator }) else { return }
+ 
++        // Ecosia: Guard against AppContainer.shared.reset() called by unit-test setUp concurrently.
++        // AppContainer is not thread-safe; the scene coordinator can still be starting up on a
++        // background queue when DependencyHelperMock.bootstrapDependencies() calls reset(). Resolve
++        // all AppContainer services we need here via resolveOptional() and abort early if any are
++        // missing — the test host will re-attempt browser startup when scene lifecycle fires again.
++        guard let profile: Profile = AppContainer.shared.resolveOptional(),
++              let themeManager: ThemeManager = AppContainer.shared.resolveOptional(),
++              let browserWindowManager: WindowManager = AppContainer.shared.resolveOptional() else {
++            logger.log("startBrowser: required services not in AppContainer — skipping (reset in test setUp?)",
++                       level: .warning,
++                       category: .coordinator)
++            return
++        }
++
+         logger.log("Starting browser with launchtype \(String(describing: launchType))",
+                    level: .info,
+                    category: .coordinator)
+ 
+-        let tabManager = TabManagerImplementation(profile: AppContainer.shared.resolve(),
++        let tabManager = TabManagerImplementation(profile: profile,
+                                                   uuid: reservedWindowUUID)
+         let browserCoordinator = BrowserCoordinator(router: router,
+                                                     screenshotService: screenshotService,
+-                                                    tabManager: tabManager)
++                                                    tabManager: tabManager,
++                                                    profile: profile,
++                                                    themeManager: themeManager,
++                                                    windowManager: browserWindowManager)
+ 
+         let windowInfo = AppWindowInfo(tabManager: tabManager, sceneCoordinator: self)
+         windowManager.newBrowserWindowConfigured(windowInfo, uuid: windowUUID)
+@@ -175,8 +192,41 @@ class SceneCoordinator: BaseCoordinator,
+     }
+ 
+     func didFinishLaunch(from coordinator: LaunchCoordinator) {
++        /* Ecosia: Custom transition
+         router.dismiss(animated: true)
+         remove(child: coordinator)
++        */
++        startBrowser(with: nil)
++
++        // Ecosia: Animate transition from welcome screen
++        guard let browserCoordinator = childCoordinators.first(where: { $0 is BrowserCoordinator }) as? BrowserCoordinator else {
++            router.dismiss(animated: true)
++            remove(child: coordinator)
++            return
++        }
++
++        browserCoordinator.browserViewController.prepareToolbarsForWelcomeTransition()
++        router.dismiss(animated: true) {
++            browserCoordinator.browserViewController.animateToolbarsIn()
++        }
++        remove(child: coordinator)
++    }
++
++    // Ecosia: Handle sign-in request from welcome screen
++    func didRequestSignIn(from coordinator: LaunchCoordinator) {
+         startBrowser(with: nil)
++
++        guard let browserCoordinator = childCoordinators.first(where: { $0 is BrowserCoordinator }) as? BrowserCoordinator else {
++            router.dismiss(animated: true)
++            remove(child: coordinator)
++            return
++        }
++
++        browserCoordinator.browserViewController.prepareToolbarsForWelcomeTransition()
++        router.dismiss(animated: true) {
++            browserCoordinator.browserViewController.animateToolbarsIn()
++            EcosiaAuth.performWelcomeSignIn(browserViewController: browserCoordinator.browserViewController)
++        }
++        remove(child: coordinator)
+     }
+ }

@@ -1,0 +1,46 @@
+diff --git a/firefox-ios/Client/Application/AccessibilityIdentifiers.swift b/firefox-ios/Client/Application/AccessibilityIdentifiers.swift
+index 021a8ae5ca..92a5af6f29 100644
+--- a/firefox-ios/Client/Application/AccessibilityIdentifiers.swift
++++ b/firefox-ios/Client/Application/AccessibilityIdentifiers.swift
+@@ -27,6 +27,8 @@ struct AccessibilityIdentifiers {
+         static let forwardButton = "TabToolbar.forwardButton"
+         static let tabsButton = "TabToolbar.tabsButton"
+         static let addNewTabButton = "TabToolbar.addNewTabButton"
++        // Ecosia: Accessibility identifier for the NTP toolbar history button
++        static let historyButton = "TabToolbar.historyButton"
+         static let searchButton = "TabToolbar.searchButton"
+         static let stopButton = "TabToolbar.stopButton"
+         static let translateButton = "TabToolbar.translateButton"
+@@ -121,6 +123,10 @@ struct AccessibilityIdentifiers {
+         static let signIn = "MainMenu.SignIn"
+         static let summarizePage = "MainMenu.SummarizePage"
+         static let trackigProtection = "shieldCheckmarkLarge"
++        // Ecosia: Reading List, Help, and Report Issue identifiers
++        static let readingList = "MainMenu.ReadingList"
++        static let help = "MainMenu.Help"
++        static let reportIssue = "MainMenu.ReportIssue"
+     }
+ 
+     struct UnifiedSearch {
+@@ -870,5 +876,21 @@ struct AccessibilityIdentifiers {
+         static let darkerBrightnessButton = "ReaderMode.darkerBrightnessButton"
+         static let brightnessSlider = "ReaderMode.brightnessSlider"
+     }
++    // Ecosia: Custom accessibility identifiers
++    struct Ecosia {
++        static let logo = "ecosia-logo"
++
++        struct TabToolbar {
++            static let circleButton = "TabToolbar.circleButton"
++        }
++
++        struct FindInPage {
++            static let searchField = "FindInPage.searchField"
++            static let matchCount = "FindInPage.matchCount"
++            static let findPrevious = "FindInPage.find_previous"
++            static let findNext = "FindInPage.find_next"
++            static let findClose = "FindInPage.close"
++        }
++    }
+ }
+ // swiftlint:enable line_length

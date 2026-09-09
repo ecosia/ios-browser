@@ -1,0 +1,75 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockSettingsFlowDelegate.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockSettingsFlowDelegate.swift
+index 8ab928a6c4..37f8a16277 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockSettingsFlowDelegate.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockSettingsFlowDelegate.swift
+@@ -6,11 +6,15 @@ import Foundation
+ 
+ @testable import Client
+ 
++@MainActor
+ class MockSettingsFlowDelegate: SettingsFlowDelegate,
+                                 GeneralSettingsDelegate,
+                                 PrivacySettingsDelegate,
+                                 AccountSettingsDelegate,
+                                 AboutSettingsDelegate,
++                                /* Ecosia: Fix "Mail App" button in settings (MOB-4892)
++                                SupportSettingsDelegate {
++                                */
+                                 SupportSettingsDelegate,
+                                 BrowsingSettingsDelegate {
+     var showDevicePassCodeCalled = 0
+@@ -51,13 +55,18 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
+     func showQRCode(delegate: QRCodeViewControllerDelegate) {
+         showQRCodeCalled += 1
+     }
++    // Ecosia: BrowsingSettingsDelegate Fix protocol conformance
++    func pressedAutoPlay() {}
+ 
+     // MARK: GeneralSettingsDelegate
+ 
+     func pressedCustomizeAppIcon() {}
+-
++    func pressedBrowsing() {}
++    func pressedSummarize() {}
+     func pressedHome() {}
+ 
++    func pressedMailApp() {}
++
+     func pressedNewTab() {}
+ 
+     func pressedSearchEngine() {}
+@@ -66,21 +75,11 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
+ 
+     func pressedToolbar() {}
+ 
+-    func pressedTheme() {}
+-
+-    func pressedBrowsing() {}
+-
+-    func pressedSummarize() {}
+-
+     func pressedTranslation() {}
+ 
+     func pressedAutoFillsPasswords() {}
+ 
+-    // MARK: BrowsingSettingsDelegate
+-
+-    func pressedMailApp() {}
+-
+-    func pressedAutoPlay() {}
++    func pressedTheme() {}
+ 
+     // MARK: PrivacySettingsDelegate
+ 
+@@ -92,10 +91,9 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
+ 
+     func pressedPasswords() {}
+ 
+-    func pressedRelayMask() {}
+-
+     func pressedNotifications() {}
+ 
++    func pressedRelayMask() {}
+     func pressedAddressAutofill() {}
+ 
+     func askedToOpen(url: URL?, withTitle title: NSAttributedString?) {}

@@ -19,3 +19,13 @@ Before any change: determine if the file is Firefox core or Ecosia-owned, and fo
 | XCTest, snapshots, mocks | [firefox-ios/Ecosia/Ecosia.docc/agents/TESTING.md](firefox-ios/Ecosia/Ecosia.docc/agents/TESTING.md) |
 | Tuist project generation, new files | [firefox-ios/Ecosia/Ecosia.docc/agents/TUIST.md](firefox-ios/Ecosia/Ecosia.docc/agents/TUIST.md) |
 | Swift Concurrency guide | [.cursor/skills/swift-concurrency/SKILL.md](.cursor/skills/swift-concurrency/SKILL.md) |
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs are tracked locally as markdown under `.scratch/`. See [docs/agents/issue-tracker.md](docs/agents/issue-tracker.md).
+
+### Domain docs
+
+Multi-context: a root [CONTEXT-MAP.md](CONTEXT-MAP.md) points to one `CONTEXT.md` per context. See [docs/agents/domain.md](docs/agents/domain.md).

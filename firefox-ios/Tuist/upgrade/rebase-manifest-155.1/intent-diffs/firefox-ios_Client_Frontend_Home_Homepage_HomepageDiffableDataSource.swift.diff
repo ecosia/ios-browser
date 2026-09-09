@@ -1,0 +1,88 @@
+diff --git a/firefox-ios/Client/Frontend/Home/Homepage/HomepageDiffableDataSource.swift b/firefox-ios/Client/Frontend/Home/Homepage/HomepageDiffableDataSource.swift
+index 74fd1c0071..5eb6fad3fa 100644
+--- a/firefox-ios/Client/Frontend/Home/Homepage/HomepageDiffableDataSource.swift
++++ b/firefox-ios/Client/Frontend/Home/Homepage/HomepageDiffableDataSource.swift
+@@ -4,6 +4,7 @@
+ 
+ import Common
+ import UIKit
++import Ecosia
+ 
+ typealias HomepageSection = HomepageDiffableDataSource.HomeSection
+ typealias HomepageItem = HomepageDiffableDataSource.HomeItem
+@@ -15,6 +16,14 @@ final class HomepageDiffableDataSource:
+     typealias TextColor = UIColor
+     typealias NumberOfTilesPerRow = Int
+ 
++    /// Ecosia: When set, snapshot contains only Ecosia sections; when nil, Firefox sections.
++    var ecosiaAdapter: EcosiaHomepageAdapter?
++
++    /// Cell types to register with the collection view.
++    class var cellTypesToRegister: [ReusableCell.Type] {
++        HomeItem.cellTypes
++    }
++
+     enum HomeSection: Hashable {
+         case privacyNotice
+         case messageCard
+@@ -25,6 +34,12 @@ final class HomepageDiffableDataSource:
+         case pocket(TextColor?)
+         case customizeHomepage
+         case spacer
++        // Ecosia: Custom sections for Ecosia-specific homepage content
++        case ecosiaHeader
++        case ecosiaLogo
++        case ecosiaLibrary
++        case ecosiaImpact
++        case ecosiaNTPCustomization
+ 
+         var canHandleLongPress: Bool {
+             switch self {
+@@ -48,6 +63,13 @@ final class HomepageDiffableDataSource:
+         case merino(MerinoStoryConfiguration)
+         case customizeHomepage
+         case spacer
++        // Ecosia: Custom items for Ecosia-specific homepage cells
++        case ecosiaHeader
++        case ecosiaLogo
++        case ecosiaLibrary
++        // Ecosia: showRows drives NSDiffableDataSource diff so toggling Climate Impact animates correctly
++        case ecosiaImpact(sectionIndex: Int, showRows: Bool)
++        case ecosiaNTPCustomization
+ 
+         static var cellTypes: [ReusableCell.Type] {
+             return [
+@@ -88,12 +110,31 @@ final class HomepageDiffableDataSource:
+         }
+     }
+ 
++    // Ecosia: animated parameter lets pref-change notifications animate the transition
+     func updateSnapshot(
+         state: HomepageState,
+-        jumpBackInDisplayConfig: JumpBackInSectionLayoutConfiguration
++        jumpBackInDisplayConfig: JumpBackInSectionLayoutConfiguration,
++        animated: Bool = false
+     ) {
+-        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
++        // Ecosia: When adapter is set, use Ecosia sections with top sites inserted at the correct anchor
++        if let adapter = ecosiaAdapter {
++            var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
++            let textColor = state.wallpaperState.wallpaperConfiguration.textColor
++            let topSitesAnchor = adapter.topSitesInsertionAnchor
++            for section in adapter.getEcosiaSections() {
++                snapshot.appendSections([section])
++                snapshot.appendItems(adapter.getItems(for: section), toSection: section)
++                if section == topSitesAnchor,
++                   let (topSites, numberOfCellsPerRow) = getTopSites(with: state.topSitesState, and: textColor) {
++                    snapshot.appendSections([.topSites(textColor, numberOfCellsPerRow)])
++                    snapshot.appendItems(topSites, toSection: .topSites(textColor, numberOfCellsPerRow))
++                }
++            }
++            apply(snapshot, animatingDifferences: animated)
++            return
++        }
+ 
++        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
+         let textColor = state.wallpaperState.wallpaperConfiguration.textColor
+ 
+         if state.shouldShowPrivacyNotice {
