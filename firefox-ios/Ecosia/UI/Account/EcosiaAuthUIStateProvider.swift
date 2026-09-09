@@ -60,6 +60,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         return userProfile?.pictureURL
     }
     nonisolated(unsafe) private static var seedProgressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
+    /// Not `private`: swapped for a mock from tests via `@testable import`.
+    nonisolated(unsafe) static var loggedInImpactCacheType: LoggedInImpactCacheProtocol.Type = UserDefaultsLoggedInImpactCache.self
 
     // MARK: - Singleton
 
@@ -83,9 +85,24 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         self.username = userProfile?.name
 
         // If logged out, ensure seed count is loaded (already done in property initializer)
-        // If logged in, seed count will be updated from API when the NTP header appears
+        // If logged in, seed the last known server values from cache so the UI doesn't flash the
+        // logged-out cap while `registerVisitIfNeeded()` (triggered separately) is still in flight.
+        if let snapshot = Self.resolveInitialImpactSnapshot(isLoggedIn: isLoggedIn, userId: userProfile?.sub) {
+            seedCount = snapshot.seedCount
+            currentLevelNumber = snapshot.currentLevelNumber
+            currentProgress = snapshot.currentProgress
+        }
 
         setupAuthStateMonitoring()
+    }
+
+    /// Resolves the cached server snapshot to seed a logged-in user's state with on cold init.
+    /// Pulled out as a pure static function (rather than inlined in `init`) so it can be unit
+    /// tested directly against a mock `loggedInImpactCacheType`, independent of the live
+    /// `EcosiaAuthenticationService.shared` state `init` otherwise reads from.
+    static func resolveInitialImpactSnapshot(isLoggedIn: Bool, userId: String?) -> LoggedInImpactSnapshot? {
+        guard isLoggedIn, let userId else { return nil }
+        return loggedInImpactCacheType.load(forUserId: userId)
     }
 
     deinit {
@@ -254,6 +271,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         currentLevelNumber = newLevelNumber
         currentProgress = newProgress
 
+        persistLoggedInImpactSnapshot(seedCount: newSeedCount, currentLevelNumber: newLevelNumber, currentProgress: newProgress)
+
         // Trigger level-up animation if user leveled up
         if response.didLevelUp {
             EcosiaLogger.accounts.info("Level up detected: triggering animation for level \(newLevelNumber)")
@@ -267,6 +286,16 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount), level=\(newLevelNumber), progress=\(newProgress)")
             seedCount = newSeedCount
         }
+    }
+
+    /// Writes through to `loggedInImpactCacheType` so a cold launch (or the profile screen) can
+    /// seed from these values next time, instead of flashing the logged-out cap.
+    private func persistLoggedInImpactSnapshot(seedCount: Int, currentLevelNumber: Int, currentProgress: Double) {
+        guard isLoggedIn, let userId = userProfile?.sub else { return }
+        Self.loggedInImpactCacheType.save(
+            LoggedInImpactSnapshot(seedCount: seedCount, currentLevelNumber: currentLevelNumber, currentProgress: currentProgress),
+            userId: userId
+        )
     }
 
     @MainActor
@@ -302,6 +331,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         EcosiaLogger.accounts.info("Resetting to local seed collection system")
 
         Self.seedProgressManagerType.resetLocalSeedProgress()
+        // So a later login by a different account doesn't briefly show this account's numbers.
+        Self.loggedInImpactCacheType.clear()
 
         seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
         currentLevelNumber = 1
