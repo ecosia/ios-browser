@@ -145,7 +145,7 @@ class BrowserViewController: UIViewController,
     // Ecosia: Bridges eligibility (checked in decidePolicyFor, where WKNavigationAction
     // and its navigationType are available) to the actual tracking call in didCommit.
     // Set when eligible, cleared on commit or on the next navigation.
-    var pendingInappSearch: PendingInappSearch?
+    var pendingInappSearchUrl: URL?
 
     /* Ecosia: TabTrayFlagManager removed in Firefox upgrade; tab tray refactor is always enabled
     lazy var isTabTrayRefactorEnabled: Bool = TabTrayFlagManager.isRefactorEnabled

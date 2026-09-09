@@ -724,9 +724,6 @@ extension BrowserViewController: WKNavigationDelegate {
         let response = navigationResponse.response
         let responseURL = response.url
 
-        // Ecosia: Separates a real document load from a bfcache restore, and carries the status.
-        ecosiaHandleNavigationResponse(response: response, isForMainFrame: navigationResponse.isForMainFrame)
-
         tabManager[webView]?.mimeType = response.mimeType
         notificationCenter.post(name: .TabMimeTypeDidSet, withUserInfo: windowUUID.userInfo)
 
