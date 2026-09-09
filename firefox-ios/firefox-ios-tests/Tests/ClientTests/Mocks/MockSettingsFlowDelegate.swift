@@ -12,7 +12,11 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
                                 PrivacySettingsDelegate,
                                 AccountSettingsDelegate,
                                 AboutSettingsDelegate,
+                                /* Ecosia: Fix "Mail App" button in settings (MOB-4892)
                                 SupportSettingsDelegate {
+                                */
+                                SupportSettingsDelegate,
+                                BrowsingSettingsDelegate {
     var showDevicePassCodeCalled = 0
     var showCreditCardSettingsCalled = 0
     var didFinishShowingSettingsCalled = 0
@@ -51,6 +55,8 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
     func showQRCode(delegate: QRCodeViewControllerDelegate) {
         showQRCodeCalled += 1
     }
+    //Ecosia: BrowsingSettingsDelegate Fix protocol conformance
+    func pressedAutoPlay() {}
 
     // MARK: GeneralSettingsDelegate
 
