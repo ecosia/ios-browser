@@ -12,11 +12,8 @@ import XCTest
 /// file itself, the only place the bug is observable.
 final class BuildSettingsConfigurationTests: XCTestCase {
     func testWallpaperAssetURLDoesNotContainAnUnescapedDoubleSlash() throws {
-        let configPath = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent() // Core
-            .deletingLastPathComponent() // EcosiaTests
-            .deletingLastPathComponent() // firefox-ios
-            .appendingPathComponent("Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig")
+let configPath = URL(fileURLWithPath: RepoPath.root())
+            .appendingPathComponent("firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig")
 
         let contents = try String(contentsOf: configPath, encoding: .utf8)
         guard let line = contents.components(separatedBy: .newlines)
