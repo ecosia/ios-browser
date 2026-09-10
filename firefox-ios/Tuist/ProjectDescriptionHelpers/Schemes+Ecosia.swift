@@ -9,7 +9,7 @@ public enum EcosiaSchemes {
 
     // MARK: - Shared test targets
 
-    /// Test targets shared by Ecosia & EcosiaBeta schemes.
+    /// Test targets shared by Ecosia-Prod & Ecosia-Staging schemes.
     private static let unitTestTargets: [TestableTarget] = [
         "EcosiaTests",
         "ClientTests",
@@ -292,7 +292,7 @@ public enum EcosiaSchemes {
 
     public static let all: [Scheme] = [
         .scheme(
-            name: "Ecosia",
+            name: "Ecosia-Prod",
             buildAction: .buildAction(targets: ["Client"]),
             testAction: .targets(
                 unitTestTargets,
@@ -310,7 +310,7 @@ public enum EcosiaSchemes {
             )
         ),
         .scheme(
-            name: "EcosiaBeta",
+            name: "Ecosia-Staging",
             buildAction: .buildAction(targets: ["Client"]),
             testAction: .targets(
                 unitTestTargets,

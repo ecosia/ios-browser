@@ -26,7 +26,7 @@ tuist generate
 # Then open and build normally:
 open Client.xcodeproj
 
-# Select scheme: Ecosia or EcosiaBeta
+# Select scheme: Ecosia-Prod or Ecosia-Staging
 # Build: Cmd+B
 # Run: Cmd+R
 
@@ -51,7 +51,7 @@ tuist graph --format svg
 tuist clean
 
 # Build via Tuist
-tuist build --scheme Ecosia
+tuist build --scheme Ecosia-Prod
 
 # Run tests via Tuist
 tuist test
@@ -70,9 +70,9 @@ tuist test --targets ClientTests
 
 ./tuist-setup.sh
 
-# 4. Verify Ecosia scheme builds:
+# 4. Verify Ecosia-Prod scheme builds:
 tuist generate
-tuist build --scheme Ecosia
+tuist build --scheme Ecosia-Prod
 
 # 5. Run tests:
 tuist test
@@ -159,6 +159,6 @@ firefox-ios/.ecosia-customizations.md  # All Firefox modifications tracked
 # 1. Tuist generates the .xcodeproj - don't manually edit it
 # 2. Edit Tuist/Project.swift if you need to change project structure
 # 3. Run tuist generate after ANY Tuist file change
-# 4. Primary schemes for daily use: Ecosia and EcosiaBeta
+# 4. Primary schemes for daily use: Ecosia-Prod and Ecosia-Staging
 # 5. All Tuist commands run from workspace root
 

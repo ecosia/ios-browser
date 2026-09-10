@@ -13,8 +13,8 @@ sh ./bootstrap.sh    # Installs hooks, resolves packages, updates content blocke
 ## Build & Run
 
 - Open `firefox-ios/Client.xcodeproj` in Xcode
-- Select the **Ecosia** scheme for development builds
-- Select the **EcosiaBeta** scheme for running tests
+- Select the **Ecosia-Prod** scheme for development builds
+- Select the **Ecosia-Staging** scheme for running tests
 
 ## Tuist Project Regeneration
 
@@ -40,7 +40,7 @@ swiftlint --strict       # Same as CI (GitHub Actions)
 ## Tests
 
 ```sh
-# Run via Xcode: Cmd+U with EcosiaBeta scheme
+# Run via Xcode: Cmd+U with Ecosia-Staging scheme
 # Test plan: firefox-ios/EcosiaTests/UnitTest.xctestplan
 ```
 

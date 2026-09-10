@@ -1,6 +1,6 @@
 # This Scanfile is kept for reference but not used directly.
 # We're using direct xcodebuild command in perform_unit_tests/action.yml instead.
-scheme("Ecosia")
+scheme("Ecosia-Prod")
 configuration("Testing")
 project("firefox-ios/Client.xcodeproj")
 device("iPhone 16")

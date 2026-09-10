@@ -45,5 +45,5 @@ After adding a new snapshot test file, run `sh tuist-setup.sh` from the repo roo
 
 ## Running Tests
 
-- Run via Xcode: `Cmd+U` with the **EcosiaBeta** scheme
+- Run via Xcode: `Cmd+U` with the **Ecosia-Staging** scheme
 - CI runs tests via GitHub Actions
