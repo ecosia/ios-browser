@@ -6,6 +6,12 @@ import Foundation
 import WebKit
 import Ecosia
 
+struct PendingInappSearch {
+    let url: URL
+    /// Set for back/forward only, where a response is what proves a document was really loaded.
+    var awaitingNavigationResponse: Bool
+}
+
 // MARK: - Ecosia Web View Event Handling
 extension BrowserViewController {
 
@@ -36,20 +42,36 @@ extension BrowserViewController {
     }
 
     /// Handles any Ecosia-specific tracking when a navigation action is allowed.
-    /// Stores a pending URL to be tracked at didCommit.
+    /// Stores a pending search to be tracked at didCommit.
     private func ecosiaHandleNavigationAction(url: URL, navigationAction: WKNavigationAction) {
         // Clear any stale pending tracking from a previous navigation
-        pendingInappSearchUrl = nil
+        pendingInappSearch = nil
 
         guard url.isEcosiaSearchVertical() else { return }
 
-        // Back/forward navigations are suppressed: on web, bfcache keeps the page mounted so
-        // Vue never refires. Tab switching doesn't reach this delegate at all, so any other
-        // navigation type arriving here is a genuine user action and should always track.
-        guard navigationAction.navigationType != .backForward else { return }
+        // A bfcache restore reuses the document, so web's Vue never re-mounts and sends nothing.
+        pendingInappSearch = PendingInappSearch(
+            url: url,
+            awaitingNavigationResponse: navigationAction.navigationType == .backForward
+        )
+    }
 
-        // Store the URL; the event fires in ecosiaHandleDidCommit when content starts rendering
-        pendingInappSearchUrl = url
+    /// Only a real document load produces a response, and only here is the status visible.
+    /// Always arrives before didCommit.
+    func ecosiaHandleNavigationResponse(response: URLResponse, isForMainFrame: Bool) {
+        guard isForMainFrame,
+              let url = response.url,
+              url == pendingInappSearch?.url
+        else { return }
+
+        // An error page commits without rendering the SERP, so web's Vue never mounts.
+        if let statusCode = (response as? HTTPURLResponse)?.statusCode,
+           !(200..<400).contains(statusCode) {
+            pendingInappSearch = nil
+            return
+        }
+
+        pendingInappSearch?.awaitingNavigationResponse = false
     }
 
     /// Fires the in-app search event when the web content starts to be received (didCommit).
@@ -58,8 +80,9 @@ extension BrowserViewController {
     ///   - url: The URL that just committed
     ///   - isPrivate: Whether the tab is in private browsing mode
     func ecosiaHandleDidCommit(url: URL, isPrivate: Bool) {
-        guard url == pendingInappSearchUrl else { return }
-        pendingInappSearchUrl = nil
+        guard let pending = pendingInappSearch, url == pending.url else { return }
+        pendingInappSearch = nil
+        guard !pending.awaitingNavigationResponse else { return }
         Analytics.shared.inappSearch(url: url, isPrivate: isPrivate)
     }
 

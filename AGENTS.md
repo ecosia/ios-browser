@@ -9,7 +9,7 @@ Before any change: determine if the file is Firefox core or Ecosia-owned, and fo
 
 | When you need… | See |
 | --- | --- |
-| Always / Ask first / Never | [firefox-ios/Ecosia/Ecosia.docc/agents/BOUNDARIES.md](firefox-ios/Ecosia/Ecosia.docc/agents/BOUNDARIES.md) |
+| Always / Ask first / Never / Comments | [firefox-ios/Ecosia/Ecosia.docc/agents/BOUNDARIES.md](firefox-ios/Ecosia/Ecosia.docc/agents/BOUNDARIES.md) |
 | Bootstrap, build, test, lint commands | [firefox-ios/Ecosia/Ecosia.docc/agents/COMMANDS.md](firefox-ios/Ecosia/Ecosia.docc/agents/COMMANDS.md) |
 | What to do before changing code | [firefox-ios/Ecosia/Ecosia.docc/agents/CONTEXT.md](firefox-ios/Ecosia/Ecosia.docc/agents/CONTEXT.md) |
 | PR naming, commits, code review | [firefox-ios/Ecosia/Ecosia.docc/agents/CODEREVIEW.md](firefox-ios/Ecosia/Ecosia.docc/agents/CODEREVIEW.md) |
