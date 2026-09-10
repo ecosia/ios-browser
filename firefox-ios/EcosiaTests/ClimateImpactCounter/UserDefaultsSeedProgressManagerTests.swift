@@ -181,4 +181,27 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         XCTAssertEqual(totalSeeds, UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers)
         XCTAssertEqual(level, 1)
     }
+
+    // Test that currentSnapshot() reflects real local progress, not a hardcoded placeholder
+    func test_currentSnapshot_reflectsLocalProgress() {
+        UserDefaultsSeedProgressManager.addSeeds(2) // exactly reaches level 1's threshold (requiredSeeds: 2)
+
+        let snapshot = UserDefaultsSeedProgressManager.currentSnapshot()
+
+        XCTAssertEqual(snapshot.seedCount, 2)
+        XCTAssertEqual(snapshot.currentLevelNumber, 1)
+        XCTAssertEqual(snapshot.currentProgress, 1.0, accuracy: 0.0001)
+    }
+
+    // Test that clearOnLogout() is the same shared vocabulary as resetLocalSeedProgress()
+    func test_clearOnLogout_isEquivalentToResetLocalSeedProgress() {
+        UserDefaultsSeedProgressManager.addSeeds(2)
+
+        UserDefaultsSeedProgressManager.clearOnLogout()
+
+        XCTAssertEqual(UserDefaultsSeedProgressManager.loadCurrentLevel(), 1)
+        XCTAssertEqual(UserDefaultsSeedProgressManager.loadTotalSeedsCollected(), 0)
+        let lastOpenDateMessage = "Last app open date should be cleared to allow immediate seed collection"
+        XCTAssertNil(UserDefaultsSeedProgressManager.loadLastAppOpenDate(), lastOpenDateMessage)
+    }
 }

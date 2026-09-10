@@ -22,7 +22,7 @@ final class UserDefaultsLoggedInImpactCacheTests: XCTestCase {
     }
 
     func test_save_thenLoad_returnsSameSnapshot_forSameUser() {
-        let snapshot = LoggedInImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6)
+        let snapshot = ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6)
 
         UserDefaultsLoggedInImpactCache.save(snapshot, userId: "user-a")
 
@@ -30,7 +30,7 @@ final class UserDefaultsLoggedInImpactCacheTests: XCTestCase {
     }
 
     func test_load_returnsNil_forDifferentUser() {
-        let snapshot = LoggedInImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6)
+        let snapshot = ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6)
         UserDefaultsLoggedInImpactCache.save(snapshot, userId: "user-a")
 
         XCTAssertNil(UserDefaultsLoggedInImpactCache.load(forUserId: "user-b"),
@@ -39,12 +39,24 @@ final class UserDefaultsLoggedInImpactCacheTests: XCTestCase {
 
     func test_clear_removesCachedSnapshot() {
         UserDefaultsLoggedInImpactCache.save(
-            LoggedInImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6),
+            ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6),
             userId: "user-a"
         )
 
         UserDefaultsLoggedInImpactCache.clear()
 
         XCTAssertNil(UserDefaultsLoggedInImpactCache.load(forUserId: "user-a"))
+    }
+
+    func test_clearOnLogout_isEquivalentToClear() {
+        UserDefaultsLoggedInImpactCache.save(
+            ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6),
+            userId: "user-a"
+        )
+
+        UserDefaultsLoggedInImpactCache.clearOnLogout()
+
+        XCTAssertNil(UserDefaultsLoggedInImpactCache.load(forUserId: "user-a"),
+                     "clearOnLogout() is the shared vocabulary with SeedProgressManagerProtocol - should behave exactly like clear()")
     }
 }

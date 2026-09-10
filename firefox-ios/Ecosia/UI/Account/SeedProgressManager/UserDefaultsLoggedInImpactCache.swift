@@ -18,20 +18,20 @@ public final class UserDefaultsLoggedInImpactCache: LoggedInImpactCacheProtocol 
 
     private init() {}
 
-    public static func load(forUserId userId: String) -> LoggedInImpactSnapshot? {
+    public static func load(forUserId userId: String) -> ImpactSnapshot? {
         let defaults = UserDefaults.standard
         guard defaults.string(forKey: userIdKey) == userId,
               defaults.object(forKey: seedCountKey) != nil else {
             return nil
         }
-        return LoggedInImpactSnapshot(
+        return ImpactSnapshot(
             seedCount: defaults.integer(forKey: seedCountKey),
             currentLevelNumber: defaults.integer(forKey: currentLevelNumberKey),
             currentProgress: defaults.double(forKey: currentProgressKey)
         )
     }
 
-    public static func save(_ snapshot: LoggedInImpactSnapshot, userId: String) {
+    public static func save(_ snapshot: ImpactSnapshot, userId: String) {
         let defaults = UserDefaults.standard
         defaults.set(snapshot.seedCount, forKey: seedCountKey)
         defaults.set(snapshot.currentLevelNumber, forKey: currentLevelNumberKey)
