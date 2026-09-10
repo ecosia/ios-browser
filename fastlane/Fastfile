@@ -55,7 +55,7 @@ platform :ios do
       xcodeproj: project_path
     )
     gym(
-      scheme: "Ecosia-Prod",
+      scheme: "Ecosia-Staging",
       workspace: workspace_path,
       export_method: "ad-hoc",
       configuration: "Development_Firebase",
@@ -121,7 +121,7 @@ platform :ios do
       readonly: true
     )
     gym(
-      scheme: "Ecosia-Prod",
+      scheme: "Ecosia-Staging",
       workspace: workspace_path,
       export_method: "app-store",
       configuration: "Development_TestFlight"
