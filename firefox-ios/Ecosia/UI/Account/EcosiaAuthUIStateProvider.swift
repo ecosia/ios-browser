@@ -231,67 +231,37 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Seed Count Management
 
-    private enum RegisterVisitRetry {
-        /// Total attempts before giving up and surfacing `hasRegisterVisitError`.
-        static let maxAttempts = 3
-        /// Doubles after each failed attempt: 1s, then 2s.
-        static let baseDelay: TimeInterval = 1.0
-    }
-
-    /// Not `private`: swapped in tests to skip real delays between retries.
-    nonisolated(unsafe) static var registerVisitRetrySleep: (TimeInterval) async -> Void = { seconds in
-        try? await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
-    }
-
     /// Registers a user visit to fetch the latest balance from the backend.
     ///
     /// Only proceeds if a valid access token is available (user is logged in).
     /// Updates the balance and level information on success.
-    /// Sets `hasRegisterVisitError` to `true` if all retries are exhausted.
+    /// Sets `hasRegisterVisitError` to `true` on failure.
     private func registerVisitIfNeeded() {
         Task {
-            guard let accessToken = EcosiaAuthenticationService.shared.accessToken, !accessToken.isEmpty else {
-                EcosiaLogger.accounts.notice("Cannot register visit - no access token available")
-                return
-            }
-            await performRegisterVisitWithRetry(accessToken: accessToken)
-        }
-    }
-
-    /// Retries `registerVisit` with exponential backoff before giving up. Under a flaky connection
-    /// a single failed attempt used to leave the balance stale until the next NTP appearance or
-    /// foreground event; this bounds that gap to a few seconds instead.
-    ///
-    /// Not `private`: tests drive this directly via the injected `accountsProvider`, since
-    /// `registerVisitIfNeeded()`'s access-token guard can't be satisfied without a real login
-    /// against the `EcosiaAuthenticationService.shared` singleton.
-    func performRegisterVisitWithRetry(accessToken: String) async {
-        for attempt in 1...RegisterVisitRetry.maxAttempts {
             do {
-                EcosiaLogger.accounts.info("Registering user visit for balance update (attempt \(attempt)/\(RegisterVisitRetry.maxAttempts))")
-                let response = try await accountsProvider.registerVisit(accessToken: accessToken)
-                await updateBalance(response)
-                await MainActor.run {
-                    hasRegisterVisitError = false
-                }
-                return
-            } catch {
-                EcosiaLogger.accounts.debug(
-                    "Could not register visit (attempt \(attempt)/\(RegisterVisitRetry.maxAttempts)): \(error.localizedDescription)"
-                )
-
-                guard attempt < RegisterVisitRetry.maxAttempts else {
-                    await MainActor.run {
-                        hasRegisterVisitError = true
-                        if #available(iOS 16.0, *) {
-                            EcosiaErrorToastPresenter.shared.presentRegisterVisitError()
-                        }
-                    }
+                guard let accessToken = EcosiaAuthenticationService.shared.accessToken, !accessToken.isEmpty else {
+                    EcosiaLogger.accounts.notice("Cannot register visit - no access token available")
                     return
                 }
 
-                let delay = RegisterVisitRetry.baseDelay * pow(2.0, Double(attempt - 1))
-                await Self.registerVisitRetrySleep(delay)
+                EcosiaLogger.accounts.info("Registering user visit for balance update")
+                let response = try await accountsProvider.registerVisit(accessToken: accessToken)
+                await updateBalance(response)
+
+                // Clear error on success
+                await MainActor.run {
+                    hasRegisterVisitError = false
+                }
+            } catch {
+                EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
+
+                // Set error state
+                await MainActor.run {
+                    hasRegisterVisitError = true
+                    if #available(iOS 16.0, *) {
+                        EcosiaErrorToastPresenter.shared.presentRegisterVisitError()
+                    }
+                }
             }
         }
     }
