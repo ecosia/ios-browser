@@ -17,6 +17,7 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
     private let onLoginAction: () -> Void
     private let onDismissAction: () -> Void
     private let authStateProvider: EcosiaAuthUIStateProvider
+    private let impactManager: ImpactManager
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Initialization
@@ -27,10 +28,12 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         self.onLoginAction = onLogin
         self.onDismissAction = onDismiss
         self.authStateProvider = EcosiaAuthUIStateProvider.shared
+        self.impactManager = ImpactManager.shared
 
-        // Forward objectWillChange notifications from authStateProvider
-        // This ensures SwiftUI knows to update the view when auth state changes
+        // Forward objectWillChange notifications from both - this ensures SwiftUI knows to
+        // update the view when either identity or impact state changes.
         authStateProvider.objectWillChange
+            .merge(with: impactManager.objectWillChange)
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
             }
@@ -54,9 +57,9 @@ public class EcosiaAccountImpactViewModel: ObservableObject {
         authStateProvider.avatarURL
     }
 
-    /// Current seed count from centralized provider
+    /// Current seed count from the impact manager
     public var seedCount: Int {
-        authStateProvider.seedCount
+        impactManager.seedCount
     }
 
     // MARK: - Public Methods
@@ -118,11 +121,11 @@ extension EcosiaAccountImpactViewModel {
 
     /// The level text to display - always shows the level based on seed count
     public var levelDisplayText: String {
-        authStateProvider.levelDisplayText
+        impactManager.levelDisplayText
     }
 
     /// Progress for the avatar (0.0 to 1.0)
     public var levelProgress: Double {
-        authStateProvider.levelProgress
+        impactManager.levelProgress
     }
 }

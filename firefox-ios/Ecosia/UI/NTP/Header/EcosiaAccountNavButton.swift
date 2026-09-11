@@ -20,6 +20,7 @@ public struct EcosiaAccountNavButton: View {
     private let windowUUID: WindowUUID
     @State private var theme = EcosiaAccountNavButtonTheme()
     @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
+    @ObservedObject private var impactManager = ImpactManager.shared
 
     public init(
         seedCount: Int,
@@ -45,7 +46,7 @@ public struct EcosiaAccountNavButton: View {
     public var body: some View {
         Button(action: { onTap() }) {
             HStack(spacing: .ecosia.space._1s) {
-                if !authStateProvider.hasRegisterVisitError {
+                if !impactManager.hasRegisterVisitError {
                     EcosiaSeedView(
                         seedCount: seedCount,
                         seedIconSize: .ecosia.space._1l,
@@ -64,10 +65,10 @@ public struct EcosiaAccountNavButton: View {
             }
             .padding(.top, .ecosia.space._2s)
             .padding(.bottom, .ecosia.space._2s)
-            .padding(.leading, authStateProvider.hasRegisterVisitError ? .ecosia.space._2s : .ecosia.space._1s)
+            .padding(.leading, impactManager.hasRegisterVisitError ? .ecosia.space._2s : .ecosia.space._1s)
             .padding(.trailing, .ecosia.space._2s)
             .frame(minHeight: .ecosia.space._3l, maxHeight: .ecosia.space._3l)
-            .animation(.easeInOut(duration: 0.3), value: authStateProvider.hasRegisterVisitError)
+            .animation(.easeInOut(duration: 0.3), value: impactManager.hasRegisterVisitError)
         }
         .buttonStyle(EcosiaAccountNavButtonStyle(
             backgroundColor: theme.backgroundColor,
