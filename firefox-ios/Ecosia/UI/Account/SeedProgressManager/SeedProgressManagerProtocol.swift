@@ -4,7 +4,7 @@
 
 import Foundation
 
-public protocol SeedProgressManagerProtocol {
+public protocol SeedProgressManagerProtocol: ImpactSnapshotReadable {
     static var progressUpdatedNotification: Notification.Name { get }
     static var levelUpNotification: Notification.Name { get }
     static var seedCounterConfig: SeedCounterConfig? { get set }
@@ -38,5 +38,12 @@ extension SeedProgressManagerProtocol {
     /// Shared vocabulary with `LoggedInImpactCacheProtocol.clearOnLogout()`.
     public static func clearOnLogout() {
         resetLocalSeedProgress()
+    }
+}
+
+extension SeedProgressManagerProtocol {
+    /// `userId` is ignored: there's one local slot for logged-out collection, not one per account.
+    public static func currentSnapshot(forUserId userId: String?) -> ImpactSnapshot? {
+        currentSnapshot()
     }
 }

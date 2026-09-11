@@ -20,10 +20,18 @@ public struct ImpactSnapshot: Equatable {
     }
 }
 
+/// A single, login-state-agnostic way to read the current impact snapshot: `ImpactManager` picks
+/// whichever store's `.Type` is relevant and calls this, without branching on the call shape
+/// itself - both `SeedProgressManagerProtocol` (userId ignored - one local slot, not per-account)
+/// and `LoggedInImpactCacheProtocol` (userId required, nil short-circuits to `nil`) conform.
+public protocol ImpactSnapshotReadable {
+    static func currentSnapshot(forUserId userId: String?) -> ImpactSnapshot?
+}
+
 /// Persists the last known server-reported seed/level/progress for a logged-in user, so the UI can
 /// show real numbers immediately on cold launch instead of the logged-out cap
 /// (`UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers`) while a fresh value is fetched.
-public protocol LoggedInImpactCacheProtocol {
+public protocol LoggedInImpactCacheProtocol: ImpactSnapshotReadable {
     /// Returns the cached snapshot, or `nil` if there is none or it belongs to a different user.
     static func load(forUserId userId: String) -> ImpactSnapshot?
 
@@ -40,5 +48,12 @@ extension LoggedInImpactCacheProtocol {
     /// reason for clearing.
     public static func clearOnLogout() {
         clear()
+    }
+}
+
+extension LoggedInImpactCacheProtocol {
+    public static func currentSnapshot(forUserId userId: String?) -> ImpactSnapshot? {
+        guard let userId else { return nil }
+        return load(forUserId: userId)
     }
 }

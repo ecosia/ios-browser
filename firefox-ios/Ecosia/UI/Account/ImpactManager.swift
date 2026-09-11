@@ -91,16 +91,14 @@ public final class ImpactManager: ObservableObject {
         }
     }
 
-    /// Resolves the snapshot to seed `init`'s state with. Pulled out as a pure static function
-    /// (rather than inlined in `init`) so it can be unit tested directly against a mock
-    /// `loggedInImpactCacheType`, independent of the live `EcosiaAuthenticationService.shared`
-    /// state `init` otherwise reads from.
+    /// Resolves the snapshot to seed `init`'s state with. One polymorphic call through
+    /// `ImpactSnapshotReadable` - which store answers it depends only on login state, the call
+    /// shape is identical either way. Pulled out as a pure static function (rather than inlined
+    /// in `init`) so it can be unit tested directly against a mock `loggedInImpactCacheType`,
+    /// independent of the live `EcosiaAuthenticationService.shared` state `init` otherwise reads from.
     static func resolveInitialImpactSnapshot(isLoggedIn: Bool, userId: String?) -> ImpactSnapshot? {
-        guard isLoggedIn else {
-            return loggedOutImpactCacheType.currentSnapshot()
-        }
-        guard let userId else { return nil }
-        return loggedInImpactCacheType.load(forUserId: userId)
+        let cacheType: ImpactSnapshotReadable.Type = isLoggedIn ? loggedInImpactCacheType : loggedOutImpactCacheType
+        return cacheType.currentSnapshot(forUserId: userId)
     }
 
     // MARK: - Public Interface
