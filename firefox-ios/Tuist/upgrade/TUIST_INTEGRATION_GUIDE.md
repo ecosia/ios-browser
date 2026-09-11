@@ -436,7 +436,7 @@ tuist generate --no-cache
 # 2. Build the project to catch compilation errors
 cd ..
 xcodebuild -workspace firefox-ios/Client.xcworkspace \
-  -scheme Ecosia \
+  -scheme Ecosia-Prod \
   -configuration Debug \
   build
 
@@ -454,7 +454,7 @@ xcodebuild -workspace firefox-ios/Client.xcworkspace \
 
 # 4. Run tests to verify functionality
 xcodebuild test -workspace firefox-ios/Client.xcworkspace \
-  -scheme Ecosia \
+  -scheme Ecosia-Prod \
   -destination 'platform=iOS Simulator,name=iPhone 15'
 
 # 5. Commit the validated upgrade
@@ -763,7 +763,7 @@ python3 firefox-ios/Tuist/upgrade/ecosia_conflict_helper.py \
 
 ### Step 5: Validation
 - [ ] Regenerate project: `cd firefox-ios && tuist generate --no-cache`
-- [ ] Build: `xcodebuild -workspace ... -scheme Ecosia build`
+- [ ] Build: `xcodebuild -workspace ... -scheme Ecosia-Prod build`
 - [ ] Fix compilation errors iteratively
 - [ ] Run tests: `xcodebuild test ...`
 - [ ] Commit: `git commit -m "Upgrade Firefox base to v148.0"`

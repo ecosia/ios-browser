@@ -167,7 +167,7 @@ The required variables can be found in Bitwarden under "[iOS Dev] Staging.xcconf
     - `--skip-bootstrap`: Skip `bootstrap.sh` (use only if dependencies are already set up).
 
     _NOTE_ for subsequent runs, appending --skip-bootstrap is faster because it will skip the dependencies
-5. In Xcode, select the `Ecosia` or `EcosiaBeta` [scheme](https://developer.apple.com/documentation/xcode/build-system?changes=_2).
+5. In Xcode, select the `Ecosia-Prod` or `Ecosia-Staging` [scheme](https://developer.apple.com/documentation/xcode/build-system?changes=_2).
 6. Select the destination device you want to build on.
 7. Run the app with `Cmd + R` or by pressing the **Build and Run** button.
 
@@ -269,7 +269,7 @@ To run the app on a new device, register it on the Apple Developer Portal and re
     bundle exec fastlane match adhoc --force_for_new_devices
     ```
    This flag makes `match` check whether the device count has changed since the last run and automatically re-generate the provisioning profiles if necessary. See the [fastlane match docs](https://docs.fastlane.tools/actions/match/#registering-new-devices) for more details.
-3. Open Xcode, select the **EcosiaBeta** (or **Ecosia**) scheme, choose your device and run (`Cmd + R`).
+3. Open Xcode, select the **Ecosia-Staging** (or **Ecosia-Prod**) scheme, choose your device and run (`Cmd + R`).
 
 ## Translations
 
@@ -361,7 +361,7 @@ DRY_RUN=true bash firefox-ios/Ecosia/L10N/check_translations.sh
 
 ## 🧪 Unit tests
 
-* Run tests against `EcosiaBeta` scheme. With the standard CMD+U it picks the test plan (Xcode)
+* Run tests against `Ecosia-Staging` scheme. With the standard CMD+U it picks the test plan (Xcode)
 
 ## ✅ Acceptance testing
 

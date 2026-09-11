@@ -138,6 +138,6 @@ echo -e "${GREEN}═════════════════════
 echo -e "${GREEN}   ✓ Setup Complete!${NC}"
 echo -e "${GREEN}═══════════════════════════════════════${NC}\n"
 echo -e "Next steps:"
-echo -e "  1. Select the ${YELLOW}Ecosia${NC} or ${YELLOW}EcosiaBeta${NC} scheme"
+echo -e "  1. Select the ${YELLOW}Ecosia-Staging${NC} scheme"
 echo -e "  2. Build the project"
 echo -e "  3. Run on simulator/device"

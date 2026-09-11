@@ -19,7 +19,7 @@ runs:
     - name: Run tests with xcodebuild and xcpretty
       shell: bash
       run: |
-        set -o pipefail && xcodebuild -scheme Ecosia \
+        set -o pipefail && xcodebuild -scheme Ecosia-Prod \
           -project firefox-ios/Client.xcodeproj \
           -configuration Testing \
           -enableCodeCoverage NO \
@@ -29,7 +29,7 @@ runs:
           build-for-testing | tee raw_build_for_testing.log | xcpretty --color
 
         set +e
-        set -o pipefail && xcodebuild -scheme Ecosia \
+        set -o pipefail && xcodebuild -scheme Ecosia-Prod \
           -project firefox-ios/Client.xcodeproj \
           -configuration Testing \
           -enableCodeCoverage NO \
