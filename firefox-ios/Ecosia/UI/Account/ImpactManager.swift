@@ -11,9 +11,12 @@ import Common
 /// whether a number came from the server (logged-in) or local collection (logged-out) - they
 /// just observe `seedCount`/`currentLevelNumber`/`currentProgress` and call `refreshSeedState()`.
 ///
-/// Tracks `isLoggedIn`/the current user id itself (independently of `EcosiaAuthUIStateProvider`,
-/// which owns identity/profile display) by listening to the same auth notifications, so it has
-/// no dependency on that type at all - the two are siblings, not layered.
+/// Reads `isLoggedIn`/the current user id straight from `authService` every time rather than
+/// caching a local copy kept in sync via notifications - `EcosiaAuthenticationService` is already
+/// the single source of truth and safe to read synchronously at any point, so a cached copy would
+/// just be a second thing that could drift from it. Listens to `.EcosiaAuthStateChanged` only to
+/// trigger the login/logout side effects (register a visit, reset local collection), not to track
+/// state itself - no dependency on `EcosiaAuthUIStateProvider` at all, the two are siblings.
 @MainActor
 public final class ImpactManager: ObservableObject {
 
@@ -36,13 +39,13 @@ public final class ImpactManager: ObservableObject {
 
     // MARK: - Private Properties
 
-    private var isLoggedIn = false
-    private var userId: String?
+    private var isLoggedIn: Bool { authService.isLoggedIn }
+    private var userId: String? { authService.userProfile?.sub }
 
     private var authStateObserver: NSObjectProtocol?
-    private var userProfileObserver: NSObjectProtocol?
     private var seedProgressObserver: NSObjectProtocol?
     private let accountsProvider: AccountsProviderProtocol
+    private let authService: EcosiaAuthenticationService
 
     /// Not `private`: swapped for a mock from tests via `@testable import`.
     nonisolated(unsafe) static var loggedOutImpactCacheType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
@@ -61,12 +64,9 @@ public final class ImpactManager: ObservableObject {
         }
     }()
 
-    public init(accountsProvider: AccountsProviderProtocol) {
+    public init(accountsProvider: AccountsProviderProtocol, authService: EcosiaAuthenticationService = .shared) {
         self.accountsProvider = accountsProvider
-
-        // Initialize state synchronously to prevent flickering
-        self.isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-        self.userId = EcosiaAuthenticationService.shared.userProfile?.sub
+        self.authService = authService
 
         // Seed real state synchronously: logged-out reads the local snapshot, logged-in reads
         // the last known server snapshot from cache (falls through to the placeholder above only
@@ -83,7 +83,7 @@ public final class ImpactManager: ObservableObject {
 
     deinit {
         MainActor.assumeIsolated {
-            [authStateObserver, userProfileObserver, seedProgressObserver].forEach {
+            [authStateObserver, seedProgressObserver].forEach {
                 if let observer = $0 {
                     NotificationCenter.default.removeObserver(observer)
                 }
@@ -125,7 +125,8 @@ public final class ImpactManager: ObservableObject {
     // MARK: - Private Methods
 
     private func setupObservers() {
-        // Listen for auth state changes
+        // Listen for auth state changes - only to trigger the login/logout side effects below,
+        // isLoggedIn/userId are read live from authService rather than cached from this.
         authStateObserver = NotificationCenter.default.addObserver(
             forName: .EcosiaAuthStateChanged,
             object: nil,
@@ -133,17 +134,6 @@ public final class ImpactManager: ObservableObject {
         ) { [weak self] notification in
             Task { [notification] in
                 await self?.handleAuthStateChange(notification)
-            }
-        }
-
-        // Listen for user profile updates (also carries login-state changes)
-        userProfileObserver = NotificationCenter.default.addObserver(
-            forName: .EcosiaUserProfileUpdated,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            Task {
-                await self?.handleUserProfileUpdate()
             }
         }
 
@@ -163,26 +153,15 @@ public final class ImpactManager: ObservableObject {
         guard let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType else { return }
         switch actionType {
         case .userLoggedIn:
-            isLoggedIn = true
-            userId = EcosiaAuthenticationService.shared.userProfile?.sub
             EcosiaLogger.accounts.info("User logged in - registering visit")
             registerVisitIfNeeded()
         case .userLoggedOut:
             EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
             await resetToLocalSeedCollection()
             await handleLocalSeedCollection()
-            isLoggedIn = false
-            userId = nil
         case .authStateLoaded:
-            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-            userId = EcosiaAuthenticationService.shared.userProfile?.sub
+            break // isLoggedIn/userId are read live, nothing to refresh here
         }
-    }
-
-    @MainActor
-    private func handleUserProfileUpdate() {
-        isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-        userId = EcosiaAuthenticationService.shared.userProfile?.sub
     }
 
     @MainActor
@@ -212,7 +191,7 @@ public final class ImpactManager: ObservableObject {
     private func registerVisitIfNeeded() {
         Task {
             do {
-                guard let accessToken = EcosiaAuthenticationService.shared.accessToken, !accessToken.isEmpty else {
+                guard let accessToken = authService.accessToken, !accessToken.isEmpty else {
                     EcosiaLogger.accounts.notice("Cannot register visit - no access token available")
                     return
                 }
