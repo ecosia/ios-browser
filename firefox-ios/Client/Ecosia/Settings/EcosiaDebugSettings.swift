@@ -768,7 +768,7 @@ final class DebugAddSeedsLoggedIn: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        let currentSeeds = EcosiaAuthUIStateProvider.shared.seedCount
+        let currentSeeds = ImpactManager.shared.seedCount
         return NSAttributedString(string: "Current: \(currentSeeds) seeds", attributes: [:])
     }
 
@@ -798,7 +798,7 @@ final class DebugAddSeedsLoggedIn: HiddenSetting {
             }
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 10_000_000_000)
-                EcosiaAuthUIStateProvider.shared.debugAddSeeds(5)
+                ImpactManager.shared.debugAddSeeds(5)
             }
         }
     }
@@ -839,7 +839,7 @@ final class DebugForceLevelUp: HiddenSetting {
             }
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 10_000_000_000)
-                EcosiaAuthUIStateProvider.shared.debugTriggerLevelUpAnimation()
+                ImpactManager.shared.debugTriggerLevelUpAnimation()
             }
         }
     }
@@ -851,7 +851,7 @@ final class DebugAddCustomSeeds: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        let currentSeeds = EcosiaAuthUIStateProvider.shared.seedCount
+        let currentSeeds = ImpactManager.shared.seedCount
         return NSAttributedString(string: "Current: \(currentSeeds) seeds | Input custom amount", attributes: [:])
     }
 
@@ -916,7 +916,7 @@ final class DebugAddCustomSeeds: HiddenSetting {
             }
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 10_000_000_000)
-                EcosiaAuthUIStateProvider.shared.debugAddSeeds(count)
+                ImpactManager.shared.debugAddSeeds(count)
             }
         }
     }

@@ -10,7 +10,7 @@ import Common
 @available(iOS 16.0, *)
 public struct EcosiaAccountImpactView: View {
     @ObservedObject private var viewModel: EcosiaAccountImpactViewModel
-    @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
+    @ObservedObject private var impactManager = ImpactManager.shared
     private let windowUUID: WindowUUID
     private let webViewUserAgent: String?
 
@@ -47,7 +47,7 @@ public struct EcosiaAccountImpactView: View {
                     avatarURL: viewModel.avatarURL,
                     progress: viewModel.levelProgress,
                     showSparkles: showSparkles,
-                    showProgress: !authStateProvider.hasRegisterVisitError,
+                    showProgress: !impactManager.hasRegisterVisitError,
                     windowUUID: windowUUID,
                     onLevelUpAnimationComplete: {
                         showSparkles = false
@@ -116,7 +116,7 @@ public struct EcosiaAccountImpactView: View {
         .background(theme.backgroundColor.ignoresSafeArea())
         .ecosiaThemed(windowUUID, $theme)
         .presentationBackgroundIfAvailable(theme.backgroundColor)
-        .onChange(of: authStateProvider.currentLevelNumber) { _ in
+        .onChange(of: impactManager.currentLevelNumber) { _ in
             let themeManager = AppContainer.shared.resolve() as ThemeManager
             theme.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         }
@@ -191,7 +191,7 @@ public struct EcosiaAccountImpactViewTheme: EcosiaThemeable {
         avatarPlaceholderColor = Color(theme.colors.ecosia.backgroundTertiary)
         avatarIconColor = Color(theme.colors.ecosia.backgroundPrimary)
 
-        if EcosiaAuthUIStateProvider.shared.currentLevelNumber > 1 {
+        if ImpactManager.shared.currentLevelNumber > 1 {
             levelTextColor = Color(theme.colors.ecosia.textStaticDark)
             levelBackgroundColor = Color(theme.colors.ecosia.brandImpact)
         } else {

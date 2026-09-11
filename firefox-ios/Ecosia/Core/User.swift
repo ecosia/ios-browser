@@ -77,7 +77,7 @@ public struct User: Codable, Equatable, @unchecked Sendable {
     public var referrals = Referrals.Model()
     @MainActor
     public var seedCount: Int {
-        EcosiaAuthUIStateProvider.shared.seedCount
+        ImpactManager.shared.seedCount
     }
     public internal(set) var id: String?
     public var whatsNewItemsVersionsShown = Set<String>()

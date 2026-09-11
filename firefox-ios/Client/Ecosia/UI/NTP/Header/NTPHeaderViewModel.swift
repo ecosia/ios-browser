@@ -23,12 +23,13 @@ final class NTPHeaderViewModel: ObservableObject {
     private(set) var auth: EcosiaAuth
     var onTapAction: ((UIButton) -> Void)?
     private let authStateProvider = EcosiaAuthUIStateProvider.shared
+    private let impactManager = ImpactManager.shared
     private var cancellables = Set<AnyCancellable>()
 
-    var seedCount: Int { authStateProvider.seedCount }
+    var seedCount: Int { impactManager.seedCount }
     var isLoggedIn: Bool { authStateProvider.isLoggedIn }
     var userAvatarURL: URL? { authStateProvider.avatarURL }
-    var balanceIncrement: Int? { authStateProvider.balanceIncrement }
+    var balanceIncrement: Int? { impactManager.balanceIncrement }
     var shouldAnimateSeed: Bool { balanceIncrement != nil }
     @Published var showSeedSparkles: Bool = false
     @Published var showAccountImpactView: Bool = false
@@ -48,10 +49,11 @@ final class NTPHeaderViewModel: ObservableObject {
         self.auth = auth
         self.delegate = delegate
 
-        // Forward objectWillChange notifications from authStateProvider
-        // This ensures SwiftUI knows to update the view when auth state changes.
+        // Forward objectWillChange notifications from both authStateProvider and impactManager.
+        // This ensures SwiftUI knows to update the view when either changes.
         // receive(on: .main) so objectWillChange.send() runs on main actor for strict concurrency.
         authStateProvider.objectWillChange
+            .merge(with: impactManager.objectWillChange)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
@@ -115,7 +117,7 @@ final class NTPHeaderViewModel: ObservableObject {
 
     @MainActor
     func refreshSeedState() {
-        authStateProvider.refreshSeedState()
+        impactManager.refreshSeedState()
     }
 
     func presentAccountImpact() {
