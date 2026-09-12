@@ -11,10 +11,14 @@ on:
     - cron: '*/30 * * * *'
   workflow_dispatch: {}
 
+permissions: {}
+
 jobs:
   check:
     runs-on: ubuntu-latest
     name: Check App Store release status
+    permissions:
+      contents: read
     outputs:
       released: ${{ steps.check.outputs.released }}
       tag: v_${{ steps.check.outputs.version }}_${{ steps.check.outputs.build }}

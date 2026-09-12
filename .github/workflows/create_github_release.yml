@@ -17,13 +17,14 @@ on:
         required: true
         type: string
 
-permissions:
-  contents: write
+permissions: {}
 
 jobs:
   create_github_release:
     runs-on: ubuntu-latest
     name: Create GitHub Release
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -33,8 +34,9 @@ jobs:
 
       - name: Parse title from tag
         id: parse
+        env:
+          TAG: ${{ inputs.tag }}
         run: |
-          TAG="${{ inputs.tag }}"
           if [[ ! "$TAG" =~ ^v_([0-9.]+)_([0-9]+)$ ]]; then
             echo "Tag '$TAG' does not match expected pattern v_<version>_<build>" >&2
             exit 1
@@ -44,14 +46,14 @@ jobs:
       - name: Create release if not already created
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+          TITLE: ${{ steps.parse.outputs.title }}
         run: |
-          TAG="${{ inputs.tag }}"
-
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "Release $TAG already exists, nothing to do"
             exit 0
           fi
 
           gh release create "$TAG" \
-            --title "${{ steps.parse.outputs.title }}" \
+            --title "$TITLE" \
             --generate-notes
