@@ -23,6 +23,7 @@ jobs:
   create_github_release:
     runs-on: ubuntu-latest
     name: Create GitHub Release
+    timeout-minutes: 5
     permissions:
       contents: write
 

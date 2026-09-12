@@ -8,7 +8,7 @@ name: Sync GitHub Release from App Store
 # patch version before anyone releases it on the App Store).
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '0 * * * *'
   workflow_dispatch: {}
 
 permissions: {}
@@ -17,6 +17,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     name: Check App Store release status
+    timeout-minutes: 10
     permissions:
       contents: read
     outputs:
