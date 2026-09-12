@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Git tag to release (e.g. v_12.5.1_3324)'
-        required: true
+        description: 'Git tag to release (e.g. v_12.5.1_3324). Defaults to the most recent v_<version>_<build> tag if omitted.'
+        required: false
         type: string
 
 permissions: {}
@@ -27,11 +27,28 @@ jobs:
         uses: actions/checkout@v5
         with:
           persist-credentials: false
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Resolve tag
+        id: resolve
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          if [[ -z "$TAG" ]]; then
+            TAG=$(git tag -l 'v_*' | sort -V | tail -1)
+            if [[ -z "$TAG" ]]; then
+              echo "No tag provided and no v_<version>_<build> tags found in the repo" >&2
+              exit 1
+            fi
+            echo "No tag provided, defaulting to latest tag: $TAG"
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Parse title from tag
         id: parse
         env:
-          TAG: ${{ inputs.tag }}
+          TAG: ${{ steps.resolve.outputs.tag }}
         run: |
           if [[ ! "$TAG" =~ ^v_([0-9.]+)_([0-9]+)$ ]]; then
             echo "Tag '$TAG' does not match expected pattern v_<version>_<build>" >&2
@@ -42,7 +59,7 @@ jobs:
       - name: Create release if not already created
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ inputs.tag }}
+          TAG: ${{ steps.resolve.outputs.tag }}
           TITLE: ${{ steps.parse.outputs.title }}
         run: |
           if gh release view "$TAG" >/dev/null 2>&1; then
