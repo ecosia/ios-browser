@@ -52,4 +52,5 @@ jobs:
 
           gh release create "$TAG" \
             --title "$TITLE" \
+            --verify-tag \
             --generate-notes
