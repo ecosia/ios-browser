@@ -226,28 +226,6 @@ platform :ios do
 
   end
 
-  desc 'Checks App Store Connect for a version that has gone live and reports it for GitHub Actions to pick up'
-  lane :check_app_store_release do
-    inject_appstore_connect_api
-
-    app = Spaceship::ConnectAPI::App.find("com.ecosia.ecosiaapp")
-    version = app.get_app_store_versions(filter: { appStoreState: "READY_FOR_SALE" }, includes: "build").first
-
-    github_output = ENV["GITHUB_OUTPUT"]
-    UI.user_error!("GITHUB_OUTPUT is not set — this lane is meant to run in GitHub Actions") if github_output.nil?
-
-    if version.nil?
-      File.open(github_output, "a") { |f| f.puts "released=false" }
-      next
-    end
-
-    File.open(github_output, "a") do |f|
-      f.puts "released=true"
-      f.puts "version=#{version.version_string}"
-      f.puts "build=#{version.build&.version}"
-    end
-  end
-
   desc 'Store the derived data path into a file'
   private_lane :save_derived_data_path do |options|
 

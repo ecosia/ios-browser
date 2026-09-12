@@ -1,19 +1,14 @@
 name: Create GitHub Release
 
-# The actual "create a GitHub Release for this tag" logic, kept in one place so
-# it can be run manually (workflow_dispatch, e.g. to recover from a missed
-# polling window) or called from another workflow (workflow_call, used by
-# sync_github_release_from_appstore.yml).
+# Run manually once a build has actually been released to the App Store —
+# not automatically on tag push, since a tag is created for every successful
+# TestFlight upload and some of those never make it to an actual release
+# (e.g. superseded by a follow-up patch version).
 on:
   workflow_dispatch:
     inputs:
       tag:
         description: 'Git tag to release (e.g. v_12.5.1_3324)'
-        required: true
-        type: string
-  workflow_call:
-    inputs:
-      tag:
         required: true
         type: string
 
