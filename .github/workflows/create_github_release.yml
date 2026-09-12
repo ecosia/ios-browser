@@ -1,0 +1,57 @@
+name: Create GitHub Release
+
+# The actual "create a GitHub Release for this tag" logic, kept in one place so
+# it can be run manually (workflow_dispatch, e.g. to recover from a missed
+# polling window) or called from another workflow (workflow_call, used by
+# sync_github_release_from_appstore.yml).
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Git tag to release (e.g. v_12.5.1_3324)'
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  create_github_release:
+    runs-on: ubuntu-latest
+    name: Create GitHub Release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Parse title from tag
+        id: parse
+        run: |
+          TAG="${{ inputs.tag }}"
+          if [[ ! "$TAG" =~ ^v_([0-9.]+)_([0-9]+)$ ]]; then
+            echo "Tag '$TAG' does not match expected pattern v_<version>_<build>" >&2
+            exit 1
+          fi
+          echo "title=${BASH_REMATCH[1]} (${BASH_REMATCH[2]})" >> "$GITHUB_OUTPUT"
+
+      - name: Create release if not already created
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ inputs.tag }}"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists, nothing to do"
+            exit 0
+          fi
+
+          gh release create "$TAG" \
+            --title "${{ steps.parse.outputs.title }}" \
+            --generate-notes

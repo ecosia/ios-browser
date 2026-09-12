@@ -1,0 +1,50 @@
+name: Sync GitHub Release from App Store
+
+# Detects when a version actually goes live on the App Store (not just uploaded
+# to TestFlight) and creates a matching GitHub Release with generated notes —
+# no manual step required. This matters because a build gets tagged and
+# uploaded to TestFlight on every successful release pipeline run, but not
+# every one of those actually ships (e.g. it gets superseded by a follow-up
+# patch version before anyone releases it on the App Store).
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    name: Check App Store release status
+    outputs:
+      released: ${{ steps.check.outputs.released }}
+      tag: v_${{ steps.check.outputs.version }}_${{ steps.check.outputs.build }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-safe-chain
+
+      - name: Install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3.0
+          bundler-cache: true
+
+      - name: Check App Store release status
+        id: check
+        run: bundle exec fastlane check_app_store_release
+        env:
+          FASTLANE_APPSTORE_CONNECT_KEY_ID: ${{ secrets.FASTLANE_APPSTORE_CONNECT_KEY_ID }}
+          FASTLANE_APPSTORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.FASTLANE_APPSTORE_CONNECT_KEY_ISSUER_ID }}
+          FASTLANE_APPSTORE_CONNECT_KEY_CONTENT: ${{ secrets.FASTLANE_APPSTORE_CONNECT_KEY_CONTENT }}
+
+  release:
+    needs: check
+    if: needs.check.outputs.released == 'true'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/create_github_release.yml
+    with:
+      tag: ${{ needs.check.outputs.tag }}
