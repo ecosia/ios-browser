@@ -158,6 +158,13 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             case .userLoggedIn:
                 EcosiaLogger.accounts.info("User logged in - registering visit")
                 syncAuthState()
+                // `accountOrigin` is only set for a real interactive login/signup, not for the
+                // silent credential resume this same notification also fires on at cold launch -
+                // only a real new login should discard a guest's local snapshot.
+                let authState = notification.userInfo?["authState"] as? AuthWindowState
+                if authState?.accountOrigin != nil {
+                    discardGuestImpactSnapshot()
+                }
                 await handleNewSeeds()
             case .userLoggedOut:
                 EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
@@ -168,6 +175,17 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
                 syncAuthState()
             }
         }
+    }
+
+    /// Clears the shared cache on a fresh login, so a guest's own local snapshot is never read
+    /// back as the new session's real balance, and reflects the resulting zeroed state right away.
+    @MainActor
+    private func discardGuestImpactSnapshot() {
+        impactManager.reset()
+        let snapshot = impactManager.loadSeeds(isLoggedIn: isLoggedIn, userId: userProfile?.sub)
+        seedCount = snapshot.seedCount
+        currentLevelNumber = snapshot.currentLevelNumber
+        currentProgress = snapshot.currentProgress
     }
 
     /// Refreshes `isLoggedIn`/`userProfile` (and the properties derived from it) from

@@ -755,6 +755,10 @@ final class DebugAddSeedsLoggedOut: HiddenSetting {
             }
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 10_000_000_000)
+                guard !EcosiaAuthenticationService.shared.isLoggedIn else {
+                    EcosiaLogger.accounts.notice("Debug: Skipped adding logged-out seed - user logged in during delay")
+                    return
+                }
                 EcosiaAuthUIStateProvider.shared.debugAddLoggedOutSeed()
             }
         }

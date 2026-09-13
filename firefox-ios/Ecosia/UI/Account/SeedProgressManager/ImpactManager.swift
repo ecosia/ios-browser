@@ -9,6 +9,10 @@ public final class ImpactManager: @unchecked Sendable {
 
     private let cache: ImpactCacheProtocol
     private let loggedOutManager: LoggedOutSeedProgressManager
+    /// Bumped by `reset()` so an in-flight `registerVisit` that resolves after a reset (logout, or
+    /// a guest transitioning into a new logged-in session) can tell its result is stale and drop it
+    /// instead of writing a since-superseded response into the cache.
+    nonisolated(unsafe) private var resetGeneration = 0
 
     public init(cache: ImpactCacheProtocol = ImpactCache(), loggedOutManager: LoggedOutSeedProgressManager? = nil) {
         self.cache = cache
@@ -63,9 +67,14 @@ public final class ImpactManager: @unchecked Sendable {
             return .registerVisitSkipped
         }
 
+        let requestGeneration = resetGeneration
         do {
             EcosiaLogger.accounts.info("Registering user visit for balance update")
             let response = try await accountsProvider.registerVisit(accessToken: accessToken)
+            guard requestGeneration == resetGeneration else {
+                EcosiaLogger.accounts.notice("Ignoring registerVisit response - session reset while in flight")
+                return .registerVisitSkipped
+            }
             let snapshot = snapshot(from: response)
             cache.save(snapshot)
             return .updated(snapshot: snapshot, didLevelUp: response.didLevelUp, seedsIncrement: response.seedsIncrement)
@@ -108,8 +117,11 @@ public final class ImpactManager: @unchecked Sendable {
 
     // MARK: - Resetting
 
-    /// Clears the entire shared cache. Only called on logout or local data deletion.
+    /// Clears the entire shared cache and invalidates any in-flight `registerVisit` response.
+    /// Called on logout, local data deletion, or when a guest transitions into a logged-in
+    /// session - so the guest's own local snapshot is never read back as the new session's balance.
     public func reset() {
+        resetGeneration += 1
         loggedOutManager.reset()
     }
 }

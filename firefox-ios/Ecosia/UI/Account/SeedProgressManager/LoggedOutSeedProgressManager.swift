@@ -27,13 +27,16 @@ public final class LoggedOutSeedProgressManager: @unchecked Sendable {
     }
 
     /// Guest progress is config-driven (`seedCounterConfig` can change remotely) and must stay
-    /// live, so it's always recomputed rather than trusted from the cache; the seed count and
-    /// level still come straight from the cache.
+    /// live, so it's always recomputed rather than trusted from the cache. The seed count is
+    /// also clamped and the level forced to 1 here, not just when writing - the cache is shared
+    /// with the logged-in path, so a snapshot read back must never expose more than a logged-out
+    /// user is allowed to have.
     private func reconciled(_ snapshot: ImpactSnapshot) -> ImpactSnapshot {
-        ImpactSnapshot(
-            seedCount: snapshot.seedCount,
-            currentLevelNumber: snapshot.currentLevelNumber,
-            currentProgress: Double(calculateInnerProgress(seedCount: snapshot.seedCount))
+        let cappedSeedCount = min(snapshot.seedCount, Self.maxSeedsForLoggedOutUsers)
+        return ImpactSnapshot(
+            seedCount: cappedSeedCount,
+            currentLevelNumber: 1,
+            currentProgress: Double(calculateInnerProgress(seedCount: cappedSeedCount))
         )
     }
 
