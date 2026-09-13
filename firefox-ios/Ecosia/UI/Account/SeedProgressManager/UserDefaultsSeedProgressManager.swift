@@ -12,10 +12,10 @@ import Foundation
 ///
 /// ## Local Storage
 ///
-/// The manager stores three key values in `UserDefaults`:
-/// - Total seeds collected since first app launch
-/// - Current level based on seed thresholds
-/// - Last app open date for daily seed collection
+/// Total seeds and current level are persisted via the shared `UserDefaultsImpactCache`,
+/// tagged with a fixed anonymous user id - the same cache the logged-in path uses, keyed
+/// by the real user id instead. Last app open date is stored separately in `UserDefaults`,
+/// since it isn't part of an `ImpactSnapshot`.
 ///
 /// ## Level Progression
 ///
@@ -72,7 +72,8 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
         return UserDefaults.standard.object(forKey: lastAppOpenDateKey) as? Date
     }
 
-    /// Saves the seed progress and level to UserDefaults.
+    /// Saves the seed progress and level to the shared `UserDefaultsImpactCache`, and the
+    /// last app open date to `UserDefaults` directly.
     ///
     /// Posts a `progressUpdatedNotification` after saving.
     ///
@@ -163,10 +164,7 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
     /// Clears the last app open date to allow immediate seed collection.
     /// Used on logout to prepare for fresh local seed collection.
     public static func resetLocalSeedProgress() {
-        UserDefaultsImpactCache.save(
-            ImpactSnapshot(seedCount: 0, currentLevelNumber: 1, currentProgress: 0),
-            userId: loggedOutUserID
-        )
+        UserDefaultsImpactCache.clear()
         UserDefaults.standard.removeObject(forKey: lastAppOpenDateKey)
         NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }

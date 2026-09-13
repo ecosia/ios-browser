@@ -335,9 +335,12 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     private func resetToLocalSeedCollection() {
         EcosiaLogger.accounts.info("Resetting to local seed collection system")
 
-        // Same vocabulary on both stores: the local manager re-arms collection from zero, the
-        // logged-in cache drops the stale server snapshot - so a later login by a different
-        // account doesn't briefly show this account's numbers either way.
+        // Both calls clear the same UserDefaultsImpactCache slot in production - logged-in and
+        // logged-out snapshots share that one store - so this is a redundant but harmless
+        // double clear rather than two independent resets. Both calls stay, rather than
+        // collapsing to one, so `loggedInImpactCacheType` remains independently mockable in
+        // tests; loggedOutImpactCacheType.clearOnLogout() also clears lastAppOpenDate, which
+        // isn't part of that shared cache.
         Self.loggedOutImpactCacheType.clearOnLogout()
         Self.loggedInImpactCacheType.clearOnLogout()
 

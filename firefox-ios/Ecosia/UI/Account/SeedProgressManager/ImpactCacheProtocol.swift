@@ -36,8 +36,9 @@ public protocol ImpactCacheProtocol {
 
 extension ImpactCacheProtocol {
     /// Shared vocabulary with `SeedProgressManagerProtocol.clearOnLogout()`: `EcosiaAuthUIStateProvider`
-    /// calls both stores by this same name on logout, without needing to know each store's own
-    /// reason for clearing.
+    /// calls both `loggedOutImpactCacheType` and `loggedInImpactCacheType` by this same name on
+    /// logout, without needing to know that they route through the very same `UserDefaultsImpactCache`
+    /// storage under the hood.
     public static func clearOnLogout() {
         clear()
     }
