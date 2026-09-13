@@ -78,10 +78,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         self.impactManager = impactManager
 
         // Initialize state synchronously to prevent flickering
-        self.isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-        self.userProfile = EcosiaAuthenticationService.shared.userProfile
-        self.avatarURL = normalizedAvatarURL
-        self.username = userProfile?.name
+        syncAuthState()
 
         // Seed real state synchronously so the UI never flashes a placeholder. `handleNewSeeds()`,
         // triggered separately, fetches and persists the real value shortly after.
@@ -160,25 +157,40 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             switch actionType {
             case .userLoggedIn:
                 EcosiaLogger.accounts.info("User logged in - registering visit")
+                syncAuthState()
                 await handleNewSeeds()
             case .userLoggedOut:
                 EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
+                syncAuthState()
                 await resetToLocalSeedCollection()
                 await handleNewSeeds()
             case .authStateLoaded:
-                break // State already updated above
+                syncAuthState()
             }
         }
     }
 
+    /// Refreshes `isLoggedIn`/`userProfile` (and the properties derived from it) from
+    /// `EcosiaAuthenticationService.shared`.
     @MainActor
-    private func handleUserProfileUpdate() {
-        Task { @MainActor in
-            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-        }
+    private func syncAuthState() {
+        isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
         userProfile = EcosiaAuthenticationService.shared.userProfile
         username = userProfile?.name
         avatarURL = normalizedAvatarURL
+    }
+
+    @MainActor
+    private func handleUserProfileUpdate() {
+        let hadUserId = isLoggedIn && userProfile?.sub != nil
+        syncAuthState()
+        let hasUserId = isLoggedIn && userProfile?.sub != nil
+
+        // The profile (and so the user id) can arrive after `.userLoggedIn` already tried and
+        // skipped a registerVisit for lack of one - retry now that it's known.
+        if hasUserId && !hadUserId {
+            Task { await handleNewSeeds() }
+        }
     }
 
     // MARK: - Seed Count Management
