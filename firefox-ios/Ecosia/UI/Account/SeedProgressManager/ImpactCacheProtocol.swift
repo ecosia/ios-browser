@@ -5,9 +5,7 @@
 import Foundation
 
 /// A point-in-time impact snapshot - seedCount/currentLevelNumber/currentProgress - regardless of
-/// whether it came from the server (logged-in) or was computed locally (logged-out, via
-/// `LoggedOutSeedProgressManager.calculateInnerProgress(seedCount:)`). `EcosiaAuthUIStateProvider`
-/// publishes these three values as flat properties either way, so the shape is shared on purpose.
+/// whether it came from the server (logged-in) or was computed locally (logged-out)
 public struct ImpactSnapshot: Equatable, Sendable {
     public let seedCount: Int
     public let currentLevelNumber: Int
@@ -25,9 +23,7 @@ public struct ImpactSnapshot: Equatable, Sendable {
 
 /// Persists the last known seed/level/progress, so the UI can show real numbers immediately on
 /// cold launch instead of a placeholder while a fresh value is fetched (logged-in) or computed
-/// (logged-out). A single slot, not keyed per user: `reset()` clears it on logout, before a
-/// different identity could read it. Held as a dependency by `ImpactManager` and
-/// `LoggedOutSeedProgressManager`, so tests can inject their own instance.
+/// (logged-out).
 public protocol ImpactCacheProtocol: Sendable {
     /// Returns the cached snapshot, or `nil` if there is none.
     func load() -> ImpactSnapshot?

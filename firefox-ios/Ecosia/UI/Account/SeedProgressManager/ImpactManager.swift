@@ -4,24 +4,7 @@
 
 import Foundation
 
-/// Owns seed/level/progress ("impact") state for both logged-in and logged-out users, and is the
-/// only thing that touches the shared `ImpactCacheProtocol` cache directly - the logged-out
-/// lifecycle is delegated to `LoggedOutSeedProgressManager`, which shares the same cache
-/// instance. A dependency of `EcosiaAuthUIStateProvider`, so tests can inject their own
-/// cache/`LoggedOutSeedProgressManager`.
-///
-/// Every method takes the raw `isLoggedIn`/`userId` state and decides internally what that means -
-/// `EcosiaAuthUIStateProvider` never branches on login state itself, it just hands its state
-/// through and applies whatever comes back.
-///
-/// Three actions cover everything `EcosiaAuthUIStateProvider` needs:
-///
-/// - `loadSeeds`: read the current snapshot, regardless of login state - a pure read, returning a
-///   zeroed default without writing anything if nothing's stored yet.
-/// - `updateSeeds`: fetch new seeds - `LoggedOutSeedProgressManager` decides whether/how many to
-///   add locally, or a `registerVisit` call returns the server's balance - and persist the result.
-///   This is the one trigger for "new seeds", regardless of login state.
-/// - `reset`: clear the entire cache. Only happens on logout or local data deletion.
+/// Owns seed/level/progress ("impact") state for both logged-in and logged-out users
 public final class ImpactManager: @unchecked Sendable {
 
     private let cache: ImpactCacheProtocol
@@ -40,8 +23,6 @@ public final class ImpactManager: @unchecked Sendable {
         case registerVisitFailed
     }
 
-    // MARK: - Loading
-
     /// Reads the current snapshot, or a zeroed default if nothing's stored yet - a pure read, it
     /// never writes to the cache. Logged out always reads the local guest lifecycle. Logged in
     /// with no userId yet (the transient window right after auth state flips, before the
@@ -55,8 +36,6 @@ public final class ImpactManager: @unchecked Sendable {
         }
         return cache.load() ?? .zero
     }
-
-    // MARK: - Updating
 
     /// Single trigger for fetching new seeds, regardless of login state, and persisting the
     /// result: a logged-out user gets today's local seed if due (capped at
