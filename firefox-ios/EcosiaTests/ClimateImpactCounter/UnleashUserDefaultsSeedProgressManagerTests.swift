@@ -13,8 +13,7 @@ final class UnleashUserDefaultsSeedProgressManagerTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Reset UserDefaults before each test
-        UserDefaults.standard.removeObject(forKey: "CurrentLevel")
-        UserDefaults.standard.removeObject(forKey: "TotalSeedsCollected")
+        UserDefaultsImpactCache.clear()
         UserDefaults.standard.removeObject(forKey: "LastAppOpenDate")
     }
 
