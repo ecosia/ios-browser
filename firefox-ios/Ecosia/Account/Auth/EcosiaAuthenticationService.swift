@@ -285,7 +285,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         self.isLoggedIn = isLoggedIn
 
         // Only dispatch the auth state change when the login state actually transitions,
-        // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
+        // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.handleNewSeeds)
         // on every token refresh when the user is already logged in.
         guard wasLoggedIn != isLoggedIn else { return }
         Task {
