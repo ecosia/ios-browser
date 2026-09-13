@@ -4,17 +4,14 @@
 
 import Foundation
 
-/// `UserDefaults`-backed implementation of `LoggedInImpactCacheProtocol`.
-///
-/// Keyed to the Auth0 `sub` that saved it, so a different account logging in on the same device
-/// never inherits stale numbers from the previous one - `load(forUserId:)` returns `nil` unless the
-/// stored snapshot belongs to the requested user.
-public final class UserDefaultsLoggedInImpactCache: LoggedInImpactCacheProtocol {
+/// `UserDefaults`-backed implementation of `ImpactCacheProtocol`, shared by both the logged-in
+/// cache in `EcosiaAuthUIStateProvider` and `UserDefaultsSeedProgressManager`'s logged-out storage.
+public final class UserDefaultsImpactCache: ImpactCacheProtocol {
 
-    private static let seedCountKey = "LoggedInImpactCache.seedCount"
-    private static let currentLevelNumberKey = "LoggedInImpactCache.currentLevelNumber"
-    private static let currentProgressKey = "LoggedInImpactCache.currentProgress"
-    private static let userIdKey = "LoggedInImpactCache.userId"
+    private static let seedCountKey = "ImpactCache.seedCount"
+    private static let currentLevelNumberKey = "ImpactCache.currentLevelNumber"
+    private static let currentProgressKey = "ImpactCache.currentProgress"
+    private static let userIdKey = "ImpactCache.userId"
 
     private init() {}
 

@@ -34,9 +34,6 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
     public static var progressUpdatedNotification: Notification.Name { .init("\(className).SeedProgressUpdated") }
     public static var levelUpNotification: Notification.Name { .init("\(className).SeedLevelUp") }
 
-    // UserDefaults keys
-    private static let totalSeedsCollectedKey = "TotalSeedsCollected"
-    private static let currentLevelKey = "CurrentLevel"
     private static let lastAppOpenDateKey = "LastAppOpenDate"
 
     nonisolated(unsafe) public static var seedCounterConfig: SeedCounterConfig?
@@ -46,23 +43,26 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
     private static let maxCappedLevel = seedCounterConfig?.maxCappedLevel
     private static let maxCappedSeeds = seedCounterConfig?.maxCappedSeeds
 
+    private static let loggedOutUserID = "anonymous_user"
+
     private init() {}
 
-    // MARK: - Static Methods
-
-    /// Loads the current level from UserDefaults.
+    /// Loads the current level from the shared `UserDefaultsImpactCache`.
     ///
     /// - Returns: The current level, defaulting to 1 if not set.
     public static func loadCurrentLevel() -> Int {
-        let currentLevel = UserDefaults.standard.integer(forKey: currentLevelKey)
-        return currentLevel == 0 ? 1 : currentLevel
+        cachedSnapshot?.currentLevelNumber ?? 1
     }
 
-    /// Loads the total seeds collected from UserDefaults.
+    /// Loads the total seeds collected from the shared `UserDefaultsImpactCache`.
     ///
     /// - Returns: The total number of seeds collected. Returns 0 for first-time users.
     public static func loadTotalSeedsCollected() -> Int {
-        return UserDefaults.standard.integer(forKey: totalSeedsCollectedKey)
+        cachedSnapshot?.seedCount ?? 0
+    }
+
+    private static var cachedSnapshot: ImpactSnapshot? {
+        UserDefaultsImpactCache.load(forUserId: loggedOutUserID)
     }
 
     /// Loads the last app open date from UserDefaults.
@@ -81,10 +81,9 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
     ///   - currentLevel: The current level to save.
     ///   - lastAppOpenDate: The date to record as the last app open.
     public static func saveProgress(totalSeeds: Int, currentLevel: Int, lastAppOpenDate: Date) {
-        let defaults = UserDefaults.standard
-        defaults.set(totalSeeds, forKey: totalSeedsCollectedKey)
-        defaults.set(currentLevel, forKey: currentLevelKey)
-        defaults.set(lastAppOpenDate, forKey: lastAppOpenDateKey)
+        let snapshot = ImpactSnapshot(seedCount: totalSeeds, currentLevelNumber: currentLevel, currentProgress: 0)
+        UserDefaultsImpactCache.save(snapshot, userId: loggedOutUserID)
+        UserDefaults.standard.set(lastAppOpenDate, forKey: lastAppOpenDateKey)
         NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }
 
@@ -164,8 +163,10 @@ public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol 
     /// Clears the last app open date to allow immediate seed collection.
     /// Used on logout to prepare for fresh local seed collection.
     public static func resetLocalSeedProgress() {
-        UserDefaults.standard.set(0, forKey: totalSeedsCollectedKey)
-        UserDefaults.standard.set(1, forKey: currentLevelKey)
+        UserDefaultsImpactCache.save(
+            ImpactSnapshot(seedCount: 0, currentLevelNumber: 1, currentProgress: 0),
+            userId: loggedOutUserID
+        )
         UserDefaults.standard.removeObject(forKey: lastAppOpenDateKey)
         NotificationCenter.default.post(name: progressUpdatedNotification, object: nil)
     }

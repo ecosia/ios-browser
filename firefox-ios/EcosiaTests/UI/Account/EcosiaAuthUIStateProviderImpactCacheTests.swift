@@ -7,7 +7,7 @@ import XCTest
 
 /// Records calls instead of touching real `UserDefaults`, so tests don't depend on
 /// `EcosiaAuthenticationService.shared`'s live (unmockable) singleton state.
-private final class MockLoggedInImpactCache: LoggedInImpactCacheProtocol {
+private final class MockLoggedInImpactCache: ImpactCacheProtocol {
     nonisolated(unsafe) static var stored: [String: ImpactSnapshot] = [:]
     nonisolated(unsafe) static var clearCallCount = 0
     nonisolated(unsafe) static var onClear: (() -> Void)?
@@ -43,7 +43,7 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
     }
 
     override func tearDown() {
-        EcosiaAuthUIStateProvider.loggedInImpactCacheType = UserDefaultsLoggedInImpactCache.self
+        EcosiaAuthUIStateProvider.loggedInImpactCacheType = UserDefaultsImpactCache.self
         MockLoggedInImpactCache.reset()
         super.tearDown()
     }

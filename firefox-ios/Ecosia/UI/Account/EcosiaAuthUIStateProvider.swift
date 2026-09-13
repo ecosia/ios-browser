@@ -62,7 +62,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     }
     nonisolated(unsafe) private static var loggedOutImpactCacheType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
     /// Not `private`: swapped for a mock from tests via `@testable import`.
-    nonisolated(unsafe) static var loggedInImpactCacheType: LoggedInImpactCacheProtocol.Type = UserDefaultsLoggedInImpactCache.self
+    nonisolated(unsafe) static var loggedInImpactCacheType: ImpactCacheProtocol.Type = UserDefaultsImpactCache.self
 
     // MARK: - Singleton
 
