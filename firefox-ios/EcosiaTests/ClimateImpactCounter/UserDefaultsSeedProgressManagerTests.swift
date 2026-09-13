@@ -6,17 +6,30 @@ import XCTest
 @testable import Ecosia
 @testable import Client
 
-/// Tests for logged-out user seed collection. Users start at 0 seeds and level 1.
+/// `registerVisit` should never be called for a logged-out `updateSeeds` - if it is, something
+/// routed the wrong login state through.
+private struct UnreachableAccountsProvider: AccountsProviderProtocol {
+    func registerVisit(accessToken: String) async throws -> AccountVisitResponse {
+        XCTFail("registerVisit must not be called for a logged-out user")
+        throw URLError(.badServerResponse)
+    }
+}
+
+/// Tests for logged-out user seed collection: `LoggedOutSeedProgressManager`'s pure decisions,
+/// and `ImpactManager`'s use of them end to end. Users start at 0 seeds and level 1.
 final class UserDefaultsSeedProgressManagerTests: XCTestCase {
+
+    private let cache = ImpactCache()
+    private lazy var loggedOutManager = LoggedOutSeedProgressManager(cache: cache)
+    private lazy var impactManager = ImpactManager(cache: cache, loggedOutManager: loggedOutManager)
 
     override func setUp() {
         super.setUp()
-        // Reset UserDefaults before each test
-        UserDefaultsImpactCache.clear()
+        cache.clear()
         UserDefaults.standard.removeObject(forKey: "LastAppOpenDate")
 
         // Default Seed Levels for testing (arbitrary levels)
-        UserDefaultsSeedProgressManager.seedCounterConfig = SeedCounterConfig(
+        loggedOutManager.seedCounterConfig = SeedCounterConfig(
             sparklesAnimationDuration: 10,
             maxCappedLevel: nil,
             maxCappedSeeds: nil,
@@ -27,180 +40,124 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         )
     }
 
-    // Test the initial state
+    // MARK: - LoggedOutSeedProgressManager: pure decisions
+
+    func test_calculateInnerProgress_reflectsSeedCount() {
+        // requiredSeeds: 2 for level 1, from the config set in setUp
+        XCTAssertEqual(loggedOutManager.calculateInnerProgress(seedCount: 2), 1.0, accuracy: 0.0001)
+        XCTAssertEqual(loggedOutManager.calculateInnerProgress(seedCount: 0), 0.0, accuracy: 0.0001)
+    }
+
+    // MARK: - ImpactManager: end-to-end logged-out behavior
+
     func test_initial_seed_progress_state() {
-        // Given / When
-        let level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        let snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
 
-        // Then
-        XCTAssertEqual(level, 1, "Initial level should be 1")
-        XCTAssertEqual(totalSeedsCollected, 0, "Initial totalSeedsCollected should be 0")
+        XCTAssertEqual(snapshot.currentLevelNumber, 1, "Initial level should be 1")
+        XCTAssertEqual(snapshot.seedCount, 0, "Initial seed count should be 0")
     }
 
-    // Test that logged-out users never level up
     func test_logged_out_users_never_level_up() {
-        // Given
-        UserDefaultsSeedProgressManager.addSeeds(2)
+        impactManager.debugAddLoggedOutSeeds(2)
+        var snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(snapshot.currentLevelNumber, 1)
+        XCTAssertEqual(snapshot.seedCount, 2)
 
-        // When / Then
-        var level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        var totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-
-        XCTAssertEqual(level, 1)
-        XCTAssertEqual(totalSeedsCollected, 2)
-
-        // When: Try to add more seeds
-        UserDefaultsSeedProgressManager.addSeeds(10)
-
-        // Then: Level remains 1, seeds capped at 3
-        level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-
-        XCTAssertEqual(level, 1)
-        XCTAssertEqual(totalSeedsCollected, 3)
+        impactManager.debugAddLoggedOutSeeds(10)
+        snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(snapshot.currentLevelNumber, 1)
+        XCTAssertEqual(snapshot.seedCount, 3)
     }
 
-    // Test resetting the progress to first-launch state
     func test_reset_local_seed_progress() {
-        // Given
-        UserDefaultsSeedProgressManager.addSeeds(2)
+        impactManager.debugAddLoggedOutSeeds(2)
 
-        // When
-        UserDefaultsSeedProgressManager.resetLocalSeedProgress()
+        impactManager.reset()
 
-        // Then
-        let level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        let lastAppOpenDate = UserDefaultsSeedProgressManager.loadLastAppOpenDate()
-
-        XCTAssertEqual(level, 1)
-        XCTAssertEqual(totalSeedsCollected, 0)
-        XCTAssertNil(lastAppOpenDate, "Last app open date should be cleared to allow immediate seed collection")
+        let snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(snapshot.currentLevelNumber, 1)
+        XCTAssertEqual(snapshot.seedCount, 0)
+        let lastOpenDateMessage = "Last app open date should be cleared to allow immediate seed collection"
+        XCTAssertNil(UserDefaults.standard.object(forKey: "LastAppOpenDate"), lastOpenDateMessage)
     }
 
-    // Test collecting a seed once per day
-    func test_collect_seed_once_per_day() {
-        // Given: Start with 0 seeds
-        let initialSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        XCTAssertEqual(initialSeeds, 0)
+    func test_collect_seed_once_per_day() async {
+        let initial = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(initial.seedCount, 0)
 
-        // When: Collect seed on first day
-        UserDefaultsSeedProgressManager.collectDailySeed()
-        let totalSeedsAfterFirstCollect = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        _ = await impactManager.updateSeeds(isLoggedIn: false, userId: nil, accessToken: nil, accountsProvider: UnreachableAccountsProvider())
+        let afterFirstCollect = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
 
-        // When: Try to collect again same day
-        UserDefaultsSeedProgressManager.collectDailySeed()
-        let totalSeedsAfterSecondCollect = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        _ = await impactManager.updateSeeds(isLoggedIn: false, userId: nil, accessToken: nil, accountsProvider: UnreachableAccountsProvider())
+        let afterSecondCollect = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
 
-        // Then: First collect should add 1, second should do nothing
-        XCTAssertEqual(totalSeedsAfterFirstCollect, 1)
-        XCTAssertEqual(totalSeedsAfterSecondCollect, 1)
+        XCTAssertEqual(afterFirstCollect.seedCount, 1)
+        XCTAssertEqual(afterSecondCollect.seedCount, 1)
     }
 
-    // Test that a seed can be collected the next day but stays at level 1
-    func test_collect_seed_next_day_stays_level_1() {
-        // Given / When
-        UserDefaultsSeedProgressManager.collectDailySeed()
-        var totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        XCTAssertEqual(totalSeedsCollected, 1)
+    func test_collect_seed_next_day_stays_level_1() async {
+        _ = await impactManager.updateSeeds(isLoggedIn: false, userId: nil, accessToken: nil, accountsProvider: UnreachableAccountsProvider())
+        var snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(snapshot.seedCount, 1)
 
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())
         UserDefaults.standard.set(yesterday, forKey: "LastAppOpenDate")
-        UserDefaultsSeedProgressManager.collectDailySeed()
+        _ = await impactManager.updateSeeds(isLoggedIn: false, userId: nil, accessToken: nil, accountsProvider: UnreachableAccountsProvider())
 
-        // Then
-        totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        let level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-
-        XCTAssertEqual(totalSeedsCollected, 2)
-        XCTAssertEqual(level, 1)
+        snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(snapshot.seedCount, 2)
+        XCTAssertEqual(snapshot.currentLevelNumber, 1)
     }
 
-    // Test that logged-out users are capped at 3 seeds and always remain at level 1
     func test_logged_out_users_capped_at_max_seeds_and_level_1() {
-        // Given
-        let initialSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        let initialLevel = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        XCTAssertEqual(initialSeeds, 0)
-        XCTAssertEqual(initialLevel, 1)
+        let initial = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(initial.seedCount, 0)
+        XCTAssertEqual(initial.currentLevelNumber, 1)
 
-        // When
-        UserDefaultsSeedProgressManager.addSeeds(3)
+        impactManager.debugAddLoggedOutSeeds(3)
+        var snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(snapshot.seedCount, LoggedOutSeedProgressManager.maxSeedsForLoggedOutUsers)
+        XCTAssertEqual(snapshot.currentLevelNumber, 1)
 
-        // Then
-        var totalSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        var level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        XCTAssertEqual(totalSeeds, UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers)
-        XCTAssertEqual(level, 1)
-
-        // When
-        UserDefaultsSeedProgressManager.addSeeds(5)
-
-        // Then
-        totalSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        XCTAssertEqual(totalSeeds, UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers)
-        XCTAssertEqual(level, 1)
+        impactManager.debugAddLoggedOutSeeds(5)
+        snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(snapshot.seedCount, LoggedOutSeedProgressManager.maxSeedsForLoggedOutUsers)
+        XCTAssertEqual(snapshot.currentLevelNumber, 1)
     }
 
-    // Test that bulk seed addition caps at 3 seeds and level remains 1
     func test_logged_out_users_bulk_addition_caps_at_3_seeds_level_1() {
-        // Given
-        let initialSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        XCTAssertEqual(initialSeeds, 0)
+        let initial = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(initial.seedCount, 0)
 
-        // When
-        UserDefaultsSeedProgressManager.addSeeds(10)
+        impactManager.debugAddLoggedOutSeeds(10)
 
-        // Then
-        let totalSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        let level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        XCTAssertEqual(totalSeeds, UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers)
-        XCTAssertEqual(level, 1)
+        let snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(snapshot.seedCount, LoggedOutSeedProgressManager.maxSeedsForLoggedOutUsers)
+        XCTAssertEqual(snapshot.currentLevelNumber, 1)
     }
 
-    // Test that daily seed collection respects cap and level remains 1
-    func test_logged_out_users_daily_seed_respects_cap_and_level_1() {
-        // Given
-        UserDefaultsSeedProgressManager.addSeeds(3)
-        var totalSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        var level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        XCTAssertEqual(totalSeeds, 3)
-        XCTAssertEqual(level, 1)
+    func test_logged_out_users_daily_seed_respects_cap_and_level_1() async {
+        impactManager.debugAddLoggedOutSeeds(3)
+        var snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(snapshot.seedCount, 3)
+        XCTAssertEqual(snapshot.currentLevelNumber, 1)
 
-        // When
         let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())
         UserDefaults.standard.set(yesterday, forKey: "LastAppOpenDate")
-        UserDefaultsSeedProgressManager.collectDailySeed()
+        _ = await impactManager.updateSeeds(isLoggedIn: false, userId: nil, accessToken: nil, accountsProvider: UnreachableAccountsProvider())
 
-        // Then
-        totalSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        level = UserDefaultsSeedProgressManager.loadCurrentLevel()
-        XCTAssertEqual(totalSeeds, UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers)
-        XCTAssertEqual(level, 1)
+        snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
+        XCTAssertEqual(snapshot.seedCount, LoggedOutSeedProgressManager.maxSeedsForLoggedOutUsers)
+        XCTAssertEqual(snapshot.currentLevelNumber, 1)
     }
 
-    // Test that currentSnapshot() reflects real local progress, not a hardcoded placeholder
-    func test_currentSnapshot_reflectsLocalProgress() {
-        UserDefaultsSeedProgressManager.addSeeds(2) // exactly reaches level 1's threshold (requiredSeeds: 2)
+    func test_loadSeeds_reflectsLocalProgress() {
+        impactManager.debugAddLoggedOutSeeds(2) // exactly reaches level 1's threshold (requiredSeeds: 2)
 
-        let snapshot = UserDefaultsSeedProgressManager.currentSnapshot()
+        let snapshot = impactManager.loadSeeds(isLoggedIn: false, userId: nil)
 
         XCTAssertEqual(snapshot.seedCount, 2)
         XCTAssertEqual(snapshot.currentLevelNumber, 1)
         XCTAssertEqual(snapshot.currentProgress, 1.0, accuracy: 0.0001)
-    }
-
-    // Test that clearOnLogout() is the same shared vocabulary as resetLocalSeedProgress()
-    func test_clearOnLogout_isEquivalentToResetLocalSeedProgress() {
-        UserDefaultsSeedProgressManager.addSeeds(2)
-
-        UserDefaultsSeedProgressManager.clearOnLogout()
-
-        XCTAssertEqual(UserDefaultsSeedProgressManager.loadCurrentLevel(), 1)
-        XCTAssertEqual(UserDefaultsSeedProgressManager.loadTotalSeedsCollected(), 0)
-        let lastOpenDateMessage = "Last app open date should be cleared to allow immediate seed collection"
-        XCTAssertNil(UserDefaultsSeedProgressManager.loadLastAppOpenDate(), lastOpenDateMessage)
     }
 }

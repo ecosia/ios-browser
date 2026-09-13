@@ -95,7 +95,7 @@ private extension HomepageComponentTests {
         makeNTPHeaderSnapshotHostingController(
             content: {
                 EcosiaAccountNavButton(
-                    seedCount: UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers,
+                    seedCount: LoggedOutSeedProgressManager.maxSeedsForLoggedOutUsers,
                     enableAnimation: false,
                     showSeedSparkles: false,
                     windowUUID: .snapshotTestDefaultUUID,
@@ -178,10 +178,9 @@ private extension HomepageComponentTests {
 private extension HomepageComponentTests {
 
     func prepareLoggedOutAccountState() {
-        UserDefaultsSeedProgressManager.resetLocalSeedProgress()
-        UserDefaultsSeedProgressManager.addSeeds(
-            UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
-        )
+        let impactManager = ImpactManager()
+        impactManager.reset()
+        impactManager.debugAddLoggedOutSeeds(LoggedOutSeedProgressManager.maxSeedsForLoggedOutUsers)
     }
 
     static let ntpSnapshotBackgroundColor = UIColor(red: 0.08, green: 0.18, blue: 0.12, alpha: 1)
