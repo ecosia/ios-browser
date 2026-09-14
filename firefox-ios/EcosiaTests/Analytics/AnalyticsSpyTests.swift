@@ -600,13 +600,8 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
             let url = URL(string: urlString)!
-            let action = FakeNavigationAction(url: url, navigationType: .other)
-            browser.webView(makeWebView(),
-                            decidePolicyFor: action) { policy in
-                XCTAssertEqual(policy, .allow, "Should allow independent of tracking behavior")
-            }
-            // inappSearch is now fired at didCommit, not decidePolicyFor
-            browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+            browser.ecosiaHandleNavigationAction(url: url)
+            respondAndCommit(browser, url: url)
 
             if shouldTrack {
                 XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
@@ -624,9 +619,8 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
 
         let rootURL = EcosiaEnvironment.current.urlProvider.root
-        // A nil responseStatus means no navigation response arrived, i.e. a bfcache restore.
+        // A nil responseStatus means no navigation response arrived, i.e. a cache restore.
         struct Case {
-            let type: WKNavigationType
             let responseStatus: Int?
             let shouldTrack: Bool
             let message: String
@@ -634,23 +628,17 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
 
         let url = URL(string: "\(rootURL)/search?q=test")!
         let testCases = [
-            Case(type: .other, responseStatus: 200, shouldTrack: true, message: "Tracks regular navigation"),
-            Case(type: .reload, responseStatus: 200, shouldTrack: true, message: "Tracks reload"),
-            Case(type: .backForward, responseStatus: 200, shouldTrack: true, message: "Tracks back/forward that reloads the document"),
-            Case(type: .backForward, responseStatus: nil, shouldTrack: false, message: "Does not track back/forward served from bfcache"),
-            Case(type: .other, responseStatus: nil, shouldTrack: false, message: "Does not track any navigation that commits without a response"),
-            Case(type: .other, responseStatus: 403, shouldTrack: false, message: "Does not track a challenge or forbidden response"),
-            Case(type: .other, responseStatus: 502, shouldTrack: false, message: "Does not track a server error page"),
+            Case(responseStatus: 200, shouldTrack: true, message: "Tracks a loaded document"),
+            Case(responseStatus: 304, shouldTrack: true, message: "Tracks a revalidated document"),
+            Case(responseStatus: nil, shouldTrack: false, message: "Does not track a cache restore, which produces no response"),
+            Case(responseStatus: 403, shouldTrack: false, message: "Does not track a challenge or forbidden response"),
+            Case(responseStatus: 502, shouldTrack: false, message: "Does not track a server error page"),
         ]
 
         for testCase in testCases {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
-            let action = FakeNavigationAction(url: url, navigationType: testCase.type)
-            browser.webView(makeWebView(),
-                            decidePolicyFor: action) { policy in
-                XCTAssertEqual(policy, .allow, "Should allow independent of tracking behavior")
-            }
+            browser.ecosiaHandleNavigationAction(url: url)
             if let status = testCase.responseStatus {
                 browser.ecosiaHandleNavigationResponse(response: Self.makeResponse(url: url, statusCode: status),
                                                        isForMainFrame: true)
@@ -677,8 +665,7 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
 
-        let action = FakeNavigationAction(url: url, navigationType: .backForward)
-        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
+        browser.ecosiaHandleNavigationAction(url: url)
         browser.ecosiaHandleNavigationResponse(response: Self.makeResponse(url: url, statusCode: 200),
                                                isForMainFrame: false)
         browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
@@ -694,22 +681,27 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
     }
 
+    /// Models WebKit's real order for a loaded document: successful main-frame response, then commit.
+    private func respondAndCommit(_ browser: BrowserViewController, url: URL, isPrivate: Bool = false) {
+        browser.ecosiaHandleNavigationResponse(response: Self.makeResponse(url: url, statusCode: 200),
+                                               isForMainFrame: true)
+        browser.ecosiaHandleDidCommit(url: url, isPrivate: isPrivate)
+    }
+
     func testWebViewDelegateTracksSearchEventOnSameURLWhenLinkActivated() {
         let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
         let rootURL = EcosiaEnvironment.current.urlProvider.root
         let url = URL(string: "\(rootURL)/search?q=test")!
 
         // Load the URL once to establish it as the current page
-        let firstAction = FakeNavigationAction(url: url, navigationType: .other)
-        browser.webView(makeWebView(), decidePolicyFor: firstAction) { _ in }
-        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+        browser.ecosiaHandleNavigationAction(url: url)
+        respondAndCommit(browser, url: url)
 
-        // Navigate to the same URL again via link activation (e.g. tapping the same search vertical)
+        // Navigate to the same URL again, which must not be mistaken for a restore
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
-        let secondAction = FakeNavigationAction(url: url, navigationType: .linkActivated)
-        browser.webView(makeWebView(), decidePolicyFor: secondAction) { _ in }
-        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+        browser.ecosiaHandleNavigationAction(url: url)
+        respondAndCommit(browser, url: url)
 
         XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
                        url.absoluteString,
@@ -726,8 +718,11 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         let differentUrl = URL(string: "\(rootURL)/images?q=test")!
 
         // Simulate decidePolicyFor setting the pending URL to searchUrl
-        let action = FakeNavigationAction(url: searchUrl, navigationType: .other)
-        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
+        browser.ecosiaHandleNavigationAction(url: searchUrl)
+
+        // The response confirms the pending search, so the mismatch below is the only reason to drop it
+        browser.ecosiaHandleNavigationResponse(response: Self.makeResponse(url: searchUrl, statusCode: 200),
+                                               isForMainFrame: true)
 
         // didCommit fires with a different URL (e.g. a redirect landed elsewhere)
         browser.ecosiaHandleDidCommit(url: differentUrl, isPrivate: false)
@@ -741,13 +736,12 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
 
         let rootURL = EcosiaEnvironment.current.urlProvider.root
         let url = URL(string: "\(rootURL)/search?q=test")!
-        let action = FakeNavigationAction(url: url, navigationType: .other)
 
         // Non-private
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
-        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
-        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+        browser.ecosiaHandleNavigationAction(url: url)
+        respondAndCommit(browser, url: url, isPrivate: false)
         XCTAssertEqual(analyticsSpy.inappSearchIsPrivateCalled,
                        false,
                        "Should forward isPrivate: false for normal tabs")
@@ -755,8 +749,8 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         // Private
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
-        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
-        browser.ecosiaHandleDidCommit(url: url, isPrivate: true)
+        browser.ecosiaHandleNavigationAction(url: url)
+        respondAndCommit(browser, url: url, isPrivate: true)
         XCTAssertEqual(analyticsSpy.inappSearchIsPrivateCalled,
                        true,
                        "Should forward isPrivate: true for private tabs")
@@ -1089,10 +1083,6 @@ extension AnalyticsSpyTests {
             EmptyView()
         }
     }
-
-    func makeWebView() -> WKWebView {
-        return WKWebView(frame: CGRect(width: 100, height: 100))
-    }
 }
 
 // MARK: - Helper Classes
@@ -1102,21 +1092,6 @@ class MultiplyImpactTestable: MultiplyImpact {
 
     override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         capturedPresentedViewController = viewControllerToPresent
-    }
-}
-
-final class FakeNavigationAction: WKNavigationAction {
-    let urlRequest: URLRequest
-    let type: WKNavigationType
-
-    override var request: URLRequest { urlRequest }
-
-    override var navigationType: WKNavigationType { type }
-
-    init(url: URL, navigationType: WKNavigationType) {
-        self.urlRequest = URLRequest(url: url)
-        self.type = navigationType
-        super.init()
     }
 }
 

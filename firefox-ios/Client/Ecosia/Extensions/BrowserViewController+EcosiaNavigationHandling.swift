@@ -45,7 +45,9 @@ extension BrowserViewController {
 
     /// Handles any Ecosia-specific tracking when a navigation action is allowed.
     /// Stores a pending search to be tracked at didCommit.
-    private func ecosiaHandleNavigationAction(url: URL) {
+    /// Not private so tests can drive this without a `WKNavigationAction`, which cannot be faked:
+    /// its `targetFrame` is nil and `WKFrameInfo` crashes on deinit when subclassed.
+    func ecosiaHandleNavigationAction(url: URL) {
         // Clear any stale pending tracking from a previous navigation
         pendingInappSearch = nil
 
