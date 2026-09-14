@@ -185,7 +185,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }
 
-    private func handleAuthStateChange(_ notification: Notification) async {
+    /// Not `private`: tests call this directly on their own instance instead of posting a real
+    /// `NotificationCenter` notification, which `.shared` would also receive and react to.
+    func handleAuthStateChange(_ notification: Notification) async {
         // Handle specific auth actions (business logic can be nonisolated)
         if let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType {
             switch actionType {

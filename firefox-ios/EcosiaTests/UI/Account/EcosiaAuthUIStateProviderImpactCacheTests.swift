@@ -10,7 +10,6 @@ import XCTest
 private final class MockLoggedInImpactCache: LoggedInImpactCacheProtocol {
     nonisolated(unsafe) static var stored: [String: ImpactSnapshot] = [:]
     nonisolated(unsafe) static var clearCallCount = 0
-    nonisolated(unsafe) static var onClear: (() -> Void)?
 
     static func load(forUserId userId: String) -> ImpactSnapshot? {
         stored[userId]
@@ -23,13 +22,11 @@ private final class MockLoggedInImpactCache: LoggedInImpactCacheProtocol {
     static func clear() {
         clearCallCount += 1
         stored.removeAll()
-        onClear?()
     }
 
     static func reset() {
         stored.removeAll()
         clearCallCount = 0
-        onClear = nil
     }
 }
 
@@ -103,27 +100,21 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
 
     // MARK: - Logout clears the cache (via the real notification flow)
 
-    func test_userLoggedOutNotification_clearsLoggedInImpactCache() {
+    func test_userLoggedOutNotification_clearsLoggedInImpactCache() async {
         MockLoggedInImpactCache.save(
             ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8),
             userId: "auth0|user-a"
         )
 
-        let expectation = expectation(description: "logged-in impact cache cleared on logout")
-        MockLoggedInImpactCache.onClear = { expectation.fulfill() }
-
         let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider())
-        NotificationCenter.default.post(
+        let notification = Notification(
             name: .EcosiaAuthStateChanged,
             object: nil,
             userInfo: ["actionType": EcosiaAuthActionType.userLoggedOut]
         )
+        await provider.handleAuthStateChange(notification)
 
-        wait(for: [expectation], timeout: 2.0)
         XCTAssertEqual(MockLoggedInImpactCache.clearCallCount, 1)
-        // Referenced here (rather than discarded right after creation) so ARC keeps `provider`,
-        // and therefore its notification observers, alive for the whole wait above.
-        XCTAssertNotNil(provider)
     }
 
     // MARK: - clearOnLogout shared vocabulary
