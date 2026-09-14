@@ -6,6 +6,14 @@ import Foundation
 import WebKit
 import Ecosia
 
+struct PendingInappSearch {
+    let url: URL
+    /// Cleared once a response proves a document was really loaded rather than served from cache.
+    var awaitingNavigationResponse = true
+    /// Set when didCommit suppressed the event, so a late response can be reported as out of order.
+    var suppressedAtCommit = false
+}
+
 // MARK: - Ecosia Web View Event Handling
 extension BrowserViewController {
 
@@ -31,25 +39,49 @@ extension BrowserViewController {
         if ecosiaEcosifyNavigationIfNeeded(url: url, tab: tab) {
             return true
         }
-        ecosiaHandleNavigationAction(url: url, navigationAction: navigationAction)
+        ecosiaHandleNavigationAction(url: url)
         return false
     }
 
     /// Handles any Ecosia-specific tracking when a navigation action is allowed.
-    /// Stores a pending URL to be tracked at didCommit.
-    private func ecosiaHandleNavigationAction(url: URL, navigationAction: WKNavigationAction) {
+    /// Stores a pending search to be tracked at didCommit.
+    /// Not private so tests can drive this without a `WKNavigationAction`, which cannot be faked:
+    /// its `targetFrame` is nil and `WKFrameInfo` crashes on deinit when subclassed.
+    func ecosiaHandleNavigationAction(url: URL) {
         // Clear any stale pending tracking from a previous navigation
-        pendingInappSearchUrl = nil
+        pendingInappSearch = nil
 
         guard url.isEcosiaSearchVertical() else { return }
 
-        // Back/forward navigations are suppressed: on web, bfcache keeps the page mounted so
-        // Vue never refires. Tab switching doesn't reach this delegate at all, so any other
-        // navigation type arriving here is a genuine user action and should always track.
-        guard navigationAction.navigationType != .backForward else { return }
+        pendingInappSearch = PendingInappSearch(url: url)
+    }
 
-        // Store the URL; the event fires in ecosiaHandleDidCommit when content starts rendering
-        pendingInappSearchUrl = url
+    /// Only a real document load produces a response, and only here is the status visible.
+    /// A cache restore reuses the document, so web's Vue never re-mounts and sends nothing either.
+    func ecosiaHandleNavigationResponse(response: URLResponse, isForMainFrame: Bool) {
+        guard isForMainFrame,
+              let url = response.url,
+              let pending = pendingInappSearch,
+              url == pending.url
+        else { return }
+
+        // The event is already gone, so all we can do is flag that the ordering assumption broke.
+        if pending.suppressedAtCommit {
+            EcosiaLogger.search.sentry(
+                "Navigation response arrived after didCommit for \(url.redactedForLogging); in-app search event was dropped"
+            )
+            pendingInappSearch = nil
+            return
+        }
+
+        // An error page commits without rendering the SERP, so web's Vue never mounts.
+        if let statusCode = (response as? HTTPURLResponse)?.statusCode,
+           !(200..<400).contains(statusCode) {
+            pendingInappSearch = nil
+            return
+        }
+
+        pendingInappSearch?.awaitingNavigationResponse = false
     }
 
     /// Fires the in-app search event when the web content starts to be received (didCommit).
@@ -58,8 +90,13 @@ extension BrowserViewController {
     ///   - url: The URL that just committed
     ///   - isPrivate: Whether the tab is in private browsing mode
     func ecosiaHandleDidCommit(url: URL, isPrivate: Bool) {
-        guard url == pendingInappSearchUrl else { return }
-        pendingInappSearchUrl = nil
+        guard let pending = pendingInappSearch, url == pending.url else { return }
+        guard !pending.awaitingNavigationResponse else {
+            // Kept rather than cleared so a late response is still recognisable as out of order.
+            pendingInappSearch?.suppressedAtCommit = true
+            return
+        }
+        pendingInappSearch = nil
         Analytics.shared.inappSearch(url: url, isPrivate: isPrivate)
     }
 
