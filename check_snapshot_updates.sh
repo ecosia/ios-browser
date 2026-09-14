@@ -7,13 +7,24 @@
 # Usage:
 #   ./check_snapshot_updates.sh <base_ref> [head_ref]
 #   ./check_snapshot_updates.sh origin/main
+#   ./check_snapshot_updates.sh --should-run <base_ref> [head_ref]
 #
 # Set SKIP_SNAPSHOT_UPDATE_CHECK=1 to bypass locally (document the reason in the PR).
 # In CI, add the skip-snapshot-check label instead.
 
 set -euo pipefail
 
+mode="check"
+if [ "${1:-}" = "--should-run" ]; then
+  mode="should-run"
+  shift
+fi
+
 if [ "${SKIP_SNAPSHOT_UPDATE_CHECK:-}" = "1" ]; then
+  if [ "$mode" = "should-run" ]; then
+    echo "true"
+    exit 0
+  fi
   echo "Skipping snapshot update check (SKIP_SNAPSHOT_UPDATE_CHECK=1)."
   exit 0
 fi
@@ -44,9 +55,10 @@ if ! git rev-parse --verify "$head_ref" >/dev/null 2>&1; then
   exit 1
 fi
 
-mapfile -t changed_files < <(git diff --name-only "$base_ref" "$head_ref")
+mapfile -t changed_files < <(git diff --no-renames --name-only "$base_ref" "$head_ref")
 
-mapfile -t covered_sources < <(python3 - "$coverage_file" <<'PY'
+covered_source_output=$(python3 - "$coverage_file" "$repo_root" <<'PY'
+import glob
 import json
 import sys
 
@@ -58,37 +70,103 @@ for entry in data["entries"]:
     for source in entry["sources"]:
         sources.add(source)
 
+missing = [
+    source
+    for source in sources
+    if not glob.glob(f"{sys.argv[2]}/{source}", recursive=True)
+]
+if missing:
+    raise SystemExit(f"Snapshot coverage patterns matched no files: {', '.join(sorted(missing))}")
+
 for source in sorted(sources):
     print(source)
 PY
 )
+mapfile -t covered_source_patterns <<< "$covered_source_output"
 
-snapshot_prefixes=(
+shared_source_output=$(python3 - "$coverage_file" "$repo_root" <<'PY'
+import glob
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    data = json.load(handle)
+
+patterns = sorted(set(data.get("sharedSourcePatterns", [])))
+missing = [
+    pattern
+    for pattern in patterns
+    if not glob.glob(f"{sys.argv[2]}/{pattern}", recursive=True)
+]
+if missing:
+    raise SystemExit(f"Shared snapshot patterns matched no files: {', '.join(missing)}")
+
+for pattern in patterns:
+    print(pattern)
+PY
+)
+mapfile -t shared_source_patterns <<< "$shared_source_output"
+
+snapshot_infrastructure_patterns=(
+  ".github/actions/perform_snapshot_tests/**"
+  ".github/actions/prepare_environment/**"
+  ".github/scripts/disable_nimbus_checksum_refresh.py"
+  ".github/workflows/snapshot_tests.yml"
+  "check_snapshot_updates.sh"
+  "firefox-ios/.package.resolved"
+  "firefox-ios/Client/Ecosia/BuildSettingsConfigurations/**"
   "firefox-ios/EcosiaTests/SnapshotTests/"
+  "firefox-ios/Tuist/ProjectDescriptionHelpers/BuildConfigurations.swift"
+  "firefox-ios/Tuist/ProjectDescriptionHelpers/Packages+Ecosia.swift"
+  "firefox-ios/Tuist/ProjectDescriptionHelpers/Schemes+Ecosia.swift"
+  "firefox-ios/Tuist/ProjectDescriptionHelpers/Targets+Tests.swift"
+  "firefox-ios/Tuist.swift"
+  "perform_snapshot_tests.sh"
+  "tuist-setup.sh"
 )
 
+matches_any_pattern() {
+  local file="$1"
+  shift
+  local pattern
+  for pattern in "$@"; do
+    if [[ "$file" == $pattern || "$file" == "$pattern"* ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
 is_ui_change=false
+should_run=false
 ui_changes=()
 snapshot_changes=()
 
 for file in "${changed_files[@]}"; do
-  for source in "${covered_sources[@]}"; do
-    if [[ "$file" == "$source" ]]; then
-      case "$file" in
-        *.swift|*.xcassets/*|*.xib|*.storyboard)
-          is_ui_change=true
-          ui_changes+=("$file")
-          ;;
-      esac
-    fi
-  done
+  if matches_any_pattern "$file" "${covered_source_patterns[@]}" ||
+     matches_any_pattern "$file" "${shared_source_patterns[@]}"; then
+    should_run=true
+    case "$file" in
+      *.swift|*.xcassets/*|*.xib|*.storyboard|*.strings|*.mp4|*.png|*.pdf|*.svg|*.json)
+        is_ui_change=true
+        ui_changes+=("$file")
+        ;;
+    esac
+  fi
 
-  for prefix in "${snapshot_prefixes[@]}"; do
-    if [[ "$file" == "$prefix"* ]]; then
-      snapshot_changes+=("$file")
-    fi
-  done
+  if matches_any_pattern "$file" "${snapshot_infrastructure_patterns[@]}"; then
+    should_run=true
+  fi
+
+  if [[ "$file" == "firefox-ios/EcosiaTests/SnapshotTests/"* ]]; then
+    snapshot_changes+=("$file")
+  fi
 done
+
+if [ "$mode" = "should-run" ]; then
+  echo "$should_run"
+  exit 0
+fi
 
 if [ "$is_ui_change" = false ]; then
   echo "No snapshot-covered UI changes detected; snapshot update check passed."
