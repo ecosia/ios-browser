@@ -8,8 +8,10 @@ import Ecosia
 
 struct PendingInappSearch {
     let url: URL
-    /// Set for back/forward only, where a response is what proves a document was really loaded.
-    var awaitingNavigationResponse: Bool
+    /// Cleared once a response proves a document was really loaded rather than served from cache.
+    var awaitingNavigationResponse = true
+    /// Set when didCommit suppressed the event, so a late response can be reported as out of order.
+    var suppressedAtCommit = false
 }
 
 // MARK: - Ecosia Web View Event Handling
@@ -37,32 +39,38 @@ extension BrowserViewController {
         if ecosiaEcosifyNavigationIfNeeded(url: url, tab: tab) {
             return true
         }
-        ecosiaHandleNavigationAction(url: url, navigationAction: navigationAction)
+        ecosiaHandleNavigationAction(url: url)
         return false
     }
 
     /// Handles any Ecosia-specific tracking when a navigation action is allowed.
     /// Stores a pending search to be tracked at didCommit.
-    private func ecosiaHandleNavigationAction(url: URL, navigationAction: WKNavigationAction) {
+    private func ecosiaHandleNavigationAction(url: URL) {
         // Clear any stale pending tracking from a previous navigation
         pendingInappSearch = nil
 
         guard url.isEcosiaSearchVertical() else { return }
 
-        // A bfcache restore reuses the document, so web's Vue never re-mounts and sends nothing.
-        pendingInappSearch = PendingInappSearch(
-            url: url,
-            awaitingNavigationResponse: navigationAction.navigationType == .backForward
-        )
+        pendingInappSearch = PendingInappSearch(url: url)
     }
 
     /// Only a real document load produces a response, and only here is the status visible.
-    /// Always arrives before didCommit.
+    /// A cache restore reuses the document, so web's Vue never re-mounts and sends nothing either.
     func ecosiaHandleNavigationResponse(response: URLResponse, isForMainFrame: Bool) {
         guard isForMainFrame,
               let url = response.url,
-              url == pendingInappSearch?.url
+              let pending = pendingInappSearch,
+              url == pending.url
         else { return }
+
+        // The event is already gone, so all we can do is flag that the ordering assumption broke.
+        if pending.suppressedAtCommit {
+            EcosiaLogger.search.sentry(
+                "Navigation response arrived after didCommit for \(url.redactedForLogging); in-app search event was dropped"
+            )
+            pendingInappSearch = nil
+            return
+        }
 
         // An error page commits without rendering the SERP, so web's Vue never mounts.
         if let statusCode = (response as? HTTPURLResponse)?.statusCode,
@@ -81,8 +89,12 @@ extension BrowserViewController {
     ///   - isPrivate: Whether the tab is in private browsing mode
     func ecosiaHandleDidCommit(url: URL, isPrivate: Bool) {
         guard let pending = pendingInappSearch, url == pending.url else { return }
+        guard !pending.awaitingNavigationResponse else {
+            // Kept rather than cleared so a late response is still recognisable as out of order.
+            pendingInappSearch?.suppressedAtCommit = true
+            return
+        }
         pendingInappSearch = nil
-        guard !pending.awaitingNavigationResponse else { return }
         Analytics.shared.inappSearch(url: url, isPrivate: isPrivate)
     }
 

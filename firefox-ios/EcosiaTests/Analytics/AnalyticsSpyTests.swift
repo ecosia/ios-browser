@@ -638,6 +638,7 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
             Case(type: .reload, responseStatus: 200, shouldTrack: true, message: "Tracks reload"),
             Case(type: .backForward, responseStatus: 200, shouldTrack: true, message: "Tracks back/forward that reloads the document"),
             Case(type: .backForward, responseStatus: nil, shouldTrack: false, message: "Does not track back/forward served from bfcache"),
+            Case(type: .other, responseStatus: nil, shouldTrack: false, message: "Does not track any navigation that commits without a response"),
             Case(type: .other, responseStatus: 403, shouldTrack: false, message: "Does not track a challenge or forbidden response"),
             Case(type: .other, responseStatus: 502, shouldTrack: false, message: "Does not track a server error page"),
         ]
