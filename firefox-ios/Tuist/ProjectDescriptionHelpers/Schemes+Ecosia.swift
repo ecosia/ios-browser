@@ -70,12 +70,9 @@ public enum EcosiaSchemes {
         // this is purely process-load isolation. Legit per-method XCTSkips also remain in the file for
         // genuinely removed-in-v147 APIs (getSharingAction, menuStatus, TopSitesViewModel, AppSettings ctor).
         // (MOB-4384)
-        // -- 5 BrowserViewController / WKWebView in-app-search tests:
-        "AnalyticsSpyTests/testWebViewDelegateTracksSearchEventOnEcosiaVerticalURLChange()",
-        "AnalyticsSpyTests/testWebViewDelegateTracksSearchEventBasedOnNavigationType()",
-        "AnalyticsSpyTests/testWebViewDelegateTracksSearchEventOnSameURLWhenLinkActivated()",
-        "AnalyticsSpyTests/testEcosiaHandleDidCommitDoesNotFireWhenURLDoesNotMatchPending()",
-        "AnalyticsSpyTests/testInappSearchPrivateFlagIsForwardedCorrectly()",
+        // -- The 5 in-app-search tests are deliberately NOT skipped (MOB-4948). They no longer build a
+        //    WKWebView or route through the navigation delegate, so only a BrowserViewController
+        //    remains, and they guard the in-app search event that regressed twice while skipped.
         // -- 4 MultiplyImpact referral tests (the "multiple fulfill" contaminator that hit ReferralsModelTests):
         "AnalyticsSpyTests/testMultiplyImpactViewDidAppearTracksReferralViewInviteScreen()",
         "AnalyticsSpyTests/testMultiplyImpactLearnMoreButtonTracksReferralClickLearnMore()",
