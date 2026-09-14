@@ -36,7 +36,7 @@ jobs:
           TAG: ${{ inputs.tag }}
         run: |
           if [[ -z "$TAG" ]]; then
-            TAG=$(git tag -l 'v_*' | sort -V | tail -1)
+            TAG=$(git tag -l 'v_*' | grep -E '^v_[0-9.]+_[0-9]+$' | sort -V | tail -1)
             if [[ -z "$TAG" ]]; then
               echo "No tag provided and no v_<version>_<build> tags found in the repo" >&2
               exit 1
