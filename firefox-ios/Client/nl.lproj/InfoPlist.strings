@@ -8,22 +8,22 @@
 "New Tab" = "Nieuw tabblad";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox kan uw camera gebruiken om QR-codes te scannen of foto’s en video te maken.";
+"NSCameraUsageDescription" = "Ecosia kan uw camera gebruiken om QR-codes te scannen of foto’s en video te maken.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox vereist Face ID om uw opgeslagen aanmeldingen en betalingsmethoden te benaderen.";
+"NSFaceIDUsageDescription" = "Ecosia vereist Face ID om uw opgeslagen aanmeldingen en betalingsmethoden te benaderen.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Websites die u bezoekt kunnen om uw locatie vragen.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Firefox gebruikt uw microfoon om audio op te nemen en te uploaden.";
+"NSMicrophoneUsageDescription" = "Ecosia gebruikt uw microfoon om audio op te nemen en te uploaden.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Hiermee kunt u foto’s opslaan.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Firefox gebruikt spraakherkenning om uw spraak naar tekst te converteren voor gesproken zoekopdrachten.";
+"NSSpeechRecognitionUsageDescription" = "Ecosia gebruikt spraakherkenning om uw spraak naar tekst te converteren voor gesproken zoekopdrachten.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR-code scannen";

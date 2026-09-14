@@ -5,13 +5,13 @@
 "New Tab" = "Nauja kortelė";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox can use your camera to scan QR codes or take photos and video.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Svetainės gali teirautis jūsų buvimo vietos.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "„Firefox“ naudoja jūsų mikrofoną garso įrašymui ir įkėlimui.";
+"NSMicrophoneUsageDescription" = "„Ecosia“ naudoja jūsų mikrofoną garso įrašymui ir įkėlimui.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Tai jums leis įrašyti nuotraukas.";

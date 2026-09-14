@@ -8,22 +8,22 @@
 "New Tab" = "Novo separador";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "O Firefox pode utilizar a sua câmara para digitalizar códigos QR ou tirar fotos e vídeos.";
+"NSCameraUsageDescription" = "O Ecosia pode utilizar a sua câmara para digitalizar códigos QR ou tirar fotos e vídeos.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "O Firefox requer o Face ID para aceder às suas palavras-passe e métodos de pagamento guardados.";
+"NSFaceIDUsageDescription" = "O Ecosia requer o Face ID para aceder às suas palavras-passe e métodos de pagamento guardados.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Os websites que visita poderão solicitar a sua localização.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "O Firefox permite-lhe usar o seu microfone para gravar e carregar áudio.";
+"NSMicrophoneUsageDescription" = "O Ecosia permite-lhe usar o seu microfone para gravar e carregar áudio.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Isto deixa-lhe guardar fotos.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "O Firefox utiliza reconhecimento de voz para converter a sua voz em texto para a pesquisa por voz.";
+"NSSpeechRecognitionUsageDescription" = "O Ecosia utiliza reconhecimento de voz para converter a sua voz em texto para a pesquisa por voz.";
 
 /* (No Comment) */
 "Scan QR Code" = "Digitalizar código QR";

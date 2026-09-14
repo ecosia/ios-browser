@@ -21,70 +21,78 @@ public let defaultErrorReporter: NimbusErrorReporter = { err in
 
 final class GleanMetricsHandler: MetricsHandler {
     func recordDatabaseLoad(event: DatabaseLoadExtraDef) {
-        GleanMetrics.NimbusEvents.databaseLoad
-            .record(GleanMetrics.NimbusEvents.DatabaseLoadExtra(
-                corrupt: event.corrupt,
-                error: event.error,
-                initialVersion: event.initialVersion.map(Int32.init),
-                migratedVersion: event.migratedVersion.map(Int32.init),
-                migrationError: event.migrationError,
-            ))
+        // Ecosia: Telemetry silenced - new MetricsHandler requirement in 155.1
+        // GleanMetrics.NimbusEvents.databaseLoad
+        //     .record(GleanMetrics.NimbusEvents.DatabaseLoadExtra(
+        //         corrupt: event.corrupt,
+        //         error: event.error,
+        //         initialVersion: event.initialVersion.map(Int32.init),
+        //         migratedVersion: event.migratedVersion.map(Int32.init),
+        //         migrationError: event.migrationError,
+        //     ))
     }
 
     func recordDatabaseMigration(event: DatabaseMigrationExtraDef) {
-        GleanMetrics.NimbusEvents.databaseMigration
-            .record(GleanMetrics.NimbusEvents.DatabaseMigrationExtra(
-                error: event.error,
-                fromVersion: Int32(event.fromVersion),
-                reason: event.reason,
-                toVersion: Int32(event.toVersion),
-            ))
+        // Ecosia: Telemetry silenced - new MetricsHandler requirement in 155.1
+        // GleanMetrics.NimbusEvents.databaseMigration
+        //     .record(GleanMetrics.NimbusEvents.DatabaseMigrationExtra(
+        //         error: event.error,
+        //         fromVersion: Int32(event.fromVersion),
+        //         reason: event.reason,
+        //         toVersion: Int32(event.toVersion),
+        //     ))
     }
 
     func recordEnrollmentStatuses(enrollmentStatusExtras: [EnrollmentStatusExtraDef]) {
-        for extra in enrollmentStatusExtras {
-            GleanMetrics.NimbusEvents.enrollmentStatus
-                .record(GleanMetrics.NimbusEvents.EnrollmentStatusExtra(
-                    branch: extra.branch,
-                    conflictSlug: extra.conflictSlug,
-                    errorString: extra.errorString,
-                    reason: extra.reason,
-                    slug: extra.slug,
-                    status: extra.status
-                ))
-        }
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // for extra in enrollmentStatusExtras {
+        //     GleanMetrics.NimbusEvents.enrollmentStatus
+        //         .record(GleanMetrics.NimbusEvents.EnrollmentStatusExtra(
+        //             branch: extra.branch,
+        //             conflictSlug: extra.conflictSlug,
+        //             errorString: extra.errorString,
+        //             reason: extra.reason,
+        //             slug: extra.slug,
+        //             status: extra.status
+        //         ))
+        // }
     }
 
     func recordFeatureActivation(event: FeatureExposureExtraDef) {
-        GleanMetrics.NimbusEvents.activation
-            .record(GleanMetrics.NimbusEvents.ActivationExtra(
-                branch: event.branch,
-                experiment: event.slug,
-                featureId: event.featureId
-            ))
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // GleanMetrics.NimbusEvents.activation
+        //     .record(GleanMetrics.NimbusEvents.ActivationExtra(
+        //         branch: event.branch,
+        //         experiment: event.slug,
+        //         featureId: event.featureId
+        //     ))
     }
 
     func recordFeatureExposure(event: FeatureExposureExtraDef) {
-        GleanMetrics.NimbusEvents.exposure
-            .record(GleanMetrics.NimbusEvents.ExposureExtra(
-                branch: event.branch,
-                experiment: event.slug,
-                featureId: event.featureId
-            ))
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // GleanMetrics.NimbusEvents.exposure
+        //     .record(GleanMetrics.NimbusEvents.ExposureExtra(
+        //         branch: event.branch,
+        //         experiment: event.slug,
+        //         featureId: event.featureId
+        //     ))
     }
 
     func recordMalformedFeatureConfig(event: MalformedFeatureConfigExtraDef) {
-        GleanMetrics.NimbusEvents.malformedFeature
-            .record(GleanMetrics.NimbusEvents.MalformedFeatureExtra(
-                branch: event.branch,
-                experiment: event.slug,
-                featureId: event.featureId,
-                partId: event.part
-            ))
+        // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
+        // GleanMetrics.NimbusEvents.malformedFeature
+        //     .record(GleanMetrics.NimbusEvents.MalformedFeatureExtra(
+        //         branch: event.branch,
+        //         experiment: event.slug,
+        //         featureId: event.featureId,
+        //         partId: event.part
+        //     ))
     }
 
     func submitTargetingContext() {
-        GleanMetrics.Pings.shared.nimbusTargetingContext.submit()
+        // Ecosia: Telemetry silenced - the nimbus-targeting-context ping is never submitted
+        // (TelemetryWrapper deliberately does not register it either).
+        // GleanMetrics.Pings.shared.nimbusTargetingContext.submit()
     }
 }
 
@@ -138,24 +146,8 @@ public extension Nimbus {
     static func buildExperimentContext(
         _ appSettings: NimbusAppSettings,
         bundle: Bundle = Bundle.main,
-        device currentDevice: UIDevice? = nil
+        device: UIDevice = .current
     ) -> AppContext {
-        var systemName = ""
-        var systemVersion = ""
-
-        // FIXME: FXIOS-13512 Questionable workaround to get main actor isolated UIDevice.current; rearchitect later
-        if Thread.isMainThread {
-            MainActor.assumeIsolated {
-                systemName = (currentDevice ?? UIDevice.current).systemName
-                systemVersion = (currentDevice ?? UIDevice.current).systemVersion
-            }
-        } else {
-            DispatchQueue.main.sync {
-                systemName = (currentDevice ?? UIDevice.current).systemName
-                systemVersion = (currentDevice ?? UIDevice.current).systemVersion
-            }
-        }
-
         let info = bundle.infoDictionary ?? [:]
         var inferredDateInstalledOn: Date? {
             guard
@@ -178,8 +170,8 @@ public extension Nimbus {
             deviceManufacturer: Sysctl.manufacturer,
             deviceModel: Sysctl.model,
             locale: getLocaleTag(), // from Glean utils
-            os: systemName,
-            osVersion: systemVersion,
+            os: device.systemName,
+            osVersion: device.systemVersion,
             androidSdkVersion: nil,
             debugTag: "Nimbus.rs",
             installationDate: installationDateSinceEpoch,

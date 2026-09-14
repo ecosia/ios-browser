@@ -7,6 +7,7 @@ import Storage
 import Sync
 import AuthenticationServices
 import Common
+import Localizations  // Ecosia: Import for String extensions
 
 import class Account.RustFirefoxAccounts
 import enum MozillaAppServices.OAuthScope

@@ -1,0 +1,21 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+// This is a debuggable version of the Ecosia Beta config with the same Bundle ID and setup utilized in staging.
+
+#include "../../Configuration/Debug.xcconfig"
+#include "Staging.xcconfig"
+#include "EcosiaCommon.xcconfig"
+
+INFOPLIST_FILE = Client/Info.plist
+MOZ_BUNDLE_DISPLAY_NAME = Ecosia Beta
+MOZ_BUNDLE_ID = com.ecosia.ecosiaapp.firefox
+INCLUDE_SETTINGS_BUNDLE = YES
+LEANPLUM_ENVIRONMENT = development
+CODE_SIGN_ENTITLEMENTS = Ecosia/Entitlements/EcosiaBeta.entitlements
+OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_FENNEC
+OTHER_LDFLAGS = -ObjC -lxml2 -fprofile-instr-generate -ld_classic
+
+// Ecosia: For completeness — AppBuildChannel has no "debug" case, so this still resolves to .other.
+CHANNEL = debug

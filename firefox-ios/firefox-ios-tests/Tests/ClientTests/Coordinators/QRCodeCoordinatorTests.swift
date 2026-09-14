@@ -10,16 +10,16 @@ final class QRCodeCoordinatorTests: XCTestCase {
     private var router: MockRouter!
     private var parentCoordinator: MockParentCoordinator!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         router = MockRouter(navigationController: UINavigationController())
         parentCoordinator = MockParentCoordinator()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         router = nil
         parentCoordinator = nil
-        try await super.tearDown()
     }
 
     func testShowQRCode_presentsQRCodeNavigationController() {

@@ -287,6 +287,13 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable {
         view.addSubview(newTab)
         view.addSubview(privateModeButton)
 
+        /* Ecosia: Constrain the incognito icon to 20×20 pt so the PDF vector doesn't fill the
+           full 44 pt touch target and appear disproportionately large in the tab strip. */
+        let iconInset: CGFloat = (UX.topTabsViewHeight - 20) / 2
+        privateModeButton.imageEdgeInsets = UIEdgeInsets(
+            top: iconInset, left: iconInset, bottom: iconInset, right: iconInset
+        )
+
         var constraints = [
             view.heightAnchor.constraint(equalToConstant: UX.topTabsViewHeight),
 
@@ -316,14 +323,30 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable {
                 )
             )
         } else {
+            /* Ecosia: Use safeAreaLayoutGuide so the button stays clear of screen-edge safe areas
+               (e.g. iPad landscape on Face ID models). Re-homed in 155.1: upstream moved this
+               constraint out of the main array and into this availability branch.
             constraints.append(
                 privateModeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10)
+            )
+             */
+            constraints.append(
+                privateModeButton.leadingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                    constant: 10
+                )
             )
         }
 
         NSLayoutConstraint.activate(constraints)
 
+        /* Ecosia: Use safeAreaLayoutGuide so the new-tab button stays clear of screen-edge safe areas.
         newTab.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.trailingEdgeSpace).isActive = true
+         */
+        newTab.trailingAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+            constant: -UX.trailingEdgeSpace
+        ).isActive = true
     }
 
     private func handleFadeOutAfterTabSelection() {

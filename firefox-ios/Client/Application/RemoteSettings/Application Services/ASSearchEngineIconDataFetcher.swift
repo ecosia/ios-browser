@@ -24,7 +24,9 @@ final class ASSearchEngineIconDataFetcher: ASSearchEngineIconDataFetcherProtocol
     private let fallbackEngineIcon: UIImage? = UIImage(named: StandardImageIdentifiers.Large.search)
 
     init?(logger: Logger = DefaultLogger.shared) {
-        let profile: Profile = AppContainer.shared.resolve()
+        // Ecosia: Use resolveOptional() so that background tasks do not crash when AppContainer
+        // is reset during unit-test setUp (which temporarily empties the container).
+        guard let profile: Profile = AppContainer.shared.resolveOptional() else { return nil }
         self.service = profile.remoteSettingsService
         self.client = ASRemoteSettingsCollection.searchEngineIcons.makeClient()
         self.logger = logger

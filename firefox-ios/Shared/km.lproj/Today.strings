@@ -5,7 +5,7 @@
 "TodayWidget.ClosePrivateTabsLabelV2" = "បិទ\nផ្ទាំងឯកជន";
 
 /* Description for medium size widget to add Firefox Shortcut to home screen */
-"TodayWidget.FirefoxShortcutGalleryDescription" = "បន្ថែមផ្លូវកាត់ Firefox ទៅអេក្រង់ដើមរបស់អ្នក។";
+"TodayWidget.FirefoxShortcutGalleryDescription" = "បន្ថែមផ្លូវកាត់ Ecosia ទៅអេក្រង់ដើមរបស់អ្នក។";
 
 /* Go to link pasted on the clipboard */
 "TodayWidget.GoToCopiedLinkLabelV1" = "ទៅ​កាន់​តំណ​ដែល​បាន​ចម្លង";
@@ -23,19 +23,19 @@
 "TodayWidget.NoOpenTabsLabel" = "គ្មានផ្ទាំងបើកទេ។";
 
 /* Open Firefox when there are no tabs opened in tab tray i.e. Empty State */
-"TodayWidget.OpenFirefoxLabel" = "បើក Firefox";
+"TodayWidget.OpenFirefoxLabel" = "បើក Ecosia";
 
 /* Open New Private Tab button label */
 "TodayWidget.PrivateTabButtonLabelV1" = "ការស្វែងរកឯកជន";
 
 /* Description for small size widget to add it to home screen */
-"TodayWidget.QuickActionGalleryDescription" = "បន្ថែមផ្លូវកាត់ Firefox ទៅក្នុងអេក្រង់ដើមរបស់អ្នក។ បន្ទាប់ពីបន្ថែមធាតុក្រាហ្វិករួច សូមចុចឱ្យជាប់ដើម្បីកែសម្រួលវា ហើយជ្រើសរើសផ្លូវកាត់ផ្សេង។";
+"TodayWidget.QuickActionGalleryDescription" = "បន្ថែមផ្លូវកាត់ Ecosia ទៅក្នុងអេក្រង់ដើមរបស់អ្នក។ បន្ទាប់ពីបន្ថែមធាតុក្រាហ្វិករួច សូមចុចឱ្យជាប់ដើម្បីកែសម្រួលវា ហើយជ្រើសរើសផ្លូវកាត់ផ្សេង។";
 
 /* Quick Actions title when widget enters edit mode */
 "TodayWidget.QuickActionsGalleryTitle" = "សកម្មភាពរហ័ស";
 
 /* Firefox shortcuts title when widget enters edit mode. Do not translate the word Firefox. */
-"TodayWidget.QuickActionsGalleryTitleV2" = "ផ្លូវកាត់ Firefox";
+"TodayWidget.QuickActionsGalleryTitleV2" = "ផ្លូវកាត់ Ecosia";
 
 /* Description for Quick View widget in Gallery View where user can add it to home screen */
 "TodayWidget.QuickViewGalleryDescriptionV2" = "បន្ថែមផ្លូវកាត់ទៅផ្ទាំងរបស់អ្នកដែលបើក។";
@@ -44,7 +44,7 @@
 "TodayWidget.QuickViewGalleryTitle" = "មើលរហ័ស";
 
 /* Search in Firefox. Do not translate the word Firefox */
-"TodayWidget.SearchInFirefoxV2" = "ស្វែងរកនៅក្នុង\nFirefox";
+"TodayWidget.SearchInFirefoxV2" = "ស្វែងរកនៅក្នុង\nEcosia";
 
 /* Search in private tab */
 "TodayWidget.SearchInPrivateTabLabelV2" = "ស្វែងរកនៅក្នុង\nផ្ទាំងឯកជន";

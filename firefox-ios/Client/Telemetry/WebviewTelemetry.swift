@@ -16,17 +16,20 @@ final class WebViewLoadMeasurementTelemetry {
     }
 
     func start() {
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
         loadTimerId = gleanWrapper.startTiming(for: GleanMetrics.Webview.pageLoad)
     }
 
     func stop() {
         guard let timerId = loadTimerId else { return }
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
         gleanWrapper.stopAndAccumulateTiming(for: GleanMetrics.Webview.pageLoad, timerId: timerId)
         loadTimerId = nil
     }
 
     func cancel() {
         if let loadTimerId {
+            // Ecosia: Telemetry silenced via FakeGleanWrapper
             gleanWrapper.cancelTiming(for: GleanMetrics.Webview.pageLoad, timerId: loadTimerId)
         }
     }

@@ -5,10 +5,10 @@
 "New Tab" = "కొత్త ట్యాబు";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox can use your camera to scan QR codes or take photos and video.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "మీరు భద్రపరచిన సంకేతపదాలను, చెల్లింపు పద్ధతులను చూడడానికి Firefoxకి ఫేస్ ID అవసరం.";
+"NSFaceIDUsageDescription" = "మీరు భద్రపరచిన సంకేతపదాలను, చెల్లింపు పద్ధతులను చూడడానికి Ecosiaకి ఫేస్ ID అవసరం.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "మీరు సందర్శించే వెబ్ సైట్లు మీ స్థానాన్ని అభ్యర్థించవచ్చు.";

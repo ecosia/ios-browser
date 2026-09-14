@@ -6,6 +6,7 @@
 import SwiftUI
 import WidgetKit
 import Common
+import Localizations  // Ecosia: Import for String extensions
 
 struct IntentProvider: IntentTimelineProvider {
     typealias Intent = QuickActionIntent
@@ -41,15 +42,25 @@ struct QuickLinkEntry: TimelineEntry {
 }
 
 struct SmallQuickLinkView: View {
-    @Environment(\.theme) private var theme
     var entry: IntentProvider.Entry
 
     @ViewBuilder var body: some View {
         ImageButtonWithLabel(isSmall: true, link: entry.link)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            /* Ecosia: Widget colours come from the Ecosia bundle, so the background uses
+               `QuickLink.backgroundColors` rather than 155.1's theme-driven `gradient(for:)`
+               (commented out in QuickLink.swift for the same reason).
             .widgetBackground(
                 LinearGradient(
                     gradient: entry.link.gradient(for: theme),
+                    startPoint: .bottomLeading,
+                    endPoint: .topTrailing
+                )
+            )
+             */
+            .widgetBackground(
+                LinearGradient(
+                    gradient: Gradient(colors: entry.link.backgroundColors),
                     startPoint: .bottomLeading,
                     endPoint: .topTrailing
                 )

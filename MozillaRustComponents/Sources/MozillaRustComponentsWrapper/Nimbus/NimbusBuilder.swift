@@ -206,8 +206,7 @@ public class NimbusBuilder {
             if fm != nil || onApplyCallback != nil {
                 NotificationCenter.default.addObserver(forName: .nimbusExperimentsApplied,
                                                        object: nil,
-                                                       queue: nil)
-                { _ in
+                                                       queue: nil) { _ in
                     fm?.invalidateCachedValues()
                     onApplyCallback?(nimbus)
                 }
@@ -216,8 +215,7 @@ public class NimbusBuilder {
             if let callback = onFetchCallback {
                 NotificationCenter.default.addObserver(forName: .nimbusExperimentsFetched,
                                                        object: nil,
-                                                       queue: nil)
-                { _ in
+                                                       queue: nil) { _ in
                     callback(nimbus)
                 }
             }
@@ -241,7 +239,9 @@ public class NimbusBuilder {
             // * we gave a 200ms timeout to the loading of a file from res/raw
             // * on completion or cancellation, applyPendingExperiments or initialize was
             //   called, and this thread waited for that to complete.
-            GleanMetrics.NimbusEvents.isReady.record()
+            // Ecosia: Telemetry silenced - new upstream call in 155.1, silenced to match the rest
+            // of the Nimbus event recording in this package.
+            // GleanMetrics.NimbusEvents.isReady.record()
             featureManifest?.initialize { nimbus }
             onCreateCallback?(nimbus)
 

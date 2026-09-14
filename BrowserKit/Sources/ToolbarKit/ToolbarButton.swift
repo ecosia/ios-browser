@@ -139,7 +139,11 @@ class ToolbarButton: UIButton,
         if let buttonBadgeImage = element.bottomBadgeImage {
             addBottomBadgeImage(buttonBadgeImage)
         } else if let badgeName = element.badgeImageName {
+            /* Ecosia: Forward badge customisation parameters (bundle, size, offsets) to support
+               the Ecosia incognito icon loaded from the Ecosia asset catalog.
             addBadgeIcon(imageName: badgeName)
+             */
+            addBadgeIcon(imageName: badgeName, bundle: element.badgeBundle, size: element.badgeSize, xOffset: element.badgeXOffset, yOffset: element.badgeYOffset)
             if let maskImageName = element.maskImageName {
                 addMaskIcon(maskImageName: maskImageName)
             } else {
@@ -194,12 +198,30 @@ class ToolbarButton: UIButton,
         ])
     }
 
+    /* Ecosia: Extended to accept bundle, size, and offset parameters for Ecosia badge customisation.
     private func addBadgeIcon(imageName: String) {
         badgeImageView = .build(nil) { UIImageView(image: UIImage(named: imageName)) }
+     */
+    private func addBadgeIcon(imageName: String,
+                              bundle: Bundle? = nil,
+                              size: CGSize? = nil,
+                              xOffset: CGFloat? = nil,
+                              yOffset: CGFloat? = nil) {
+        // Ecosia: bundle-loaded badges render as templates so they inherit the button's
+        // foreground tint in applyTheme.
+        badgeImageView = .build(nil) {
+            guard let bundle else { return UIImageView(image: UIImage(named: imageName)) }
+            let image = UIImage(named: imageName, in: bundle, compatibleWith: nil)?
+                .withRenderingMode(.alwaysTemplate)
+            return UIImageView(image: image)
+        }
         guard let badgeImageView else { return }
 
         badgeContainerView().addSubview(badgeImageView)
+        /* Ecosia: Forward size and offset parameters for Ecosia incognito badge positioning.
         applyBadgeConstraints(to: badgeImageView)
+         */
+        applyBadgeConstraints(to: badgeImageView, size: size, xOffset: xOffset, yOffset: yOffset)
     }
 
     private func addMaskIcon(maskImageName: String) {
@@ -211,17 +233,26 @@ class ToolbarButton: UIButton,
         applyBadgeConstraints(to: maskImageView)
     }
 
+    /* Ecosia: Extended to accept size and position overrides for the Ecosia incognito badge.
     private func applyBadgeConstraints(to imageView: UIImageView) {
+     */
+    private func applyBadgeConstraints(to imageView: UIImageView,
+                                       size: CGSize? = nil,
+                                       xOffset: CGFloat? = nil,
+                                       yOffset: CGFloat? = nil) {
+        // Ecosia: xOffset/yOffset nudge the incognito badge without moving every other badge;
+        // resolvedSize lets it override UX.badgeIconSize. Both default to Firefox's values.
+        let resolvedSize = size ?? UX.badgeIconSize
         let positionConstraints: [NSLayoutConstraint] = configuration?.image != nil ? [
-            imageView.leadingAnchor.constraint(equalTo: centerXAnchor),
-            imageView.bottomAnchor.constraint(equalTo: centerYAnchor)
+            imageView.leadingAnchor.constraint(equalTo: centerXAnchor, constant: xOffset ?? 0),
+            imageView.bottomAnchor.constraint(equalTo: centerYAnchor, constant: yOffset ?? 0)
         ] : [
             imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ]
         NSLayoutConstraint.activate(positionConstraints + [
-            imageView.widthAnchor.constraint(equalToConstant: UX.badgeIconSize.width),
-            imageView.heightAnchor.constraint(equalToConstant: UX.badgeIconSize.height)
+            imageView.widthAnchor.constraint(equalToConstant: resolvedSize.width),
+            imageView.heightAnchor.constraint(equalToConstant: resolvedSize.height)
         ])
     }
 
@@ -406,8 +437,13 @@ class ToolbarButton: UIButton,
 
         badgeImageView?.layer.borderColor = colors.layer1.cgColor
         badgeImageView?.backgroundColor = maskImageView == nil ? colors.layer1 : .clear
+        /* Ecosia: Use the button's foreground tint for no-mask badges (e.g. incognito icon)
+           so it matches the back/forward arrow color instead of being invisible.
         badgeImageView?.tintColor = maskImageView == nil ?
                                     .clear : (theme.isNova ? colors.iconPrivate : colors.actionInformation)
+         */
+        badgeImageView?.tintColor = maskImageView == nil ?
+                                    foregroundColorNormal : (theme.isNova ? colors.iconPrivate : colors.actionInformation)
         maskImageView?.tintColor = colors.layer1
         setNeedsUpdateConfiguration()
     }

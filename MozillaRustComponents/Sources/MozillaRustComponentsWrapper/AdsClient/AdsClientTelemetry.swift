@@ -5,24 +5,27 @@
 import Foundation
 import Glean
 
+// Ecosia: Telemetry silenced - every body below is a no-op so the Rust ads client's diagnostic
+// metrics are never recorded, matching the blanket silencing of Firefox telemetry elsewhere.
+// New upstream file in 155.1.
 public final class AdsClientTelemetry: MozAdsTelemetry {
     public func recordBuildCacheError(label: String, value: String) {
-        GleanMetrics.AdsClient.buildCacheError[label].set(value)
+        // GleanMetrics.AdsClient.buildCacheError[label].set(value)
     }
 
     public func recordClientError(label: String, value: String) {
-        GleanMetrics.AdsClient.clientError[label].set(value)
+        // GleanMetrics.AdsClient.clientError[label].set(value)
     }
 
     public func recordClientOperationTotal(label: String) {
-        GleanMetrics.AdsClient.clientOperationTotal[label].add()
+        // GleanMetrics.AdsClient.clientOperationTotal[label].add()
     }
 
     public func recordDeserializationError(label: String, value: String) {
-        GleanMetrics.AdsClient.deserializationError[label].set(value)
+        // GleanMetrics.AdsClient.deserializationError[label].set(value)
     }
 
     public func recordHttpCacheOutcome(label: String, value: String) {
-        GleanMetrics.AdsClient.httpCacheOutcome[label].set(value)
+        // GleanMetrics.AdsClient.httpCacheOutcome[label].set(value)
     }
 }

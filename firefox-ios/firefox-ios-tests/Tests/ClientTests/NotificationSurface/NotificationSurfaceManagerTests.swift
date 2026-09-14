@@ -3,24 +3,26 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import Shared
+import Common
 @testable import Client
 
 @MainActor
-final class NotificationSurfaceManagerTests: XCTestCase {
+class NotificationSurfaceManagerTests: XCTestCase {
     private var messageManager: MockGleanPlumbMessageManagerProtocol!
     private var notificationManager: MockNotificationManager!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         notificationManager = MockNotificationManager()
         messageManager = MockGleanPlumbMessageManagerProtocol()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         messageManager = nil
         notificationManager = nil
-        try await super.tearDown()
     }
 
     func testShouldShowSurface_noMessage() {
@@ -100,7 +102,7 @@ final class NotificationSurfaceManagerTests: XCTestCase {
     }
 
     // MARK: Helpers
-    private func createSubject(file: StaticString = #filePath,
+    private func createSubject(file: StaticString = #file,
                                line: UInt = #line
     ) -> NotificationSurfaceManager {
         let subject = NotificationSurfaceManager(messagingManager: messageManager,
@@ -148,7 +150,7 @@ class MockNotificationMessageDataProtocol: MessageDataProtocol {
     var surface: MessageSurfaceId
     var isControl = true
     var title: String? = "title label test"
-    var text = "text label test"
+    var text: String = "text label test"
     var buttonLabel: String? = "button label test"
     var shouldRandomizeOptions = false
     var experiment: String?

@@ -1,0 +1,29 @@
+diff --git a/firefox-ios/Client/Frontend/Browser/SearchEngines/OpenSearchEngine.swift b/firefox-ios/Client/Frontend/Browser/SearchEngines/OpenSearchEngine.swift
+index 113e4c3198..6adcfc41f3 100644
+--- a/firefox-ios/Client/Frontend/Browser/SearchEngines/OpenSearchEngine.swift
++++ b/firefox-ios/Client/Frontend/Browser/SearchEngines/OpenSearchEngine.swift
+@@ -4,6 +4,7 @@
+ 
+ import UIKit
+ import Common
++import Ecosia
+ 
+ final class OpenSearchEngine: NSObject, NSSecureCoding, Sendable, TrendingSearchEngine {
+     static let logger: Logger = DefaultLogger.shared
+@@ -140,7 +141,16 @@ final class OpenSearchEngine: NSObject, NSSecureCoding, Sendable, TrendingSearch
+ 
+     /// Returns the search URL for the given query.
+     func searchURLForQuery(_ query: String) -> URL? {
++        /* Ecosia: Use environment-aware URL builder instead of hardcoded template
+         return getURLFromTemplate(searchTemplate, query: query)
++        */
++        // Ecosia: With custom search providers on, non-Ecosia engines keep the upstream
++        // template behaviour; Ecosia itself always uses the environment-aware builder.
++        if CustomSearchProviderFeatureFlag.isEnabled,
++           engineID != SearchProviderSelection.ecosiaEngineID {
++            return getURLFromTemplate(searchTemplate, query: query)
++        }
++        return URL.ecosiaSearchWithQuery(query)
+     }
+ 
+     /// Returns the search suggestion URL for the given query.

@@ -1,0 +1,15 @@
+diff --git a/firefox-ios/Client/Frontend/Browser/BrowserViewController/Actions/GeneralBrowserAction.swift b/firefox-ios/Client/Frontend/Browser/BrowserViewController/Actions/GeneralBrowserAction.swift
+index 7d2ef4ef43..16b4bb905c 100644
+--- a/firefox-ios/Client/Frontend/Browser/BrowserViewController/Actions/GeneralBrowserAction.swift
++++ b/firefox-ios/Client/Frontend/Browser/BrowserViewController/Actions/GeneralBrowserAction.swift
+@@ -74,6 +74,10 @@ enum GeneralBrowserActionType: ActionType {
+     case didUnhideToolbar
+     case didCloseTabFromToolbar
+     case shakeMotionEnded
++    // Ecosia: QR code scanner action
++    case showQRCode
++    // Ecosia: History panel action triggered from the NTP toolbar history button
++    case showHistory
+ }
+ 
+ struct GeneralBrowserMiddlewareAction: Action {

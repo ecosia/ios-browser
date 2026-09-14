@@ -36,9 +36,15 @@ struct ContextualHintEligibilityUtility: ContextualHintEligibilityUtilityProtoco
         case .jumpBackIn:
             hintTypeShouldBePresented = canJumpBackInBePresented
         case .jumpBackInSyncedTab:
+            /* Ecosia: Disabled — Ecosia does not surface synced-tab hints.
             hintTypeShouldBePresented = canPresentJumpBackInSyncedTab
+             */
+            hintTypeShouldBePresented = false
         case .mainMenu:
+            /* Ecosia: Disabled — main-menu redesign hint is not applicable to Ecosia.
             hintTypeShouldBePresented = true
+             */
+            hintTypeShouldBePresented = false
         case .navigation:
             hintTypeShouldBePresented = true
         case .relay:

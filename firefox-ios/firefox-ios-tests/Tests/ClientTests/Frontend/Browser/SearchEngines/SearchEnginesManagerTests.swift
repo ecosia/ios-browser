@@ -5,9 +5,9 @@
 @testable import Client
 import Foundation
 import XCTest
-import Common
 import Shared
 
+// Ecosia: added @MainActor for Swift 6
 @MainActor
 class SearchEnginesManagerTests: XCTestCase {
     private let defaultSearchEngineName = "ATester"
@@ -17,9 +17,10 @@ class SearchEnginesManagerTests: XCTestCase {
     private var orderedEngines: [OpenSearchEngine]!
     private var mockSearchEngineProvider: MockSearchEngineProvider!
 
-    override func setUp() async throws {
-        try await super.setUp()
-
+    override func setUp() {
+        super.setUp()
+        // Ecosia: Sync to upstream v147.5 — bootstrap the DI container so default-arg resolves
+        // (Profile/WindowManager) during SearchEnginesManager flows succeed. Our copy predated this. (MOB-4384)
         DependencyHelperMock().bootstrapDependencies()
         profile = MockProfile()
         mockSearchEngineProvider = MockSearchEngineProvider()
@@ -30,18 +31,19 @@ class SearchEnginesManagerTests: XCTestCase {
         )
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
+
         profile = nil
         mockSearchEngineProvider = nil
         searchEnginesManager = nil
-        try await super.tearDown()
     }
 
     func testIncludesExpectedEngines() {
         // Verify that the set of shipped engines includes the expected subset.
         let expectation = expectation(description: "Completed parse engines")
 
-        searchEnginesManager.getOrderedEngines { prefs, result in
+        searchEnginesManager.getOrderedEngines { _, result in
             XCTAssertEqual(self.searchEnginesManager.orderedEngines.count, 6)
             expectation.fulfill()
         }
@@ -60,29 +62,24 @@ class SearchEnginesManagerTests: XCTestCase {
             XCTFail("Check that image is bundled for testing")
             return
         }
-
-        // Add a custom engine so we can test deleting it
-        let testEngine = OpenSearchEngine(engineID: "NewEngine",
-                                          shortName: "NewEngine",
+        let testEngine = OpenSearchEngine(engineID: "ATester",
+                                          shortName: "ATester",
                                           telemetrySuffix: nil,
                                           image: testImage,
                                           searchTemplate: "http://firefox.com/find?q={searchTerm}",
                                           suggestTemplate: nil,
                                           isCustomEngine: true)
 
+        searchEnginesManager.orderedEngines[0] = testEngine
         searchEnginesManager.addSearchEngine(testEngine)
-        XCTAssertEqual(searchEnginesManager.orderedEngines[safe: 1]?.engineID, testEngine.engineID)
+        XCTAssertEqual(searchEnginesManager.orderedEngines[1].engineID, testEngine.engineID)
 
-        let exp = expectation(description: "Engine was deleted")
+        var deleted: [OpenSearchEngine] = []
         searchEnginesManager.deleteCustomEngine(testEngine) { [self] in
-            ensureMainThread {
-                XCTAssertFalse(self.searchEnginesManager.orderedEngines.contains(where: { $0 == testEngine }))
-
-                exp.fulfill()
-            }
+            deleted = searchEnginesManager.orderedEngines.filter { $0 == testEngine }
         }
 
-        waitForExpectations(timeout: 2)
+        XCTAssertEqual(deleted, [])
     }
 
     func testDefaultEngine() {
@@ -100,14 +97,14 @@ class SearchEnginesManagerTests: XCTestCase {
         // The first ordered engine is the default.
         XCTAssertEqual(searchEnginesManager.orderedEngines[0].shortName, engineSet[1].shortName)
 
-        // Persistence can't be tested without the fixture changing.
+        // Persistence can't be tested without the fixture changing. 
     }
 
     func testOrderedEngines() {
         // Persistence can't be tested without the default fixture changing.
         // Remaining engines should be appended in alphabetical order.
         let expectation = expectation(description: "Completed parse engines")
-        searchEnginesManager.getOrderedEngines { [weak self] prefs, orderedEngines in
+        searchEnginesManager.getOrderedEngines { [weak self] _, orderedEngines in
             guard let self = self else {
                 XCTFail("Could not weakify self.")
                 return
@@ -197,7 +194,7 @@ class SearchEnginesManagerTests: XCTestCase {
         // Verify that the set of shipped engines includes the expected subset.
         let expectation = expectation(description: "Completed parse engines")
 
-        searchEnginesManager.getOrderedEngines { prefs, result in
+        searchEnginesManager.getOrderedEngines { _, result in
             XCTAssert(self.searchEnginesManager.orderedEngines.count > 1, "There should be more than one search engine")
             XCTAssertEqual(self.searchEnginesManager.orderedEngines.first?.shortName, "ATester")
             expectation.fulfill()

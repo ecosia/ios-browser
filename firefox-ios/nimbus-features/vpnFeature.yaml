@@ -10,9 +10,11 @@ features:
         type: Boolean
         default: false
     defaults:
+      # Ecosia: VPN is not part of the Ecosia product; suppressed on every channel including
+      # developer, so no VPN entry point is ever reachable.
       - channel: beta
         value:
           enabled: false
       - channel: developer
         value:
-          enabled: true
+          enabled: false

@@ -372,7 +372,9 @@ class NimbusOnboardingKitFeatureLayerTests: XCTestCase {
             XCTFail("Expected a card")
             return
         }
-        XCTAssertTrue(card.buttons.primary.title.contains("Firefox"))
+        // Ecosia: The %@ app-name placeholder is substituted with AppName.shortName ("Ecosia"), not "Firefox".
+        // XCTAssertTrue(card.buttons.primary.title.contains("Firefox"))
+        XCTAssertTrue(card.buttons.primary.title.contains("Ecosia"))
     }
 
     // MARK: - Multiple Choice Button Tests
@@ -502,7 +504,9 @@ class NimbusOnboardingKitFeatureLayerTests: XCTestCase {
             XCTFail("Expected a card with popup")
             return
         }
-        XCTAssertTrue(popup.instructionSteps.allSatisfy { $0.contains("Firefox") })
+        // Ecosia: The %@ app-name placeholder is substituted with AppName.shortName ("Ecosia"), not "Firefox".
+        // XCTAssertTrue(popup.instructionSteps.allSatisfy { $0.contains("Firefox") })
+        XCTAssertTrue(popup.instructionSteps.allSatisfy { $0.contains("Ecosia") })
     }
 
     // MARK: - Condition Evaluation Tests
@@ -580,7 +584,9 @@ class NimbusOnboardingKitFeatureLayerTests: XCTestCase {
             XCTFail("Expected a card")
             return
         }
-        XCTAssertTrue(card.title.contains("Firefox"))
+        // Ecosia: The %@ app-name placeholder is substituted with AppName.shortName ("Ecosia"), not "Firefox".
+        // XCTAssertTrue(card.title.contains("Firefox"))
+        XCTAssertTrue(card.title.contains("Ecosia"))
         XCTAssertFalse(card.title.contains("%@"))
     }
 
@@ -596,7 +602,9 @@ class NimbusOnboardingKitFeatureLayerTests: XCTestCase {
             XCTFail("Expected a card")
             return
         }
-        XCTAssertTrue(card.body.contains("Firefox"))
+        // Ecosia: The %@ app-name placeholder is substituted with AppName.shortName ("Ecosia"), not "Firefox".
+        // XCTAssertTrue(card.body.contains("Firefox"))
+        XCTAssertTrue(card.body.contains("Ecosia"))
         XCTAssertFalse(card.body.contains("%@"))
     }
 

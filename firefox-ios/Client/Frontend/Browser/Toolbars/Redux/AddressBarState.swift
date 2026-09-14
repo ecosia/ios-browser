@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import ModifiedCopy
 import Redux
 import ToolbarKit
@@ -43,6 +44,14 @@ struct AddressBarState: StateType, Sendable, Equatable {
         isEnabled: true,
         a11yLabel: AccessibilityIdentifiers.GeneralizedIdentifiers.back,
         a11yId: AccessibilityIdentifiers.Browser.UrlBar.cancelButton)
+
+    // Ecosia: QR code scanner button for editing mode
+    private static let qrCodeAction = ToolbarActionConfiguration(
+        actionType: .search,
+        iconName: "menu-ScanQRCode",
+        isEnabled: true,
+        a11yLabel: .ScanQRCodeViewTitle,
+        a11yId: "urlBar-scanQRCode")
 
     private static let cancelEditTextAction = ToolbarActionConfiguration(
         actionType: .cancelEdit,
@@ -607,9 +616,17 @@ struct AddressBarState: StateType, Sendable, Equatable {
             .copy(browserActions: browserActions(action: toolbarAction, addressBarState: state, isEditing: true))
             .copy(searchTerm: toolbarAction.searchTerm)
             .copy(isEditing: true)
+            /* Ecosia: Firefox forces the keyboard back on and resets `didStartTyping` here.
+               Re-requesting the keyboard after a drag-dismiss leaves a gap under the bar
+               (`keyboardDidHide` is what clears the flag), and resetting `didStartTyping`
+               mid-keystroke overwrites the text field and drops first responder. Omitting
+               both `.copy` calls preserves the values already on `state`.
             .copy(shouldShowKeyboard: true)
+             */
             .copy(shouldSelectSearchTerm: false)
+            /* Ecosia: see above — `didStartTyping` is preserved rather than reset.
             .copy(didStartTyping: false)
+             */
             .copy(isEmptySearch: isEmptySearch)
     }
 
@@ -738,6 +755,12 @@ struct AddressBarState: StateType, Sendable, Equatable {
         else { return actions }
 
         let isShowingNavigationToolbar = action.isShowingNavigationToolbar ?? toolbarState.isShowingNavigationToolbar
+
+        // Ecosia: Show back arrow (cancel edit) when editing
+        if isEditing {
+            actions.append(cancelEditAction)
+            return actions
+        }
 
         if !isShowingNavigationToolbar {
             // otherwise back/forward and maybe data clearance when navigation toolbar is hidden
@@ -903,8 +926,8 @@ struct AddressBarState: StateType, Sendable, Equatable {
         let tabTrayButtonStyle = isLoadAction ? action.tabTrayButtonStyle : toolbarState.tabTrayButtonStyle
 
         if isEditing {
-            // cancel button when in edit mode
-            actions.append(cancelEditTextAction)
+            // Ecosia: Show back arrow on left (cancel button) and QR code on right
+            return [qrCodeAction]
         }
 
         // In compact only cancel action should be shown
@@ -920,7 +943,12 @@ struct AddressBarState: StateType, Sendable, Equatable {
         let isShowMenuWarningAction = action.actionType as? ToolbarActionType == .showMenuWarningBadge
         let showActionWarningBadge = action.showMenuWarningBadge ?? toolbarState.showMenuWarningBadge
         let showWarningBadge = isShowMenuWarningAction ? showActionWarningBadge : toolbarState.showMenuWarningBadge
+        /* Ecosia: moreHorizontalRoundLarge does not exist in any Ecosia asset catalog,
+           causing the menu button to render with no image on iPad. Use the same custom
+           ellipsis icon as the iPhone navigation bar.
         let menuIcon = StandardImageIdentifiers.Large.moreHorizontalRound
+         */
+        let menuIcon = "elipsis"
 
         let isTabScreenshotAction = action.actionType as? ToolbarActionType == .didSetTabScreenshot
         let previousTabScreenshot = isTabScreenshotAction ? action.previousTabScreenshot : toolbarState.previousTabScreenshot
@@ -1022,16 +1050,28 @@ struct AddressBarState: StateType, Sendable, Equatable {
             .Toolbars.TabsButtonOverflowLargeContentTitle :
             String(format: .Toolbars.TabsButtonLargeContentTitle, NSNumber(value: numberOfTabs))
 
+        /* Ecosia: Replace the purple/Nova private-mode badge with the Ecosia incognito icon,
+           which comes from the Ecosia bundle and needs its own size and offsets. The mask goes
+           with it — the incognito glyph is tinted via `foregroundColorNormal` instead.
         let isNovaPrivate = isPrivateMode && isNovaDesignEnabled
         let badgeImageName = isNovaPrivate
             ? StandardImageIdentifiers.Medium.privateModeCircleFillStrokeMulticolor
             : StandardImageIdentifiers.Medium.privateModeCircleFillPurple
+         */
 
         return ToolbarActionConfiguration(
             actionType: .tabs,
             iconName: iconName,
+            /* Ecosia: see above.
             badgeImageName: isPrivateMode ? badgeImageName : nil,
             maskImageName: (isPrivateMode && iconName != nil) ? ImageIdentifiers.badgeMask : nil,
+             */
+            badgeImageName: isPrivateMode ? "incognito" : nil,
+            badgeBundle: isPrivateMode ? .ecosia : nil,
+            badgeSize: isPrivateMode ? CGSize(width: 12, height: 12) : nil,
+            badgeXOffset: isPrivateMode ? 6 : nil,
+            badgeYOffset: isPrivateMode ? -4 : nil,
+            maskImageName: nil,
             numberOfTabs: numberOfTabs,
             isEnabled: true,
             largeContentTitle: largeContentTitle,

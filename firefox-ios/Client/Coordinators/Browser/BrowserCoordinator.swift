@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Ecosia
 import Foundation
 import Glean
 import PhotosUI
@@ -99,6 +100,8 @@ final class BrowserCoordinator: BaseCoordinator,
         browserViewController.browserDelegate = self
         browserViewController.navigationHandler = self
         tabManager.addDelegate(self)
+        // Ecosia: Set referrals and ecosiaAuth so showHomepage can run setupEcosiaAdapter and use Ecosia NTP
+        configureEcosiaServicesIfNeeded()
     }
 
     func start(with launchType: LaunchType?) {
@@ -129,9 +132,14 @@ final class BrowserCoordinator: BaseCoordinator,
     }
 
     func didFinishLaunch(from coordinator: LaunchCoordinator) {
+        /* Ecosia: Animate transition from welcome screen
         router.dismiss(animated: true, completion: { [weak self] in
             self?.showTermsOfUse()
         })
+        */
+        router.dismiss(animated: true) { [weak self] in
+            self?.browserViewController.animateToolbarsIn()
+        }
         remove(child: coordinator)
 
         // Once launch is done, we check for any saved Route
@@ -141,6 +149,17 @@ final class BrowserCoordinator: BaseCoordinator,
                        category: .coordinator)
             findAndHandle(route: savedRoute)
         }
+    }
+
+    // Ecosia: Handle sign-in request from welcome screen
+    func didRequestSignIn(from coordinator: LaunchCoordinator) {
+        browserViewController.prepareToolbarsForWelcomeTransition()
+        router.dismiss(animated: true) { [weak self] in
+            guard let self else { return }
+            self.browserViewController.animateToolbarsIn()
+            EcosiaAuth.performWelcomeSignIn(browserViewController: self.browserViewController)
+        }
+        remove(child: coordinator)
     }
 
     // MARK: - BrowserDelegate
@@ -161,7 +180,22 @@ final class BrowserCoordinator: BaseCoordinator,
         )
         browserViewController.dispatchAvailableContentHeightChangedAction()
         homepageController.termsOfUseDelegate = self
+
+        // Ecosia: Setup Ecosia adapter before first view access so homepage uses Ecosia sections
+        if self.homepageViewController == nil,
+           let auth = browserViewController.ecosiaAuth,
+           let referrals = browserViewController.referrals {
+            homepageController.setupEcosiaAdapter(
+                profile: profile,
+                tabManager: browserViewController.tabManager,
+                referrals: referrals,
+                auth: auth,
+                browserViewController: browserViewController
+            )
+        }
+
         homepageController.view.accessibilityElementsHidden = false
+
         dispatchActionForEmbeddingHomepage(with: isZeroSearch)
         let didEmbed = browserViewController.embedContent(homepageController)
         if !didEmbed {
@@ -272,6 +306,11 @@ final class BrowserCoordinator: BaseCoordinator,
     }
 
     func browserHasLoaded() {
+        // Ecosia: Store the current version as the upgrade version once the browser is ready.
+        if !User.shared.firstTime {
+            EcosiaInstallType.evaluateCurrentEcosiaInstallType(storeUpgradeVersion: true)
+        }
+
         browserIsReady = true
         logger.log("Browser has loaded", level: .info, category: .coordinator)
 
@@ -400,9 +439,15 @@ final class BrowserCoordinator: BaseCoordinator,
         case .topSites:
             browserViewController.openURLInNewTab(HomePanelType.topSites.internalUrl)
         case .newPrivateTab:
+            /* Ecosia: Do not auto-focus the address bar when opening a new tab from the toolbar.
             browserViewController.openBlankNewTab(focusLocationField: true, isPrivate: true)
+            */
+            browserViewController.openBlankNewTab(focusLocationField: false, isPrivate: true)
         case .newTab:
+            /* Ecosia: Do not auto-focus the address bar when opening a new tab from the toolbar.
             browserViewController.openBlankNewTab(focusLocationField: true)
+            */
+            browserViewController.openBlankNewTab(focusLocationField: false)
         }
     }
 

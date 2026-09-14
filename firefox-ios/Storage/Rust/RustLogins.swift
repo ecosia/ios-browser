@@ -248,11 +248,25 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
 
     // Open the db.
     private func open() -> NSError? {
+        // Ecosia: run v133→v147 migration before LoginsStorage opens the database.
+        // backupV133Database() moves the legacy DB away from perFieldDatabasePath so LoginsStorage
+        // finds no file there and creates a fresh one — same effect as deleting, but the data is
+        // preserved at v133BackupDatabasePath and only removed after re-add completes.
+        let migratedLogins = extractV133Logins()
+        let migrationActive = !migratedLogins.isEmpty && backupV133Database()
         do {
             storage = try LoginsStorage(databasePath: self.perFieldDatabasePath, keyManager: self)
             isOpen = true
+            if migrationActive {
+                readdMigratedLogins(migratedLogins)
+            }
             return nil
         } catch let err as NSError {
+            // Ecosia: restore the v133 backup so the migration can retry next launch
+            if migrationActive {
+                restoreV133Backup()
+            }
+
             if let loginsStoreError = err as? LoginsStoreError {
                 // This is an unrecoverable
                 // state unless we can move the existing file to a backup
@@ -628,10 +642,11 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
     }
 
     public func reportPreSyncKeyRetrievalFailure(err: String) {
-        GleanMetrics
-            .PreSyncKeyRetrievalFailure
-            .logins
-            .record(GleanMetrics .PreSyncKeyRetrievalFailure .LoginsExtra(errorMessage: err))
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        // GleanMetrics
+        //     .PreSyncKeyRetrievalFailure
+        //     .logins
+        //     .record(GleanMetrics.PreSyncKeyRetrievalFailure.LoginsExtra(errorMessage: err))
     }
 
     private func resetLoginsAndKey(completion: @escaping @Sendable (Result<String, NSError>) -> Void) {
@@ -693,7 +708,8 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
                 self.logger.log("Logins key was corrupted, new one generated",
                                 level: .warning,
                                 category: .storage)
-                GleanMetrics.LoginsStoreKeyRegeneration.corrupt.record()
+                // Ecosia: Telemetry silenced via FakeGleanWrapper
+                // GleanMetrics.LoginsStoreKeyRegeneration.corrupt.record()
                 self.resetLoginsAndKey(completion: completion)
             }
         } catch let error as NSError {
@@ -711,7 +727,8 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
         self.logger.log("Logins key lost due to storage malfunction, new one generated",
                         level: .warning,
                         category: .storage)
-        GleanMetrics.LoginsStoreKeyRegeneration.other.record()
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        // GleanMetrics.LoginsStoreKeyRegeneration.other.record()
         self.resetLoginsAndKey(completion: completion)
     }
 
@@ -721,7 +738,8 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
         self.logger.log("Logins key lost, new one generated",
                         level: .warning,
                         category: .storage)
-        GleanMetrics.LoginsStoreKeyRegeneration.lost.record()
+        // Ecosia: Telemetry silenced via FakeGleanWrapper
+        // GleanMetrics.LoginsStoreKeyRegeneration.lost.record()
         self.resetLoginsAndKey(completion: completion)
     }
 
@@ -746,7 +764,8 @@ public final class RustLogins: LoginsProtocol, KeyManager, @unchecked Sendable {
             if hasLogins {
                 // Since the key data isn't present and we have login records in
                 // the database, we both clear the database and reset the key.
-                GleanMetrics.LoginsStoreKeyRegeneration.keychainDataLost.record()
+                // Ecosia: Telemetry silenced via FakeGleanWrapper
+                // GleanMetrics.LoginsStoreKeyRegeneration.keychainDataLost.record()
                 self.resetLoginsAndKey(completion: completion)
             } else {
                 // There are no records in the database so we don't need to wipe any

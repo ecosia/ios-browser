@@ -9,15 +9,6 @@ import XCTest
 
 @testable import Client
 
-class MockWallpaperStorageUtility: WallpaperStorageProtocol, WallpaperMetadataTestProvider {
-    var fetchMetadataCalled = 0
-
-    func fetchMetadata() throws -> WallpaperMetadata? {
-        fetchMetadataCalled += 1
-        return getExpectedMetadata(for: .newUpdates)
-    }
-}
-
 class WallpaperMetadataTrackerTests: XCTestCase, WallpaperJSONTestProvider {
     // MARK: - Properties
     var sut: WallpaperMetadataUtility!
@@ -27,27 +18,26 @@ class WallpaperMetadataTrackerTests: XCTestCase, WallpaperJSONTestProvider {
     private let prefsKey = PrefsKeys.Wallpapers.MetadataLastCheckedDate
 
     // MARK: - Setup & Teardown
-    override func setUp() {
-        super.setUp()
+    override func setUpWithError() throws {
+        try super.setUpWithError()
         mockUserDefaults = MockUserDefaults()
         mockNetwork = NetworkingMock()
-        sut = WallpaperMetadataUtility(
-            with: mockNetwork,
-            and: mockUserDefaults,
-            storageUtility: MockWallpaperStorageUtility()
-        )
+        sut = WallpaperMetadataUtility(with: mockNetwork,
+                                       and: mockUserDefaults)
     }
 
-    override func tearDown() {
+    override func tearDownWithError() throws {
         sut = nil
         mockUserDefaults = nil
         mockNetwork = nil
-        super.tearDown()
+        try super.tearDownWithError()
     }
 
     // MARK: Tests
     func testMetadataTracker_whenInitializedFirstTime_fetchesFreshData() async {
-        setupNetwork(for: .goodData)
+//        setupNetwork(for: .goodData)
+        let data = getDataFromJSONFile(named: .goodData)
+        mockNetwork.result = .success(data)
         let didFetchNewMetadata = await sut.metadataUpdateFetchedNewData()
 
         XCTAssertTrue(didFetchNewMetadata)

@@ -6,7 +6,8 @@ import Common
 import UIKit
 
 public struct AddressToolbarUXConfiguration {
-    private(set) var toolbarCornerRadius: CGFloat = if #available(iOS 26, *) { 22 } else { 12 }
+    // Ecosia: Use 22pt corner radius to match legacy URLBarView Ecosia styling on all iOS versions.
+    private(set) var toolbarCornerRadius: CGFloat = 22
     let browserActionsAddressBarDividerWidth: CGFloat
     let isLocationTextCentered: Bool
     let hasAlternativeLocationColor: Bool
@@ -47,7 +48,10 @@ public struct AddressToolbarUXConfiguration {
     }
 
     func addressToolbarBackgroundColor(theme: some Theme) -> UIColor {
+        /* Ecosia: Use Ecosia background for toolbar (legacy URLBarView applyTheme)
         let backgroundColor = isLocationTextCentered ? theme.colors.layerSurfaceLow : theme.colors.layer1
+         */
+        let backgroundColor = theme.colors.ecosia.backgroundPrimary
         if shouldBlur {
             return backgroundColor.withAlphaComponent(backgroundAlpha)
         }
@@ -60,11 +64,14 @@ public struct AddressToolbarUXConfiguration {
 
         let alternativeLocationColor = theme.isNova ? theme.colors.layerSurfaceMedium : theme.colors.layerSurfaceMediumAlt
 
+        /* Ecosia: Use backgroundElevation1 as the location container background.
         if hasAlternativeLocationColor {
             return isLocationTextCentered ? alternativeLocationColor : theme.colors.layerEmphasis
         } else {
             return isLocationTextCentered ? theme.colors.layerSurfaceMedium : theme.colors.layerEmphasis
         }
+         */
+        return theme.colors.ecosia.backgroundElevation1
     }
 
     public func locationViewVerticalPaddings(addressBarPosition: AddressToolbarPosition) -> (top: CGFloat, bottom: CGFloat) {

@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Common
 import SummarizeKit
 @testable import Client
 
@@ -21,6 +22,10 @@ class MockMainMenuCoordinatorDelegate: MainMenuCoordinatorDelegate {
     private(set) var showShareSheetForCurrentlySelectedTabCalled = 0
     private(set) var showSummarizePanelCalled = 0
     private(set) var showSummarizePanelTrigger: SummarizerTrigger?
+    // Ecosia: Help and Report Issue actions for the compact menu
+    private(set) var showHelpCalled = 0
+    private(set) var showFeedbackCalled = 0
+    private(set) var showFeedbackWindowUUID: WindowUUID?
 
     func editBookmarkForCurrentTab() {
         editBookmarkForCurrentTabCalled += 1
@@ -74,5 +79,15 @@ class MockMainMenuCoordinatorDelegate: MainMenuCoordinatorDelegate {
     func showSummarizePanel(_ trigger: SummarizerTrigger, config: SummarizerConfig?) {
         showSummarizePanelCalled += 1
         showSummarizePanelTrigger = trigger
+    }
+
+    // Ecosia: Help and Report Issue actions for the compact menu
+    func showHelp() {
+        showHelpCalled += 1
+    }
+
+    func showFeedback(windowUUID: WindowUUID) {
+        showFeedbackCalled += 1
+        showFeedbackWindowUUID = windowUUID
     }
 }

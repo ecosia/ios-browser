@@ -7,31 +7,37 @@ import Common
 
 @testable import Client
 
+@MainActor
 final class PasswordGeneratorViewControllerTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
         DependencyHelperMock().reset()
-        try await super.tearDown()
+        super.tearDown()
     }
 
-    @MainActor
     func testPasswordGeneratorViewController_simpleCreation_hasNoLeaks() {
         let mockProfile = MockProfile()
         let currentTab = Tab(profile: mockProfile, windowUUID: windowUUID)
-        let mockEvaluator = MockPasswordGeneratorScriptEvaluator()
-        let frameContext = PasswordGeneratorFrameContext(origin: "https://foo.com",
-                                                         host: "foo.com",
-                                                         scriptEvaluator: mockEvaluator,
-                                                         frameInfo: nil)
-        let passwordGeneratorViewController = PasswordGeneratorViewController(windowUUID: windowUUID,
-                                                                              currentTab: currentTab,
-                                                                              frameContext: frameContext)
+        let URL = URL(string: "https://foo.com")!
+        let webView = WKWebViewMock(URL)
+        let currentFrame = WKFrameInfoMock.new(webView: webView, frameURL: URL, isMainFrame: true)
+        let frameContext = PasswordGeneratorFrameContext(
+            origin: URL.absoluteString,
+            host: URL.host ?? "",
+            scriptEvaluator: MockPasswordGeneratorScriptEvaluator(),
+            frameInfo: currentFrame
+        )
+        let passwordGeneratorViewController = PasswordGeneratorViewController(
+            windowUUID: windowUUID,
+            currentTab: currentTab,
+            frameContext: frameContext
+        )
         trackForMemoryLeaks(passwordGeneratorViewController)
     }
 }

@@ -131,8 +131,12 @@ final class MenuInfoCell: UITableViewCell, ReusableCell, ThemeApplicable {
         }
         if model.isActive {
             titleLabel.textColor = theme.colors.textAccent
+            /* Ecosia: Tint the badge with the accent colour (white text on green) to match the toggle's active state
             infoLabelView.textColor = theme.isNova ? theme.colors.textInverted : theme.colors.textPrimary
             infoLabelView.backgroundColor = theme.isNova ? theme.colors.actionPrimary : theme.colors.layerInformation
+            */
+            infoLabelView.textColor = theme.colors.textInverted
+            infoLabelView.backgroundColor = theme.colors.textAccent
         } else if !model.isEnabled {
             titleLabel.textColor = theme.colors.textDisabled
             infoLabelView.textColor = theme.colors.textDisabled

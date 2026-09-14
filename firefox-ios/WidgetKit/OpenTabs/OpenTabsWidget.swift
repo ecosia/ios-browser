@@ -7,6 +7,9 @@ import WidgetKit
 import UIKit
 import Combine
 import Common
+// Ecosia: Additional imports for Ecosia framework and suggested sites updates
+import Ecosia
+import Storage
 
 struct OpenTabsWidget: Widget {
     private let kind = "Quick View"
@@ -26,10 +29,22 @@ struct OpenTabsWidget: Widget {
 struct OpenTabsView: View {
     let entry: OpenTabsEntry
 
+    /* Ecosia: Update Environment state definition — `import Ecosia` reintroduces an ambiguous
+       `Environment`, so both property wrappers stay explicitly qualified.
     @Environment(\.widgetFamily) var widgetFamily
     @Environment(\.theme) private var theme
+     */
+    @SwiftUI.Environment(\.widgetFamily)
+    var widgetFamily
+    @SwiftUI.Environment(\.theme)
+    private var theme
 
+    /* Ecosia: Widget colours come from the Ecosia bundle, not the Firefox theme. 155.1 funnels
+       every content colour through this one property, so the dozen per-call-site overrides Ecosia
+       used to carry collapse into this single substitution.
     private var contentColor: Color { Color(uiColor: theme.colors.textPrimary) }
+     */
+    private var contentColor: Color { .ecosiaBundledColorWithName("PrimaryText") }
 
     @ViewBuilder
     func lineItemForTab(_ tab: SimpleTab) -> some View {
@@ -63,7 +78,10 @@ struct OpenTabsView: View {
 
             // Separator
             Rectangle()
+                /* Ecosia: update color
                 .fill(Color(uiColor: theme.colors.borderPrimary))
+                 */
+                .fill(Color.ecosiaBundledColorWithName("Border"))
                 .frame(height: 0.5)
                 .padding(.leading, 45)
         }
@@ -89,7 +107,10 @@ struct OpenTabsView: View {
                 .foregroundStyle(contentColor)
             HStack {
                 Spacer()
+                /* Ecosia: Update image
                 Image(decorative: StandardImageIdentifiers.Small.externalLink)
+                 */
+                Image(decorative: "openEcosia", bundle: .ecosia)
                     .foregroundColor(contentColor)
                 Text(String.OpenFirefoxLabel)
                     .foregroundColor(contentColor)
@@ -108,7 +129,10 @@ struct OpenTabsView: View {
 
             if entry.tabs.count > numberOfTabsToDisplay {
                 HStack(alignment: .center, spacing: 15) {
+                    /* Ecosia: Update image
                     Image(decorative: StandardImageIdentifiers.Small.externalLink)
+                     */
+                    Image(decorative: "openEcosia", bundle: .ecosia)
                         .foregroundColor(contentColor)
                         .frame(width: 16, height: 16)
                     Text(
@@ -123,16 +147,25 @@ struct OpenTabsView: View {
                     Spacer()
                 }.padding([.horizontal])
             } else {
+                /* Ecosia: Rename from openFirefoxButton
                 openFirefoxButton
+                 */
+                openEcosiaButton
             }
 
             Spacer()
         }.padding(.top, 14)
     }
 
+    /* Ecosia: Rename from openFirefoxButton
     var openFirefoxButton: some View {
+     */
+    var openEcosiaButton: some View {
         HStack(alignment: .center, spacing: 15) {
+            /* Ecosia: Update image
             Image(decorative: StandardImageIdentifiers.Small.externalLink)
+             */
+            Image(decorative: "openEcosia", bundle: .ecosia)
                 .foregroundColor(contentColor)
             Text(String.OpenFirefoxLabel)
                 .foregroundColor(contentColor)
@@ -159,6 +192,7 @@ struct OpenTabsView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        /* Ecosia: update color
         .widgetBackground(
             LinearGradient(
                 gradient: theme.colors.gradientWidgetSurface.swiftUI,
@@ -166,6 +200,8 @@ struct OpenTabsView: View {
                 endPoint: .topTrailing
             )
         )
+         */
+        .background(Color.ecosiaBundledColorWithName("PrimaryBackground"))
     }
 
     private func linkToContainingApp(_ urlSuffix: String = "", query: String) -> URL {

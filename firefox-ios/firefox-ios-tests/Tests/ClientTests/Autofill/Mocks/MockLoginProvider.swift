@@ -4,23 +4,15 @@
 
 import Foundation
 import MozillaAppServices
+@testable import Client
 
-class MockLoginProvider: LoginProvider, SyncLoginProvider, @unchecked Sendable {
+class MockLoginProvider: LoginProvider {
     var searchLoginsWithQueryCalledCount = 0
     var addLoginCalledCount = 0
-    var getStoredKeyCalledCount = 0
-    var registerWithSyncManagerCalled = 0
-    var verifyLoginsCalled = 0
-    var loginsVerified = true
-    var reportPreSyncKeyRetrievalFailureCalled = 0
-
     func searchLoginsWithQuery(
         _ query: String?,
-        completionHandler: @escaping (
-            Result<
-                [MozillaAppServices.Login],
-            any Error
-            >
+        completionHandler: @escaping @Sendable (
+            Result<[MozillaAppServices.Login], any Error>
         ) -> Void
     ) {
         searchLoginsWithQueryCalledCount += 1
@@ -29,32 +21,11 @@ class MockLoginProvider: LoginProvider, SyncLoginProvider, @unchecked Sendable {
 
     func addLogin(
         login: MozillaAppServices.LoginEntry,
-        completionHandler: @escaping (
-            Result<
-            MozillaAppServices.Login?,
-            any Error
-            >
+        completionHandler: @escaping @Sendable (
+            Result<MozillaAppServices.Login?, any Error>
         ) -> Void
     ) {
         addLoginCalledCount += 1
         completionHandler(.success(nil))
-    }
-
-    func getStoredKey(completion: @Sendable @escaping (Result<String, NSError>) -> Void) {
-        getStoredKeyCalledCount += 1
-        return completion(.success("test encryption key"))
-    }
-
-    func registerWithSyncManager() {
-        registerWithSyncManagerCalled += 1
-    }
-
-    func verifyLogins(completionHandler: @escaping (Bool) -> Void) {
-        verifyLoginsCalled += 1
-        completionHandler(loginsVerified)
-    }
-
-    func reportPreSyncKeyRetrievalFailure(err: String) {
-        reportPreSyncKeyRetrievalFailureCalled += 1
     }
 }

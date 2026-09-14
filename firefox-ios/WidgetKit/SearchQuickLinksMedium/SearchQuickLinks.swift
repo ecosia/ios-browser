@@ -6,6 +6,8 @@
 import WidgetKit
 import SwiftUI
 import Common
+// Ecosia: Add import for Ecosia bundle color access
+import Ecosia
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
@@ -31,7 +33,12 @@ struct SimpleEntry: TimelineEntry {
 }
 
 struct SearchQuickLinksEntryView: View {
+    /* Ecosia: `import Ecosia` brings a second `Environment` into scope, so SwiftUI's property
+       wrapper must be qualified. 155.1 added this theme environment value.
     @Environment(\.theme) private var theme
+     */
+    @SwiftUI.Environment(\.theme)
+    private var theme
 
     @ViewBuilder var body: some View {
         VStack {
@@ -45,7 +52,10 @@ struct SearchQuickLinksEntryView: View {
             }
         }
         .padding(10.0)
+        /* Ecosia: Update color
         .widgetBackground(Color(uiColor: theme.colors.layer1))
+         */
+        .widgetBackground(Color.ecosiaBundledColorWithName("PrimaryBackground"))
     }
 }
 

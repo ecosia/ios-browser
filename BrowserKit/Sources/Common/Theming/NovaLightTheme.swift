@@ -7,13 +7,21 @@ import UIKit
 public struct NovaLightTheme: Theme {
     public var type: ThemeType = .light
     private let palette = NovaLightColourPalette()
+    /* Ecosia: Theme protocol requires colors: EcosiaThemeColourPalette
     public var colors: ThemeColourPalette { palette }
+     */
+    public var colors: EcosiaThemeColourPalette { palette }
     public var isNova = true
 
     public init() {}
 }
 
+/* Ecosia: Conform to EcosiaThemeColourPalette
 private struct NovaLightColourPalette: ThemeColourPalette {
+*/
+private struct NovaLightColourPalette: EcosiaThemeColourPalette {
+    var ecosia: EcosiaSemanticColors = FakeEcosiaSemanticColors()
+
     // MARK: - Layer
 
     var layer1: UIColor = NovaColors.Gray5

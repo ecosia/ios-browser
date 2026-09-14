@@ -8,6 +8,7 @@ import Shared
 import OnboardingKit
 import SwiftUI
 import ComponentLibrary
+import Ecosia
 
 protocol LaunchCoordinatorDelegate: AnyObject {
     @MainActor
@@ -15,6 +16,9 @@ protocol LaunchCoordinatorDelegate: AnyObject {
 
     @MainActor
     func didFinishLaunch(from coordinator: LaunchCoordinator)
+    // Ecosia: Handle sign-in request from welcome screen
+    @MainActor
+    func didRequestSignIn(from coordinator: LaunchCoordinator)
 }
 
 // Manages different types of onboarding that gets shown at the launch of the application
@@ -30,6 +34,8 @@ final class LaunchCoordinator: BaseCoordinator,
     let themeManager: ThemeManager = AppContainer.shared.resolve()
     weak var parentCoordinator: LaunchCoordinatorDelegate?
     private var onboardingService: OnboardingService?
+    // Ecosia: Used when presenting Ecosia Welcome to call didSeeIntroScreen on finish
+    private var introManagerForEcosiaWelcome: IntroScreenManagerProtocol?
 
     init(router: Router,
          windowUUID: WindowUUID,
@@ -50,7 +56,13 @@ final class LaunchCoordinator: BaseCoordinator,
         case .termsOfService(let manager):
             presentTermsOfUse(with: manager, isFullScreen: isFullScreen)
         case .intro(let manager):
+            /* Ecosia: Ecosia presents its own Welcome flow instead of Firefox's onboarding. Upstream's
+               implementation is left intact and reconciled below — it is simply not called from here.
+               (Upstream also renamed `presentModernIntroOnboarding` to `presentIntroOnboarding` and
+               deleted the legacy variant that Ecosia's replacement used to shadow.)
             presentIntroOnboarding(with: manager, isFullScreen: isFullScreen)
+             */
+            presentEcosiaWelcomeOnboarding(with: manager)
         case .defaultBrowser:
             presentDefaultBrowserOnboarding()
         case .survey(let manager):
@@ -378,5 +390,38 @@ final class LaunchCoordinator: BaseCoordinator,
     // MARK: - OnboardingNavigationDelegate
     func finishOnboardingFlow() {
         dismiss(animated: true, completion: nil)
+    }
+}
+
+// Ecosia: custom onboarding — presented from `start(with:)` in place of Firefox's intro onboarding.
+extension LaunchCoordinator {
+    /// Ecosia's replacement for Firefox's `presentIntroOnboarding`. `isFullScreen` is not taken because
+    /// the Welcome flow is always presented full screen.
+    func presentEcosiaWelcomeOnboarding(with manager: IntroScreenManagerProtocol) {
+        // Ecosia: Store manager so welcomeDidFinish/welcomeDidRequestSignIn can mark it as seen.
+        introManagerForEcosiaWelcome = manager
+
+        let introViewController = WelcomeNavigation(
+            rootViewController: WelcomeViewController(delegate: self, windowUUID: self.windowUUID),
+            windowUUID: self.windowUUID
+        )
+        introViewController.isNavigationBarHidden = true
+        introViewController.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
+        introViewController.modalPresentationStyle = .fullScreen
+        router.present(introViewController, animated: false)
+    }
+}
+
+extension LaunchCoordinator: WelcomeDelegate {
+    func welcomeDidFinish(_ welcome: WelcomeViewController) {
+        introManagerForEcosiaWelcome?.didSeeIntroScreen()
+        introManagerForEcosiaWelcome = nil
+        self.parentCoordinator?.didFinishLaunch(from: self)
+    }
+
+    func welcomeDidRequestSignIn(_ welcome: WelcomeViewController) {
+        introManagerForEcosiaWelcome?.didSeeIntroScreen()
+        introManagerForEcosiaWelcome = nil
+        self.parentCoordinator?.didRequestSignIn(from: self)
     }
 }

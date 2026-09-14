@@ -7,7 +7,8 @@ import XCTest
 
 @testable import Client
 
-final class MessageCardMiddlewareTests: XCTestCase, StoreTestUtility {
+@MainActor
+final class MessageCardMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Sendable {
     var mockStore: MockStoreForMiddleware<AppState>!
 
     override func setUp() async throws {

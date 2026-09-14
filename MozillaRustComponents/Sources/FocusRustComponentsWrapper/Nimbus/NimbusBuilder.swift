@@ -203,8 +203,7 @@ public class NimbusBuilder {
             if fm != nil || onApplyCallback != nil {
                 NotificationCenter.default.addObserver(forName: .nimbusExperimentsApplied,
                                                        object: nil,
-                                                       queue: nil)
-                { _ in
+                                                       queue: nil) { _ in
                     fm?.invalidateCachedValues()
                     onApplyCallback?(nimbus)
                 }
@@ -213,8 +212,7 @@ public class NimbusBuilder {
             if let callback = onFetchCallback {
                 NotificationCenter.default.addObserver(forName: .nimbusExperimentsFetched,
                                                        object: nil,
-                                                       queue: nil)
-                { _ in
+                                                       queue: nil) { _ in
                     callback(nimbus)
                 }
             }

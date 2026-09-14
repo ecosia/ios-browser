@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Ecosia
 import WebEngine
 import Shared
 import WebKit
@@ -69,6 +70,10 @@ class TabConfigurationProvider {
                     forURLScheme: ReaderModeSchemeHandler.scheme
                 )
             }
+        }
+        // Ecosia: inject all required cookies when config is created to make sure they are present
+        Cookie.makeRequiredCookies(isPrivate: isPrivate).forEach { cookie in
+            engineConfiguration.webViewConfiguration.websiteDataStore.httpCookieStore.setCookie(cookie)
         }
         return engineConfiguration
     }

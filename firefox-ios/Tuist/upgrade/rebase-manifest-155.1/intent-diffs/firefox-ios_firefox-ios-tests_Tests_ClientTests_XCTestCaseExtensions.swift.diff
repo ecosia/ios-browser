@@ -1,0 +1,133 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/XCTestCaseExtensions.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/XCTestCaseExtensions.swift
+index c91781fcae..8c4d6f6185 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/XCTestCaseExtensions.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/XCTestCaseExtensions.swift
+@@ -2,10 +2,7 @@
+ // License, v. 2.0. If a copy of the MPL was not distributed with this
+ // file, You can obtain one at http://mozilla.org/MPL/2.0/
+ 
+-@testable import Client
+-
+ import Foundation
+-import Glean
+ import XCTest
+ 
+ extension XCTestCase {
+@@ -14,15 +11,35 @@ extension XCTestCase {
+         XCTWaiter().wait(for: [expectation], timeout: timeout)
+     }
+ 
++    func waitForCondition(timeout: TimeInterval = 10, condition: () -> Bool) {
++        let timeoutTime = Date.timeIntervalSinceReferenceDate + timeout
++
++        while !condition() {
++            if Date.timeIntervalSinceReferenceDate > timeoutTime {
++                XCTFail("Condition timed out")
++                return
++            }
++
++            wait(0.1)
++        }
++    }
++
++    /// Tracks an object for memory leaks by asserting it's deallocated after the test completes.
+     @MainActor
+-    func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #filePath, line: UInt = #line) {
+-        addTeardownBlock { [weak instance] in
+-            XCTAssertNil(
+-                instance,
+-                "Instance should have been deallocated, potential memory leak.",
+-                file: file,
+-                line: line
+-            )
++    func trackForMemoryLeaks(_ object: AnyObject?, file: StaticString = #filePath, line: UInt = #line) {
++        addTeardownBlock { [weak object] in
++            // Ecosia: poll briefly before asserting. Under CI load an object can still be retained at
++            // teardown by an in-flight async completion that captured it (e.g. a reloadData callback
++            // delivered on a background queue), which made this a load-induced FLAKE — passing in light
++            // runs, "leak detected" under heavier ones. A genuine leak never releases, so this bounded
++            // poll keeps real leaks caught while removing the false positive. It costs nothing in the
++            // happy path: when the ref is already nil the loop is skipped and the assert is immediate.
++            // (MOB-4384)
++            let deadline = Date().addingTimeInterval(2)
++            while object != nil, Date() < deadline {
++                RunLoop.current.run(until: Date().addingTimeInterval(0.05))
++            }
++            XCTAssertNil(object, "Memory leak detected in \(file):\(line)")
+         }
+     }
+ 
+@@ -31,71 +48,8 @@ extension XCTestCase {
+     /// It is a wrapper of XCTUnwrap. Since is not possible to do ```XCTUnwrap(await asyncMethod())```
+     ///
+     /// it has to be done always in two steps, this method make it one line for users.
+-    func unwrapAsync<T>(asyncMethod: () async throws -> T?,
+-                        file: StaticString = #filePath,
+-                        line: UInt = #line) async throws -> T {
++    func unwrapAsync<T>(asyncMethod: () async throws -> T?) async throws -> T {
+         let returnValue = try await asyncMethod()
+-        return try XCTUnwrap(returnValue, file: file, line: line)
+-    }
+-
+-    /// Helper function to cast a value to `AnyHashable`.
+-    func asAnyHashable<T>(_ value: T) -> AnyHashable? {
+-        return value as? AnyHashable
+-    }
+-
+-    /// Helper function to ensure Glean telemetry is setup for unit tests
+-    /// This should not be called in new code:
+-    /// - We should us GleanWrapper or mock objects instead of concrete type testing for Glean
+-    @MainActor
+-    static func setupTelemetry(with profile: Profile) {
+-        TelemetryWrapper.hasTelemetryOverride = true
+-
+-        DependencyHelperMock().bootstrapDependencies()
+-        TelemetryWrapper().initGlean(profile, sendUsageData: false)
+-
+-        // Due to changes allow certain custom pings to implement their own opt-out
+-        // independent of Glean, custom pings may need to be registered manually in
+-        // tests in order to put them in a state in which they can collect data.
+-        Glean.shared.registerPings(GleanMetrics.Pings.shared)
+-        Glean.shared.resetGlean(clearStores: true)
+-    }
+-
+-    /// Helper function to ensure Glean telemetry is properly teardown for unit tests
+-    static func tearDownTelemetry() {
+-        TelemetryWrapper.hasTelemetryOverride = false
+-        DependencyHelperMock().reset()
+-    }
+-
+-    // MARK: Error Handling
+-    /// Convenience method to simplify error checking in the test cases for non Equatable types.
+-    @MainActor
+-    func assertAsyncThrows<E: Error, T>(
+-        ofType expectedType: E.Type,
+-        _ expression: @MainActor () async throws -> T,
+-        file: StaticString = #filePath,
+-        line: UInt = #line,
+-        verify: (@MainActor (E) -> Void)? = nil
+-    ) async {
+-        do {
+-            _ = try await expression()
+-            XCTFail("Expected error \(expectedType), but no error thrown.", file: file, line: line)
+-        } catch let error as E {
+-            verify?(error)
+-        } catch {
+-            XCTFail("Expected error \(expectedType), but got \(error)", file: file, line: line)
+-        }
+-    }
+-
+-    /// Convenience method to simplify error checking in the test cases for Equatable types.
+-    @MainActor
+-    func assertAsyncThrowsEqual<E: Error & Equatable, T>(
+-        _ expected: E,
+-        _ expression: @MainActor () async throws -> T,
+-        file: StaticString = #filePath,
+-        line: UInt = #line
+-    ) async {
+-        await assertAsyncThrows(ofType: E.self, expression, file: file, line: line) { error in
+-            XCTAssertEqual(error, expected, file: file, line: line)
+-        }
++        return try XCTUnwrap(returnValue)
+     }
+ }

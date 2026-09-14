@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import MenuKit
 import XCTest
 
 @testable import Client
@@ -55,6 +56,15 @@ final class MainMenuCoordinatorTests: XCTestCase, StoreTestUtility {
 
         XCTAssertTrue(mockRouter.rootViewController is MainMenuViewController)
         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 1)
+    }
+
+    func testDismissDetailViewController() {
+        let subject = createSubject()
+
+        subject.start()
+        subject.dismissDetailViewController()
+
+        XCTAssertEqual(mockRouter.popViewControllerCalled, 1)
     }
 
     func testMainMenu_dismissFlow_callsRouterDismiss() throws {

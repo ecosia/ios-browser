@@ -4,36 +4,35 @@
 
 import Common
 import Redux
-import XCTest
 import SummarizeKit
+import XCTest
 
 @testable import Client
 
+@MainActor
 final class MainMenuStateTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+    override func setUp() {
+        super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
         DependencyHelperMock().reset()
-        try await super.tearDown()
+        super.tearDown()
     }
 
     func testInitialization() {
         let initialState = createSubject()
 
         XCTAssertFalse(initialState.shouldDismiss)
-        XCTAssertEqual(initialState.menuElements, [])
+        XCTAssertTrue(initialState.menuElements.isEmpty)
         XCTAssertNil(initialState.navigationDestination)
         XCTAssertNil(initialState.currentTabInfo)
     }
 
-    @MainActor
     func testUpdatingCurrentTabInfo() {
         let initialState = createSubject()
         let reducer = mainMenuReducer()
-        let accountData = AccountData(title: "Test Title", subtitle: "Test Subtitle")
 
         let expectedResult = MainMenuTabInfo(
             tabID: "1234",
@@ -48,11 +47,11 @@ final class MainMenuStateTests: XCTestCase {
                 isActive: false,
             ),
             summaryIsAvailable: false,
-            summarizerConfig: SummarizerConfig(instructions: "Test instructions", options: [:]),
+            summarizerConfig: nil,
             isBookmarked: false,
             isInReadingList: false,
             isPinned: false,
-            accountData: accountData,
+            accountData: AccountData(title: "Test", subtitle: nil),
             translationConfiguration: nil
         )
 
@@ -70,7 +69,6 @@ final class MainMenuStateTests: XCTestCase {
         XCTAssertEqual(newState.currentTabInfo, expectedResult)
     }
 
-    @MainActor
     func testNavigation_AllCases() {
         let initialState = createSubject()
         let reducer = mainMenuReducer()
@@ -95,7 +93,6 @@ final class MainMenuStateTests: XCTestCase {
         }
     }
 
-    @MainActor
     func testToggleUserAgentAction() {
         let initialState = createSubject()
         let reducer = mainMenuReducer()
@@ -113,7 +110,6 @@ final class MainMenuStateTests: XCTestCase {
         XCTAssertTrue(newState.shouldDismiss)
     }
 
-    @MainActor
     func testCloseAction() {
         let initialState = createSubject()
         let reducer = mainMenuReducer()

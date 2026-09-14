@@ -55,6 +55,7 @@ public protocol KeychainProtocol: Sendable {
     static func wipeKeychain()
     func createLoginsKeyData() throws -> String
     func queryKeychainForKey(key: String) -> Result<String?, Error>
+    func legacyDataForKey(_ key: String) -> Data? // Ecosia: finds pre-v147 MZKeychainWrapper keys for migration
     func createAndStoreKey(canaryPhrase: String, canaryIdentifier: String, keyIdentifier: String) throws -> String
     func decryptCreditCardNum(encryptedCCNum: String) -> String?
     func checkCanary(canary: String,

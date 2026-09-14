@@ -1,0 +1,116 @@
+name: 'Prepare environment'
+description: 'This action contains all the usual steps needed to setup the environment and restore caches when available'
+
+inputs:
+  core-token:
+    description: 'The iOS core token'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+
+    # Ecosia: must run before "Fix-up private GitHub URLs" rewrites the manifests and lockfiles in
+    # place, so it reads the committed files verbatim.
+    - name: Check pinned dependencies match lockfiles
+      shell: bash
+      run: python3 .github/scripts/check_pinned_dependencies.py
+
+    - name: Xcode Select Version
+      uses: mobiledevops/xcode-select-version-action@v1
+      with:
+        # Ecosia: pinned so the toolchain is not a moving part. Keep in sync with what developers run
+        # locally, since a mismatch has bitten us before.
+        #
+        # Before bumping to 27, expect work: Xcode 27 statically folds SPM library products into
+        # consumer targets, which makes -ObjC force-load both the folded copies and the standalone
+        # package objects and fails with thousands of duplicate symbols. Our -ObjC lives in
+        # EcosiaDebug.xcconfig and EcosiaBetaDebug.xcconfig, and EcosiaTesting.xcconfig inherits it,
+        # so the Testing configuration CI builds is affected. Upstream version-gates the flag on
+        # XCODE_VERSION_MAJOR: https://github.com/mozilla-mobile/firefox-ios/pull/34592
+        # Also note -ld_classic, set in all five xcconfigs, is deprecated and due for removal.
+        xcode-select-version: 26.6
+
+    - name: Check Xcode and Swift Version
+      shell: bash
+      run: |
+        echo "Checking Xcode and Swift version"
+        xcodebuild -version
+        swift --version
+
+    - name: Fix-up private GitHub URLs
+      shell: bash
+      run: find . -type f \( -name '*.pbxproj' -o -name 'Package.swift' -o -name 'Package.resolved' \) -exec sed -i '' "s/https:\/\/github.com\/${GITHUB_REPOSITORY_OWNER}/https:\/\/${GITHUB_ACCESS_TOKEN}@github.com\/${GITHUB_REPOSITORY_OWNER}/g" {} \;
+      env:
+        GITHUB_ACCESS_TOKEN: ${{ inputs.core-token }}
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install gems
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.3
+        bundler-cache: true
+
+    - name: Install npm
+      uses: bahmutov/npm-install@v1
+      
+    - name: Restore SPM Cache
+      id: restore-spm-cache
+      uses: actions/cache/restore@v4
+      with:
+        path: firefox-ios/SourcePackages/
+        key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'BrowserKit/Package.swift', 'firefox-ios/Tuist/ProjectDescriptionHelpers/Packages+Ecosia.swift') }}
+
+    - name: Install SPM if cache not found
+      shell: bash
+      if: steps.restore-spm-cache.outputs.cache-hit != 'true'
+      run: xcodebuild -resolvePackageDependencies -clonedSourcePackagesDirPath "firefox-ios/SourcePackages/"
+
+    - name: Save SPM Cache if needed
+      if: steps.restore-spm-cache.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v4
+      with:
+        path: firefox-ios/SourcePackages/
+        key: ${{ runner.os }}-spm-cache-${{ hashFiles('firefox-ios/Client.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved', 'BrowserKit/Package.swift', 'firefox-ios/Tuist/ProjectDescriptionHelpers/Packages+Ecosia.swift') }}  
+
+    - name: Extract Staging XCConfig
+      shell: bash
+      run: echo "$STAGING_XCCONFIG" | base64 --decode > firefox-ios/Client/Ecosia/BuildSettingsConfigurations/Staging.xcconfig
+
+    - name: List Available Simulator Runtimes
+      shell: bash
+      run: |
+        echo "Available simulator runtimes:"
+        xcrun simctl list runtimes
+        
+    - name: Create and Boot iPhone 17 Simulator
+      shell: bash
+      run: |
+        # Check if simulator already exists
+        if xcrun simctl list devices | grep -q "iPhone 17"; then
+          echo "iPhone 17 simulator already exists"
+        else
+          echo "Creating iPhone 17 simulator"
+          # Get the latest available iOS runtime
+          LATEST_RUNTIME=$(xcrun simctl list runtimes | grep iOS | tail -1 | awk '{print $NF}')
+          # Get the device type for iPhone 17
+          DEVICE_TYPE=$(xcrun simctl list devicetypes | grep "iPhone 17" | head -1 | awk '{print $NF}')
+          
+          if [ -n "$LATEST_RUNTIME" ] && [ -n "$DEVICE_TYPE" ]; then
+            xcrun simctl create "iPhone 17" "$DEVICE_TYPE" "$LATEST_RUNTIME"
+          else
+            echo "Error: Could not determine runtime or device type"
+            exit 1
+          fi
+        fi
+        
+        # Boot the simulator
+        xcrun simctl boot "iPhone 17" || echo "Simulator may already be booted"
+        
+    - name: Setup environment and generate Xcode project with Tuist
+      shell: bash
+      run: ./tuist-setup.sh --no-open

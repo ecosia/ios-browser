@@ -20,7 +20,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 import Foundation
 import SystemConfiguration
 
@@ -65,14 +64,13 @@ open class Reach {
             return .unknown
         }
 
-        var flags : SCNetworkReachabilityFlags = []
+        var flags: SCNetworkReachabilityFlags = []
         if !SCNetworkReachabilityGetFlags(defaultRouteReachability, &flags) {
             return .unknown
         }
 
         return ReachabilityStatus(reachabilityFlags: flags)
     }
-
 
     func monitorReachabilityChanges() {
         let host = "google.com"
@@ -85,12 +83,10 @@ open class Reach {
             NotificationCenter.default.post(name: .ReachabilityStatusChanged,
                 object: nil,
                 userInfo: ["Status": status.description])
-
             }, &context)
 
         SCNetworkReachabilityScheduleWithRunLoop(reachability, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
     }
-
 }
 
 extension ReachabilityStatus {

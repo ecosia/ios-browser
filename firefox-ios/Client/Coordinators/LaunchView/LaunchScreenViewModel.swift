@@ -85,13 +85,21 @@ class LaunchScreenViewModel {
         var order: [LaunchType] = []
 
         if introScreenManager.shouldShowIntroScreen {
+            // Ecosia: `.videoIntro` is upstream's; `enable-video-intro` is false on every channel in
+            // onboardingFrameworkFeature.yaml, so this never fires here. Reconciled, not removed.
             if introScreenManager.shouldShowVideoIntro {
                 order.append(.videoIntro)
             }
+            /* Ecosia: Present Welcome right after launch screen (intro before ToS)
             if termsOfServiceManager.shouldShowScreen {
                 order.append(.termsOfService(manager: termsOfServiceManager))
             }
             order.append(.intro(manager: introScreenManager))
+             */
+            order.append(.intro(manager: introScreenManager))
+            if termsOfServiceManager.shouldShowScreen {
+                order.append(.termsOfService(manager: termsOfServiceManager))
+            }
         } else if surveySurfaceManager.shouldShowSurveySurface {
             order.append(.survey(manager: surveySurfaceManager))
         }

@@ -82,14 +82,13 @@ class LoginListViewModelTests: XCTestCase {
         )
 
         // Simulate tapping a login cell
-        viewModel.onLoginCellTap(Login(
-            credentials: URLCredential(
-                user: "test",
-                password: "doubletest",
-                persistence: .permanent
-            ),
-            protectionSpace: URLProtectionSpace.fromOrigin("https://test.com")
-        ))
+        viewModel.onLoginCellTap(LoginRecord(fromJSONDict: [
+            "hostname": "https://test.com",
+            "formSubmitUrl": "https://test.com",
+            "username": "test",
+            "password": "doubletest",
+            "id": "test-login"
+        ]))
 
         XCTAssertTrue(didTapLogin)
     }

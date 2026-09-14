@@ -364,7 +364,7 @@ public class PlacesReadConnection {
             return try self.conn.getMostRecentSearchEntriesInHistoryMetadata(limit: limit)
         }
     }
-    
+
     open func queryHistoryMetadata(query: String, limit: Int32) throws -> [HistoryMetadata] {
         return try queue.sync {
             try self.checkApi()
@@ -389,8 +389,7 @@ public class PlacesReadConnection {
     }
 
     open func getVisitUrlsInRange(start: PlacesTimestamp, end: PlacesTimestamp, includeRemote: Bool)
-        throws -> [Url]
-    {
+        throws -> [Url] {
         return try queue.sync {
             try self.checkApi()
             return try self.conn.getVisitedUrlsInRange(start: start, end: end, includeRemote: includeRemote)
@@ -398,8 +397,7 @@ public class PlacesReadConnection {
     }
 
     open func getVisitInfos(start: PlacesTimestamp, end: PlacesTimestamp, excludeTypes: VisitTransitionSet)
-        throws -> [HistoryVisitInfo]
-    {
+        throws -> [HistoryVisitInfo] {
         return try queue.sync {
             try self.checkApi()
             return try self.conn.getVisitInfos(startDate: start, endDate: end, excludeTypes: excludeTypes)
@@ -419,8 +417,7 @@ public class PlacesReadConnection {
         count: Int64,
         excludedTypes: VisitTransitionSet
     )
-        throws -> HistoryVisitInfosWithBound
-    {
+        throws -> HistoryVisitInfosWithBound {
         return try queue.sync {
             try self.checkApi()
             return try self.conn.getVisitPageWithBound(
@@ -437,8 +434,7 @@ public class PlacesReadConnection {
     }
 
     open func getTopFrecentSiteInfos(numItems: Int32, thresholdOption: FrecencyThresholdOption)
-        throws -> [TopFrecentSiteInfo]
-    {
+        throws -> [TopFrecentSiteInfo] {
         return try queue.sync {
             try self.checkApi()
             return try self.conn.getTopFrecentSiteInfos(
@@ -569,8 +565,7 @@ public class PlacesWriteConnection: PlacesReadConnection {
     @discardableResult
     open func createFolder(parentGUID: Guid,
                            title: String,
-                           position: UInt32? = nil) throws -> Guid
-    {
+                           position: UInt32? = nil) throws -> Guid {
         return try queue.sync {
             try self.checkApi()
             let p = position == nil ? BookmarkPosition.append : BookmarkPosition.specific(pos: position ?? 0)
@@ -649,8 +644,7 @@ public class PlacesWriteConnection: PlacesReadConnection {
     open func createBookmark(parentGUID: String,
                              url: String,
                              title: String?,
-                             position: UInt32? = nil) throws -> Guid
-    {
+                             position: UInt32? = nil) throws -> Guid {
         return try queue.sync {
             try self.checkApi()
             let p = position == nil ? BookmarkPosition.append : BookmarkPosition.specific(pos: position ?? 0)
@@ -714,8 +708,7 @@ public class PlacesWriteConnection: PlacesReadConnection {
                                  parentGUID: Guid? = nil,
                                  position: UInt32? = nil,
                                  title: String? = nil,
-                                 url: Url? = nil) throws
-    {
+                                 url: Url? = nil) throws {
         try queue.sync {
             try self.checkApi()
             let data = BookmarkUpdateInfo(
@@ -808,7 +801,7 @@ public class PlacesWriteConnection: PlacesReadConnection {
             )
         }
     }
-    
+
     open func deleteSearchHistoryMetadata() throws {
         try queue.sync {
             try self.checkApi()

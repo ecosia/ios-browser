@@ -27,8 +27,7 @@ public actor OhttpManager {
 
     public init(configUrl: URL,
                 relayUrl: URL,
-                network: @escaping NetworkFunction = URLSession.shared.data)
-    {
+                network: @escaping NetworkFunction = URLSession.shared.data) {
         self.configUrl = configUrl
         self.relayUrl = relayUrl
         self.network = network
@@ -61,8 +60,7 @@ public actor OhttpManager {
         let request = URLRequest(url: url)
         if let (data, response) = try? await network(request),
            let httpResponse = response as? HTTPURLResponse,
-           httpResponse.statusCode == 200
-        {
+           httpResponse.statusCode == 200 {
             return [UInt8](data)
         }
 
@@ -116,8 +114,7 @@ public actor OhttpManager {
         // keys in case the gateway has changed them.
         if let httpResponse = response as? HTTPURLResponse,
            httpResponse.statusCode == 400 ||
-           httpResponse.statusCode == 401
-        {
+           httpResponse.statusCode == 401 {
             invalidateKey(for: configUrl)
         }
 

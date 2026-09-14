@@ -6,6 +6,9 @@ import SwiftUI
 import WidgetKit
 import Combine
 import Common
+// Ecosia: Additional imports for Ecosia framework and suggested sites updates
+import Ecosia
+import Storage
 
 struct TopSitesWidget: Widget {
     private let kind = "Top Sites"
@@ -31,7 +34,12 @@ struct TopSitesView: View {
 
     let entry: TopSitesEntry
 
+    /* Ecosia: `import Ecosia` brings a second `Environment` into scope, so SwiftUI's property
+       wrapper must be qualified. 155.1 added this theme environment value.
     @Environment(\.theme) private var theme
+     */
+    @SwiftUI.Environment(\.theme)
+    private var theme
 
     var body: some View {
         VStack {
@@ -51,12 +59,19 @@ struct TopSitesView: View {
                                          emptyColor: Color(uiColor: theme.colors.layer3).opacity(0.3))
                                 .frame(height: rowSize)
                         } else {
+                            /* Ecosia: Update rectangle and color
                             Rectangle()
                                 .fill(Color.clear)
+                             */
+                            RoundedRectangle(cornerRadius: UX.itemCornerRadius)
+                                .fill(Color.ecosiaBundledColorWithName("TertiaryBackground"))
                                 .frame(height: rowSize)
                                 .overlay {
                                     RoundedRectangle(cornerRadius: UX.itemCornerRadius)
+                                        /* Ecosia: Update color
                                         .fill(Color(uiColor: theme.colors.layer3))
+                                         */
+                                        .fill(Color.ecosiaBundledColorWithName("TertiaryBackground"))
                                         .frame(width: itemSize, height: itemSize)
                                 }
                         }
@@ -66,7 +81,10 @@ struct TopSitesView: View {
             .padding(.all)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        /* Ecosia: Update color
         .widgetBackground(Color(uiColor: theme.colors.layer1))
+         */
+        .widgetBackground(Color.ecosiaBundledColorWithName("PrimaryBackground"))
     }
 
     @ViewBuilder

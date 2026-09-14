@@ -47,6 +47,7 @@ final class TopSitesSettingsViewController: SettingsTableViewController, UserFea
                         )
                     )
                 },
+                /* Ecosia: No sponsored shortcuts in Ecosia; omit the sponsored toggle (MOB-4331).
                 BoolSetting(
                     prefs: profile.prefs,
                     theme: themeManager.getCurrentTheme(for: windowUUID),
@@ -70,14 +71,16 @@ final class TopSitesSettingsViewController: SettingsTableViewController, UserFea
                         self.deleteUserRequest(contextId: contextId)
                     }
                 }
+                 */
             ]
             let toggleSection = SettingSection(title: nil, children: toggleSettings)
             sections.append(toggleSection)
         }
-
+        /* Ecosia: No sponsored row selection in Ecosia; omit the rows number selector (MOB-4331).
         let rowSetting = RowSettings(settings: self)
         let rowSection = SettingSection(title: nil, children: [rowSetting])
         sections.append(rowSection)
+         */
 
         return sections
     }

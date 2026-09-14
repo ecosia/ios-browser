@@ -1,0 +1,24 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import WebKit
+
+public protocol CookieStoreProtocol: Sendable {
+    func allCookies() async -> [HTTPCookie]
+    func setCookie(_ cookie: HTTPCookie) async
+}
+
+extension WKHTTPCookieStore: CookieStoreProtocol {
+    public func allCookies() async -> [HTTPCookie] {
+        await withCheckedContinuation { continuation in
+            getAllCookies { continuation.resume(returning: $0) }
+        }
+    }
+
+    public func setCookie(_ cookie: HTTPCookie) async {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            setCookie(cookie) { continuation.resume() }
+        }
+    }
+}

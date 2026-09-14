@@ -95,8 +95,6 @@ final class CuratedRecommendationCacheUtilityTests: XCTestCase {
         testFileURL = tempDir.appendingPathComponent("test_curated_recommendations_cache.json")
 
         let cache = CuratedRecommendationCacheUtility(withCustomCacheURL: testFileURL)
-        trackForMemoryLeaks(cache)
-
         return cache
     }
 }

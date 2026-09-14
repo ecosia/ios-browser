@@ -95,7 +95,10 @@ let middlewares = [
     TrackerBlockerModuleMiddleware().trackerBlockerModuleProvider,
     HomepageMiddleware(notificationCenter: NotificationCenter.default).homepageProvider,
     QuickAnswersMiddleware().quickAnswersProvider,
+    /* Ecosia: Use Ecosia's start at home middleware to disable the feature
     StartAtHomeMiddleware().startAtHomeProvider,
+    */
+    EcosiaStartAtHomeMiddleware().startAtHomeProvider,
     ShortcutsLibraryMiddleware().shortcutsLibraryProvider,
     SummarizerMiddleware().summarizerProvider,
     TermsOfUseMiddleware().termsOfUseProvider,

@@ -6,10 +6,9 @@ import Foundation
 import Storage
 import MozillaAppServices
 
-final class MockRustFirefoxSuggest: RustFirefoxSuggestProtocol {
+final class MockRustFirefoxSuggest: RustFirefoxSuggestProtocol, @unchecked Sendable {
     func ingest(emptyOnly: Bool) async throws {
     }
-
     func query(
         _ keyword: String,
         providers: [SuggestionProvider],

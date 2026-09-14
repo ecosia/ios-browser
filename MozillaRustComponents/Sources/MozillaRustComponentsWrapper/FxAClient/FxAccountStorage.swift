@@ -21,8 +21,7 @@ class KeyChainAccountStorage {
                                                       forKey: KeyChainAccountStorage.keychainKey)
         if let json = keychainWrapper
             .getKeyValue(key: KeyChainAccountStorage.keychainKey,
-                         accessibility: KeyChainAccountStorage.accessibility)
-        {
+                         accessibility: KeyChainAccountStorage.accessibility) {
             do {
                 return try PersistedFirefoxAccount.fromJSON(data: json)
             } catch {

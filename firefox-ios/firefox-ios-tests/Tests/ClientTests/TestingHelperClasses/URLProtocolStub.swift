@@ -11,7 +11,6 @@ class URLProtocolStub: URLProtocol {
         let error: Error?
     }
 
-    // TODO FXIOS-12605 This global property is not concurrency safe
     nonisolated(unsafe) private static var stub: Stub?
 
     static func stub(data: Data?, response: URLResponse?, error: Error?) {

@@ -9,10 +9,16 @@ import XCTest
 
 @testable import Client
 
-class CreditCardInputViewModelTests: XCTestCase {
+// Ecosia: Synced to upstream v147.5. The previous version drove the view model through a real RustAutofill DB;
+// the credit-card save/update/remove tests crashed writing to it (autofill encryption/Rust). Upstream uses a
+// MockCreditCardProvider spy — deterministic and crash-free. Kept @MainActor + bootstrapDependencies() in setUp
+// (our CreditCardInputViewModel resolves Profile/GleanUsageReportingMetricsService via default args). (MOB-4384)
+@MainActor
+class CreditCardInputViewModelTests: XCTestCase, @unchecked Sendable {
     private var profile: MockProfile!
     private var viewModel: CreditCardInputViewModel!
     private var files: FileAccessor!
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var autofill: MockCreditCardProvider!
     private var encryptionKey: String!
     private var samplePlainTextCard = UnencryptedCreditCardFields(ccName: "Allen Burges",
@@ -23,6 +29,7 @@ class CreditCardInputViewModelTests: XCTestCase {
                                                                   ccType: "VISA")
     override func setUp() {
         super.setUp()
+        DependencyHelperMock().bootstrapDependencies()
         files = MockFiles()
         autofill = MockCreditCardProvider()
         profile = MockProfile()
@@ -33,6 +40,7 @@ class CreditCardInputViewModelTests: XCTestCase {
         viewModel = nil
         profile = nil
         autofill = nil
+        DependencyHelperMock().reset()
         super.tearDown()
     }
 

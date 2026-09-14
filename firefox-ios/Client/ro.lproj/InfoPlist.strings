@@ -8,22 +8,22 @@
 "New Tab" = "Filă nouă";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox îți poate folosi camera pentru scanare de coduri QR și fotografii și videoclipuri.";
+"NSCameraUsageDescription" = "Ecosia îți poate folosi camera pentru scanare de coduri QR și fotografii și videoclipuri.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox are nevoie de Face ID pentru a-ți accesa parolele și metodele de plată salvate.";
+"NSFaceIDUsageDescription" = "Ecosia are nevoie de Face ID pentru a-ți accesa parolele și metodele de plată salvate.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Site-urile web pe care le vizitezi îți pot solicita locația.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Firefox folosește microfonul pentru a înregistra și încărca audio.";
+"NSMicrophoneUsageDescription" = "Ecosia folosește microfonul pentru a înregistra și încărca audio.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Îți permite să salvezi fotografii.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Firefox folosește recunoașterea vocală ca să convertească vocea în text pentru căutare vocală.";
+"NSSpeechRecognitionUsageDescription" = "Ecosia folosește recunoașterea vocală ca să convertească vocea în text pentru căutare vocală.";
 
 /* (No Comment) */
 "Scan QR Code" = "Scanează codul QR";

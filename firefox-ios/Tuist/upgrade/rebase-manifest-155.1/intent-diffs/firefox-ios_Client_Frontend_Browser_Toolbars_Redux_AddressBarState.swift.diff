@@ -1,0 +1,105 @@
+diff --git a/firefox-ios/Client/Frontend/Browser/Toolbars/Redux/AddressBarState.swift b/firefox-ios/Client/Frontend/Browser/Toolbars/Redux/AddressBarState.swift
+index 6c7fb4b341..3dc6b8fc81 100644
+--- a/firefox-ios/Client/Frontend/Browser/Toolbars/Redux/AddressBarState.swift
++++ b/firefox-ios/Client/Frontend/Browser/Toolbars/Redux/AddressBarState.swift
+@@ -3,6 +3,7 @@
+ // file, You can obtain one at http://mozilla.org/MPL/2.0/
+ 
+ import Common
++import Ecosia
+ import Redux
+ import ToolbarKit
+ import SummarizeKit
+@@ -39,6 +40,14 @@ struct AddressBarState: StateType, Sendable, Equatable {
+         a11yLabel: AccessibilityIdentifiers.GeneralizedIdentifiers.back,
+         a11yId: AccessibilityIdentifiers.Browser.UrlBar.cancelButton)
+ 
++    // Ecosia: QR code scanner button for editing mode
++    private static let qrCodeAction = ToolbarActionConfiguration(
++        actionType: .search,
++        iconName: "menu-ScanQRCode",
++        isEnabled: true,
++        a11yLabel: .ScanQRCodeViewTitle,
++        a11yId: "urlBar-scanQRCode")
++
+     private static let cancelEditTextAction = ToolbarActionConfiguration(
+         actionType: .cancelEdit,
+         actionLabel: .CancelString, // Use .AddressToolbar.CancelEditButtonLabel starting v138 (localization)
+@@ -695,13 +704,23 @@ struct AddressBarState: StateType, Sendable, Equatable {
+             lockIconNeedsTheming: state.lockIconNeedsTheming,
+             safeListedURLImageName: state.safeListedURLImageName,
+             isEditing: true,
++            /* Ecosia: Firefox sets shouldShowKeyboard true on location-view text updates.
++               Re-requesting the keyboard after drag-dismiss leaves a gap under the bar;
++               keyboardDidHide clears the flag — preserve state here instead of forcing true.
+             shouldShowKeyboard: true,
++             */
++            shouldShowKeyboard: state.shouldShowKeyboard,
+             shouldSelectSearchTerm: false,
+             isLoading: state.isLoading,
+             readerModeState: state.readerModeState,
+             canSummarize: state.canSummarize,
+             translationConfiguration: state.translationConfiguration,
++            /* Ecosia: Firefox resets didStartTyping so highlight can update the field.
++               Preserve it while the user is typing — resetting mid-keystroke overwrites
++               the text view and drops first responder.
+             didStartTyping: false,
++             */
++            didStartTyping: state.didStartTyping,
+             isEmptySearch: isEmptySearch,
+             alternativeSearchEngine: state.alternativeSearchEngine
+         )
+@@ -988,6 +1007,12 @@ struct AddressBarState: StateType, Sendable, Equatable {
+ 
+         let isShowingNavigationToolbar = action.isShowingNavigationToolbar ?? toolbarState.isShowingNavigationToolbar
+ 
++        // Ecosia: Show back arrow (cancel edit) when editing
++        if isEditing {
++            actions.append(cancelEditAction)
++            return actions
++        }
++
+         if !isShowingNavigationToolbar {
+             // otherwise back/forward and maybe data clearance when navigation toolbar is hidden
+             let canGoBack = action.canGoBack ?? toolbarState.canGoBack
+@@ -1144,8 +1169,8 @@ struct AddressBarState: StateType, Sendable, Equatable {
+         let layout = isLoadAction ? action.toolbarLayout : toolbarState.toolbarLayout
+ 
+         if isEditing {
+-            // cancel button when in edit mode
+-            actions.append(cancelEditTextAction)
++            // Ecosia: Show back arrow on left (cancel button) and QR code on right
++            return [qrCodeAction]
+         }
+ 
+         // In compact only cancel action should be shown
+@@ -1161,7 +1186,12 @@ struct AddressBarState: StateType, Sendable, Equatable {
+         let isShowMenuWarningAction = action.actionType as? ToolbarActionType == .showMenuWarningBadge
+         let showActionWarningBadge = action.showMenuWarningBadge ?? toolbarState.showMenuWarningBadge
+         let showWarningBadge = isShowMenuWarningAction ? showActionWarningBadge : toolbarState.showMenuWarningBadge
++        /* Ecosia: moreHorizontalRoundLarge does not exist in any Ecosia asset catalog,
++           causing the menu button to render with no image on iPad. Use the same custom
++           ellipsis icon as the iPhone navigation bar.
+         let menuIcon = StandardImageIdentifiers.Large.moreHorizontalRound
++         */
++        let menuIcon = "elipsis"
+ 
+         switch layout {
+         case .version1, .none:
+@@ -1229,8 +1259,16 @@ struct AddressBarState: StateType, Sendable, Equatable {
+         return ToolbarActionConfiguration(
+             actionType: .tabs,
+             iconName: StandardImageIdentifiers.Large.tab,
++            /* Ecosia: Replace purple private-mode badge with the Ecosia incognito icon
+             badgeImageName: isPrivateMode ? StandardImageIdentifiers.Medium.privateModeCircleFillPurple : nil,
+             maskImageName: isPrivateMode ? ImageIdentifiers.badgeMask : nil,
++             */
++            badgeImageName: isPrivateMode ? "incognito" : nil,
++            badgeBundle: isPrivateMode ? .ecosia : nil,
++            badgeSize: isPrivateMode ? CGSize(width: 12, height: 12) : nil,
++            badgeXOffset: isPrivateMode ? 6 : nil,
++            badgeYOffset: isPrivateMode ? -4 : nil,
++            maskImageName: nil,
+             numberOfTabs: numberOfTabs,
+             isEnabled: true,
+             largeContentTitle: largeContentTitle,

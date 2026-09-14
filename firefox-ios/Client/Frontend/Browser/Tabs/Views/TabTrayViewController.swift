@@ -125,9 +125,13 @@ final class TabTrayViewController: UIViewController,
 
     private lazy var experimentSegmentControl: TabTraySelectorView = {
         let selectedIndex = experimentConvertSelectedIndex()
+        /* Ecosia: Remove syncedTabs from experiment selector
         let titles = [TabTrayPanelType.privateTabs.label,
                      TabTrayPanelType.tabs.label,
                      TabTrayPanelType.syncedTabs.label]
+        */
+        let titles = [TabTrayPanelType.privateTabs.label,
+                     TabTrayPanelType.tabs.label]
         let selector = TabTraySelectorView(selectedIndex: selectedIndex,
                                            theme: retrieveTheme(),
                                            buttonTitles: titles)
@@ -174,6 +178,7 @@ final class TabTrayViewController: UIViewController,
     }()
 
     var segmentControlItems: [Any] {
+        /* Ecosia: Remove syncedTabs from segmented control
         let iPhoneItems = [
             TabTrayPanelType.tabs.image!.overlayWith(image: countLabel),
             TabTrayPanelType.privateTabs.image!,
@@ -184,6 +189,16 @@ final class TabTrayViewController: UIViewController,
             TabTrayPanelType.tabs.label,
             TabTrayPanelType.privateTabs.label,
             TabTrayPanelType.syncedTabs.label,
+        ]
+        */
+        let iPhoneItems = [
+            TabTrayPanelType.tabs.image!.overlayWith(image: countLabel),
+            TabTrayPanelType.privateTabs.image!
+        ]
+
+        let regularLayoutItems = [
+            TabTrayPanelType.tabs.label,
+            TabTrayPanelType.privateTabs.label,
         ]
 
         return isRegularLayout ? regularLayoutItems : iPhoneItems
@@ -782,6 +797,7 @@ final class TabTrayViewController: UIViewController,
             return
         }
 
+        /* Ecosia: Remove syncedTabs - no sync panel toolbar items needed
         let isSyncTabsPanel = tabTrayState.isSyncTabsPanel
         var toolbarItems: [UIBarButtonItem]
         if tabTrayUtils.shouldDisplayExperimentUI() {
@@ -789,10 +805,18 @@ final class TabTrayViewController: UIViewController,
         } else {
             toolbarItems = isSyncTabsPanel ? bottomToolbarItemsForSync : bottomToolbarItems
         }
+        */
+        let toolbarItems: [UIBarButtonItem]
+        if tabTrayUtils.shouldDisplayExperimentUI() {
+            toolbarItems = experimentBottomToolbarItems
+        } else {
+            toolbarItems = bottomToolbarItems
+        }
         setToolbarItems(toolbarItems, animated: true)
     }
 
     private func setupToolbarForIpad() {
+        /* Ecosia: Remove syncedTabs - no sync panel iPad toolbar
         if tabTrayState.isSyncTabsPanel {
             navigationItem.leftBarButtonItem = nil
             navigationItem.rightBarButtonItems = rightBarButtonItemsForSync
@@ -800,6 +824,9 @@ final class TabTrayViewController: UIViewController,
             navigationItem.leftBarButtonItem = deleteButton
             navigationItem.rightBarButtonItems = [doneButton, fixedSpace, newTabButton]
         }
+        */
+        navigationItem.leftBarButtonItem = deleteButton
+        navigationItem.rightBarButtonItems = [doneButton, fixedSpace, newTabButton]
 
         navigationController?.isToolbarHidden = true
         let toolbarItems = tabTrayState.isSyncTabsPanel ? bottomToolbarItemsForSync : bottomToolbarItems

@@ -1,0 +1,13 @@
+diff --git a/firefox-ios/Client/Frontend/Home/Homepage/Layout/TopSitesSectionLayoutProvider.swift b/firefox-ios/Client/Frontend/Home/Homepage/Layout/TopSitesSectionLayoutProvider.swift
+index 028a72ed70..4e8310a1ee 100644
+--- a/firefox-ios/Client/Frontend/Home/Homepage/Layout/TopSitesSectionLayoutProvider.swift
++++ b/firefox-ios/Client/Frontend/Home/Homepage/Layout/TopSitesSectionLayoutProvider.swift
+@@ -9,6 +9,8 @@ struct TopSitesSectionLayoutProvider {
+     struct UX {
+         static let estimatedCellSize = CGSize(width: 85, height: 94)
+         static let minCards = 4
++        // Ecosia: Cap shortcuts row at 5 tiles to avoid a cramped layout
++        static let maxCards = 5
+     }
+ 
+     @MainActor

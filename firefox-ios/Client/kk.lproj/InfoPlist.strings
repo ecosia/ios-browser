@@ -8,10 +8,10 @@
 "New Tab" = "Жаңа бет";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox сіздің камераңызды QR кодтарын сканерлеу немесе фотосуреттер мен видеоларды түсіру үшін пайдалана алады.";
+"NSCameraUsageDescription" = "Ecosia сіздің камераңызды QR кодтарын сканерлеу немесе фотосуреттер мен видеоларды түсіру үшін пайдалана алады.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Сақталған парольдер мен төлем әдістеріне қол жеткізу үшін Firefox Face ID қажет етеді.";
+"NSFaceIDUsageDescription" = "Сақталған парольдер мен төлем әдістеріне қол жеткізу үшін Ecosia Face ID қажет етеді.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Сіз ашатын веб-сайттар сізден орналасуыңызды сұрауы мүмкін.";
@@ -23,7 +23,7 @@
 "NSPhotoLibraryAddUsageDescription" = "Бұл көмегімен фотоларды сақтауға болады.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Firefox дауыстық іздеу үшін дауысыңызды мәтінге түрлендіру үшін сөйлеуді тануды пайдаланады.";
+"NSSpeechRecognitionUsageDescription" = "Ecosia дауыстық іздеу үшін дауысыңызды мәтінге түрлендіру үшін сөйлеуді тануды пайдаланады.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR кодын сканерлеу";

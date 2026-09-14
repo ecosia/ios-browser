@@ -8,22 +8,22 @@
 "New Tab" = "Nov zavihek";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox lahko z vašo kamero skenira kode QR, fotografira in snema.";
+"NSCameraUsageDescription" = "Ecosia lahko z vašo kamero skenira kode QR, fotografira in snema.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox za dostop do shranjenih gesel in plačilnih sredstev zahteva Face ID.";
+"NSFaceIDUsageDescription" = "Ecosia za dostop do shranjenih gesel in plačilnih sredstev zahteva Face ID.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Spletne strani lahko zahtevajo vašo lokacijo.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Firefox uporablja vaš mikrofon za snemanje in nalaganje zvoka.";
+"NSMicrophoneUsageDescription" = "Ecosia uporablja vaš mikrofon za snemanje in nalaganje zvoka.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "To vam omogoča shranjevati fotografije.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Pri glasovnem iskanju Firefox uporablja prepoznavo govora za pretvarjanje vašega glasu v besedilo.";
+"NSSpeechRecognitionUsageDescription" = "Pri glasovnem iskanju Ecosia uporablja prepoznavo govora za pretvarjanje vašega glasu v besedilo.";
 
 /* (No Comment) */
 "Scan QR Code" = "Skeniraj QR-kodo";

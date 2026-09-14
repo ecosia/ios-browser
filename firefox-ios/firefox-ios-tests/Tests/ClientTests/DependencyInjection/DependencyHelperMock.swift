@@ -16,7 +16,8 @@ final class DependencyHelperMock {
         injectedMicrosurveyManager: MicrosurveyManager? = nil,
         injectedMerinoManager: MerinoManagerProvider? = nil,
         injectedFeatureFlagProvider: FeatureFlagProviding? = nil,
-        injectedUserFeaturePreferences: UserFeaturePreferring? = nil
+        injectedUserFeaturePreferences: UserFeaturePreferring? = nil,
+        themeManager: ThemeManager = MockThemeManager() // Ecosia: Make themeManager injectable
     ) {
         AppContainer.shared.reset()
 
@@ -42,7 +43,7 @@ final class DependencyHelperMock {
         AppContainer.shared.register(service: appSessionProvider as AppSessionProvider)
 
         tabManager = injectedTabManager ?? MockTabManager()
-        AppContainer.shared.register(service: MockThemeManager() as ThemeManager)
+        AppContainer.shared.register(service: themeManager as ThemeManager)
 
         let searchEnginesManager = SearchEnginesManager(
             prefs: profile.prefs,

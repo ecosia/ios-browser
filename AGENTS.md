@@ -1,46 +1,31 @@
-## Global instructions
+# Coding Agent Instructions
 
-- When refactoring existing code, check relevant files for existing tests and update them if necessary.
-- When adding new code, prefer to write easily mockable and testable code, and include tests where applicable.
-- Limit the amount of comments you put in the code to a strict minimum. You should almost never add comments, except sometimes on non-trivial code, function definitions if the arguments aren't self-explanatory, and class definitions and their members.
-- Do not remove existing comments unless they are directly related to what you are changing.
+Ecosia iOS Browser — a fork of Mozilla Firefox iOS with Ecosia customizations layered on top. Swift/SwiftUI, Xcode, MVVM.
+**Build:** Tuist (project generation), Xcode, SwiftLint, webpack (user scripts)
 
-## Repository Structure
+Before any change: determine if the file is Firefox core or Ecosia-owned, and follow the commenting conventions in [firefox-ios/Ecosia/Ecosia.docc/agents/ARCHITECTURE.md](firefox-ios/Ecosia/Ecosia.docc/agents/ARCHITECTURE.md).
 
-This is a monorepo containing three main projects:
+## Documentation
 
-- `firefox-ios/` - Firefox for iOS (main app, scheme: `Fennec`)
-- `focus-ios/` - Firefox Focus for iOS (scheme: `Focus`)
-- `BrowserKit/` - Shared Swift Package mostly used in Firefox
+| When you need… | See |
+| --- | --- |
+| Always / Ask first / Never | [firefox-ios/Ecosia/Ecosia.docc/agents/BOUNDARIES.md](firefox-ios/Ecosia/Ecosia.docc/agents/BOUNDARIES.md) |
+| Bootstrap, build, test, lint commands | [firefox-ios/Ecosia/Ecosia.docc/agents/COMMANDS.md](firefox-ios/Ecosia/Ecosia.docc/agents/COMMANDS.md) |
+| What to do before changing code | [firefox-ios/Ecosia/Ecosia.docc/agents/CONTEXT.md](firefox-ios/Ecosia/Ecosia.docc/agents/CONTEXT.md) |
+| PR naming, commits, code review | [firefox-ios/Ecosia/Ecosia.docc/agents/CODEREVIEW.md](firefox-ios/Ecosia/Ecosia.docc/agents/CODEREVIEW.md) |
+| Firefox fork structure, commenting rules | [firefox-ios/Ecosia/Ecosia.docc/agents/ARCHITECTURE.md](firefox-ios/Ecosia/Ecosia.docc/agents/ARCHITECTURE.md) |
+| Swift style, MVVM, theming, error handling | [firefox-ios/Ecosia/Ecosia.docc/agents/SWIFT.md](firefox-ios/Ecosia/Ecosia.docc/agents/SWIFT.md) |
+| Ecosia.strings, Transifex, localization | [firefox-ios/Ecosia/Ecosia.docc/agents/LOCALIZATION.md](firefox-ios/Ecosia/Ecosia.docc/agents/LOCALIZATION.md) |
+| XCTest, snapshots, mocks | [firefox-ios/Ecosia/Ecosia.docc/agents/TESTING.md](firefox-ios/Ecosia/Ecosia.docc/agents/TESTING.md) |
+| Tuist project generation, new files | [firefox-ios/Ecosia/Ecosia.docc/agents/TUIST.md](firefox-ios/Ecosia/Ecosia.docc/agents/TUIST.md) |
+| Swift Concurrency guide | [.cursor/skills/swift-concurrency/SKILL.md](.cursor/skills/swift-concurrency/SKILL.md) |
 
-## Common Commands
+## Agent skills
 
-### Build & Test
+### Issue tracker
 
-```bash
-# Build for testing (Firefox)
-fxios test
-```
+Issues and specs are tracked locally as markdown under `.scratch/`. See [docs/agents/issue-tracker.md](docs/agents/issue-tracker.md).
 
-### JavaScript User Scripts
+### Domain docs
 
-Needed to be ran whenever we make JavaScript changes.
-
-```bash
-npm run build   # production build
-npm run dev     # watch mode with source maps
-```
-
-### Linting
-
-SwiftLint runs automatically via Xcode build phases on the Client target. Install via `brew install swiftlint`. Configuration is in `.swiftlint.yml`.
-SwiftLint also runs whenever code is pushed to the remote, using hooks.
-
-### Pull requests
-
-Pull requests needs to be opened with the provided `PULL_REQUEST_TEMPLATE`. Update relevant section. 
-GitHub ticket number can be found at the bottom of the JIRA ticket.
-
-## Runbooks
-
-- **Xcode version upgrade.** When bumping the Xcode version used by CI/local builds, follow [docs/xcode-upgrade.md](docs/xcode-upgrade.md).
+Multi-context: a root [CONTEXT-MAP.md](CONTEXT-MAP.md) points to one `CONTEXT.md` per context. See [docs/agents/domain.md](docs/agents/domain.md).

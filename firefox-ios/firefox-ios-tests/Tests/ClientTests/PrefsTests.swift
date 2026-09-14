@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+@testable import Client
 import Foundation
 import Shared
 
@@ -79,25 +80,15 @@ class PrefsTests: XCTestCase {
     }
 
     func testMockProfilePrefsKeys() {
-        guard let prefs = MockProfilePrefs().branch("baz") as? MockProfilePrefs else {
-            return XCTFail("Expected MockProfilePrefs instance from branch 'baz'")
-        }
+        let prefs = MockProfilePrefs().branch("baz") as! MockProfilePrefs
         let val: Timestamp = Date.now()
         prefs.setLong(val, forKey: "foobar")
-        guard let numberValue = prefs.things["baz.foobar"] as? NSNumber else {
-            return XCTFail("Expected NSNumber for key 'baz.foobar'")
-        }
-        XCTAssertEqual(val, numberValue.uint64Value)
+        XCTAssertEqual(val, (prefs.things["baz.foobar"] as! NSNumber).uint64Value)
     }
 
     func testMockProfilePrefsClearAll() {
-        guard let prefs1 = MockProfilePrefs().branch("bar") as? MockProfilePrefs else {
-            return XCTFail("Failed to cast branch 'bar' to MockProfilePrefs")
-        }
-
-        guard let prefs2 = MockProfilePrefs().branch("baz") as? MockProfilePrefs else {
-            return XCTFail("Failed to cast branch 'baz' to MockProfilePrefs")
-        }
+        let prefs1 = MockProfilePrefs().branch("bar") as! MockProfilePrefs
+        let prefs2 = MockProfilePrefs().branch("baz") as! MockProfilePrefs
 
         // Ensure clearing prefs is branch-specific.
         prefs1.setInt(123, forKey: "foo")

@@ -34,7 +34,7 @@ class MockUserDefaultsTests: XCTestCase {
         sut.set(date, forKey: key)
 
         XCTAssertEqual(sut.savedData.count, expectedCount)
-        XCTAssertEqual(sut.savedData[key] as? Date, date)
+        XCTAssertEqual(sut.savedData[key] as! Date, date)
     }
 
     func testMUD_retrievingItem_itemIsDate() {
@@ -42,9 +42,7 @@ class MockUserDefaultsTests: XCTestCase {
         let date = Date()
         sut.set(date, forKey: key)
 
-        guard let actualObject = sut.object(forKey: key) as? Date else {
-            return XCTFail("expected object is not a date")
-        }
+        let actualObject = sut.object(forKey: key) as! Date
 
         XCTAssertEqual(actualObject, date)
     }

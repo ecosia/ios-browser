@@ -1,0 +1,744 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import UIKit
+internal import SnowplowTracker
+
+open class Analytics {
+    private static let abTestSchema = "iglu:org.ecosia/abtest_context/jsonschema/1-0-1"
+    private static let consentSchema = "iglu:org.ecosia/eccc_context/jsonschema/1-0-2"
+    private static let feedbackSchema = "iglu:org.ecosia/ios_feedback_event/jsonschema/1-0-0"
+    static let impactBalanceSchema = "iglu:org.ecosia/impact_balance/jsonschema/1-0-0"
+    private static let abTestRoot = "ab_tests"
+    private static let namespace = "ios_sp"
+    private static let privateNamespace = "ios_sp_anonymous"
+    static let installSchema = "iglu:org.ecosia/ios_install_event/jsonschema/1-0-0"
+    static let userSchema = "iglu:org.ecosia/app_user_state_context/jsonschema/1-0-0"
+    static let inappSearchSchema = "iglu:org.ecosia/inapp_search_event/jsonschema/1-0-1"
+    private static let shouldUseMicroInstanceKey = "shouldUseMicroInstance"
+    public static var shouldUseMicroInstance: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: shouldUseMicroInstanceKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: shouldUseMicroInstanceKey)
+            Analytics.updateTrackerController()
+        }
+    }
+
+    /// Persists the Micro-instance preference without touching `Analytics.shared` (unlike the
+    /// `shouldUseMicroInstance` setter). Use at launch so the tracker is built against Micro during
+    /// its normal lazy init, avoiding premature initialization during startup.
+    public static func persistShouldUseMicroInstance(_ value: Bool) {
+        UserDefaults.standard.set(value, forKey: shouldUseMicroInstanceKey)
+    }
+
+    nonisolated(unsafe) public static var shared = Analytics()
+    private var tracker: TrackerController
+    private var privateTracker: TrackerController
+    private let notificationCenter: AnalyticsUserNotificationCenterProtocol
+
+    internal init(notificationCenter: AnalyticsUserNotificationCenterProtocol = AnalyticsUserNotificationCenterWrapper()) {
+        tracker = Self.makeTracker()
+        privateTracker = Self.makePrivateTracker()
+        self.notificationCenter = notificationCenter
+    }
+
+    internal func track(_ event: SnowplowTracker.Event, isPrivate: Bool = false) {
+        guard User.shared.sendAnonymousUsageData else { return }
+        if let structuredEvent = event as? Structured {
+            appendContextIfNeeded(to: structuredEvent)
+        }
+#if !TESTING
+        _ = (isPrivate ? privateTracker : tracker).track(event)
+#endif
+    }
+
+    private static func updateTrackerController() {
+        Analytics.shared.tracker = makeTracker()
+        Analytics.shared.privateTracker = makePrivateTracker()
+    }
+
+    private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
+        let variant = Unleash.getVariant(toggle).name
+        guard variant != "disabled" else { return nil }
+
+        let variantContext: [String: String] = [toggle.rawValue: variant]
+        let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
+        return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
+    }
+
+    public func reset() {
+        User.shared.analyticsId = .init()
+        tracker = Self.makeTracker()
+        privateTracker = Self.makePrivateTracker()
+    }
+
+    // MARK: App events
+    public func install() {
+        track(SelfDescribing(schema: Self.installSchema,
+                             payload: ["app_v": Bundle.version as NSObject]))
+    }
+
+    public func activity(_ action: Action.Activity) {
+        let event = Structured(category: Category.activity.rawValue,
+                               action: action.rawValue)
+            .label(Analytics.Label.Navigation.inapp.rawValue)
+
+        appendActivityContextIfNeeded(action, event) { [weak self] in
+            self?.track(event)
+        }
+    }
+
+    // MARK: Bookmarks
+    public func bookmarksPerformImportExport(_ property: Property.Bookmarks) {
+        let event = Structured(category: Category.bookmarks.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Bookmarks.importFunctionality.rawValue)
+            .property(property.rawValue)
+        track(event)
+    }
+
+    public func bookmarksEmptyLearnMoreClicked() {
+        let event = Structured(category: Category.bookmarks.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Bookmarks.learnMore.rawValue)
+            .property(Property.Bookmarks.emptyState.rawValue)
+        track(event)
+    }
+
+    public func bookmarksImportEnded(_ property: Property.Bookmarks) {
+        let event = Structured(category: Category.bookmarks.rawValue,
+                               action: Action.Bookmarks.import.rawValue)
+            .label(Label.Bookmarks.import.rawValue)
+            .property(property.rawValue)
+        track(event)
+    }
+
+    // MARK: Braze IAM
+    public func brazeIAM(action: Action.BrazeIAM, messageOrButtonId: String?) {
+        track(Structured(category: Category.brazeIAM.rawValue,
+                         action: action.rawValue)
+            .property(messageOrButtonId))
+    }
+
+    // MARK: Default Browser
+    public func appOpenAsDefaultBrowser() {
+        let event = Structured(category: Category.external.rawValue,
+                               action: Action.receive.rawValue)
+            .label(Label.DefaultBrowser.deeplink.rawValue)
+
+        track(event)
+    }
+
+    public func defaultBrowser(_ action: Action.Promo) {
+        track(Structured(category: Category.browser.rawValue,
+                         action: action.rawValue)
+            .label(Label.DefaultBrowser.promo.rawValue)
+            .property(Property.home.rawValue))
+    }
+
+    public func defaultBrowserSettingsShowsDetailViewVia(_ label: Label.DefaultBrowser) {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.open.rawValue)
+            .label(label.rawValue))
+    }
+
+    public func defaultBrowserSettingsViaNudgeCardDismiss() {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.dismiss.rawValue)
+            .label(Label.DefaultBrowser.settingsNudgeCard.rawValue))
+    }
+
+    public func defaultBrowserSettingsOpenNativeSettingsVia(_ label: Label.DefaultBrowser) {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.click.rawValue)
+            .label(label.rawValue)
+            .property(Property.nativeSettings.rawValue))
+    }
+
+    public func defaultBrowserSettingsDismissDetailViewVia(_ label: Label.DefaultBrowser) {
+        track(Structured(category: Category.browser.rawValue,
+                         action: Action.dismiss.rawValue)
+            .label(label.rawValue)
+            .property(Property.detail.rawValue))
+    }
+
+    // MARK: Menu
+    public func menuClick(_ item: Analytics.Label.Menu) {
+        let event = Structured(category: Category.menu.rawValue,
+                               action: Action.click.rawValue)
+            .label(item.rawValue)
+        track(event)
+    }
+
+    public func menuShare(_ content: Property.ShareContent) {
+        let event = Structured(category: Category.menu.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Menu.share.rawValue)
+            .property(content.rawValue)
+        track(event)
+    }
+
+    public func menuStatus(changed item: Analytics.Label.MenuStatus, to: Bool) {
+        let event = Structured(category: Category.menuStatus.rawValue,
+                               action: Action.click.rawValue)
+            .label(item.rawValue)
+            .value(.init(value: to))
+        track(event)
+    }
+
+    // MARK: Migration
+    public func migration(_ success: Bool) {
+        track(Structured(category: Category.migration.rawValue,
+                         action: success ? Action.success.rawValue : Action.error.rawValue))
+    }
+
+    public func migrationError(in migration: Label.Migration, message: String) {
+        track(Structured(category: Category.migration.rawValue,
+                         action: Action.error.rawValue)
+            .label(migration.rawValue)
+            .property(message))
+    }
+
+    // MARK: Navigation
+    public func navigation(_ action: Action, label: Label.Navigation) {
+        track(Structured(category: Category.navigation.rawValue,
+                         action: action.rawValue)
+            .label(label.rawValue))
+    }
+
+    public func navigationOpenNews(_ id: String) {
+        track(Structured(category: Category.navigation.rawValue,
+                         action: Action.open.rawValue)
+            .label(Label.Navigation.news.rawValue)
+            .property(id))
+    }
+
+    public func navigationChangeMarket(_ new: String) {
+        track(Structured(category: Category.navigation.rawValue,
+                         action: Action.change.rawValue)
+            .label(Label.Navigation.market.rawValue)
+            .property(new))
+    }
+
+    // MARK: NTP
+    public func ntpCustomisation(_ action: Action.NTPCustomization, label: Label.NTP) {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: action.rawValue)
+            .label(label.rawValue))
+    }
+
+    public func ntpTopSite(_ action: Action.TopSite, property: Property.TopSite, position: NSNumber? = nil) {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: action.rawValue)
+            .label(Label.NTP.topSites.rawValue)
+            .property(property.rawValue)
+            .value(position))
+    }
+
+    public func ntpLibraryItem(_ action: Action, property: Property.Library) {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: action.rawValue)
+            .label(Label.NTP.quickActions.rawValue)
+            .property(property.rawValue))
+    }
+
+    public func ntpClimateCounterTapped(_ property: Property.ClimateCounter) {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.NTP.climateCounter.rawValue)
+            .property(property.rawValue))
+    }
+
+    public func ntpSeedCounterExperiment(_ action: Action.SeedCounter, value: NSNumber) {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: action.rawValue)
+            .label(Label.NTP.climateCounter.rawValue)
+            .value(value)
+        )
+    }
+
+    // MARK: Product Tour
+    public func introWelcome(action: Action.Welcome, property: Property.Welcome? = nil) {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: action.rawValue)
+            .label(Label.Onboarding.welcome.rawValue)
+            .property(property?.rawValue)
+        track(event)
+    }
+
+    public func firstSearchCardDismiss() {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.dismiss.rawValue)
+            .label(Label.Onboarding.firstSearchCard.rawValue)
+        track(event)
+    }
+
+    public func firstSearchCardSuggestionClick(pillNumber: Int, languageRegionIdentifier: String) {
+        let event = Structured(category: Category.intro.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.Onboarding.firstSearchCard.rawValue)
+            .property(languageRegionIdentifier)
+            .value(NSNumber(value: pillNumber))
+        track(event)
+    }
+
+    // MARK: Push Notifications Consent
+    func apnConsent(_ action: Action.APNConsent) {
+        let event = Structured(category: Category.pushNotificationConsent.rawValue,
+                               action: action.rawValue)
+            .property(Property.APNConsent.onLaunchPrompt.rawValue)
+        track(event)
+    }
+
+    // MARK: Referrals
+    public func referral(action: Action.Referral, label: Label.Referral? = nil) {
+        track(Structured(category: Category.invitations.rawValue,
+                         action: action.rawValue)
+            .label(label?.rawValue))
+    }
+
+    // MARK: In-App Search
+    public func inappSearch(url: URL, isPrivate: Bool = false) {
+        guard let query = url.getEcosiaSearchQuery() else {
+            return
+        }
+        let payload: [String: Any?] = [
+            "query": query,
+            "page_num": url.getEcosiaSearchPage(),
+            "plt_name": "ios",
+            "plt_v": Bundle.version as NSObject,
+            "search_type": url.getEcosiaSearchVerticalPath()
+        ]
+        track(SelfDescribing(schema: Self.inappSearchSchema,
+                             payload: payload.compactMapValues({ $0 })),
+              isPrivate: isPrivate)
+    }
+
+    // MARK: Settings
+    public func searchbarChanged(to position: String) {
+        track(Structured(category: Category.settings.rawValue,
+                         action: Action.change.rawValue)
+            .label(Label.Settings.toolbar.rawValue)
+            .property(position))
+    }
+
+    public func searchProviderChanged(to engineID: String) {
+        track(Structured(category: Category.settings.rawValue,
+                         action: Action.change.rawValue)
+            .label(Label.Settings.searchProvider.rawValue)
+            .property(engineID))
+    }
+
+    public func toggleAIChatOverviewsSetting(enabled: Bool) {
+        track(Structured(category: Category.settings.rawValue,
+                         action: Action.change.rawValue)
+            .label(Label.Settings.aiOverviews.rawValue)
+            .property(enabled ? Property.enable.rawValue : Property.disable.rawValue))
+    }
+
+    public func sendAnonymousUsageDataSetting(enabled: Bool) {
+        // This is the only place where the tracker should be directly
+        // used since we want to send this just as the user opts out
+        _ = tracker.track(Structured(category: Category.settings.rawValue,
+                                     action: Action.change.rawValue)
+            .label(Label.Settings.analytics.rawValue)
+            .property(enabled ? Property.enable.rawValue : Property.disable.rawValue))
+    }
+
+    public func clearsDataFromSection(_ section: Analytics.Property.SettingsPrivateDataSection) {
+        track(Structured(category: Category.settings.rawValue,
+                         action: Action.click.rawValue)
+            .label(Analytics.Label.Settings.clear.rawValue)
+            .property(section.rawValue))
+    }
+
+    // MARK: Feedback
+
+    public func sendFeedback(_ feedback: String, withType feedbackType: FeedbackType) {
+        let deviceType = UIDevice.current.model
+        let operatingSystem = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
+        let idiom = UIDevice.current.userInterfaceIdiom == .pad ? "iPadOS" : "iOS"
+        let browserVersion = "Ecosia \(idiom) \(Bundle.version)"
+
+        let payload: [String: Any] = [
+            "feedback_type": feedbackType.analyticsIdentfier,
+            "device_type": deviceType,
+            "os": operatingSystem,
+            "browser_version": browserVersion,
+            "feedback_text": feedback
+        ]
+
+        track(SelfDescribing(schema: Self.feedbackSchema,
+                             payload: payload))
+    }
+
+    // MARK: NTP History Button
+
+    public func ntpHistoryButtonTapped() {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.NTP.history.rawValue))
+    }
+
+    // MARK: AI Chat MVP
+
+    public func aiChatNTPButtonTapped() {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: Action.click.rawValue)
+            .label(Analytics.Label.AIChat.cta.rawValue)
+            .property(Analytics.Property.header.rawValue))
+    }
+
+    public func aiChatAutocompleteForQuery(_ text: String) {
+        track(Structured(category: Category.autocomplete.rawValue,
+                         action: Action.click.rawValue)
+            .label(Analytics.Label.AIChat.cta.rawValue)
+            .property(text))
+	}
+
+    // MARK: AI Tools Menu
+
+    /// Sign-in CTA tapped inside the omnibox "AI tools" drawer. The drawer
+    /// currently lives only on the new-tab page, so the category is `new_tab`.
+    public func aiToolsMenuSignInClicked() {
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+            .property(Property.aiToolsMenu.rawValue))
+    }
+
+    /// A chat mode was picked, or the active one cleared, in the omnibox "AI
+    /// tools" drawer.
+    ///
+    /// The tracking plan carries `mode`, `action` and `logged_in` as a single
+    /// JSON object in `se_property` — a structured event has only one string
+    /// property and one numeric value, so the three fields cannot travel as
+    /// separate columns.
+    ///
+    /// Also fires for signed-out users, who can only reach `standard` (the other
+    /// modes are disabled until they sign in); those arrive with `logged_in: false`.
+    public func aiToolsMenuChatModeSelection(mode: OmniboxChatMode,
+                                             action: Property.ChatModeAction,
+                                             isLoggedIn: Bool) {
+        let payload: [String: Any] = [
+            "mode": mode.analyticsIdentifier,
+            "action": action.rawValue,
+            "logged_in": isLoggedIn
+        ]
+        guard let json = Self.jsonProperty(payload) else { return }
+
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.modeSelection.rawValue)
+            .property(json))
+    }
+
+    // MARK: File Upload
+
+    /// User selected a file for omnibox upload (picker confirmation).
+    ///
+    /// `file_type` and `source` travel as JSON in `se_property` — a structured
+    /// event has only one string property.
+    public func fileUploadInitiated(fileType: String,
+                                    source: Property.FileUploadSource = .buttonClick) {
+        let payload: [String: Any] = [
+            "file_type": fileType,
+            "source": source.rawValue
+        ]
+        guard let json = Self.jsonProperty(payload) else { return }
+
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.fileUploadInitiated.rawValue)
+            .property(json))
+    }
+
+    /// File finished loading and uploading and is attached to the omnibox.
+    public func fileUploadCompleted(fileType: String, fileSizeKb: Int) {
+        let payload: [String: Any] = [
+            "file_type": fileType,
+            "file_size_kb": fileSizeKb
+        ]
+        guard let json = Self.jsonProperty(payload) else { return }
+
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.success.rawValue)
+            .label(Label.fileUploadCompleted.rawValue)
+            .property(json))
+    }
+
+    /// Upload failed for a mapped error (`unsupported_format`, `too_large`,
+    /// `parse_failed`, or `timeout`).
+    public func fileUploadFailed(errorType: Property.FileUploadErrorType, fileType: String) {
+        let payload: [String: Any] = [
+            "error_type": errorType.rawValue,
+            "file_type": fileType
+        ]
+        guard let json = Self.jsonProperty(payload) else { return }
+
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.error.rawValue)
+            .label(Label.fileUploadFailed.rawValue)
+            .property(json))
+    }
+
+    /// Prefer the lowercased path extension; fall back to a MIME-derived type
+    /// (PHPicker `suggestedName` often has no extension). `"unknown"` only when
+    /// neither source yields a usable type.
+    public static func fileUploadFileType(fromFileName fileName: String,
+                                          mimeType: String? = nil) -> String {
+        let ext = (fileName as NSString).pathExtension.lowercased()
+        if !ext.isEmpty {
+            return ext == "jpeg" ? "jpg" : ext
+        }
+        return fileUploadFileType(fromMimeType: mimeType) ?? "unknown"
+    }
+
+    /// Maps a MIME type to the `file_type` vocabulary (`jpg`, `png`, `pdf`, …).
+    public static func fileUploadFileType(fromMimeType mimeType: String?) -> String? {
+        guard let mimeType, !mimeType.isEmpty else { return nil }
+        switch mimeType.lowercased() {
+        case "image/jpeg":
+            return "jpg"
+        case "image/png":
+            return "png"
+        case "application/pdf":
+            return "pdf"
+        case "text/plain":
+            return "txt"
+        case "application/msword":
+            return "doc"
+        default:
+            guard let subtype = mimeType.split(separator: "/").last, !subtype.isEmpty else {
+                return nil
+            }
+            let value = String(subtype).lowercased()
+            return value == "jpeg" ? "jpg" : value
+        }
+    }
+
+    /// Rounded kibibyte size for `file_size_kb`.
+    public static func fileUploadSizeKb(byteCount: Int) -> Int {
+        (byteCount + 512) / 1024
+    }
+
+    /// Encodes a multi-field tracking-plan payload for `se_property`.
+    /// `sortedKeys` keeps the emitted string deterministic for tests.
+    private static func jsonProperty(_ payload: [String: Any]) -> String? {
+        guard let data = try? JSONSerialization.data(withJSONObject: payload,
+                                                     options: [.sortedKeys]) else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
+    }
+
+    // MARK: Account Authentication
+
+    public func accountHeaderClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+            .property(Property.header.rawValue)
+        track(event)
+    }
+
+    public func accountSignInCancelled() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+            .property(Property.cancel.rawValue)
+        track(event)
+    }
+
+    public func accountImpactSignUpClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.signUp.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountImpactCloseClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.close.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountImpactCardCtaClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.accountNudgeCard.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountImpactCardDismissClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.dismiss.rawValue)
+            .label(Label.accountNudgeCard.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountProfileClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.profile.rawValue)
+            .property(Property.menu.rawValue)
+        track(event)
+    }
+
+    public func accountSignOutClicked() {
+        let event = Structured(category: Category.account.rawValue,
+                               action: Action.click.rawValue)
+            .label(Label.profile.rawValue)
+            .property(Property.signOut.rawValue)
+        track(event)
+    }
+
+    public func accountProfileViewed() {
+        let event = Structured(category: Category.menu.rawValue,
+                               action: Action.view.rawValue)
+            .label(Label.profile.rawValue)
+            .property(Property.account.rawValue)
+        track(event)
+    }
+
+    public func accountProfileDismissed() {
+        let event = Structured(category: Category.menu.rawValue,
+                               action: Action.dismiss.rawValue)
+            .label(Label.profile.rawValue)
+            .property(Property.account.rawValue)
+        track(event)
+    }
+}
+
+extension Analytics {
+
+    /// Appends common context to all structured events
+    func appendContextIfNeeded(to event: Structured) {
+        addUserSeedCountContext(to: event)
+    }
+
+    /// Appends activity-specific context for launch/resume events
+    func appendActivityContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
+        switch action {
+        case .resume, .launch:
+            addABTestContexts(to: event, toggles: [.brazeIntegration])
+            addCookieConsentContext(to: event)
+            addUserStateContext(to: event, completion: completion)
+        }
+    }
+
+    private func addABTestContexts(to event: Structured, toggles: [Unleash.Toggle.Name]) {
+        toggles.forEach { toggle in
+            if let context = Self.getTestContext(from: toggle) {
+                event.entities.append(context)
+            }
+        }
+    }
+
+    private func addCookieConsentContext(to event: Structured) {
+        if let consentValue = User.shared.cookieConsentValue {
+            let consentContext = SelfDescribingJson(schema: Self.consentSchema,
+                                                    andDictionary: ["cookie_consent": consentValue])
+            event.entities.append(consentContext)
+        }
+    }
+
+    private func addUserStateContext(to event: Structured, completion: @escaping () -> Void) {
+        notificationCenter.getNotificationSettingsProtocol { settings in
+            User.shared.updatePushNotificationUserStateWithAnalytics(from: settings.authorizationStatus)
+            let userContext = SelfDescribingJson(schema: Self.userSchema,
+                                                 andDictionary: User.shared.analyticsUserState.dictionary)
+            event.entities.append(userContext)
+            completion()
+        }
+    }
+
+    private func addUserSeedCountContext(to event: Structured) {
+        // User.shared.seedCount is @MainActor-isolated. Snowplow may invoke track() on a
+        // background thread, so we must not use assumeIsolated unconditionally (it precondition-
+        // crashes on the wrong thread). Instead, sync-hop to main when needed.
+        var seedCount = 0
+        if Thread.isMainThread {
+            seedCount = MainActor.assumeIsolated { User.shared.seedCount }
+        } else {
+            DispatchQueue.main.sync {
+                seedCount = MainActor.assumeIsolated { User.shared.seedCount }
+            }
+        }
+        let consentContext = SelfDescribingJson(schema: Self.impactBalanceSchema,
+                                                andDictionary: ["amount": seedCount])
+        event.entities.append(consentContext)
+    }
+}
+
+extension Analytics {
+
+    /// Creates and configures a new instance of `TrackerController` using Snowplow.
+    ///
+    /// - Returns: A configured `TrackerController` instance, which in non-release builds can either point to mini or micro Snowplow instance.
+    private static func makeTracker() -> TrackerController {
+        let controller = Snowplow.createTracker(namespace: namespace,
+                                                network: makeNetworkConfig(),
+                                                configurations: [
+                                                    Self.trackerConfiguration,
+                                                    Self.subjectConfiguration,
+                                                    Self.appInstallTrackingPluginConfiguration,
+                                                    Self.appResumeDailyTrackingPluginConfiguration])
+        configure(controller, installAutotracking: true)
+        return controller
+    }
+
+    /// Creates and configures a tracker for private browsing.
+    /// Sets userId to an all-zeros UUID so the field is present but carries no identifying value.
+    private static func makePrivateTracker() -> TrackerController {
+        let controller = Snowplow.createTracker(namespace: privateNamespace,
+                                                network: makeNetworkConfig(),
+                                                configurations: [
+                                                    Self.trackerConfiguration,
+                                                    Self.privateSubjectConfiguration,
+                                                    Self.appResumeDailyTrackingPluginConfiguration])
+        configure(controller, installAutotracking: false)
+        return controller
+    }
+
+    private static func configure(_ tracker: TrackerController, installAutotracking: Bool) {
+        tracker.installAutotracking = installAutotracking
+        tracker.screenViewAutotracking = false
+        tracker.lifecycleAutotracking = false
+        tracker.screenEngagementAutotracking = false
+        tracker.exceptionAutotracking = false
+        tracker.diagnosticAutotracking = false
+    }
+
+    /// Factory that builds the `NetworkConfiguration` for the Snowplow tracker, optionally
+    /// including authentication headers when the environment provides Cloudflare credentials.
+    ///
+    /// - Parameters:
+    ///   - environment: The environment to use for resolving the endpoint and authentication.
+    ///                  Defaults to `EcosiaEnvironment.current`. Pass a specific value in tests.
+    /// - Returns: A configured `NetworkConfiguration` object.
+    static func makeNetworkConfig(environment: EcosiaEnvironment = .current) -> NetworkConfiguration {
+        let urlProvider = environment.urlProvider
+        let endpoint = shouldUseMicroInstance ? urlProvider.snowplowMicro : urlProvider.snowplow
+        var networkConfig = NetworkConfiguration(endpoint: endpoint!)
+
+        if let auth = environment.cloudFlareAuth {
+            networkConfig = networkConfig
+                .requestHeaders([
+                    CloudflareKeyProvider.clientId: auth.id,
+                    CloudflareKeyProvider.clientSecret: auth.secret
+                ])
+        }
+
+        return networkConfig
+    }
+}

@@ -6,6 +6,7 @@ import Common
 import UIKit
 import Shared
 import Glean
+import Ecosia
 
 import struct MozillaAppServices.VisitObservation
 
@@ -17,7 +18,11 @@ protocol SettingsFlowDelegate: AnyObject,
                                PrivacySettingsDelegate,
                                AccountSettingsDelegate,
                                AboutSettingsDelegate,
+                               /* Ecosia: Fix "Mail App" button in settings (MOB-4892)
                                SupportSettingsDelegate {
+                               */
+                               SupportSettingsDelegate,
+                               BrowsingSettingsDelegate {
     @MainActor
     func showDevicePassCode()
 
@@ -122,6 +127,12 @@ class AppSettingsTableViewController: SettingsTableViewController,
         tableView.register(cellType: ThemedLearnMoreTableViewCell.self)
         setupNavigationBar()
         configureAccessibilityIdentifiers()
+
+        // Ecosia: Register Nudge Card if needed
+        if User.shared.shouldShowDefaultBrowserSettingNudgeCard {
+            tableView.register(DefaultBrowserSettingsNudgeCardHeaderView.self,
+                               forHeaderFooterViewReuseIdentifier: DefaultBrowserSettingsNudgeCardHeaderView.cellIdentifier)
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -320,6 +331,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
     // MARK: - Generate Settings
 
     override func generateSettings() -> [SettingSection] {
+        /* Ecosia: Replace Firefox settings structure with Ecosia settings
         setupDataSettings()
         var settings = [SettingSection]()
         settings += getDefaultBrowserSetting()
@@ -334,14 +346,40 @@ class AppSettingsTableViewController: SettingsTableViewController,
         }
 
         return settings
+        */
+        var settings = [SettingSection]()
+
+        if User.shared.shouldShowDefaultBrowserSettingNudgeCard {
+            settings += getDefaultBrowserSetting()
+        }
+
+        settings += getSearchSection()
+        settings += getCustomizationSection()
+        settings += getGeneralSettings()
+        settings += getPrivacySettings()
+        settings += getSupportSettings()
+        settings += getAboutSettings()
+
+        if showDebugSettings {
+            settings.append(getEcosiaDebugSupportSection())
+            settings.append(getEcosiaDebugUnleashSection())
+            settings.append(getEcosiaDebugAccountsSection())
+            settings.append(getEcosiaDebugFileUploadSection())
+        }
+
+        return settings
     }
 
     private func getDefaultBrowserSetting() -> [SettingSection] {
+        /* Ecosia: Replace Firefox default browser banner with nudge card placeholder
         let footerTitle = NSAttributedString(
             string: String.FirefoxHomepage.HomeTabBanner.EvergreenMessage.HomeTabBannerDescription)
 
         return [SettingSection(footerTitle: footerTitle,
                                children: [DefaultBrowserSetting(theme: themeManager.getCurrentTheme(for: windowUUID))])]
+        */
+        let placeholder = EcosiaDefaultBrowserNudgeCardPlaceholder()
+        return [SettingSection(children: [placeholder])]
     }
 
     private func getAccountSetting() -> [SettingSection] {
@@ -367,6 +405,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
     }
 
     private func getGeneralSettings() -> [SettingSection] {
+        /* Ecosia: Replace Firefox general settings with Ecosia general settings
         var generalSettings: [Setting] = [
             BrowsingSetting(settings: self, settingsDelegate: parentCoordinator),
             SearchSetting(
@@ -418,9 +457,45 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
         return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
                                children: generalSettings)]
+        */
+        guard let profile else {
+            return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
+                                   children: [
+                                    ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
+                                    SiriPageSetting(settings: self, settingsDelegate: parentCoordinator)
+                                   ])]
+        }
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        let generalSettings: [Setting] = [
+            OpenWithSetting(settings: self, settingsDelegate: parentCoordinator),
+            ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
+            SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
+            BlockPopupSetting(prefs: profile.prefs),
+            NoImageModeSetting(profile: profile),
+            BoolSetting(
+                prefs: profile.prefs,
+                theme: theme,
+                prefKey: "showClipboardBar",
+                defaultValue: false,
+                titleText: .SettingsOfferClipboardBarTitle,
+                statusText: String(format: .SettingsOfferClipboardBarStatus, AppName.shortName.rawValue)
+            ),
+            BoolSetting(
+                prefs: profile.prefs,
+                theme: theme,
+                prefKey: PrefsKeys.ContextMenuShowLinkPreviews,
+                defaultValue: true,
+                titleText: .SettingsShowLinkPreviewsTitle,
+                statusText: .SettingsShowLinkPreviewsStatus
+            )
+        ]
+
+        return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
+                               children: generalSettings)]
     }
 
     private func getPrivacySettings() -> [SettingSection] {
+        /* Ecosia: Replace Firefox privacy settings with Ecosia privacy settings
         var privacySettings = [Setting]()
 
         privacySettings.append(AutofillPasswordSetting(settings: self, settingsDelegate: parentCoordinator))
@@ -458,9 +533,40 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsPrivacyTitle),
                                children: privacySettings)]
+        */
+        let theme = themeManager.getCurrentTheme(for: windowUUID)
+        var privacySettings: [Setting] = [
+            PasswordManagerSetting(settings: self, settingsDelegate: parentCoordinator),
+            ClearPrivateDataSetting(settings: self, settingsDelegate: parentCoordinator),
+        ]
+
+        if let profile {
+            privacySettings.append(EcosiaSendAnonymousUsageDataSetting(prefs: profile.prefs, theme: theme))
+            privacySettings.append(BoolSetting(
+                prefs: profile.prefs,
+                theme: theme,
+                prefKey: PrefsKeys.Settings.closePrivateTabs,
+                defaultValue: PrefsKeysDefaultValues.Settings.closePrivateTabs,
+                titleText: .AppSettingsClosePrivateTabsTitle,
+                statusText: .AppSettingsClosePrivateTabsDescription
+            ) { [weak self] _ in
+                guard let self else { return }
+                let action = TabTrayAction(windowUUID: self.windowUUID,
+                                           actionType: TabTrayActionType.closePrivateTabsSettingToggled)
+                store.dispatch(action)
+            })
+        }
+
+        privacySettings.append(ContentBlockerSetting(settings: self, settingsDelegate: parentCoordinator))
+        privacySettings.append(EcosiaPrivacyPolicySetting(settings: self))
+        privacySettings.append(EcosiaTermsSetting(settings: self))
+
+        return [SettingSection(title: NSAttributedString(string: .AppSettingsPrivacyTitle),
+                               children: privacySettings)]
     }
 
     private func getSupportSettings() -> [SettingSection] {
+        /* Ecosia: Replace Firefox support settings with Ecosia support settings
         var supportSettings = [
             ShowIntroductionSetting(settings: self, settingsDelegate: self),
             SendFeedbackSetting(settingsDelegate: parentCoordinator),
@@ -502,6 +608,29 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsSupport),
                                children: supportSettings)]
+        */
+        var supportSettings: [Setting] = [
+            HelpCenterSetting(),
+            EcosiaSendFeedbackSetting(settings: self)
+        ]
+
+        if let profile, SentryReportingExperiment.isEnabled {
+            // Ecosia: Firefox's own send-crash-reports toggle and strings (neither string is
+            // Mozilla-branded), minus the "Learn More" link - BoolSetting instead of
+            // SendDataSetting, which is `final` and always renders one. Matches Firefox's own
+            // placement under Support. Gated on the Sentry rollout experiment.
+            supportSettings.append(BoolSetting(
+                prefs: profile.prefs,
+                theme: themeManager.getCurrentTheme(for: windowUUID),
+                prefKey: AppConstants.prefSendCrashReports,
+                defaultValue: true,
+                titleText: .SendCrashReportsSettingTitle,
+                statusText: .SendCrashReportsSettingMessageV2
+            ))
+        }
+
+        return [SettingSection(title: NSAttributedString(string: .AppSettingsSupport),
+                               children: supportSettings)]
     }
 
     private func getAboutSettings() -> [SettingSection] {
@@ -509,7 +638,9 @@ class AppSettingsTableViewController: SettingsTableViewController,
             AppStoreReviewSetting(settingsDelegate: parentCoordinator),
             VersionSetting(settingsDelegate: self),
             LicenseAndAcknowledgementsSetting(settingsDelegate: parentCoordinator),
+            /* Ecosia: Remove YourRightsSetting
             YourRightsSetting(settingsDelegate: parentCoordinator)
+            */
         ]
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsAbout),
@@ -652,6 +783,20 @@ class AppSettingsTableViewController: SettingsTableViewController,
     // MARK: - UITableViewDelegate
 
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        // Ecosia: Show nudge card header for default browser section
+        if shouldShowDefaultBrowserNudgeCardInSection(section),
+           let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: DefaultBrowserSettingsNudgeCardHeaderView.cellIdentifier) as? DefaultBrowserSettingsNudgeCardHeaderView {
+            header.configure(theme: themeManager.getCurrentTheme(for: windowUUID))
+            header.onDismiss = { [weak self] in
+                User.shared.hideDefaultBrowserSettingNudgeCard()
+                self?.hideDefaultBrowserNudgeCardInSection(section)
+            }
+            header.onTap = { [weak self] in
+                self?.showDefaultBrowserDetailView()
+            }
+            return header
+        }
+
         guard let headerView = super.tableView(
             tableView,
             viewForHeaderInSection: section

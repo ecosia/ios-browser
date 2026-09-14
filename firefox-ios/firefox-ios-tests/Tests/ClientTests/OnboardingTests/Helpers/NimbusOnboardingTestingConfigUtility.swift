@@ -3,6 +3,11 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import MozillaAppServices
+// Ecosia: Upstream compiles this helper into the Client target, where the Nimbus-generated
+// types (`OnboardingVariant`, `NimbusOnboardingCardData`, `FxNimbus`, ...) are in scope.
+// Ecosia's Tuist globs `firefox-ios-tests/Tests/ClientTests/**` into ClientTests instead, so
+// the file needs an explicit `@testable import Client`.
+@testable import Client
 
 struct NimbusOnboardingTestingConfigUtility {
     struct CardElementNames {

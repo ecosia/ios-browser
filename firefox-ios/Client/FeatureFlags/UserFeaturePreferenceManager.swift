@@ -53,7 +53,13 @@ final class UserFeaturePreferenceManager: UserFeaturePreferring, @unchecked Send
             return false
         // This feature has no nimbus configuration anymore, the default value should be false
         } else if flag == .hntSponsoredShortcuts {
+            /* Ecosia: Sponsored shortcuts are disabled by default; no sponsored tiles on FTE.
+               This decision used to live in `nimbus-features/hntSponsoredShortcutsFeature.yaml`
+               (`enabled: false` on every channel), which upstream deleted in 155.1 in favour of
+               this hardcoded default.
             return true
+            */
+            return false
         } else {
             return backendLayer.checkNimbusConfigFor(flag, with: prefs)
         }

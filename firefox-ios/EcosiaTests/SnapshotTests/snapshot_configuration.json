@@ -1,0 +1,57 @@
+{
+  "locales": [
+    "en",
+    "it",
+    "de",
+    "es",
+    "nl"
+  ],
+  "themes": [
+    "light",
+    "dark"
+  ],
+  "devices": [
+    {
+      "name": "iPhone SE (3rd generation)",
+      "orientation": "portrait"
+    },
+    {
+      "name": "iPhone 16 Pro",
+      "orientation": "portrait",
+      "isDefaultTestDevice": true
+    },
+    {
+      "name": "iPhone 16 Pro Max",
+      "orientation": "landscape"
+    },
+    {
+      "name": "iPad Pro 11-inch (M4)",
+      "orientation": "portrait"
+    }
+  ],
+  "testBundles": [
+    {
+      "name": "EcosiaSnapshotTests",
+      "testClasses": [
+        {
+          "name": "OnboardingTests",
+          "devices": ["all"],
+          "locales": ["all"],
+          "themes": ["light"]
+        },
+        {
+          "name": "HomepageComponentTests",
+          "devices": ["iPhone 16 Pro"],
+          "locales": ["all"],
+          "themes": ["all"]
+        },
+        {
+          "name": "NTPOmniboxUploadDrawerSnapshotTests",
+          "devices": ["iPhone 16 Pro"],
+          "locales": ["all"],
+          "themes": ["all"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+name: SwiftLint
+on:
+  pull_request:
+    branches: [main, 'patch/**', 'develop']
+  push:
+    branches: [tuist-implementation]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/realm/swiftlint:0.63.2
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Keep GITHUB_TOKEN out of .git/config, where later steps could read it.
+          persist-credentials: false
+
+      - name: SwiftLint
+        run: |
+          swiftlint --reporter github-actions-logging --strict

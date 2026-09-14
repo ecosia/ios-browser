@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Ecosia
 
 enum TabTrayPanelType: Int, CaseIterable {
     case tabs
@@ -37,7 +38,10 @@ enum TabTrayPanelType: Int, CaseIterable {
         case .tabs:
             return UIImage(named: StandardImageIdentifiers.Large.tab)
         case .privateTabs:
+            /* Ecosia: Use Ecosia incognito icon instead of Firefox private mode mask
             return UIImage(named: StandardImageIdentifiers.Large.privateMode)
+             */
+            return UIImage(named: "incognito", in: .ecosia, with: nil)
         case .syncedTabs:
             return UIImage(named: StandardImageIdentifiers.Large.syncTabs)
         }
@@ -55,6 +59,7 @@ enum TabTrayPanelType: Int, CaseIterable {
     }
 
     static func getExperimentConvert(index: Int) -> TabTrayPanelType {
+        /* Ecosia: Remove syncedTabs from UI - only 2 panels now
         var panelType: TabTrayPanelType = .tabs
         switch index {
         case 0: panelType = .privateTabs
@@ -63,5 +68,11 @@ enum TabTrayPanelType: Int, CaseIterable {
         default: break
         }
         return panelType
+        */
+        switch index {
+        case 0: return .privateTabs
+        case 1: return .tabs
+        default: return .tabs
+        }
     }
 }

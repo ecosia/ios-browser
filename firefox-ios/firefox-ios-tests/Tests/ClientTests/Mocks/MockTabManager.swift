@@ -52,7 +52,13 @@ class MockTabManager: TabManager {
         return tabs[index]
     }
 
+    // Ecosia: Lets a test pin the tab returned for any web view (AnalyticsSpyTests relies on it).
+    // Ticket 09 took upstream's version of this shared mock, which dropped the hook. Restored
+    // additively — when unset, upstream's lookup is used, so upstream's tests are unaffected.
+    var subscriptedTab: Tab?
+
     subscript(webView: WKWebView) -> Tab? {
+        if let subscriptedTab { return subscriptedTab }
         return tabs.first {
             $0.webView === webView
         }

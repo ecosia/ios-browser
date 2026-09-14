@@ -91,6 +91,10 @@ enum GeneralBrowserActionType: ActionType {
     case showTranslationLanguagePicker
     case showGoogleLensPhotoPicker
     case showGoogleLensCamera
+    // Ecosia: QR code scanner action
+    case showQRCode
+    // Ecosia: History panel action triggered from the NTP toolbar history button
+    case showHistory
 }
 
 struct GeneralBrowserMiddlewareAction: Action {

@@ -400,24 +400,6 @@ final class MerinoProviderTests: XCTestCase, @unchecked Sendable {
     }
 }
 
-extension RecommendationDataItem {
-    static func makeItem(_ name: String) -> RecommendationDataItem {
-        return RecommendationDataItem(
-            corpusItemId: "\(name)",
-            scheduledCorpusItemId: "\(name)",
-            url: "https://\(name).com",
-            title: "\(name)",
-            excerpt: "Excerpt \(name)",
-            publisher: "Publisher \(name)",
-            isTimeSensitive: false,
-            imageUrl: "https://example\(name).com",
-            iconUrl: "https://example\(name).com",
-            tileId: 0,
-            receivedRank: 0
-        )
-    }
-}
-
 extension CuratedRecommendationsResponse {
     static func makeResponse(
         items: [RecommendationDataItem],

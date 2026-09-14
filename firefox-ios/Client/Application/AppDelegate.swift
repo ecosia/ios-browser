@@ -9,6 +9,7 @@ import Common
 import Glean
 import TabDataStore
 import TipKit
+import Ecosia
 
 import class MozillaAppServices.Viaduct
 import struct MozillaAppServices.RustAdsClient
@@ -30,7 +31,10 @@ class AppDelegate: UIResponder,
         files: profile.files
     )
 
+    /* Ecosia: Use EcosiaThemeManager
     lazy var themeManager: ThemeManager = DefaultThemeManager(
+    */
+    lazy var themeManager: ThemeManager = EcosiaThemeManager(
         sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
         isNovaDesignOnClosure: { self.featureFlagsProvider.isEnabled(.novaDesign) }
     )
@@ -50,6 +54,8 @@ class AppDelegate: UIResponder,
     private var shutdownWebServer: DispatchSourceTimer?
     private var webServerUtil: WebServerUtil?
     private var appLaunchUtil: AppLaunchUtil?
+    // Ecosia: Searches counter
+    private let searchesCounter = SearchesCounter()
     private var backgroundWorkUtility: BackgroundFetchAndProcessingUtility?
     private var suggestBackgroundUtility: BackgroundFirefoxSuggestIngestUtility?
     private var suggestBackgroundTaskID: UIBackgroundTaskIdentifier = .invalid
@@ -66,11 +72,34 @@ class AppDelegate: UIResponder,
         willFinishLaunchingWithOptions
         launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // Ecosia: Let acceptance tests route analytics to the Snowplow Micro instance from the first
+        // event (install/launch/resume). Persisted (not set) so it survives terminate/activate and
+        // doesn't create Analytics.shared before dependencies are ready. Staging-only.
+        if ProcessInfo.processInfo.arguments.contains(LaunchArguments.UseSnowplowMicroInstance),
+           EcosiaEnvironment.current == .staging {
+            Analytics.persistShouldUseMicroInstance(true)
+        }
+
         shareTelemetry.recordOpenDeeplinkTime()
         // Configure app information for BrowserKit, needed for logger
         BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
                                                nightlyAppVersion: AppConstants.nightlyAppVersion,
+                                               /* Ecosia: added environmentName and dsn args below
                                                sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+                                                */
+                                               sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
+                                               // Ecosia: Tag Sentry events with Ecosia's own staging/production environment.
+                                               environmentName: EcosiaEnvironment.current.sentryTag,
+                                               // Ecosia: Only supply a DSN for beta/release builds, so local Debug/Testing
+                                               // builds never report to Sentry at all — same intent the CHANNEL xcconfig
+                                               // entries already express for those configs.
+                                               dsn: [.beta, .release].contains(AppConstants.buildChannel)
+                                                   ? EcosiaEnvironment.current.urlProvider.sentryDSN : nil)
+        // Ecosia: Register URLProvider domains that need Ecosia's desktop UA.
+        UserAgent.configureEcosiaDesktopUserAgentDomains([
+            URLProvider.production.domain,
+            URLProvider.staging.domain
+        ])
 
         // Set-up Rust network stack. Note that this has to be called
         // before any Application Services component gets used.
@@ -86,8 +115,14 @@ class AppDelegate: UIResponder,
             .preLaunchDependenciesComplete,
             .postLaunchDependenciesComplete,
             .accountManagerInitialized,
-            .browserIsReady
+            .browserIsReady,
+            // Ecosia: Add Feature Management dependency
+            .featureManagementInitialized
         ])
+
+        // Ecosia: Hydrate Unleash from disk before DI bootstrap so flags are readable when
+        // SearchEnginesManager picks its engine provider (network refresh still runs later).
+        Unleash.loadCachedModelIfNeeded()
 
         // Then setup dependency container as it's needed for everything else
         DependencyHelper().bootstrapDependencies()
@@ -132,9 +167,46 @@ class AppDelegate: UIResponder,
 
         if let firefoxSuggest = profile.firefoxSuggest {
             suggestBackgroundUtility = BackgroundFirefoxSuggestIngestUtility(firefoxSuggest: firefoxSuggest)
+		}
+        // Ecosia: Update EcosiaInstallType if needed. This should always happen before `FeatureManagement`
+        // so that versionOnInstall and install type are available as Unleash context properties.
+        EcosiaInstallType.evaluateCurrentEcosiaInstallType()
+
+        /*
+         Ecosia: Feature Management fetch
+         We perform the same configuration retrieval in
+         `applicationDidBecomeActive(:)` and sounds redundant;
+         However we need it here to make sure we retrieve the latest
+         flag state of the EngagementService.
+         Decouple the "loading" only from the filesystem of any
+         previously saved Model from the `Unleash.start(:)` will not
+         make any tangible difference in the process as we check if
+         any cached version of the Model is in place.
+         */
+        /* Ecosia: Pinned to the main actor so the engine reconfiguration below can touch
+           `searchEnginesManager`.
+        Task {
+        */
+        Task { @MainActor in
+            await FeatureManagement.fetchConfiguration()
+            // Ecosia: Swap search engine provider if Unleash refresh changed the custom provider flag.
+            searchEnginesManager.reconfigureEngineProviderIfNeeded()
+            // Signal that feature management initialization is complete on main thread
+            AppEventQueue.signal(event: .featureManagementInitialized)
+            // Ecosia: Braze Service Initialization after feature flags are fetched for conditional initialization
+            BrazeService.shared.initialize()
+            // Ecosia: Sentry setup is gated by Unleash, so it only runs once this fetch resolves.
+            appLaunchUtil?.setUpCrashReportingIfEnabled()
+            // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
+            ecosiaTrackLaunchActivity()
         }
 
         metricKitWrapper.beginObservingMXPayloads()
+
+        // Ecosia: fetching statistics before they are used
+        Task.detached {
+            try? await Statistics.shared.fetchAndUpdate()
+        }
 
         let topSitesProvider = TopSitesProviderImplementation(
             placesFetcher: profile.places,
@@ -149,6 +221,9 @@ class AppDelegate: UIResponder,
         }
 
         addObservers()
+
+        // Ecosia: Send the install event. It happens only once per App install.
+        ecosiaTrackInstall()
 
         /// Prewarm translation resources off the main thread
         /// This will fetch the translator WASM and model attachments for the device language.
@@ -214,6 +289,11 @@ class AppDelegate: UIResponder,
         }
 
         prefetchMerinoStories()
+
+        // Ecosia: Foreground analytics + MMP, extracted into a testable unit so unit tests can verify
+        // it without driving the rest of applicationDidBecomeActive. (MOB-4384)
+        ecosiaTrackBecomeActiveLifecycle()
+
         updateWallpaperMetadata()
         loadBackgroundTabs()
         ingestFirefoxSuggestions(in: application)
@@ -221,6 +301,48 @@ class AppDelegate: UIResponder,
         logger.log("applicationDidBecomeActive end",
                    level: .info,
                    category: .lifecycle)
+    }
+
+    // MARK: - Ecosia lifecycle analytics (extracted for unit testing)
+    //
+    // Ecosia: These wrap the analytics / MMP work fired on launch and foreground. They are extracted
+    // into named methods so EcosiaTests (AppDelegateMMPIntegrationTests, AnalyticsSpyTests) can verify
+    // the tracking DIRECTLY, instead of driving the whole application(_:didFinishLaunchingWithOptions:)
+    // / applicationDidBecomeActive(_:). Driving the full lifecycle in the shared app-hosted test
+    // process registers BGTasks (re-registration assertion crash), starts a web server, loads
+    // background tabs and writes PageStore/User files on shared queues — which intermittently
+    // crash/contaminate other tests. Production calls these from the real lifecycle methods, so
+    // behaviour is unchanged. (MOB-4384)
+
+    /// Ecosia: Records the app-launch activity event. Called inside the post-FeatureManagement Task in
+    /// `application(_:didFinishLaunchingWithOptions:)` so feature flags are in the analytics context.
+    func ecosiaTrackLaunchActivity() {
+        Analytics.shared.activity(.launch)
+    }
+
+    /// Ecosia: Records the one-time install event (fired once per app install).
+    func ecosiaTrackInstall() {
+        Analytics.shared.install()
+    }
+
+    /// Ecosia: Foreground (becomeActive) analytics + MMP — refreshes feature flags then records the
+    /// resume activity, sends the MMP session, and subscribes to search-count milestones.
+    func ecosiaTrackBecomeActiveLifecycle() {
+        // Refresh flags on foreground (no-op if the cache is fresh), then record resume so the flags
+        // are in the analytics context.
+        Task { @MainActor in
+            await FeatureManagement.fetchConfiguration()
+            // A refresh can change the search provider flag or its router payload.
+            searchEnginesManager.reconfigureEngineProviderIfNeeded()
+            Analytics.shared.activity(.resume)
+            // Ecosia: Also re-check here — Sentry setup is a no-op once already enabled, so this just
+            // catches the case where it wasn't enabled yet at launch (e.g. flag flipped ON since).
+            appLaunchUtil?.setUpCrashReportingIfEnabled()
+        }
+        MMP.sendSession()
+        searchesCounter.subscribe(self) { searchCount in
+            MMP.handleSearchEvent(searchCount)
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

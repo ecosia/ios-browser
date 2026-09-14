@@ -8,10 +8,10 @@
 "New Tab" = "Pestanya nova";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "El Firefox pot usar la càmera per a escanejar codis QR o fer fotos i vídeos.";
+"NSCameraUsageDescription" = "El Ecosia pot usar la càmera per a escanejar codis QR o fer fotos i vídeos.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "El Firefox necessita el Face ID per accedir a les contrasenyes i formes de pagament que heu desat.";
+"NSFaceIDUsageDescription" = "El Ecosia necessita el Face ID per accedir a les contrasenyes i formes de pagament que heu desat.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Els llocs web que visiteu poden sol·licitar la vostra ubicació.";
@@ -23,7 +23,7 @@
 "NSPhotoLibraryAddUsageDescription" = "Això permet desar fotos.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Mitjançant el reconeixement de veu, el Firefox converteix la vostra veu en text per a les cerques per veu.";
+"NSSpeechRecognitionUsageDescription" = "Mitjançant el reconeixement de veu, el Ecosia converteix la vostra veu en text per a les cerques per veu.";
 
 /* (No Comment) */
 "Scan QR Code" = "Escaneja un codi QR";

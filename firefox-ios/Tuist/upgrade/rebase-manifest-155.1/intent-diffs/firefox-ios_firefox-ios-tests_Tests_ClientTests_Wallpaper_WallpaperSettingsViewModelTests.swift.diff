@@ -1,0 +1,228 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Wallpaper/WallpaperSettingsViewModelTests.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Wallpaper/WallpaperSettingsViewModelTests.swift
+index 2f44e23da0..a8d30be8b9 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Wallpaper/WallpaperSettingsViewModelTests.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Wallpaper/WallpaperSettingsViewModelTests.swift
+@@ -10,19 +10,18 @@ import XCTest
+ @testable import Client
+ 
+ @MainActor
+-final class WallpaperSettingsViewModelTests: XCTestCase {
++class WallpaperSettingsViewModelTests: XCTestCase {
+     private var wallpaperManager: WallpaperManagerInterface!
+ 
+-    override func setUp() async throws {
+-        try await super.setUp()
+-
++    override func setUp() {
++        super.setUp()
+         wallpaperManager = WallpaperManagerMock()
+         addWallpaperCollections()
+     }
+ 
+-    override func tearDown() async throws {
++    override func tearDown() {
+         wallpaperManager = nil
+-        try await super.tearDown()
++        super.tearDown()
+     }
+ 
+     func testInit_hasDefaultLayout() {
+@@ -34,50 +33,135 @@ final class WallpaperSettingsViewModelTests: XCTestCase {
+     func testUpdateSectionLayout_hasRegularLayout() {
+         let subject = createSubject()
+         let expectedLayout: WallpaperSettingsViewModel.WallpaperSettingsLayout = .regular
+-
+         let landscapeTrait = MockTraitCollection(verticalSizeClass: .compact).getTraitCollection()
+-
+         subject.updateSectionLayout(for: landscapeTrait)
+-
+         XCTAssertEqual(subject.sectionLayout, expectedLayout)
+     }
+ 
+     func testNumberOfSections() {
+         let subject = createSubject()
+-
+         XCTAssertEqual(subject.numberOfSections, 2)
+     }
+ 
+     func testNumberOfItemsInSection() {
+         let subject = createSubject()
+-
+         XCTAssertEqual(subject.numberOfWallpapers(in: 0),
+                        wallpaperManager.availableCollections[safe: 0]?.wallpapers.count)
+-
+         XCTAssertEqual(subject.numberOfWallpapers(in: 1),
+                        wallpaperManager.availableCollections[safe: 1]?.wallpapers.count)
+     }
+ 
+-    func testSectionHeaderViewModel_defaultCollectionWithoutLinkAndDescription() {
++    // Ecosia: Test collection without description shows no description
++    func testSectionHeaderViewModel_defaultCollectionWithoutDescription() {
+         let subject = createSubject()
+         let headerViewModel = subject.sectionHeaderViewModel(for: 0) {
+         }
+-
+         XCTAssertNotNil(headerViewModel?.title)
+         XCTAssertNil(headerViewModel?.description)
+         XCTAssertNil(headerViewModel?.buttonTitle)
+     }
+ 
+-    func testSectionHeaderViewModel_limitedCollectionWithLinkAndDescription() {
++    // Ecosia: Test collection with learn-more URL shows button
++    func testSectionHeaderViewModel_collectionWithLearnMoreURL() {
+         let subject = createSubject()
+         let headerViewModel = subject.sectionHeaderViewModel(for: 1) {
+         }
++        XCTAssertNotNil(headerViewModel?.buttonTitle)
++    }
++
++    // Ecosia: Test that heading and description are used when available
++    func testSectionHeaderViewModel_usesJSONHeadingAndDescription() {
++        guard let mockManager = wallpaperManager as? WallpaperManagerMock else { return }
+ 
++        let customDescription = "Beautiful nature wallpapers"
++        let wallpapers = [Wallpaper(id: "test",
++                                    textColor: .green,
++                                    cardColor: .green,
++                                    logoTextColor: .green)]
++
++        mockManager.mockAvailableCollections.append(
++            WallpaperCollection(
++                id: "custom-collection",
++                learnMoreURL: "https://ecosia.org",
++                availableLocales: nil,
++                availability: nil,
++                wallpapers: wallpapers,
++                description: customDescription,
++                heading: "Abstract Nature")
++        )
++
++        let subject = createSubject()
++        let headerViewModel = subject.sectionHeaderViewModel(for: 2) {
++        }
+         XCTAssertNotNil(headerViewModel?.title)
+         XCTAssertNotNil(headerViewModel?.description)
+         XCTAssertNotNil(headerViewModel?.buttonTitle)
+     }
+ 
++    // Ecosia: Test that heading can be shown independently without description
++    func testSectionHeaderViewModel_headingWithoutDescription() {
++        guard let mockManager = wallpaperManager as? WallpaperManagerMock else { return }
++
++        let wallpapers = [Wallpaper(id: "test",
++                                    textColor: .green,
++                                    cardColor: .green,
++                                    logoTextColor: .green)]
++
++        mockManager.mockAvailableCollections.append(
++            WallpaperCollection(
++                id: "heading-only-collection",
++                learnMoreURL: "https://ecosia.org",
++                availableLocales: nil,
++                availability: nil,
++                wallpapers: wallpapers,
++                description: nil,
++                heading: "Ecosia Projects")
++        )
++
++        let subject = createSubject()
++        let headerViewModel = subject.sectionHeaderViewModel(for: 2) {
++        }
++        XCTAssertNotNil(headerViewModel?.title)
++        XCTAssertNil(headerViewModel?.description)
++    }
++
++    // Ecosia: Test that description can be shown independently without heading
++    func testSectionHeaderViewModel_descriptionWithoutHeading() {
++        guard let mockManager = wallpaperManager as? WallpaperManagerMock else { return }
++
++        let customDescription = "Lorem ipsum dolor sit amet"
++        let wallpapers = [Wallpaper(id: "test",
++                                    textColor: .green,
++                                    cardColor: .green,
++                                    logoTextColor: .green)]
++
++        mockManager.mockAvailableCollections.append(
++            WallpaperCollection(
++                id: "description-only-collection",
++                learnMoreURL: "https://ecosia.org",
++                availableLocales: nil,
++                availability: nil,
++                wallpapers: wallpapers,
++                description: customDescription,
++                heading: nil)
++        )
++
++        let subject = createSubject()
++        let headerViewModel = subject.sectionHeaderViewModel(for: 2) {
++        }
++        XCTAssertNotNil(headerViewModel?.title)
++        XCTAssertNotNil(headerViewModel?.description)
++    }
++
++    // Ecosia: Test that no description is shown when it is nil
++    func testSectionHeaderViewModel_noDescriptionWhenNil() {
++        let subject = createSubject()
++        let headerViewModel = subject.sectionHeaderViewModel(for: 0) {
++        }
++        XCTAssertNotNil(headerViewModel?.title)
++        XCTAssertNil(headerViewModel?.description)
++    }
++
+     func testDownloadAndSetWallpaper_downloaded_wallpaperIsSet() {
+         guard let mockManager = wallpaperManager as? WallpaperManagerMock else { return }
+         let subject = createSubject()
+@@ -89,26 +173,11 @@ final class WallpaperSettingsViewModelTests: XCTestCase {
+         }
+     }
+ 
+-//    func testClickingCell_recordsWallpaperChange() {
+-//        wallpaperManager = WallpaperManager()
+-//        let subject = createSubject()
+-//
+-//        let expectation = self.expectation(description: "Download and set wallpaper")
+-//        subject.downloadAndSetWallpaper(at: IndexPath(item: 0, section: 0)) { _ in
+-//            self.testEventMetricRecordingSuccess(metric: GleanMetrics.WallpaperAnalytics.wallpaperSelected)
+-//            expectation.fulfill()
+-//        }
+-//
+-//        waitForExpectations(timeout: 5, handler: nil)
+-//    }
+-
+     func createSubject() -> WallpaperSettingsViewModel {
+-        let subject = WallpaperSettingsViewModel(
+-            wallpaperManager: wallpaperManager,
+-            tabManager: MockTabManager(),
+-            theme: LightTheme(),
+-            windowUUID: .XCTestDefaultUUID
+-        )
++        let subject = WallpaperSettingsViewModel(wallpaperManager: wallpaperManager,
++                                                 tabManager: MockTabManager(),
++                                                 theme: LightTheme(),
++                                                 windowUUID: WindowUUID())
+         trackForMemoryLeaks(subject)
+         return subject
+     }
+@@ -122,14 +191,12 @@ final class WallpaperSettingsViewModelTests: XCTestCase {
+                                         textColor: .green,
+                                         cardColor: .green,
+                                         logoTextColor: .green))
+-
+             for _ in 0..<4 {
+                 wallpapers.append(Wallpaper(id: "fxAmethyst",
+                                             textColor: .red,
+                                             cardColor: .red,
+                                             logoTextColor: .red))
+             }
+-
+             return wallpapers
+         }
+ 
+@@ -141,7 +208,6 @@ final class WallpaperSettingsViewModelTests: XCTestCase {
+                                             cardColor: .purple,
+                                             logoTextColor: .purple))
+             }
+-
+             return wallpapers
+         }
+ 

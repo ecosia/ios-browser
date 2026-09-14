@@ -1,5 +1,5 @@
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.BetterInternet.Description.v108" = "Firefox ᱫᱚ ᱟᱢᱟᱜ ᱢᱩᱞ ᱵᱽᱨᱟᱣᱡᱚᱨ ᱞᱮᱠᱷᱟ ᱛᱮ ᱫᱚᱦᱚ ᱫᱚ ᱠᱷᱩᱞᱟᱹ, ᱟᱫᱮᱨ ᱫᱟᱲᱮᱭᱟᱜ ᱞᱮᱠᱷᱟ ᱤᱱᱴᱚᱨᱱᱮᱴ ᱞᱟᱹᱜᱤᱫ ᱢᱤᱫᱴᱟᱝ ᱣᱚᱴ ᱞᱮᱠᱷᱟ ᱠᱟᱱᱟ ᱾";
+"DefaultBrowserCard.BetterInternet.Description.v108" = "Ecosia ᱫᱚ ᱟᱢᱟᱜ ᱢᱩᱞ ᱵᱽᱨᱟᱣᱡᱚᱨ ᱞᱮᱠᱷᱟ ᱛᱮ ᱫᱚᱦᱚ ᱫᱚ ᱠᱷᱩᱞᱟᱹ, ᱟᱫᱮᱨ ᱫᱟᱲᱮᱭᱟᱜ ᱞᱮᱠᱷᱟ ᱤᱱᱴᱚᱨᱱᱮᱴ ᱞᱟᱹᱜᱤᱫ ᱢᱤᱫᱴᱟᱝ ᱣᱚᱴ ᱞᱮᱠᱷᱟ ᱠᱟᱱᱟ ᱾";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.BetterInternet.Title.v108" = "ᱢᱤᱫᱴᱟᱝ ᱵᱮᱥ ᱤᱱᱴᱚᱨᱱᱮᱴ ᱞᱟᱹᱜᱤᱫ ᱢᱩᱞ ᱞᱮᱠᱷᱟ ᱫᱚᱦᱚᱭ ᱢᱮ";
@@ -8,19 +8,19 @@
 "DefaultBrowserCard.Button.v2" = "ᱪᱮᱫᱢᱮ ᱚᱠᱟᱞᱠᱟ";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Description" = "ᱞᱤᱱᱠ ᱠᱚ ᱥᱟᱡᱟᱣ ᱢᱮ ᱣᱮᱵᱥᱟᱭᱤᱴ, ᱤᱢᱮᱞ, ᱟᱨ ᱢᱮᱥᱮᱡ ᱠᱷᱚᱱ Firefox ᱨᱮ ᱟᱪᱛᱮ ᱡᱷᱤᱜ ᱞᱚᱜᱤᱛ.";
+"DefaultBrowserCard.Description" = "ᱞᱤᱱᱠ ᱠᱚ ᱥᱟᱡᱟᱣ ᱢᱮ ᱣᱮᱵᱥᱟᱭᱤᱴ, ᱤᱢᱮᱞ, ᱟᱨ ᱢᱮᱥᱮᱡ ᱠᱷᱚᱱ Ecosia ᱨᱮ ᱟᱪᱛᱮ ᱡᱷᱤᱜ ᱞᱚᱜᱤᱛ.";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.NextLevel.Description.v108" = "ᱛᱮᱡᱽ, ᱨᱩᱠᱷᱤᱭᱟᱹ, ᱟᱨ ᱱᱤᱥᱚᱱ ᱟᱡ ᱛᱮ ᱫᱚᱦᱚ ᱪᱷᱚ ᱞᱟᱹᱜᱤᱫ Firefox ᱫᱚ ᱢᱩᱞ ᱵᱽᱨᱟᱣᱡᱚᱨ ᱞᱮᱠᱷᱟ ᱵᱟᱪᱷᱟᱣ ᱢᱮ ᱾";
+"DefaultBrowserCard.NextLevel.Description.v108" = "ᱛᱮᱡᱽ, ᱨᱩᱠᱷᱤᱭᱟᱹ, ᱟᱨ ᱱᱤᱥᱚᱱ ᱟᱡ ᱛᱮ ᱫᱚᱦᱚ ᱪᱷᱚ ᱞᱟᱹᱜᱤᱫ Ecosia ᱫᱚ ᱢᱩᱞ ᱵᱽᱨᱟᱣᱡᱚᱨ ᱞᱮᱠᱷᱟ ᱵᱟᱪᱷᱟᱣ ᱢᱮ ᱾";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.NextLevel.Title.v108" = "ᱫᱤᱱ ᱨᱮᱭᱟᱜ ᱵᱽᱨᱟᱣᱡᱤᱝ ᱠᱟᱹᱢᱤ ᱠᱚ ᱵᱚᱰᱷᱟᱣ ᱢᱮ";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Firefox ᱫᱚ ᱢᱩᱴ 3,000+ ᱜᱟᱱ ᱯᱟᱧᱡᱟ ᱫᱟᱱᱟᱲ ᱢᱤᱫ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱯᱤᱪᱷᱟᱹ ᱡᱷᱚᱛᱚ ᱪᱟᱱᱫᱚ ᱵᱟᱹᱰ ᱮᱫ ᱠᱚᱣᱟᱭ ᱾ ᱯᱨᱟᱭᱣᱮᱥᱤ ᱥᱟᱱᱛ ᱢᱚᱱᱮ ᱞᱟᱹᱜᱤᱫ ᱞᱮ ᱫᱚ ᱟᱢᱟᱜ ᱢᱩᱞ ᱵᱽᱨᱟᱣᱩᱡᱚᱨ ᱞᱮᱠᱷᱟ ᱦᱟᱛᱟᱣ ᱞᱮᱢ ᱾";
+"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Ecosia ᱫᱚ ᱢᱩᱴ 3,000+ ᱜᱟᱱ ᱯᱟᱧᱡᱟ ᱫᱟᱱᱟᱲ ᱢᱤᱫ ᱵᱮᱵᱷᱟᱨᱤᱭᱟᱹ ᱯᱤᱪᱷᱟᱹ ᱡᱷᱚᱛᱚ ᱪᱟᱱᱫᱚ ᱵᱟᱹᱰ ᱮᱫ ᱠᱚᱣᱟᱭ ᱾ ᱯᱨᱟᱭᱣᱮᱥᱤ ᱥᱟᱱᱛ ᱢᱚᱱᱮ ᱞᱟᱹᱜᱤᱫ ᱞᱮ ᱫᱚ ᱟᱢᱟᱜ ᱢᱩᱞ ᱵᱽᱨᱟᱣᱩᱡᱚᱨ ᱞᱮᱠᱷᱟ ᱦᱟᱛᱟᱣ ᱞᱮᱢ ᱾";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Firefox ᱫᱚ ᱯᱨᱟᱭᱣᱮᱥᱤ ᱯᱩᱨᱟᱹᱣ ᱪᱷᱚ ᱠᱮᱜᱼᱟᱭ";
+"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Ecosia ᱫᱚ ᱯᱨᱟᱭᱣᱮᱥᱤ ᱯᱩᱨᱟᱹᱣ ᱪᱷᱚ ᱠᱮᱜᱼᱟᱭ";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.Title" = "ᱟᱢᱟᱜ ᱢᱩᱞ ᱯᱟᱱᱛᱮᱭᱟᱜ ᱵᱚᱫᱚᱞ ᱢᱮ";
@@ -35,7 +35,7 @@
 "DefaultBrowserOnboarding.Description2" = "2. ᱢᱩᱞ ᱵᱽᱨᱟᱣᱩᱡᱽᱟᱹᱨ ᱮᱯ ᱨᱮ ᱚᱛᱟᱭ ᱢᱮ";
 
 /* Description for default browser onboarding card. */
-"DefaultBrowserOnboarding.Description3" = "3. Firefox ᱵᱟᱪᱷᱟᱣᱢᱮ";
+"DefaultBrowserOnboarding.Description3" = "3. Ecosia ᱵᱟᱪᱷᱟᱣᱢᱮ";
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "ᱢᱩᱞ ᱵᱽᱨᱟᱣᱩᱡᱽᱟᱹᱨ ᱮᱯ";

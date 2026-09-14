@@ -202,8 +202,11 @@ class ContextualHintViewController: UIViewController,
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         hintView.applyTheme(theme: theme)
+        /* Ecosia: Keep the popover arrow color in sync with the hint background (= toolbar background)
         let gradient = theme.isNova ? theme.colors.gradient : theme.colors.layerGradient
         popoverPresentationController?.backgroundColor = gradient.colors.last
+         */
+        popoverPresentationController?.backgroundColor = theme.colors.layerSurfaceLow
     }
 
     // MARK: - UIAdaptivePresentationControllerDelegate

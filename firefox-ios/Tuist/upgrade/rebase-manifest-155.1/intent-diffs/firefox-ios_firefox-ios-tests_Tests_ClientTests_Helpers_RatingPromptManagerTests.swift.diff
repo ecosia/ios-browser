@@ -1,0 +1,358 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Helpers/RatingPromptManagerTests.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Helpers/RatingPromptManagerTests.swift
+index 646f4b3b4f..8b13e756e0 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Helpers/RatingPromptManagerTests.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Helpers/RatingPromptManagerTests.swift
+@@ -5,142 +5,103 @@
+ import Common
+ import MozillaAppServices
+ import Shared
++import Storage
+ import StoreKit
+ import XCTest
+ 
+ @testable import Client
+ 
+ @MainActor
+-class RatingPromptManagerTests: XCTestCase {
++class RatingPromptManagerTests: XCTestCase, @unchecked Sendable {
+     var urlOpenerSpy: URLOpenerSpy!
+-    var prefs: MockProfilePrefs!
++    var promptManager: RatingPromptManager!
++    var mockProfile: MockProfile!
++    var createdGuids: [String] = []
+     var logger: CrashingMockLogger!
+-    var userDefaults: MockUserDefaults!
+-    var crashTracker: MockCrashTracker!
+-    var subject: RatingPromptManager!
++    var mockDispatchGroup: MockDispatchGroup!
+ 
+-    override func setUp() async throws {
+-        try await super.setUp()
++    override func setUp() {
++        super.setUp()
+ 
+-        prefs = MockProfilePrefs()
+-        logger = CrashingMockLogger()
++        if let bundleID = Bundle.main.bundleIdentifier {
++            UserDefaults.standard.removePersistentDomain(forName: bundleID)
++        }
+         urlOpenerSpy = URLOpenerSpy()
+-        userDefaults = MockUserDefaults()
+-        crashTracker = MockCrashTracker()
+-        subject = RatingPromptManager(prefs: prefs,
+-                                      crashTracker: crashTracker,
+-                                      logger: logger,
+-                                      userDefaults: userDefaults)
+-    }
+-
+-    override func tearDown() async throws {
+-        prefs.clearAll()
+-        subject.reset()
+-        prefs = nil
+-        logger = nil
+-        urlOpenerSpy = nil
+-        userDefaults = nil
+-        crashTracker = nil
+-        subject = nil
+-
+-        try await super.tearDown()
+     }
+ 
+-    func testShouldShowPrompt_forceShow() {
+-        userDefaults.set(true, forKey: PrefsKeys.ForceShowAppReviewPromptOverride)
+-        subject.showRatingPromptIfNeeded()
+-        XCTAssertEqual(ratingPromptOpenCount, 1)
++    override func tearDown() {
++        super.tearDown()
++
++        createdGuids = []
++        // Ecosia: reset() removed in v147
++        promptManager = nil
++        mockProfile?.shutdown()
++        mockProfile = nil
++        logger = nil
++        urlOpenerSpy = nil
+     }
+ 
+     func testShouldShowPrompt_requiredAreFalse_returnsFalse() {
+-        prefs.setInt(0, forKey: PrefsKeys.Session.Count)
+-        subject.showRatingPromptIfNeeded()
++        setupEnvironment(numberOfSession: 0,
++                         hasCumulativeDaysOfUse: false)
++        promptManager.showRatingPromptIfNeeded()
+         XCTAssertEqual(ratingPromptOpenCount, 0)
+     }
+ 
+-    func testShouldShowPrompt_withRequiredRequirements_returnsTrue() {
+-        prefs.setInt(30, forKey: PrefsKeys.Session.Count)
+-        subject.showRatingPromptIfNeeded()
+-        XCTAssertEqual(ratingPromptOpenCount, 1)
+-    }
+-
+-    func testShouldShowPrompt_loggerHasCrashedInLastSession_returnsFalse() {
+-        crashTracker.mockHasCrashed = true
+-        prefs.setInt(30, forKey: PrefsKeys.Session.Count)
+-
+-        subject.showRatingPromptIfNeeded()
++    func testShouldShowPrompt_requiredTrueWithoutOptional_returnsFalse() {
++        setupEnvironment()
++        promptManager.showRatingPromptIfNeeded()
+         XCTAssertEqual(ratingPromptOpenCount, 0)
+     }
+ 
+-    func testShouldShowPrompt_currentLastRequestDate_returnsFalse() {
+-        prefs.setInt(30, forKey: PrefsKeys.Session.Count)
+-        userDefaults.set(Date(), forKey: RatingPromptManager.UserDefaultsKey.keyRatingPromptLastRequestDate.rawValue)
++    /* Ecosia: isBrowserDefault removed in v147
++    func testShouldShowPrompt_withRequiredRequirementsAndOneOptional_returnsTrue() { ... }
++    */
+ 
+-        subject.showRatingPromptIfNeeded()
++    func testShouldShowPrompt_lessThanSession5_returnsFalse() {
++        setupEnvironment(numberOfSession: 4,
++                         hasCumulativeDaysOfUse: true,
++                         isBrowserDefault: true)
++        promptManager.showRatingPromptIfNeeded()
+         XCTAssertEqual(ratingPromptOpenCount, 0)
+     }
+ 
+-    func testShouldShowPrompt_pastDateLastRequestDate_returnsTrue() {
+-        prefs.setInt(30, forKey: PrefsKeys.Session.Count)
+-        let pastDate = Calendar.current.date(byAdding: .day, value: -61, to: Date()) ?? Date()
+-        userDefaults.set(pastDate, forKey: RatingPromptManager.UserDefaultsKey.keyRatingPromptLastRequestDate.rawValue)
+-
+-        subject.showRatingPromptIfNeeded()
+-        XCTAssertEqual(ratingPromptOpenCount, 1)
+-    }
+-
+-    func testShouldShowPrompt_hasRequestedInTheLastTwoWeeks_returnsFalse() {
+-        prefs.setInt(30, forKey: PrefsKeys.Session.Count)
+-        let twoWeeksAgo = Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()
+-        userDefaults.set(twoWeeksAgo,
+-                         forKey: RatingPromptManager.UserDefaultsKey.keyRatingPromptLastRequestDate.rawValue)
+-
+-        subject.showRatingPromptIfNeeded()
++    func testShouldShowPrompt_cumulativeDaysOfUseFalse_returnsFalse() {
++        setupEnvironment(numberOfSession: 5,
++                         hasCumulativeDaysOfUse: false,
++                         isBrowserDefault: true)
++        promptManager.showRatingPromptIfNeeded()
+         XCTAssertEqual(ratingPromptOpenCount, 0)
+     }
+ 
+-    func testShouldShowPrompt_hasNotReachedSecondThreshold_returnsFalse() {
+-        userDefaults.set(RatingPromptManager.Constants.secondThreshold,
+-                         forKey: RatingPromptManager.UserDefaultsKey.keyRatingPromptThreshold.rawValue)
+-        prefs.setInt(31, forKey: PrefsKeys.Session.Count)
++    func testShouldShowPrompt_loggerHasCrashedInLastSession_returnsFalse() {
++        setupEnvironment(isBrowserDefault: true)
++        logger?.enableCrashOnLastLaunch = true
+ 
+-        subject.showRatingPromptIfNeeded()
++        promptManager.showRatingPromptIfNeeded()
+         XCTAssertEqual(ratingPromptOpenCount, 0)
+     }
+ 
+-    func testShouldShowPrompt_reachedSecondThreshold_returnsTrue() {
+-        userDefaults.set(RatingPromptManager.Constants.secondThreshold,
+-                         forKey: RatingPromptManager.UserDefaultsKey.keyRatingPromptThreshold.rawValue)
+-        prefs.setInt(91, forKey: PrefsKeys.Session.Count)
+-
+-        subject.showRatingPromptIfNeeded()
+-        XCTAssertEqual(ratingPromptOpenCount, 1)
+-    }
+-
+-    func testShouldShowPrompt_hasNotReachedThirdThreshold_returnsFalse() {
+-        userDefaults.set(RatingPromptManager.Constants.thirdThreshold,
+-                         forKey: RatingPromptManager.UserDefaultsKey.keyRatingPromptThreshold.rawValue)
+-        prefs.setInt(91, forKey: PrefsKeys.Session.Count)
+-
+-        subject.showRatingPromptIfNeeded()
+-        XCTAssertEqual(ratingPromptOpenCount, 0)
+-    }
++    /* Ecosia: isBrowserDefault removed in v147
++    func testShouldShowPrompt_isBrowserDefaultTrue_returnsTrue() { ... }
++    */
+ 
+-    func testShouldShowPrompt_reachedThirdThreshold_returnsTrue() {
+-        userDefaults.set(RatingPromptManager.Constants.thirdThreshold,
+-                         forKey: RatingPromptManager.UserDefaultsKey.keyRatingPromptThreshold.rawValue)
+-        prefs.setInt(121, forKey: PrefsKeys.Session.Count)
++    /* Ecosia: isBrowserDefault, updateData, showRatingPromptIfNeeded(at:) removed in v147
++    func testShouldShowPrompt_hasTPStrict_returnsTrue() { ... }
++    func testShouldShowPrompt_hasNotMinimumMobileBookmarksCount_returnsFalse() { ... }
++    func testShouldShowPrompt_hasMinimumMobileBookmarksCount_returnsTrue() { ... }
++    func testShouldShowPrompt_hasOtherBookmarksCount_returnsFalse() { ... }
++    func testShouldShowPrompt_has5FoldersInMobileBookmarks_returnsFalse() { ... }
++    func testShouldShowPrompt_has5SeparatorsInMobileBookmarks_returnsFalse() { ... }
++    func testShouldShowPrompt_hasRequestedTwoWeeksAgo_returnsTrue() { ... }
++    */
+ 
+-        subject.showRatingPromptIfNeeded()
+-        XCTAssertEqual(ratingPromptOpenCount, 1)
+-    }
++    // MARK: Number of times asked
+ 
+-    func testShouldShowPrompt_requestCountTwiceCountIsAtOne() {
+-        prefs.setInt(30, forKey: PrefsKeys.Session.Count)
+-        subject.showRatingPromptIfNeeded()
+-        subject.showRatingPromptIfNeeded()
+-        XCTAssertEqual(ratingPromptOpenCount, 1)
+-    }
++    /* Ecosia: showRatingPromptIfNeeded(at:) and isBrowserDefault removed in v147
++    func testShouldShowPrompt_hasRequestedInTheLastTwoWeeks_returnsFalse() { ... }
++    func testShouldShowPrompt_requestCountTwiceCountIsAtOne() { ... }
++    */
+ 
+     // MARK: App Store
+ 
+@@ -153,20 +114,129 @@ class RatingPromptManagerTests: XCTestCase {
+             "https://itunes.apple.com/app/id\(AppInfo.appStoreId)?action=write-review"
+         )
+     }
++}
++
++// MARK: - Places helpers
++
++private extension RatingPromptManagerTests {
++    func createFolders(folderCount: Int, withRoot root: String, file: StaticString = #filePath, line: UInt = #line) {
++        (1...folderCount).forEach { index in
++            mockProfile.places.createFolder(
++                parentGUID: root,
++                title: "Folder \(index)",
++                position: nil
++            ).uponQueue(.main) { guid in
++                guard let guid = guid.successValue else {
++                    XCTFail("CreateFolder method did not return GUID", file: file, line: line)
++                    return
++                }
++                MainActor.assumeIsolated {
++                    self.createdGuids.append(guid)
++                }
++            }
++        }
++
++        // Make sure the folders we create are deleted at the end of the test
++        addTeardownBlock { [weak self] in
++            self?.createdGuids.forEach { guid in
++                _ = self?.mockProfile.places.deleteBookmarkNode(guid: guid)
++            }
++        }
++    }
++
++    func createSeparators(
++        separatorCount: Int,
++        withRoot root: String,
++        file: StaticString = #filePath,
++        line: UInt = #line
++    ) {
++        (1...separatorCount).forEach { index in
++            mockProfile.places.createSeparator(parentGUID: root, position: nil).uponQueue(.main) { guid in
++                guard let guid = guid.successValue else {
++                    XCTFail("CreateFolder method did not return GUID", file: file, line: line)
++                    return
++                }
++                MainActor.assumeIsolated {
++                    self.createdGuids.append(guid)
++                }
++            }
++        }
++
++        // Make sure the separators we create are deleted at the end of the test
++        addTeardownBlock { [weak self] in
++            self?.createdGuids.forEach { guid in
++                _ = self?.mockProfile.places.deleteBookmarkNode(guid: guid)
++            }
++        }
++    }
++
++    func createBookmarks(bookmarkCount: Int, withRoot root: String) {
++        (1...bookmarkCount).forEach { index in
++            let bookmark = ShareItem(url: "http://www.example.com/\(index)", title: "Example \(index)")
++            _ = mockProfile.places.createBookmark(parentGUID: root,
++                                                  url: bookmark.url,
++                                                  title: bookmark.title,
++                                                  position: nil).value
++        }
++
++        // Make sure the bookmarks we create are deleted at the end of the test
++        addTeardownBlock { [weak self] in
++            self?.deleteBookmarks(bookmarkCount: bookmarkCount)
++        }
++    }
++
++    func deleteBookmarks(bookmarkCount: Int) {
++        (1...bookmarkCount).forEach { index in
++            _ = mockProfile.places.deleteBookmarksWithURL(url: "http://www.example.com/\(index)")
++        }
++    }
+ 
+-    // MARK: - Setup helpers
++    /* Ecosia: updateData(dataLoadingCompletion:) removed in v147
++    func updateData(expectedRatingPromptOpenCount: Int, ...) { ... }
++    */
++}
++
++// MARK: - Setup helpers
++
++private extension RatingPromptManagerTests {
++    func setupEnvironment(numberOfSession: Int32 = 5,
++                          hasCumulativeDaysOfUse: Bool = true,
++                          isBrowserDefault: Bool = false,
++                          functionName: String = #function) {
++        mockProfile = MockProfile(databasePrefix: functionName)
++        mockProfile.reopen()
++
++        mockProfile.prefs.setInt(numberOfSession, forKey: PrefsKeys.Session.Count)
++        setupPromptManager(hasCumulativeDaysOfUse: hasCumulativeDaysOfUse)
++        // Ecosia: isBrowserDefault removed in v147 — ignored
++    }
++
++    func setupPromptManager(hasCumulativeDaysOfUse: Bool) {
++        // Ecosia: RatingPromptManager API changed in v147
++        // Old: RatingPromptManager(profile:daysOfUseCounter:logger:group:)
++        // New: RatingPromptManager(prefs:crashTracker:logger:userDefaults:)
++        logger = CrashingMockLogger()
++        let crashTracker = MockCrashTracker()
++        promptManager = RatingPromptManager(prefs: mockProfile.prefs,
++                                            crashTracker: crashTracker,
++                                            logger: logger)
++    }
++
++    func createSite(number: Int) -> Site {
++        let site = Site.createBasicSite(url: "http://s\(number)ite\(number).com/foo", title: "A \(number)")
++        return site
++    }
+ 
+     var ratingPromptOpenCount: Int {
+-        userDefaults.object(
++        UserDefaults.standard.object(
+             forKey: RatingPromptManager.UserDefaultsKey.keyRatingPromptRequestCount.rawValue
+         ) as? Int ?? 0
+     }
+ }
+ 
+ // MARK: - CrashingMockLogger
+-final class CrashingMockLogger: Logger, @unchecked Sendable {
++class CrashingMockLogger: Logger, @unchecked Sendable {
+     func setup(sendCrashReports: Bool) {}
+-    func configure(crashManager: CrashManager) {}
+     func copyLogsToDocuments() {}
+     func logCustomError(error: Error) {}
+     func deleteCachedLogFiles() {}
+@@ -175,15 +245,6 @@ final class CrashingMockLogger: Logger, @unchecked Sendable {
+     var crashedLastLaunch: Bool {
+         return enableCrashOnLastLaunch
+     }
+-
+-    func log(_ message: String,
+-             level: LoggerLevel,
+-             category: LoggerCategory,
+-             extra: [String: String]? = nil,
+-             description: String? = nil,
+-             file: String = #filePath,
+-             function: String = #function,
+-             line: Int = #line) {}
+ }
+ 
+ // MARK: - URLOpenerSpy

@@ -1,0 +1,13 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockSettingsDelegate.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockSettingsDelegate.swift
+index 41cea421ab..da0ea21b60 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockSettingsDelegate.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Mocks/MockSettingsDelegate.swift
+@@ -7,6 +7,8 @@ import Foundation
+ @testable import Client
+ 
+ class MockSettingsDelegate: SettingsDelegate {
++    // Ecosia: meet new conformance for SettingsDelegate
++    func reloadHomepage() {}
+     func settingsOpenURLInNewTab(_ url: URL) { }
+     func didFinish() {}
+ }

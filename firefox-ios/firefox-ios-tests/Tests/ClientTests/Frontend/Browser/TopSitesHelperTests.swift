@@ -12,7 +12,11 @@ import SiteImageView
 
 class TopSitesHelperTests: XCTestCase {
     private let faviconResource: SiteResource = .remoteURL(url: URL(string: "https://mozilla.org/favicon.ico")!)
+    /* Ecosia: DefaultSuggestedSites.defaultSites returns [] — Ecosia ships no default
+       suggested sites, so every count below that is derived from this constant follows.
     private static let defaultSuggestedSitesCount = 4
+    */
+    private static let defaultSuggestedSitesCount = 0
     private var profile: MockProfile!
 
     private func deleteDatabases() {
@@ -181,10 +185,17 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
+            /* Ecosia: With no default sites the frecency site is not de-duplicated away.
             XCTAssertEqual(
                 sites.count,
                 Self.defaultSuggestedSitesCount,
                 "Contains only default sites, no duplicates of defaults sites"
+            )
+             */
+            XCTAssertEqual(
+                sites.count,
+                Self.defaultSuggestedSitesCount + 1,
+                "Contains no default sites, so the frecency site is not de-duplicated away"
             )
             expectation.fulfill()
         }
@@ -207,10 +218,17 @@ class TopSitesHelperTests: XCTestCase {
                 XCTFail("Has no sites")
                 return
             }
+            /* Ecosia: With no default sites there is nothing to replace; only the pinned site remains.
             XCTAssertEqual(
                 sites.count,
                 Self.defaultSuggestedSitesCount,
                 "Contains default sites, and one pinned site that replaced the default site"
+            )
+             */
+            XCTAssertEqual(
+                sites.count,
+                Self.defaultSuggestedSitesCount + 1,
+                "Contains no default sites, and the one pinned site"
             )
             expectation.fulfill()
         }

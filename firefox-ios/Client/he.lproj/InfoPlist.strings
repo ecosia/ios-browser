@@ -8,22 +8,22 @@
 "New Tab" = "לשונית חדשה";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "‏Firefox יכול להשתמש במצלמה שלך כדי לסרוק קודי QR או לצלם תמונות ולהסריט סרטונים.";
+"NSCameraUsageDescription" = "‏Ecosia יכול להשתמש במצלמה שלך כדי לסרוק קודי QR או לצלם תמונות ולהסריט סרטונים.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox‏ דורש שימוש ב־Face ID כדי לגשת לססמאות ולאמצעי התשלום השמורים שלך.";
+"NSFaceIDUsageDescription" = "Ecosia‏ דורש שימוש ב־Face ID כדי לגשת לססמאות ולאמצעי התשלום השמורים שלך.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "אתרים בשימושך עשויים לבקש ממך את המיקום שלך.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "‏Firefox משתמש במיקרופון שלך כדי להקליט ולהעלות אודיו.";
+"NSMicrophoneUsageDescription" = "‏Ecosia משתמש במיקרופון שלך כדי להקליט ולהעלות אודיו.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "זה מאפשר לך לשמור תמונות.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "‏Firefox משתמש בזיהוי דיבור כדי להמיר את הקול שלך לטקסט לצורך חיפוש קולי.";
+"NSSpeechRecognitionUsageDescription" = "‏Ecosia משתמש בזיהוי דיבור כדי להמיר את הקול שלך לטקסט לצורך חיפוש קולי.";
 
 /* (No Comment) */
 "Scan QR Code" = "סריקת קוד QR";

@@ -855,12 +855,17 @@ final class AddressBarStateTests: XCTestCase, StoreTestUtility {
         )
 
         XCTAssertEqual(newState.windowUUID, windowUUID)
-        XCTAssertEqual(newState.navigationActions.count, 0)
+        // Ecosia: `navigationActions` returns `[cancelEditAction]` while editing (back arrow on the
+        // left), where Firefox shows nothing.
+        XCTAssertEqual(newState.navigationActions.count, 1)
+        XCTAssertEqual(newState.navigationActions[0].actionType, .cancelEdit)
 
         XCTAssertEqual(newState.leadingPageActions.count, 0)
         XCTAssertEqual(newState.trailingPageActions.count, 0)
+        // Ecosia: `browserActions` returns `[qrCodeAction]` while editing (QR scanner on the right),
+        // where Firefox shows the cancel-edit text button.
         XCTAssertEqual(newState.browserActions.count, 1)
-        XCTAssertEqual(newState.browserActions[0].actionType, .cancelEdit)
+        XCTAssertEqual(newState.browserActions[0].actionType, .search)
 
         XCTAssertEqual(newState.searchTerm, searchTerm)
         XCTAssertTrue(newState.isEditing)
@@ -884,12 +889,17 @@ final class AddressBarStateTests: XCTestCase, StoreTestUtility {
         )
 
         XCTAssertEqual(newState.windowUUID, windowUUID)
-        XCTAssertEqual(newState.navigationActions.count, 0)
+        // Ecosia: `navigationActions` returns `[cancelEditAction]` while editing (back arrow on the
+        // left), where Firefox shows nothing.
+        XCTAssertEqual(newState.navigationActions.count, 1)
+        XCTAssertEqual(newState.navigationActions[0].actionType, .cancelEdit)
 
         XCTAssertEqual(newState.leadingPageActions.count, 0)
         XCTAssertEqual(newState.trailingPageActions.count, 0)
+        // Ecosia: `browserActions` returns `[qrCodeAction]` while editing (QR scanner on the right),
+        // where Firefox shows the cancel-edit text button.
         XCTAssertEqual(newState.browserActions.count, 1)
-        XCTAssertEqual(newState.browserActions[0].actionType, .cancelEdit)
+        XCTAssertEqual(newState.browserActions[0].actionType, .search)
 
         XCTAssertEqual(newState.searchTerm, nil)
         XCTAssertTrue(newState.isEditing)
@@ -915,12 +925,17 @@ final class AddressBarStateTests: XCTestCase, StoreTestUtility {
         )
 
         XCTAssertEqual(newState.windowUUID, windowUUID)
-        XCTAssertEqual(newState.navigationActions.count, 0)
+        // Ecosia: `navigationActions` returns `[cancelEditAction]` while editing (back arrow on the
+        // left), where Firefox shows nothing.
+        XCTAssertEqual(newState.navigationActions.count, 1)
+        XCTAssertEqual(newState.navigationActions[0].actionType, .cancelEdit)
 
         XCTAssertEqual(newState.leadingPageActions.count, 0)
         XCTAssertEqual(newState.trailingPageActions.count, 0)
+        // Ecosia: `browserActions` returns `[qrCodeAction]` while editing (QR scanner on the right),
+        // where Firefox shows the cancel-edit text button.
         XCTAssertEqual(newState.browserActions.count, 1)
-        XCTAssertEqual(newState.browserActions[0].actionType, .cancelEdit)
+        XCTAssertEqual(newState.browserActions[0].actionType, .search)
 
         XCTAssertEqual(newState.searchTerm, nil)
         XCTAssertTrue(newState.isEditing)
@@ -1122,15 +1137,22 @@ final class AddressBarStateTests: XCTestCase, StoreTestUtility {
         )
 
         XCTAssertEqual(newState.windowUUID, windowUUID)
-        XCTAssertEqual(newState.navigationActions.count, 0)
+        // Ecosia: `navigationActions` returns `[cancelEditAction]` while editing (back arrow on the
+        // left), where Firefox shows nothing.
+        XCTAssertEqual(newState.navigationActions.count, 1)
+        XCTAssertEqual(newState.navigationActions[0].actionType, .cancelEdit)
         XCTAssertEqual(newState.leadingPageActions.count, 0)
         XCTAssertEqual(newState.trailingPageActions.count, 0)
+        // Ecosia: `browserActions` returns `[qrCodeAction]` while editing (QR scanner on the right),
+        // where Firefox shows the cancel-edit text button.
         XCTAssertEqual(newState.browserActions.count, 1)
-        XCTAssertEqual(newState.browserActions[0].actionType, .cancelEdit)
+        XCTAssertEqual(newState.browserActions[0].actionType, .search)
 
         XCTAssertEqual(newState.searchTerm, searchTerm)
         XCTAssertTrue(newState.isEditing)
-        XCTAssertTrue(newState.shouldShowKeyboard)
+        // Ecosia: this reducer preserves `shouldShowKeyboard` rather than forcing it true, so the
+        // keyboard is not re-requested after a drag-dismiss. The initial state has it false.
+        XCTAssertFalse(newState.shouldShowKeyboard)
         XCTAssertFalse(newState.shouldSelectSearchTerm)
         XCTAssertFalse(newState.didStartTyping)
         XCTAssertFalse(newState.isEmptySearch)

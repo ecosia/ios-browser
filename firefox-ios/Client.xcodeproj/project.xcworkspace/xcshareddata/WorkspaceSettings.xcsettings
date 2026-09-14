@@ -7,6 +7,6 @@
 	<key>IDEWorkspaceSharedSettings_AutocreateContextsIfNeeded</key>
 	<false/>
 	<key>PreviewsEnabled</key>
-	<false/>
+	<true/>
 </dict>
 </plist>

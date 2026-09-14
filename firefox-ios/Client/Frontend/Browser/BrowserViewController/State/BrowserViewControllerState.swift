@@ -44,6 +44,10 @@ struct BrowserViewControllerState: ScreenState {
         case translationLanguagePicker(TranslationLanguagePickerData)
         case googleLensPhotoPicker
         case googleLensCamera
+        // Ecosia: QR code scanner display type
+        case qrCode
+        // Ecosia: History panel display type triggered from the NTP toolbar button
+        case history
     }
 
     let windowUUID: WindowUUID
@@ -384,6 +388,12 @@ struct BrowserViewControllerState: ScreenState {
             return handleShowGoogleLensPhotoPickerAction(state: state, action: action)
         case GeneralBrowserActionType.showGoogleLensCamera:
             return handleShowGoogleLensCameraAction(state: state, action: action)
+        // Ecosia: Handle QR code scanner action
+        case GeneralBrowserActionType.showQRCode:
+            return handleShowQRCodeAction(state: state, action: action)
+        // Ecosia: Handle history panel action from the NTP toolbar button
+        case GeneralBrowserActionType.showHistory:
+            return handleShowHistoryAction(state: state, action: action)
         default:
             return passthroughState(from: state, action: action)
         }
@@ -764,5 +774,29 @@ struct BrowserViewControllerState: ScreenState {
             autoTranslatePromptState: AutoTranslatePromptState.defaultState(from: state.autoTranslatePromptState),
             navigationDestination: nil
         )
+    }
+
+    // MARK: - Ecosia
+
+    @MainActor
+    private static func handleShowQRCodeAction(state: BrowserViewControllerState,
+                                               action: GeneralBrowserAction) -> BrowserViewControllerState {
+        return state
+            .resetTransientState()
+            .copy(displayView: .qrCode)
+            .copy(microsurveyState: MicrosurveyPromptState.reducer.legacyReducer(state.microsurveyState, action))
+            .copy(autoTranslatePromptState: AutoTranslatePromptState.reducer
+                .legacyReducer(state.autoTranslatePromptState, action))
+    }
+
+    @MainActor
+    private static func handleShowHistoryAction(state: BrowserViewControllerState,
+                                                action: GeneralBrowserAction) -> BrowserViewControllerState {
+        return state
+            .resetTransientState()
+            .copy(displayView: .history)
+            .copy(microsurveyState: MicrosurveyPromptState.reducer.legacyReducer(state.microsurveyState, action))
+            .copy(autoTranslatePromptState: AutoTranslatePromptState.reducer
+                .legacyReducer(state.autoTranslatePromptState, action))
     }
 }

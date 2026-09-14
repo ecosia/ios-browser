@@ -12,8 +12,8 @@ final class TabTrayCoordinatorTests: XCTestCase {
     private var parentCoordinator: MockTabTrayCoordinatorDelegate!
     private var tabManager: TabManager!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         let mockTabManager = MockTabManager()
         DependencyHelperMock().bootstrapDependencies(injectedTabManager: mockTabManager)
         mockRouter = MockRouter(navigationController: MockNavigationController())
@@ -22,12 +22,12 @@ final class TabTrayCoordinatorTests: XCTestCase {
         tabManager = mockTabManager
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
         mockRouter = nil
         profile = nil
         parentCoordinator = nil
         DependencyHelperMock().reset()
-        try await super.tearDown()
     }
 
     func testInitialState() {
@@ -71,7 +71,7 @@ final class TabTrayCoordinatorTests: XCTestCase {
 
     // MARK: - Helpers
     private func createSubject(panelType: TabTrayPanelType = .tabs,
-                               file: StaticString = #filePath,
+                               file: StaticString = #file,
                                line: UInt = #line) -> TabTrayCoordinator {
         let subject = TabTrayCoordinator(router: mockRouter,
                                          tabTraySection: panelType,

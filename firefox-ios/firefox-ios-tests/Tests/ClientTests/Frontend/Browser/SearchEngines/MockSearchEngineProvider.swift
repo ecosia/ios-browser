@@ -3,12 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
-import Common
 @testable import Client
 
-class MockSearchEngineProvider: SearchEngineProvider, @unchecked Sendable {
-    var unorderedEngines: (([OpenSearchEngine]) -> Void)?
-
+// Ecosia: made final + @unchecked Sendable for Swift 6
+final class MockSearchEngineProvider: SearchEngineProvider, @unchecked Sendable {
     var mockEngines: [OpenSearchEngine] = [
         OpenSearchEngine(
             engineID: "ATester",
@@ -66,18 +64,24 @@ class MockSearchEngineProvider: SearchEngineProvider, @unchecked Sendable {
         )
     ]
 
-    func getUnorderedEngines(withResult result: [OpenSearchEngine]) {
-        unorderedEngines?(mockEngines)
-    }
+    // Ecosia: Updated to match v147 SearchEngineProvider protocol
+    var preferencesVersion: SearchEngineOrderingPrefsVersion { .v1 }
 
     func getOrderedEngines(customEngines: [OpenSearchEngine],
                            engineOrderingPrefs: SearchEnginePrefs,
-                           prefsMigrator: any SearchEnginePreferencesMigrator,
+                           prefsMigrator: SearchEnginePreferencesMigrator,
                            completion: @escaping SearchEngineCompletion) {
-        ensureMainThread {
-            completion(engineOrderingPrefs, self.mockEngines)
+        /* Ecosia: The original delivered engines asynchronously via DispatchQueue.main.async, which left
+           SearchEnginesManager.orderedEngines empty when SearchEnginesManagerTests reads it synchronously right
+           after init → `Fatal error: Index out of range`. Upstream v147.5 delivers synchronously. (MOB-4384)
+        DispatchQueue.main.async { [mockEngines] in
+            completion(engineOrderingPrefs, mockEngines)
+        }
+         */
+        // Ecosia: completion is @MainActor-isolated and this mock is only used by main-actor test setUp,
+        // so assumeIsolated delivers it synchronously without a thread hop. (MOB-4384)
+        MainActor.assumeIsolated {
+            completion(engineOrderingPrefs, mockEngines)
         }
     }
-
-    let preferencesVersion: SearchEngineOrderingPrefsVersion = .v1
 }

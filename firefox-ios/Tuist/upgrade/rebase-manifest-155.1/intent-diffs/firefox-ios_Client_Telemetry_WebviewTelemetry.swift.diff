@@ -1,0 +1,25 @@
+diff --git a/firefox-ios/Client/Telemetry/WebviewTelemetry.swift b/firefox-ios/Client/Telemetry/WebviewTelemetry.swift
+index a3a053a000..7a86dd6c02 100644
+--- a/firefox-ios/Client/Telemetry/WebviewTelemetry.swift
++++ b/firefox-ios/Client/Telemetry/WebviewTelemetry.swift
+@@ -16,17 +16,20 @@ final class WebViewLoadMeasurementTelemetry {
+     }
+ 
+     func start() {
++        // Ecosia: Telemetry silenced via FakeGleanWrapper
+         loadTimerId = gleanWrapper.startTiming(for: GleanMetrics.Webview.pageLoad)
+     }
+ 
+     func stop() {
+         guard let timerId = loadTimerId else { return }
++        // Ecosia: Telemetry silenced via FakeGleanWrapper
+         gleanWrapper.stopAndAccumulateTiming(for: GleanMetrics.Webview.pageLoad, timerId: timerId)
+         loadTimerId = nil
+     }
+ 
+     func cancel() {
+         if let loadTimerId {
++            // Ecosia: Telemetry silenced via FakeGleanWrapper
+             gleanWrapper.cancelTiming(for: GleanMetrics.Webview.pageLoad, timerId: loadTimerId)
+         }
+     }

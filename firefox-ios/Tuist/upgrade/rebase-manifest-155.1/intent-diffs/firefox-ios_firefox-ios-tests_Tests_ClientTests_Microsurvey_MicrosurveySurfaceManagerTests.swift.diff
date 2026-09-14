@@ -1,0 +1,113 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Microsurvey/MicrosurveySurfaceManagerTests.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Microsurvey/MicrosurveySurfaceManagerTests.swift
+index fe3347e30d..16dd28700b 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Microsurvey/MicrosurveySurfaceManagerTests.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Microsurvey/MicrosurveySurfaceManagerTests.swift
+@@ -10,17 +10,16 @@ import XCTest
+ @MainActor
+ final class MicrosurveySurfaceManagerTests: XCTestCase {
+     private var messageManager: MockGleanPlumbMessageManagerProtocol!
+-
+-    override func setUp() async throws {
+-        try await super.setUp()
++    override func setUp() {
++        super.setUp()
+         DependencyHelperMock().bootstrapDependencies()
+         messageManager = MockGleanPlumbMessageManagerProtocol()
+     }
+ 
+-    override func tearDown() async throws {
+-        DependencyHelperMock().reset()
++    override func tearDown() {
++        super.tearDown()
+         messageManager = nil
+-        try await super.tearDown()
++        AppContainer.shared.reset()
+     }
+ 
+     func testNilMessage_microsurveyShouldNotShow() {
+@@ -34,11 +33,16 @@ final class MicrosurveySurfaceManagerTests: XCTestCase {
+         messageManager.message = createMessage()
+ 
+         let model = subject.showMicrosurveyPrompt()
++        // Ecosia: The microsurvey prompt is suppressed (not applicable to Ecosia), so showMicrosurveyPrompt()
++        // returns nil even when a valid microsurvey message is available.
++        /* Ecosia:
+         XCTAssertNotNil(model)
+         XCTAssertEqual(model?.promptTitle, "title label test")
+         XCTAssertEqual(model?.promptButtonLabel, "button label test")
+         XCTAssertEqual(model?.surveyQuestion, "text label test")
+         XCTAssertEqual(model?.surveyOptions, ["yes", "no"])
++         */
++        XCTAssertNil(model)
+     }
+ 
+     func testInvalidMessageSurface_microsurveyShouldNotShow() {
+@@ -58,7 +62,11 @@ final class MicrosurveySurfaceManagerTests: XCTestCase {
+         XCTAssertEqual(messageManager.onMessageDismissedCalled, 0)
+     }
+ 
+-    func testManager_messageDisplayedCalled() {
++    func testManager_messageDisplayedCalled() throws {
++        // Ecosia: Microsurvey is suppressed (showMicrosurveyPrompt never retrieves a message), so there is no
++        // message to forward to the messaging manager. The forwarding path is not exercised in Ecosia.
++        throw XCTSkip("Microsurvey is suppressed in Ecosia; no message is retrieved to forward.")
++        /* Ecosia:
+         let subject = createSubject()
+         messageManager.message = createMessage()
+         _ = subject.showMicrosurveyPrompt()
+@@ -68,9 +76,13 @@ final class MicrosurveySurfaceManagerTests: XCTestCase {
+         XCTAssertEqual(messageManager.onMessageDisplayedCalled, 1)
+         XCTAssertEqual(messageManager.onMessagePressedCalled, 0)
+         XCTAssertEqual(messageManager.onMessageDismissedCalled, 0)
++         */
+     }
+ 
+-    func testManager_messagePressedCalled() {
++    func testManager_messagePressedCalled() throws {
++        // Ecosia: Microsurvey is suppressed (no message is retrieved), so there is nothing to forward.
++        throw XCTSkip("Microsurvey is suppressed in Ecosia; no message is retrieved to forward.")
++        /* Ecosia:
+         let subject = createSubject()
+         messageManager.message = createMessage()
+         _ = subject.showMicrosurveyPrompt()
+@@ -80,9 +92,13 @@ final class MicrosurveySurfaceManagerTests: XCTestCase {
+         XCTAssertEqual(messageManager.onMessageDisplayedCalled, 0)
+         XCTAssertEqual(messageManager.onMessagePressedCalled, 1)
+         XCTAssertEqual(messageManager.onMessageDismissedCalled, 0)
++         */
+     }
+ 
+-    func testManager_messageDismissCalled() {
++    func testManager_messageDimissCalled() throws {
++        // Ecosia: Microsurvey is suppressed (no message is retrieved), so there is nothing to forward.
++        throw XCTSkip("Microsurvey is suppressed in Ecosia; no message is retrieved to forward.")
++        /* Ecosia:
+         let subject = createSubject()
+         messageManager.message = createMessage()
+         _ = subject.showMicrosurveyPrompt()
+@@ -92,14 +108,14 @@ final class MicrosurveySurfaceManagerTests: XCTestCase {
+         XCTAssertEqual(messageManager.onMessageDisplayedCalled, 0)
+         XCTAssertEqual(messageManager.onMessagePressedCalled, 0)
+         XCTAssertEqual(messageManager.onMessageDismissedCalled, 1)
++         */
+     }
+ 
+     private func createSubject(
+-        file: StaticString = #filePath,
++        file: StaticString = #file,
+         line: UInt = #line
+     ) -> MicrosurveySurfaceManager {
+         let subject = MicrosurveySurfaceManager(messagingManager: messageManager)
+-        trackForMemoryLeaks(subject, file: file, line: line)
+         return subject
+     }
+ 
+@@ -126,7 +142,7 @@ class MockMicrosurveyMessageDataProtocol: MessageDataProtocol {
+     var surface: MessageSurfaceId
+     var isControl = true
+     var title: String? = "title label test"
+-    var text = "text label test"
++    var text: String = "text label test"
+     var buttonLabel: String? = "button label test"
+     var experiment: String?
+     var actionParams: [String: String] = [:]

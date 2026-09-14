@@ -153,6 +153,11 @@ else
             infile="${!infilevar}"
 
             while read -r line; do
+                # Ecosia: Skip comment lines and empty lines
+                [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
+                # Ecosia: Expand Xcode build variables in file paths
+                line="${line//\$(PROJECT_DIR)/${SOURCE_ROOT}}"
+                line="${line//\$(SRCROOT)/${SOURCE_ROOT}}"
                 YAML_FILES+=("${line}")
             done <"$infile"
         done

@@ -5,13 +5,13 @@
 "New Tab" = "زبانه‌ جدید";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox can use your camera to scan QR codes or take photos and video.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "وب سایت‌هایی که شما بازدید میکنید ممکن است مکان شما را درخواست کنند.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "فایرفاکس از میکروفن شما برای ضبط و ارسال صدا استفاده می‌کند.";
+"NSMicrophoneUsageDescription" = "Ecosia از میکروفن شما برای ضبط و ارسال صدا استفاده می‌کند.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "با این می‌توانید تصاویر را ذخیره کنید.";

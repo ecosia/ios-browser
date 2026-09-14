@@ -8,7 +8,7 @@
 "New Tab" = "പുതിയ ടാബ്";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox can use your camera to scan QR codes or take photos and video.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Face ID Usage Description */
 "NSFaceIDUsageDescription" = "താങ്ങളുടെ കരുതിവച്ച പ്രവേശിക്കലുകൾ ഉപയോഗിക്കാൻ ഫയർഫോക്സിന് മുഖതിരിച്ചറിയൽരേഖ ആവശ്യമാണ്.";

@@ -46,6 +46,9 @@ final class HomePageSettingViewControllerTests: XCTestCase {
         trackForMemoryLeaks(subject)
     }
 
+    /* Ecosia: Ecosia's `customizeFirefoxSettingSection` never adds the Jump Back In or Bookmarks
+       toggles (see HomePageSettingViewController), so both of these fail on the `XCTUnwrap` of a
+       setting that is deliberately absent.
     func testHomepageSettings_generateSettings_jumpBackInSectionDefaultValue_isFalse() throws {
         let subject = createSubject()
         subject.profile = profile
@@ -87,6 +90,7 @@ final class HomePageSettingViewControllerTests: XCTestCase {
 
         XCTAssertFalse(bookmarksSectionSettingValue)
     }
+     */
 
     func testHomepageSettings_generateSettings_trackerBlockerModule_whenFeatureDisabled_isHidden() throws {
         let subject = createSubject()
@@ -107,6 +111,9 @@ final class HomePageSettingViewControllerTests: XCTestCase {
         XCTAssertNil(trackerBlockerModuleSetting)
     }
 
+    /* Ecosia: the Tracker Blocker toggle is inside the same removed block, so it is never added
+       even when `.homepageTrackerBlockerModule` is enabled (it is on for the developer channel).
+       The `_whenFeatureDisabled_isHidden` test above still passes and is left live.
     func testHomepageSettings_generateSettings_trackerBlockerModule_whenFeatureEnabledDefaultValue_isTrue() throws {
         setFeatureFlag(.homepageTrackerBlockerModule, isEnabled: true)
         let subject = createSubject()
@@ -128,6 +135,7 @@ final class HomePageSettingViewControllerTests: XCTestCase {
 
         XCTAssertTrue(trackerBlockerModuleSettingValue)
     }
+     */
 
     // MARK: - Helper
     private func setFeatureFlag(_ flag: FeatureFlagID, isEnabled: Bool) {

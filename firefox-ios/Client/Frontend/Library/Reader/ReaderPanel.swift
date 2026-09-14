@@ -334,8 +334,13 @@ class ReadingListPanel: UITableViewController,
         return scrollView
     }()
 
+    /* Ecosia: Use Ecosia-themed empty reading list view
     private lazy var emptyStateView: ReaderPanelEmptyStateView = {
         return ReaderPanelEmptyStateView(windowUUID: self.windowUUID)
+    }()
+    */
+    private lazy var emptyStateView: UIView = {
+        return EmptyReadingListView(windowUUID: self.windowUUID)
     }()
 
     @objc
@@ -471,7 +476,12 @@ class ReadingListPanel: UITableViewController,
         tableView.separatorColor = currentTheme().colors.borderPrimary
         view.backgroundColor = currentTheme().colors.layer1
         tableView.backgroundColor = currentTheme().colors.layer1
+        /* Ecosia: New in 155.1, for upstream's `ReaderPanelEmptyStateView` (a `ThemeApplicable`).
+           Ecosia substitutes `EmptyReadingListView`, which is `Themeable` — it calls `applyTheme()`
+           in its own init and registers via `listenForThemeChanges`, so it re-themes itself and has
+           no `applyTheme(theme:)` to call here.
         emptyStateView.applyTheme(theme: currentTheme())
+         */
         refreshReadingList()
     }
 

@@ -1,0 +1,1279 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Coordinators/BrowserCoordinatorTests.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Coordinators/BrowserCoordinatorTests.swift
+index 4237ed8efc..4c663a49c7 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Coordinators/BrowserCoordinatorTests.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Coordinators/BrowserCoordinatorTests.swift
+@@ -7,8 +7,6 @@ import ComponentLibrary
+ import MozillaAppServices
+ import WebKit
+ import XCTest
+-import GCDWebServers
+-import SummarizeKit
+ 
+ @testable import Client
+ 
+@@ -22,41 +20,34 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+     private var applicationHelper: MockApplicationHelper!
+     private var glean: MockGleanWrapper!
+     private var scrollDelegate: MockStatusBarScrollDelegate!
+-    private var browserViewController: MockBrowserViewController!
+     let windowUUID: WindowUUID = .XCTestDefaultUUID
+ 
+-    override func setUp() async throws {
+-        try await super.setUp()
++    override func setUp() {
++        super.setUp()
+         let mockTabManager = MockTabManager()
+         self.tabManager = mockTabManager
+-        profile = MockProfile()
+         DependencyHelperMock().bootstrapDependencies(injectedTabManager: mockTabManager)
+-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
+-        setIsAppleSummarizerEnabled(false)
+-        setIsHostedSummarizerEnabled(false)
+-        setIsDeeplinkOptimizationRefactorEnabled(false)
+-        mockRouter = MockRouter(navigationController: MockNavigationController())
+-        overlayModeManager = MockOverlayModeManager()
+-        screenshotService = ScreenshotService()
+-        applicationHelper = MockApplicationHelper()
+-        glean = MockGleanWrapper()
+-        scrollDelegate = MockStatusBarScrollDelegate()
+-        browserViewController = MockBrowserViewController(profile: profile, tabManager: tabManager)
+-    }
+-
+-    override func tearDown() async throws {
+-        profile.shutdown()
+-        mockRouter = nil
+-        profile = nil
+-        overlayModeManager = nil
+-        screenshotService = nil
+-        tabManager = nil
+-        applicationHelper = nil
+-        glean = nil
+-        scrollDelegate = nil
+-        browserViewController = nil
++        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: AppContainer.shared.resolve())
++        self.mockRouter = MockRouter(navigationController: MockNavigationController())
++        self.profile = MockProfile()
++        self.overlayModeManager = MockOverlayModeManager()
++        self.screenshotService = ScreenshotService()
++        self.applicationHelper = MockApplicationHelper()
++        self.glean = MockGleanWrapper()
++        self.scrollDelegate = MockStatusBarScrollDelegate()
++    }
++
++    override func tearDown() {
++        self.mockRouter = nil
++        self.profile = nil
++        self.overlayModeManager = nil
++        self.screenshotService = nil
++        self.tabManager = nil
++        self.applicationHelper = nil
++        self.glean = nil
++        self.scrollDelegate = nil
+         DependencyHelperMock().reset()
+-        try await super.tearDown()
++        super.tearDown()
+     }
+ 
+     func testInitialState() {
+@@ -70,18 +61,20 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+     func testWithoutLaunchType_startsBrowserOnly() {
+         let subject = createSubject()
+         subject.start(with: nil)
+-        // TODO: FXIOS-12947 - Add tests for ToU Feature implementation
+-        if !featureFlags.isFeatureEnabled(.touFeature, checking: .buildOnly) {
+-            XCTAssertNotNil(mockRouter.rootViewController as? BrowserViewController)
+-            XCTAssertEqual(mockRouter.setRootViewControllerCalled, 1)
+-            XCTAssertTrue(subject.childCoordinators.isEmpty)
+-        }
++
++        // Ecosia: start(with:) installs the browser as the router's root view controller (setRootViewController),
++        // not via push.
++        XCTAssertNotNil(mockRouter.rootViewController as? BrowserViewController)
++        XCTAssertEqual(mockRouter.setRootViewControllerCalled, 1)
++        XCTAssertTrue(subject.childCoordinators.isEmpty)
+     }
+ 
+     func testWithLaunchType_startsLaunchCoordinator() {
+         let subject = createSubject()
+         subject.start(with: .defaultBrowser)
+ 
++        // Ecosia: start(with:) installs the browser as the router's root view controller (setRootViewController),
++        // not via push.
+         XCTAssertNotNil(mockRouter.rootViewController as? BrowserViewController)
+         XCTAssertEqual(mockRouter.setRootViewControllerCalled, 1)
+         XCTAssertEqual(subject.childCoordinators.count, 1)
+@@ -101,143 +94,62 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+ 
+     // MARK: - Show homepage
+ 
+-    func testShowHomepage_addsOneHomepageOnly() {
++    /* Ecosia: showLegacyHomepage and LegacyHomepageViewController removed in v147
++    func testShowHomepage_addsOneHomepageOnly() { ... }
++    func testShowHomepage_reuseExistingHomepage() { ... }
++    */
++
++    // MARK: - Show new homepage
++
++    func testShowNewHomepage_setsProperViewController() {
+         let subject = createSubject()
+         subject.showHomepage(overlayManager: overlayModeManager,
+-                             isZeroSearch: true,
++                             isZeroSearch: false,
+                              statusBarScrollDelegate: scrollDelegate,
+                              toastContainer: UIView())
+ 
+-        let secondHomepage = HomepageViewController(windowUUID: windowUUID,
+-                                                    overlayManager: overlayModeManager,
+-                                                    toastContainer: UIView())
+-        XCTAssertFalse(subject.browserViewController.contentContainer.canAdd(content: secondHomepage))
+         XCTAssertNotNil(subject.homepageViewController)
+         XCTAssertNil(subject.webviewController)
++        // Ecosia: privateViewController removed in v147
+     }
+ 
+-    func testShowHomepage_reuseExistingHomepage() {
++    func testShowNewHomepage_hasSameInstance() {
+         let subject = createSubject()
+         subject.showHomepage(overlayManager: overlayModeManager,
+-                             isZeroSearch: true,
++                             isZeroSearch: false,
+                              statusBarScrollDelegate: scrollDelegate,
+                              toastContainer: UIView())
+         let firstHomepage = subject.homepageViewController
+         XCTAssertNotNil(subject.homepageViewController)
+ 
+         subject.showHomepage(overlayManager: overlayModeManager,
+-                             isZeroSearch: true,
++                             isZeroSearch: false,
+                              statusBarScrollDelegate: scrollDelegate,
+                              toastContainer: UIView())
+         let secondHomepage = subject.homepageViewController
+         XCTAssertEqual(firstHomepage, secondHomepage)
+     }
+ 
+-    func testHomepageScreenshotTool_returnsHomepage_forNormalTab() throws {
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-        subject.showHomepage(
+-            overlayManager: overlayModeManager,
+-            isZeroSearch: false,
+-            statusBarScrollDelegate: scrollDelegate,
+-            toastContainer: UIView()
+-        )
+-
+-        let screenshotTool = try XCTUnwrap(subject.homepageScreenshotTool())
+-        XCTAssertTrue(screenshotTool is HomepageViewController)
+-    }
+-
+-    func testHomepageScreenshotTool_returnsNil_forNewBlankNewTab() throws {
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-        browserViewController.overrideNewTabSettings = .blankPage
+-        subject.showHomepage(
+-            overlayManager: overlayModeManager,
+-            isZeroSearch: false,
+-            statusBarScrollDelegate: scrollDelegate,
+-            toastContainer: UIView()
+-        )
+-        XCTAssertNil(subject.homepageScreenshotTool())
+-    }
+-
+-    func testHomepageScreenshotTool_returnsNil_forNewCustomURLNewTab() throws {
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-        browserViewController.overrideNewTabSettings = .homePage
+-        subject.showHomepage(
+-            overlayManager: overlayModeManager,
+-            isZeroSearch: false,
+-            statusBarScrollDelegate: scrollDelegate,
+-            toastContainer: UIView()
+-        )
+-
+-        XCTAssertNil(subject.homepageScreenshotTool())
+-    }
+-
+-    func testHomepageScreenshotTool_returnsPrivateHomepage_forPrivateTab() throws {
+-        let subject = createSubject()
+-        browserViewController.overrideNewTabSettings = .topSites
+-        let tab = tabManager.addTab(nil, afterTab: nil, zombie: false, isPrivate: true)
+-        tabManager.selectTab(tab)
+-        subject.showPrivateHomepage(overlayManager: overlayModeManager)
+-
+-        let screenshotTool = try XCTUnwrap(subject.homepageScreenshotTool())
+-        XCTAssertTrue(screenshotTool is PrivateHomepageViewController)
+-    }
+-
+-    // MARK: - Show new homepage
+-
+-    func testShowNewHomepage_setsProperViewController() {
+-        let subject = createSubject()
+-        subject.showHomepage(
+-            overlayManager: overlayModeManager,
+-            isZeroSearch: false,
+-            statusBarScrollDelegate: scrollDelegate,
+-            toastContainer: UIView()
+-        )
+-
+-        XCTAssertNotNil(subject.homepageViewController)
+-        XCTAssertNil(subject.webviewController)
+-    }
+-
+-    func testShowNewHomepage_hasSameInstance() {
+-        let subject = createSubject()
+-        subject.showHomepage(
+-            overlayManager: overlayModeManager,
+-            isZeroSearch: false,
+-            statusBarScrollDelegate: scrollDelegate,
+-            toastContainer: UIView()
+-        )
+-        let firstHomepage = subject.homepageViewController
+-        XCTAssertNotNil(subject.homepageViewController)
+-
+-        subject.showHomepage(
+-            overlayManager: overlayModeManager,
+-            isZeroSearch: false,
+-            statusBarScrollDelegate: scrollDelegate,
+-            toastContainer: UIView()
+-        )
+-        let secondHomepage = subject.homepageViewController
+-        XCTAssertEqual(firstHomepage, secondHomepage)
+-    }
+-
+     // MARK: - Show webview
+ 
+     func testShowWebview_embedNewWebview() {
+         let webview = WKWebView()
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.show(webView: webview)
+ 
++        // Ecosia: legacyHomepageViewController removed in v147
+         XCTAssertNotNil(subject.webviewController)
+-        XCTAssertEqual(browserViewController.embedContentCalled, 1)
+-        XCTAssertEqual(browserViewController.saveEmbeddedContent?.contentType, .webview)
++        XCTAssertEqual(mbvc.embedContentCalled, 1)
++        XCTAssertEqual(mbvc.saveEmbeddedContent?.contentType, .webview)
+     }
+ 
+     func testShowWebview_reuseExistingWebview() {
+         let webview = WKWebView()
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.show(webView: webview)
+         let firstWebview = subject.webviewController
+         XCTAssertNotNil(firstWebview)
+@@ -246,9 +158,9 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         let secondWebview = subject.webviewController
+ 
+         XCTAssertEqual(firstWebview, secondWebview)
+-        XCTAssertEqual(browserViewController.embedContentCalled, 1)
+-        XCTAssertEqual(browserViewController.frontEmbeddedContentCalled, 1)
+-        XCTAssertEqual(browserViewController.saveEmbeddedContent?.contentType, .webview)
++        XCTAssertEqual(mbvc.embedContentCalled, 1)
++        XCTAssertEqual(mbvc.frontEmbeddedContentCalled, 1)
++        XCTAssertEqual(mbvc.saveEmbeddedContent?.contentType, .webview)
+     }
+ 
+     func testShowWebview_setsScreenshotService() {
+@@ -259,17 +171,6 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         XCTAssertNotNil(screenshotService.screenshotableView)
+     }
+ 
+-    func testShowWebview_popsShortcutLibrary() {
+-        let webview = WKWebView()
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-        subject.showShortcutsLibrary()
+-
+-        subject.show(webView: webview)
+-
+-        XCTAssertEqual(mockRouter.popViewControllerCalled, 1)
+-    }
+-
+     // MARK: - BrowserNavigationHandler
+ 
+     func testShowSettings() throws {
+@@ -309,67 +210,27 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         }
+     }
+ 
+-    func testStartShareSheetCoordinator_addsShareSheetCoordinator() {
++    func testShowShareSheet_addsShareSheetCoordinator() async {
+         let subject = createSubject()
+ 
+-        let exp = expectation(description: "present called")
+-        mockRouter.onPresent = { exp.fulfill() }
+-
+-        subject.startShareSheetCoordinator(
++        subject.showShareSheet(
+             shareType: .site(url: URL(string: "https://www.google.com")!),
+-            shareMessage: ShareMessage(message: "Test Message", subtitle: "Test Subtitle"),
++            shareMessage: nil,
+             sourceView: UIView(),
+-            sourceRect: .zero,
++            sourceRect: nil,
+             toastContainer: UIView(),
+-            popoverArrowDirection: .up
++            popoverArrowDirection: .any
+         )
+ 
+-        wait(for: [exp], timeout: 5)
+-
+-        XCTAssertEqual(subject.childCoordinators.count, 1)
+-        XCTAssertTrue(subject.childCoordinators.first is ShareSheetCoordinator)
+-        XCTAssertEqual(mockRouter.presentCalled, 1)
+-        XCTAssertTrue(mockRouter.presentedViewController is UIActivityViewController)
+-    }
+-
+-    func testStartShareSheetCoordinator_isSharingTabWithTemporaryDocument_upgradesTabShareToFileShare() throws {
+-        let testWebURL = URL(string: "https://mozilla.org")!
+-        let testFileURL = URL(string: "file://some/file/url")!
+-        let testWebpageDisplayTitle = "Mozilla"
+-        let testShareMessage = ShareMessage(message: "Test Message", subtitle: "Test Subtitle")
+-        let mockTemporaryDocument = MockTemporaryDocument(withFileURL: testFileURL)
+-        let testTab = MockShareTab(
+-            title: testWebpageDisplayTitle,
+-            url: testWebURL,
+-            canonicalURL: testWebURL,
+-            withTemporaryDocument: mockTemporaryDocument
+-        )
+-
+-        let mockServerURL = try startMockServer()
+-
+-        let subject = createSubject()
+-
+-        subject.startShareSheetCoordinator(
+-            shareType: .tab(url: mockServerURL, tab: testTab),
+-            shareMessage: testShareMessage,
+-            sourceView: UIView(),
+-            sourceRect: CGRect(),
+-            toastContainer: UIView(),
+-            popoverArrowDirection: .up
+-        )
+-
+-        let exp = expectation(description: "present called")
+-        mockRouter.onPresent = { exp.fulfill() }
+-
+-        wait(for: [exp], timeout: 5.0)
++        // Ecosia: startShareSheetCoordinator creates and starts the coordinator inside a
++        // `Task { await MainActor.run { ... } }`, so let the scheduled main-actor task run before asserting.
++        await Task.yield()
++        try? await Task.sleep(nanoseconds: 200_000_000)
+ 
+         XCTAssertEqual(subject.childCoordinators.count, 1)
+         XCTAssertTrue(subject.childCoordinators.first is ShareSheetCoordinator)
+         XCTAssertEqual(mockRouter.presentCalled, 1)
+         XCTAssertTrue(mockRouter.presentedViewController is UIActivityViewController)
+-        // Right now we have no interface to check the ShareType passed in to ShareSheetCoordinator's start() call, but this
+-        // can tell us that there was an attempt to download a TemporaryDocument for a tab type share, which is sufficient.
+-        XCTAssertEqual(mockTemporaryDocument.downloadAsyncCalled, 1)
+     }
+ 
+     func testShowCreditCardAutofill_addsCredentialAutofillCoordinator() {
+@@ -389,6 +250,7 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         XCTAssertTrue(mockRouter.presentedViewController is BottomSheetViewController)
+     }
+ 
++    @MainActor
+     func testShowSavedLoginAutofill_addsCredentialAutofillCoordinator() {
+         let subject = createSubject()
+         let testURL = URL(string: "https://example.com")!
+@@ -445,7 +307,6 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+     }
+ 
+     func testShowTabTray() throws {
+-        setupNimbusTabTrayUIExperimentTesting(isEnabled: false)
+         let subject = createSubject()
+         subject.showTabTray(selectedPanel: .tabs)
+ 
+@@ -456,70 +317,6 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         XCTAssertTrue(presentedVC.topViewController is TabTrayViewController)
+     }
+ 
+-    func testShowTabTray_withExperiment() throws {
+-        setupNimbusTabTrayUIExperimentTesting(isEnabled: true)
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-        subject.showTabTray(selectedPanel: .tabs)
+-
+-        XCTAssertEqual(subject.childCoordinators.count, 1)
+-        XCTAssertNotNil(subject.childCoordinators[0] as? TabTrayCoordinator)
+-        let presentedVC = try XCTUnwrap(mockRouter.presentedViewController as? DismissableNavigationViewController)
+-        XCTAssertEqual(mockRouter.presentCalledWithAnimation, 1)
+-        XCTAssertTrue(presentedVC.topViewController is TabTrayViewController)
+-    }
+-
+-    func testShowTabTray_withPrivateTabs_withoutExperiment_showDefaultPresentation() throws {
+-        setupNimbusTabTrayUIExperimentTesting(isEnabled: false)
+-        let subject = createSubject()
+-        subject.showTabTray(selectedPanel: .privateTabs)
+-
+-        XCTAssertEqual(subject.childCoordinators.count, 1)
+-        XCTAssertNotNil(subject.childCoordinators[0] as? TabTrayCoordinator)
+-        let presentedVC = try XCTUnwrap(mockRouter.presentedViewController as? DismissableNavigationViewController)
+-        XCTAssertEqual(mockRouter.presentCalled, 1)
+-        XCTAssertTrue(presentedVC.topViewController is TabTrayViewController)
+-    }
+-
+-    func testShowTabTray_withPrivateTabs_withExperiment_showAnimatedPresentation() throws {
+-        setupNimbusTabTrayUIExperimentTesting(isEnabled: true)
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-        subject.showTabTray(selectedPanel: .privateTabs)
+-
+-        XCTAssertEqual(subject.childCoordinators.count, 1)
+-        XCTAssertNotNil(subject.childCoordinators[0] as? TabTrayCoordinator)
+-        let presentedVC = try XCTUnwrap(mockRouter.presentedViewController as? DismissableNavigationViewController)
+-        XCTAssertEqual(mockRouter.presentCalledWithAnimation, 1)
+-        XCTAssertTrue(presentedVC.topViewController is TabTrayViewController)
+-    }
+-
+-    func testShowTabTray_withSyncedTabs_withoutExperiment_showDefaultPresentation() throws {
+-        setupNimbusTabTrayUIExperimentTesting(isEnabled: false)
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-        subject.showTabTray(selectedPanel: .syncedTabs)
+-
+-        XCTAssertEqual(subject.childCoordinators.count, 1)
+-        XCTAssertNotNil(subject.childCoordinators[0] as? TabTrayCoordinator)
+-        let presentedVC = try XCTUnwrap(mockRouter.presentedViewController as? DismissableNavigationViewController)
+-        XCTAssertEqual(mockRouter.presentCalled, 1)
+-        XCTAssertTrue(presentedVC.topViewController is TabTrayViewController)
+-    }
+-
+-    func testShowTabTray_withSyncedTabs_withExperiment_showDefaultPresentation() throws {
+-        setupNimbusTabTrayUIExperimentTesting(isEnabled: true)
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-        subject.showTabTray(selectedPanel: .syncedTabs)
+-
+-        XCTAssertEqual(subject.childCoordinators.count, 1)
+-        XCTAssertNotNil(subject.childCoordinators[0] as? TabTrayCoordinator)
+-        let presentedVC = try XCTUnwrap(mockRouter.presentedViewController as? DismissableNavigationViewController)
+-        XCTAssertEqual(mockRouter.presentCalled, 1)
+-        XCTAssertTrue(presentedVC.topViewController is TabTrayViewController)
+-    }
+-
+     func testDismissTabTray_removesChild() throws {
+         let subject = createSubject()
+         subject.showTabTray(selectedPanel: .tabs)
+@@ -537,187 +334,14 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+     func testShowPasswordGenerator_presentsPasswordGeneratorBottomSheet() {
+         let subject = createSubject()
+         let mockTab = Tab(profile: profile, windowUUID: windowUUID)
+-        let mockEvaluator = MockPasswordGeneratorScriptEvaluator()
+-        let frameContext = PasswordGeneratorFrameContext(origin: "https://foo.com",
+-                                                         host: "foo.com",
+-                                                         scriptEvaluator: mockEvaluator,
+-                                                         frameInfo: nil)
+-        subject.showPasswordGenerator(tab: mockTab, frameContext: frameContext)
+-
+-        XCTAssertEqual(mockRouter.presentCalled, 1)
+-        XCTAssertTrue(mockRouter.presentedViewController is BottomSheetViewController)
+-    }
+-
+-    func testShowContextMenu_addsContextMenuCoordinator() {
+-        let subject = createSubject()
+-        let config = ContextMenuConfiguration(site: nil, menuType: nil, sourceView: nil, toastContainer: UIView())
+-        subject.showContextMenu(for: config)
+-
+-        XCTAssertEqual(subject.childCoordinators.count, 1)
+-        XCTAssertTrue(subject.childCoordinators.first is ContextMenuCoordinator)
+-        XCTAssertEqual(mockRouter.presentCalled, 1)
+-        XCTAssertTrue(mockRouter.presentedViewController is PhotonActionSheet)
+-    }
+-
+-    func testShowLoadingDocument() {
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-
+-        subject.showDocumentLoading()
+-
+-        XCTAssertEqual(browserViewController.removeDocumentLoadingViewCalled, 0)
+-        XCTAssertEqual(browserViewController.showDocumentLoadingViewCalled, 1)
+-    }
+-
+-    func testRemoveDocumentLoading() {
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-
+-        subject.removeDocumentLoading()
++        let URL = URL(string: "https://foo.com")!
++        let webView = WKWebViewMock(URL)
++        let frame = WKFrameInfoMock.new(webView: webView, frameURL: URL, isMainFrame: true)
+ 
+-        XCTAssertEqual(browserViewController.showDocumentLoadingViewCalled, 0)
+-        XCTAssertEqual(browserViewController.removeDocumentLoadingViewCalled, 1)
+-    }
+-
+-    // MARK: - Summarize Panel
+-
+-    func testShowSummarizePanel_whenSummarizeFeatureEnabled_showsPanel() async {
+-        setIsHostedSummarizerEnabled(true)
+-        let subject = createSubject()
+-        let tab = MockTab(profile: profile, windowUUID: windowUUID)
+-        tab.webView = MockTabWebView(tab: tab)
+-        tabManager.selectedTab = tab
+-        subject.browserViewController = browserViewController
+-
+-        subject.showSummarizePanel(.mainMenu, config: SummarizerConfig(instructions: "Test instructions", options: [:]))
+-
+-        let childCoordinator = subject.childCoordinators.first
+-        XCTAssertTrue(childCoordinator is SummarizeCoordinator)
+-
+-        /// Yield the main actor for one run loop, ensuring the animations on the mock BVC's `view.snapshot` can complete.
+-        /// See PR #31137 for more details.
+-        await Task.yield()
+-    }
+-
+-    func testShowSummarizePanel_whenSelectedTabIsHomePage_doesntShowPanel() {
+-        setIsHostedSummarizerEnabled(true)
+-        let subject = createSubject()
+-        let tab = MockTab(profile: profile, windowUUID: windowUUID, isHomePage: true)
+-        tab.webView = MockTabWebView(tab: tab)
+-        tabManager.selectedTab = tab
+-        subject.browserViewController = browserViewController
+-
+-        subject.showSummarizePanel(.mainMenu, config: SummarizerConfig(instructions: "Test instructions", options: [:]))
+-
+-        XCTAssertNil(subject.childCoordinators.first(where: {
+-            $0 is SummarizeCoordinator
+-        }))
+-    }
+-
+-    func testShowSummarizePanel_whenSummarizeFeatureIsDisabled_doesntShowPanel() {
+-        let subject = createSubject()
+-        subject.browserViewController = browserViewController
+-
+-        subject.showSummarizePanel(.mainMenu, config: SummarizerConfig(instructions: "Test instructions", options: [:]))
+-        XCTAssertNil(subject.childCoordinators.first(where: {
+-            $0 is SummarizeCoordinator
+-        }))
+-    }
+-
+-    func testShowSummarizePanel_whenSummarizeCoordinatorAlreadyPresent_doesntAddNewOne() async {
+-        setIsHostedSummarizerEnabled(true)
+-        let subject = createSubject()
+-        let tab = MockTab(profile: profile, windowUUID: windowUUID)
+-        tab.webView = MockTabWebView(tab: tab)
+-        tabManager.selectedTab = tab
+-        subject.browserViewController = browserViewController
+-
+-        // Calling twice showSummarizePanel has to add just once the SummarizeCoordinator.
+-        subject.showSummarizePanel(.mainMenu, config: SummarizerConfig(instructions: "instructions", options: [:]))
+-        subject.showSummarizePanel(.mainMenu, config: SummarizerConfig(instructions: "instructions", options: [:]))
+-
+-        let numberOfSummarizeCoordinators = subject.childCoordinators.count {
+-            $0 is SummarizeCoordinator
+-        }
+-        XCTAssertEqual(numberOfSummarizeCoordinators, 1)
+-
+-        /// Yield the main actor for one run loop, ensuring the animations on the mock BVC's `view.snapshot` can complete.
+-        /// See PR #31137 for more details.
+-        await Task.yield()
+-    }
+-
+-    // MARK: - Shortcuts Library
+-
+-    func testShowShortcutsLibrary_showsShortcutsLibrary() throws {
+-        let subject = createSubject()
+-
+-        subject.showShortcutsLibrary()
+-
+-        XCTAssertNotNil(mockRouter.pushedViewController as? ShortcutsLibraryViewController)
+-        XCTAssertEqual(mockRouter.pushCalled, 1)
+-    }
+-
+-    // MARK: - Stories Feed
+-
+-    func testShowStoriesFeed_showsStoriesFeed() throws {
+-        let subject = createSubject()
++        subject.showPasswordGenerator(tab: mockTab, frame: frame)
+ 
+-        subject.showStoriesFeed()
+-
+-        XCTAssertNotNil(mockRouter.pushedViewController as? StoriesFeedViewController)
+-        XCTAssertEqual(mockRouter.pushCalled, 1)
+-    }
+-
+-    func testShowStoriesWebview_showsStoriesWebview() throws {
+-        let subject = createSubject()
+-
+-        subject.showStoriesWebView(url: URL(string: "https://www.mozilla.com"))
+-
+-        XCTAssertNotNil(mockRouter.pushedViewController as? StoriesWebviewViewController)
+-        XCTAssertEqual(mockRouter.pushCalled, 1)
+-    }
+-
+-    func testShowPrivacyNoticeLink_showsStoriesWebview() throws {
+-        let subject = createSubject()
+-
+-        guard let url = URL(string: "https://www.mozilla.com") else { return }
+-
+-        subject.showPrivacyNoticeLink(url: url)
+-
+-        XCTAssertNotNil(mockRouter.presentedViewController as? TermsOfUseLinkViewController)
+         XCTAssertEqual(mockRouter.presentCalled, 1)
+-    }
+-
+-    func testPopToBVC_popsViewControllers() {
+-        let subject = createSubject()
+-
+-        mockRouter.push(browserViewController, animated: false)
+-        (0...1).forEach { _ in
+-            mockRouter.push(UIViewController(), animated: false)
+-        }
+-
+-        subject.popToBVC()
+-
+-        XCTAssertEqual(mockRouter.popToViewControllerCalled, 1)
+-    }
+-
+-    func testShouldShowNewTabToast_returnsTrue() throws {
+-        let subject = createSubject()
+-
+-        let tab = Tab(profile: profile, windowUUID: .XCTestDefaultUUID)
+-        let shouldShowNewTabToast = subject.shouldShowNewTabToast(tab: tab)
+-
+-        XCTAssertTrue(shouldShowNewTabToast)
+-    }
+-
+-    func testShouldShowNewTabToast_returnsFalse() throws {
+-        let subject = createSubject()
+-
+-        subject.showShortcutsLibrary()
+-        let tab = Tab(profile: profile, windowUUID: .XCTestDefaultUUID)
+-        let shouldShowNewTabToast = subject.shouldShowNewTabToast(tab: tab)
+-
+-        XCTAssertFalse(shouldShowNewTabToast)
++        XCTAssertTrue(mockRouter.presentedViewController is BottomSheetViewController)
+     }
+ 
+     // MARK: - ParentCoordinatorDelegate
+@@ -728,6 +352,7 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+             alertContainer: UIView(),
+             router: mockRouter,
+             profile: profile,
++            parentCoordinator: subject,
+             tabManager: tabManager)
+ 
+         subject.add(child: childCoordinator)
+@@ -741,20 +366,22 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+     func testHandleSearchQuery_returnsTrue() {
+         let query = "test query"
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         let result = testCanHandleAndHandle(subject, route: .searchQuery(query: query, isPrivate: false))
+ 
+         XCTAssertTrue(result)
+-        XCTAssertTrue(browserViewController.handleQueryCalled)
+-        XCTAssertEqual(browserViewController.handleQuery, query)
+-        XCTAssertEqual(browserViewController.handleQueryCount, 1)
++        XCTAssertTrue(mbvc.handleQueryCalled)
++        XCTAssertEqual(mbvc.handleQuery, query)
++        XCTAssertEqual(mbvc.handleQueryCount, 1)
+     }
+ 
+     func testHandleSearch_returnsTrue() {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         let result = testCanHandleAndHandle(subject, route: .search(url: URL(string: "https://example.com")!,
+@@ -762,41 +389,50 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+                                                                     options: nil))
+ 
+         XCTAssertTrue(result)
+-        XCTAssertTrue(browserViewController.switchToTabForURLOrOpenCalled)
+-        XCTAssertEqual(browserViewController.switchToTabForURLOrOpenURL, URL(string: "https://example.com")!)
+-        XCTAssertEqual(browserViewController.switchToTabForURLOrOpenCount, 1)
++        XCTAssertTrue(mbvc.switchToTabForURLOrOpenCalled)
++        XCTAssertEqual(mbvc.switchToTabForURLOrOpenURL, URL(string: "https://example.com")!)
++        XCTAssertEqual(mbvc.switchToTabForURLOrOpenCount, 1)
+     }
+ 
+     func testHandleSearchWithNormalMode_returnsTrue() {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         let result = testCanHandleAndHandle(subject, route: .search(url: URL(string: "https://example.com")!,
+                                                                     isPrivate: false))
+ 
+         XCTAssertTrue(result)
+-        XCTAssertTrue(browserViewController.switchToTabForURLOrOpenCalled)
+-        XCTAssertEqual(browserViewController.switchToTabForURLOrOpenURL, URL(string: "https://example.com")!)
+-        XCTAssertEqual(browserViewController.switchToTabForURLOrOpenCount, 1)
++        XCTAssertFalse(mbvc.switchToPrivacyModeCalled)
++        XCTAssertFalse(mbvc.switchToPrivacyModeIsPrivate)
++        XCTAssertTrue(mbvc.switchToTabForURLOrOpenCalled)
++        XCTAssertEqual(mbvc.switchToTabForURLOrOpenURL, URL(string: "https://example.com")!)
++        XCTAssertEqual(mbvc.switchToTabForURLOrOpenCount, 1)
+     }
+ 
+     func testHandleSearchWithNilURL_returnsTrue() {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
++        // Ecosia: handle(url: nil) needs a selected tab, otherwise the BVC waits for tab restoration and
++        // openBlankNewTab is never called. (shouldFocusLocationTextField is overridden to false in Ecosia, so a
++        // selected tab always routes to openBlankNewTab.)
++        tabManager.selectedTab = Tab(profile: profile, windowUUID: windowUUID)
+ 
+         let result = testCanHandleAndHandle(subject, route: .search(url: nil, isPrivate: false))
+ 
+         XCTAssertTrue(result)
+-        XCTAssertFalse(browserViewController.openBlankNewTabCalled)
+-        XCTAssertFalse(browserViewController.openBlankNewTabIsPrivate)
+-        XCTAssertEqual(browserViewController.openBlankNewTabCount, 0)
++        XCTAssertTrue(mbvc.openBlankNewTabCalled)
++        XCTAssertFalse(mbvc.openBlankNewTabIsPrivate)
++        XCTAssertEqual(mbvc.openBlankNewTabCount, 1)
+     }
+ 
+     func testHandleSearchURL_returnsTrue() {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         let result = testCanHandleAndHandle(
+@@ -808,82 +444,88 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         )
+ 
+         XCTAssertTrue(result)
+-        XCTAssertTrue(browserViewController.switchToTabForURLOrOpenCalled)
+-        XCTAssertEqual(browserViewController.switchToTabForURLOrOpenURL, URL(string: "https://example.com")!)
+-        XCTAssertEqual(browserViewController.switchToTabForURLOrOpenCount, 1)
++        XCTAssertTrue(mbvc.switchToTabForURLOrOpenCalled)
++        XCTAssertEqual(mbvc.switchToTabForURLOrOpenURL, URL(string: "https://example.com")!)
++        XCTAssertEqual(mbvc.switchToTabForURLOrOpenCount, 1)
+     }
+ 
+     func testHandleNilSearchURL_returnsTrue() {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         let result = testCanHandleAndHandle(subject, route: .searchURL(url: nil, tabId: "1234"))
+ 
+         XCTAssertTrue(result)
+-        XCTAssertTrue(browserViewController.openBlankNewTabCalled)
+-        XCTAssertFalse(browserViewController.openBlankNewTabIsPrivate)
+-        XCTAssertEqual(browserViewController.openBlankNewTabCount, 1)
++        XCTAssertTrue(mbvc.openBlankNewTabCalled)
++        XCTAssertFalse(mbvc.openBlankNewTabIsPrivate)
++        XCTAssertEqual(mbvc.openBlankNewTabCount, 1)
+     }
+ 
+     // MARK: - Homepanel route
+ 
+     func testHandleHomepanelBookmarks_returnsTrue() {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         let result = testCanHandleAndHandle(subject, route: .homepanel(section: .bookmarks))
+ 
+         XCTAssertTrue(result)
+-        XCTAssertTrue(browserViewController.showLibraryCalled)
+-        XCTAssertEqual(browserViewController.showLibraryPanel, .bookmarks)
+-        XCTAssertEqual(browserViewController.showLibraryCount, 1)
++        XCTAssertTrue(mbvc.showLibraryCalled)
++        XCTAssertEqual(mbvc.showLibraryPanel, .bookmarks)
++        XCTAssertEqual(mbvc.showLibraryCount, 1)
+     }
+ 
+     func testHandleHomepanelHistory_returnsTrue() {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         let result = testCanHandleAndHandle(subject, route: .homepanel(section: .history))
+ 
+         XCTAssertTrue(result)
+-        XCTAssertTrue(browserViewController.showLibraryCalled)
+-        XCTAssertEqual(browserViewController.showLibraryPanel, .history)
+-        XCTAssertEqual(browserViewController.showLibraryCount, 1)
++        XCTAssertTrue(mbvc.showLibraryCalled)
++        XCTAssertEqual(mbvc.showLibraryPanel, .history)
++        XCTAssertEqual(mbvc.showLibraryCount, 1)
+     }
+ 
+     func testHandleHomepanelReadingList_returnsTrue() {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         let result = testCanHandleAndHandle(subject, route: .homepanel(section: .readingList))
+ 
+         XCTAssertTrue(result)
+-        XCTAssertTrue(browserViewController.showLibraryCalled)
+-        XCTAssertEqual(browserViewController.showLibraryPanel, .readingList)
+-        XCTAssertEqual(browserViewController.showLibraryCount, 1)
++        XCTAssertTrue(mbvc.showLibraryCalled)
++        XCTAssertEqual(mbvc.showLibraryPanel, .readingList)
++        XCTAssertEqual(mbvc.showLibraryCount, 1)
+     }
+ 
+     func testHandleHomepanelDownloads_returnsTrue() {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         let result = testCanHandleAndHandle(subject, route: .homepanel(section: .downloads))
+ 
+         XCTAssertTrue(result)
+-        XCTAssertTrue(browserViewController.showLibraryCalled)
+-        XCTAssertEqual(browserViewController.showLibraryPanel, .downloads)
+-        XCTAssertEqual(browserViewController.showLibraryCount, 1)
++        XCTAssertTrue(mbvc.showLibraryCalled)
++        XCTAssertEqual(mbvc.showLibraryPanel, .downloads)
++        XCTAssertEqual(mbvc.showLibraryCount, 1)
+     }
+ 
+     func testHandleHomepanelTopSites_returnsTrue() {
+         // Given
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         // When
+@@ -891,41 +533,49 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+ 
+         // Then
+         XCTAssertTrue(result)
+-        XCTAssertEqual(browserViewController.openURLInNewTabCount, 1)
+-        XCTAssertEqual(browserViewController.openURLInNewTabURL, HomePanelType.topSites.internalUrl)
+-        XCTAssertEqual(browserViewController.openURLInNewTabIsPrivate, false)
++        XCTAssertEqual(mbvc.openURLInNewTabCount, 1)
++        XCTAssertEqual(mbvc.openURLInNewTabURL, HomePanelType.topSites.internalUrl)
++        XCTAssertEqual(mbvc.openURLInNewTabIsPrivate, false)
+     }
+ 
+     func testHandleNewPrivateTab_returnsTrue() {
+         // Given
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
++        // Ecosia: handle(url: nil) needs a selected tab, otherwise the BVC waits for tab restoration and
++        // openBlankNewTab is never called.
++        tabManager.selectedTab = Tab(profile: profile, windowUUID: windowUUID)
+ 
+         // When
+         let result = testCanHandleAndHandle(subject, route: .search(url: nil, isPrivate: true))
+ 
+         // Then
+         XCTAssertTrue(result)
+-        XCTAssertEqual(browserViewController.openBlankNewTabCount, 0)
+-        XCTAssertFalse(browserViewController.openBlankNewTabFocusLocationField)
+-        XCTAssertEqual(browserViewController.openBlankNewTabIsPrivate, false)
++        XCTAssertEqual(mbvc.openBlankNewTabCount, 1)
++        XCTAssertFalse(mbvc.openBlankNewTabFocusLocationField)
++        XCTAssertEqual(mbvc.openBlankNewTabIsPrivate, true)
+     }
+ 
+     func testHandleHomepanelNewTab_returnsTrue() {
+         // Given
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
++        // Ecosia: handle(url: nil) needs a selected tab, otherwise the BVC waits for tab restoration and
++        // openBlankNewTab is never called.
++        tabManager.selectedTab = Tab(profile: profile, windowUUID: windowUUID)
+ 
+         // When
+         let result = testCanHandleAndHandle(subject, route: .search(url: nil, isPrivate: false))
+ 
+         // Then
+         XCTAssertTrue(result)
+-        XCTAssertEqual(browserViewController.openBlankNewTabCount, 0)
+-        XCTAssertFalse(browserViewController.openBlankNewTabFocusLocationField)
+-        XCTAssertEqual(browserViewController.openBlankNewTabIsPrivate, false)
++        XCTAssertEqual(mbvc.openBlankNewTabCount, 1)
++        XCTAssertFalse(mbvc.openBlankNewTabFocusLocationField)
++        XCTAssertEqual(mbvc.openBlankNewTabIsPrivate, false)
+     }
+ 
+     // MARK: - Default browser route
+@@ -1022,12 +672,13 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+     func testSettingsCoordinatorDelegate_openURLinNewTab() {
+         let expectedURL = URL(string: "www.mozilla.com")!
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+ 
+         subject.openURLinNewTab(expectedURL)
+ 
+-        XCTAssertEqual(browserViewController.openURLInNewTabCount, 1)
+-        XCTAssertEqual(browserViewController.openURLInNewTabURL, expectedURL)
++        XCTAssertEqual(mbvc.openURLInNewTabCount, 1)
++        XCTAssertEqual(mbvc.openURLInNewTabURL, expectedURL)
+     }
+ 
+     func testSettingsCoordinatorDelegate_didFinishSettings_removesChild() {
+@@ -1035,9 +686,7 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         subject.browserHasLoaded()
+ 
+         let result = testCanHandleAndHandle(subject, route: .settings(section: .general))
+-        guard let settingsCoordinator = subject.childCoordinators[0] as? SettingsCoordinator else {
+-            return XCTFail("settingsCoordinator was not found")
+-        }
++        let settingsCoordinator = subject.childCoordinators[0] as! SettingsCoordinator
+         subject.didFinishSettings(from: settingsCoordinator)
+ 
+         XCTAssertTrue(result)
+@@ -1047,7 +696,8 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+ 
+     func testETPCoordinatorDelegate_settingsOpenPage() {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+ 
+         subject.settingsOpenPage(settings: .contentBlocker)
+         XCTAssertEqual(subject.childCoordinators.count, 1)
+@@ -1059,9 +709,7 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         subject.browserHasLoaded()
+ 
+         subject.showEnhancedTrackingProtection(sourceView: UIView())
+-        guard let etpCoordinator = subject.childCoordinators[0] as? EnhancedTrackingProtectionCoordinator else {
+-            return XCTFail("etpCoordinator was not found")
+-        }
++        let etpCoordinator = subject.childCoordinators[0] as! EnhancedTrackingProtectionCoordinator
+         subject.didFinishEnhancedTrackingProtection(from: etpCoordinator)
+ 
+         XCTAssertEqual(mockRouter.dismissCalled, 1)
+@@ -1073,7 +721,8 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+     func testHandleFxaSignIn_returnsTrue() {
+         // Given
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         // When
+@@ -1083,18 +732,37 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+ 
+         // Then
+         XCTAssertTrue(result)
+-        XCTAssertEqual(browserViewController.presentSignInCount, 1)
+-        XCTAssertEqual(browserViewController.presentSignInFlowType, .emailLoginFlow)
+-        XCTAssertEqual(browserViewController.presentSignInFxaOptions, params)
+-        XCTAssertEqual(browserViewController.presentSignInReferringPage, ReferringPage.none)
++        XCTAssertEqual(mbvc.presentSignInCount, 1)
++        XCTAssertEqual(mbvc.presentSignInFlowType, .emailLoginFlow)
++        XCTAssertEqual(mbvc.presentSignInFxaOptions, params)
++        XCTAssertEqual(mbvc.presentSignInReferringPage, ReferringPage.none)
+     }
+ 
+     // MARK: - App action route
+ 
++    // Ecosia: Route.AppAction.showQRCode removed in v147
++    /*
++    func testHandleHandleQRCode_returnsTrue() {
++        // Given
++        let subject = createSubject()
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
++        subject.browserHasLoaded()
++
++        // When
++        let result = testCanHandleAndHandle(subject, route: .action(action: .showQRCode))
++
++        // Then
++        XCTAssertTrue(result)
++        XCTAssertEqual(mbvc.qrCodeCount, 1)
++    }
++    */
++
+     func testHandleClosePrivateTabs_returnsTrue() {
+         // Given
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+         subject.browserHasLoaded()
+ 
+         // When
+@@ -1102,12 +770,11 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+ 
+         // Then
+         XCTAssertTrue(result)
+-        guard let windowManager = (AppContainer.shared.resolve() as WindowManager) as? MockWindowManager else {
+-            return XCTFail("windowManager was not found")
+-        }
++        let windowManager = (AppContainer.shared.resolve() as WindowManager) as! MockWindowManager
+         XCTAssertEqual(windowManager.closePrivateTabsMultiActionCalled, 1)
+     }
+ 
++    /* Ecosia: Disable Onboarding dependant tests since LaunchCoordinator.presentIntroOnboarding is temporarily disabled
+     func testHandleShowOnboarding_returnsTrueAndShowsOnboarding() {
+         let subject = createSubject()
+         subject.browserHasLoaded()
+@@ -1118,6 +785,7 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         XCTAssertEqual(subject.childCoordinators.count, 1)
+         XCTAssertNotNil(subject.childCoordinators[0] as? LaunchCoordinator)
+     }
++    */
+ 
+     // MARK: - Saved route
+ 
+@@ -1205,7 +873,8 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+ 
+     func testTappingOpenUrl_CallsTheDidSelectUrlOnBrowserViewController() throws {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+ 
+         // We show the library with bookmarks tab
+         subject.show(homepanelSection: .bookmarks)
+@@ -1215,14 +884,15 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         let url = URL(string: "http://google.com")!
+         coordinator.libraryPanel(didSelectURL: url, visitType: .bookmark)
+ 
+-        XCTAssertTrue(browserViewController.didSelectURLCalled)
+-        XCTAssertEqual(browserViewController.lastOpenedURL, url)
+-        XCTAssertEqual(browserViewController.lastVisitType, .bookmark)
++        XCTAssertTrue(mbvc.didSelectURLCalled)
++        XCTAssertEqual(mbvc.lastOpenedURL, url)
++        XCTAssertEqual(mbvc.lastVisitType, .bookmark)
+     }
+ 
+     func testTappingOpenUrlInNewTab_CallsTheDidSelectUrlInNewTapOnBrowserViewController() throws {
+         let subject = createSubject()
+-        subject.browserViewController = browserViewController
++        let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
++        subject.browserViewController = mbvc
+ 
+         // We show the library with bookmarks tab
+         subject.show(homepanelSection: .bookmarks)
+@@ -1232,11 +902,15 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         let url = URL(string: "http://google.com")!
+         coordinator.libraryPanelDidRequestToOpenInNewTab(url, isPrivate: true)
+ 
+-        XCTAssertTrue(browserViewController.didRequestToOpenInNewTabCalled)
+-        XCTAssertEqual(browserViewController.lastOpenedURL, url)
+-        XCTAssertTrue(browserViewController.isPrivate)
++        XCTAssertTrue(mbvc.didRequestToOpenInNewTabCalled)
++        XCTAssertEqual(mbvc.lastOpenedURL, url)
++        XCTAssertTrue(mbvc.isPrivate)
+     }
+ 
++    /* Ecosia: openRecentlyClosedSiteInSameTab removed in v147
++    func testOpenRecentlyClosedTabInSameTab_callsReletedMethodInBrowserViewController() { ... }
++    */
++
+     func testOpenRecentlyClosedSiteInNewTab_addsOneTabToTabManager() {
+         let subject = createSubject()
+ 
+@@ -1245,6 +919,18 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         XCTAssertEqual(tabManager.lastSelectedTabs.count, 1)
+     }
+ 
++    /* Ecosia: Fakespot removed in v147 — FakespotCoordinator, FakespotViewController,
++       showFakespotFlowAsModal/AsSidebar, dismissFakespotModal/Sidebar, updateFakespotSidebar all removed
++    func testFakespotCoordinatorDelegate_didDidDismiss_removesChild() { ... }
++    func testTappingShopping_startsFakespotCoordinatorAsModal() { ... }
++    func testTappingShopping_startsFakespotCoordinatorAsSidebar() { ... }
++    func testTappingShopping_dismissFakespotModal() { ... }
++    func testTappingShopping_dismissFakespotModal_noCoordinator() { ... }
++    func testTappingShopping_dismissFakespotSidebar() { ... }
++    func testTappingShopping_dismissFakespotSidebar_noCoordinator() { ... }
++    func testChangeShoppingURL_updatesSidebar() { ... }
++    */
++
+     func testShowAddressAutofill_addsAddressAutofillCoordinator() {
+         // Arrange
+         let subject = createSubject()
+@@ -1268,9 +954,10 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         XCTAssertEqual(subject.childCoordinators.count, 1)
+         XCTAssertTrue(subject.childCoordinators.first is MainMenuCoordinator)
+         XCTAssertEqual(mockRouter.presentCalled, 1)
+-        if !featureFlags.isFeatureEnabled(.menuRefactor, checking: .buildOnly) {
+-            XCTAssertTrue(mockRouter.presentedViewController is DismissableNavigationViewController)
+-        }
++        // Ecosia: the refactored main menu (menuRefactor enabled) presents a plain UINavigationController via
++        // MainMenuCoordinator.startWithNavController(), not a DismissableNavigationViewController.
++        // XCTAssertTrue(mockRouter.presentedViewController is DismissableNavigationViewController)
++        XCTAssertTrue(mockRouter.presentedViewController is UINavigationController)
+         XCTAssertTrue(mockRouter.presentedViewController?.children.first is MainMenuViewController)
+     }
+ 
+@@ -1289,6 +976,26 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         XCTAssertTrue(subject.childCoordinators.isEmpty)
+     }
+ 
++    func testMainMenuCoordinatorDelegate_navigatesToSettings() {
++        let subject = createSubject()
++        subject.browserHasLoaded()
++
++        subject.showMainMenu()
++        guard let menuCoordinator = subject.childCoordinators[0] as? MainMenuCoordinator else {
++            XCTFail("Main menu coordinator was expected to be resolved")
++            return
++        }
++
++        // Ecosia: .customizeHomepage removed in v147, use .settings instead
++        menuCoordinator.navigateTo(MenuNavigationDestination(.settings), animated: false)
++        // Ecosia: navigateTo dismisses the menu first and performs the navigation in the dismiss completion;
++        // run the mock router's saved completion to execute it.
++        mockRouter.savedCompletion?()
++
++        XCTAssertTrue(subject.childCoordinators[0] is SettingsCoordinator)
++        XCTAssertTrue(mockRouter.presentedViewController?.children.first is AppSettingsTableViewController)
++    }
++
+     // MARK: - Search Engine Selection
+     func testShowSearchEngineSelection_addsSearchEngineSelectionCoordinator() {
+         let subject = createSubject()
+@@ -1332,57 +1039,8 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         XCTAssertTrue(mockRouter.presentedViewController?.children.first is MicrosurveyViewController)
+     }
+ 
+-    // MARK: - Edit Bookmark Controller
+-    func testShowEditBookmarks_addBookmarksCoordinator() {
+-        let subject = createSubject()
+-
+-        let folder = MockFxBookmarkNode(type: .folder,
+-                                        guid: "0",
+-                                        position: 0,
+-                                        isRoot: false,
+-                                        title: "TestFolder")
+-        let bookmark = MockFxBookmarkNode(type: .bookmark,
+-                                          guid: "1",
+-                                          position: 0,
+-                                          isRoot: false,
+-                                          title: "TestBookmark")
+-
+-        subject.showEditBookmark(parentFolder: folder, bookmark: bookmark)
+-
+-        XCTAssertEqual(subject.childCoordinators.count, 1)
+-        XCTAssertTrue(subject.childCoordinators.first is BookmarksCoordinator)
+-        XCTAssertEqual(mockRouter.presentCalled, 1)
+-        XCTAssertTrue(mockRouter.presentedViewController is DismissableNavigationViewController)
+-        XCTAssertTrue(mockRouter.presentedViewController?.children.first is EditBookmarkViewController)
+-    }
+-
+-    func testShowEditBookmarks_didDidDismiss_removesChild() {
+-        let subject = createSubject()
+-
+-        let folder = MockFxBookmarkNode(type: .folder,
+-                                        guid: "0",
+-                                        position: 0,
+-                                        isRoot: false,
+-                                        title: "TestFolder")
+-        let bookmark = MockFxBookmarkNode(type: .bookmark,
+-                                          guid: "1",
+-                                          position: 0,
+-                                          isRoot: false,
+-                                          title: "TestBookmark")
+-
+-        subject.showEditBookmark(parentFolder: folder, bookmark: bookmark)
+-        guard let bookmarksCoordinator = subject.childCoordinators[0] as? BookmarksCoordinator else {
+-            XCTFail("Bookmarks coordinator was expected to be resolved")
+-            return
+-        }
+-
+-        subject.didFinish(from: bookmarksCoordinator)
+-
+-        XCTAssertTrue(subject.childCoordinators.isEmpty)
+-    }
+-
+     // MARK: - Helpers
+-    private func createSubject(file: StaticString = #filePath,
++    private func createSubject(file: StaticString = #file,
+                                line: UInt = #line) -> BrowserCoordinator {
+         let subject = BrowserCoordinator(router: mockRouter,
+                                          screenshotService: screenshotService,
+@@ -1390,6 +1048,7 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+                                          profile: profile,
+                                          glean: glean,
+                                          applicationHelper: applicationHelper)
++
+         trackForMemoryLeaks(subject, file: file, line: line)
+         return subject
+     }
+@@ -1399,48 +1058,4 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
+         subject.handle(route: route)
+         return result
+     }
+-
+-    private func setIsDeeplinkOptimizationRefactorEnabled(_ enabled: Bool) {
+-        FxNimbus.shared.features.deeplinkOptimizationRefactorFeature.with { _, _ in
+-            return DeeplinkOptimizationRefactorFeature(enabled: enabled)
+-        }
+-    }
+-
+-    private func setIsAppleSummarizerEnabled(_ isEnabled: Bool) {
+-        FxNimbus.shared.features.appleSummarizerFeature.with { _, _ in
+-            return AppleSummarizerFeature(enabled: isEnabled)
+-        }
+-    }
+-
+-    private func setIsHostedSummarizerEnabled(_ isEnabled: Bool) {
+-        FxNimbus.shared.features.hostedSummarizerFeature.with { _, _ in
+-            return HostedSummarizerFeature(enabled: isEnabled)
+-        }
+-    }
+-
+-    private func setupNimbusTabTrayUIExperimentTesting(isEnabled: Bool) {
+-        FxNimbus.shared.features.tabTrayUiExperiments.with { _, _ in
+-            return TabTrayUiExperiments(
+-                enabled: isEnabled
+-            )
+-        }
+-    }
+-
+-    // MARK: - Mock Server
+-
+-    func startMockServer() throws -> URL {
+-        let webServer = GCDWebServer()
+-
+-        webServer.addHandler(forMethod: "GET",
+-                             path: "/",
+-                             request: GCDWebServerRequest.self) { (request) -> GCDWebServerResponse? in
+-            return GCDWebServerDataResponse()
+-        }
+-
+-        if !webServer.start(withPort: 0, bonjourName: nil) {
+-            XCTFail("Can't start the GCDWebServer")
+-        }
+-
+-        return URL(string: "http://localhost:\(webServer.port)")!
+-    }
+ }

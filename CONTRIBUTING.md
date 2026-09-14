@@ -1,8 +1,5 @@
-# Contribution Guidelines
-
-Thank you for taking the time to contribute to Firefox iOS. We welcome contributions of all kinds, including bug fixes, improvements, and new ideas.
-
-Before getting started, please make sure your work aligns with how we collaborate in this repository.
+# Contribution guidelines
+We encourage you to participate in this open source project. We love Pull Requests, Issue Reports, Feature Requests or any kind of positive contribution. Please read the following guidelines and our [Firefox for iOS contributing guidelines](https://github.com/mozilla-mobile/firefox-ios/blob/main/CONTRIBUTING.md) first.
 
 ## Submitting an Issue
 

@@ -72,8 +72,10 @@ class TrackingProtectionViewController: UIViewController,
     // MARK: UI components Header View
     private var headerContainer: HeaderView = .build()
 
+    /* Ecosia: Remove "Firefox is on Guard" connection details header view
     // MARK: Connection Details View
     private var connectionDetailsHeaderView: TrackingProtectionConnectionDetailsView = .build()
+    */
 
     // MARK: Blocked Trackers View
     private var trackersView: TrackingProtectionBlockedTrackersView = .build()
@@ -241,7 +243,8 @@ class TrackingProtectionViewController: UIViewController,
 
         setupHeaderView()
         setupContentView()
-        setupConnectionHeaderView()
+        // Ecosia: Remove "Firefox is on Guard" connection details header
+        // setupConnectionHeaderView()
         setupTrackersConnectionView()
         setupToggleView()
         setupClearCookiesButton()
@@ -351,6 +354,7 @@ class TrackingProtectionViewController: UIViewController,
         headerContainer.updateHeaderLineView(isHidden: true)
     }
 
+    /* Ecosia: Remove "Firefox is on Guard" connection details header
     // MARK: Connection Status Header Setup
     private func setupConnectionHeaderView() {
         baseView.addSubviews(connectionDetailsHeaderView)
@@ -372,9 +376,17 @@ class TrackingProtectionViewController: UIViewController,
         }
         constraints.append(contentsOf: connectionHeaderConstraints)
     }
+    */
 
     // MARK: Trackers Connection Setup
     private func setupTrackersConnectionView() {
+        // Ecosia: Add top corner rounding since connection details header is removed. Use
+        // `newStyleCornerRadius` (24 on iOS 26, `viewCornerRadius` below it) because this container is
+        // now the panel's top card, and that is the radius upstream gives the card it replaced — and
+        // the sibling `toggleView` — on iOS 26.
+        trackersConnectionContainer.layer.cornerRadius = TPMenuUX.UX.newStyleCornerRadius
+        trackersConnectionContainer.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        trackersConnectionContainer.layer.masksToBounds = true
         baseView.addSubview(trackersConnectionContainer)
         baseView.addSubview(connectionHorizontalLine)
         trackersConnectionContainer.addArrangedSubview(trackersView)
@@ -390,7 +402,13 @@ class TrackingProtectionViewController: UIViewController,
                 equalTo: view.trailingAnchor,
                 constant: -TPMenuUX.UX.horizontalMargin
             ),
+            /* Ecosia: Anchor to baseView top since connection details header is removed
             trackersConnectionContainer.topAnchor.constraint(equalTo: connectionDetailsHeaderView.bottomAnchor),
+            */
+            trackersConnectionContainer.topAnchor.constraint(
+                equalTo: baseView.topAnchor,
+                constant: TPMenuUX.UX.connectionDetailsHeaderMargins
+            ),
             connectionHorizontalLine.topAnchor.constraint(equalTo: trackersConnectionContainer.bottomAnchor),
             connectionHorizontalLine.leadingAnchor.constraint(equalTo: trackersConnectionContainer.leadingAnchor),
             connectionHorizontalLine.trailingAnchor.constraint(equalTo: trackersConnectionContainer.trailingAnchor),
@@ -543,9 +561,11 @@ class TrackingProtectionViewController: UIViewController,
                                                  theme: currentTheme(),
                                                  isInternalCertErrorURL: isInternalCertErrorURL,
                                                  isManuallyTrusted: isManuallyTrusted)
+        /* Ecosia: Remove "Firefox is on Guard" connection details header
         connectionDetailsHeaderView.setupDetails(title: model.connectionDetailsTitle,
                                                  status: model.connectionDetailsHeader,
                                                  image: model.connectionDetailsImage)
+        */
     }
 
     private func setupViewActions() {
@@ -593,6 +613,7 @@ class TrackingProtectionViewController: UIViewController,
             closeButtonA11yLabel: model.closeButtonA11yLabel,
             closeButtonA11yId: model.closeButtonA11yId
         )
+        /* Ecosia: Remove "Firefox is on Guard" connection details header
         connectionDetailsHeaderView.setupAccessibilityIdentifiers(
             connectionDetailsContentViewA11yId: model.connectionDetailsContentViewA11yId,
             foxImageA11yId: model.foxImageA11yId,
@@ -600,6 +621,7 @@ class TrackingProtectionViewController: UIViewController,
             connectionDetailsTitleLabelA11yId: model.connectionDetailsTitleLabelA11yId,
             connectionDetailsStatusLabelA11yId: model.connectionDetailsStatusLabelA11yId,
         )
+         */
         trackersView.setupAccessibilityIdentifiers(
             arrowImageA11yId: model.arrowImageA11yId,
             trackersBlockedButtonA11yId: model.trackersBlockedButtonA11yId,
@@ -626,7 +648,8 @@ class TrackingProtectionViewController: UIViewController,
         headerContainer.adjustLayout(isWebsiteIcon: true)
         trackersView.adjustLayout()
         connectionStatusView.adjustLayout()
-        connectionDetailsHeaderView.adjustLayout()
+        // Ecosia: Remove "Firefox is on Guard" connection details header
+        // connectionDetailsHeaderView.adjustLayout()
         toggleView.adjustLayout()
         configureProtectionSettingsView()
 
@@ -761,10 +784,12 @@ class TrackingProtectionViewController: UIViewController,
             model.isProtectionEnabled = false
         }
         toggleView.setToggleSwitchVisibility(with: !isContentBlockingConfigEnabled)
+        /* Ecosia: Remove "Firefox is on Guard" connection details header
         connectionDetailsHeaderView.setupDetails(color: model.getConnectionDetailsBackgroundColor(theme: currentTheme()),
                                                  title: model.connectionDetailsTitle,
                                                  status: model.connectionDetailsHeader,
                                                  image: model.connectionDetailsImage)
+        */
         adjustLayout()
     }
 
@@ -775,7 +800,8 @@ class TrackingProtectionViewController: UIViewController,
         let panelBackground = theme.isNova ? theme.colors.layer1 : theme.colors.layer3
         view.backgroundColor = panelBackground.withAlphaComponent(backgroundAlpha(isNova: theme.isNova))
         headerContainer.applyTheme(theme: theme)
-        connectionDetailsHeaderView.applyTheme(theme: theme)
+        // Ecosia: Remove "Firefox is on Guard" connection details header
+        // connectionDetailsHeaderView.applyTheme(theme: theme)
         trackersView.applyTheme(theme: theme)
         connectionStatusView.applyTheme(theme: theme)
         connectionHorizontalLine.backgroundColor = theme.colors.borderPrimary

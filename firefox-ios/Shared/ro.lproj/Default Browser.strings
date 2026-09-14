@@ -1,5 +1,5 @@
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.BetterInternet.Description.v108" = "Când setezi Firefox ca browser implicit votezi pentru un internet deschis și accesibil.";
+"DefaultBrowserCard.BetterInternet.Description.v108" = "Când setezi Ecosia ca browser implicit votezi pentru un internet deschis și accesibil.";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.BetterInternet.Title.v108" = "Implicit pentru un internet mai bun";
@@ -8,19 +8,19 @@
 "DefaultBrowserCard.Button.v2" = "Află cum";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Description" = "Setează linkurile de pe site-uri web, din mesaje de pe e-mail și din Mesaje ca să se deschidă automat cu Firefox.";
+"DefaultBrowserCard.Description" = "Setează linkurile de pe site-uri web, din mesaje de pe e-mail și din Mesaje ca să se deschidă automat cu Ecosia.";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.NextLevel.Description.v108" = "Alege Firefox ca browser implicit ca să ai automat viteză, siguranță și confidențialitate.";
+"DefaultBrowserCard.NextLevel.Description.v108" = "Alege Ecosia ca browser implicit ca să ai automat viteză, siguranță și confidențialitate.";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.NextLevel.Title.v108" = "Îmbunătățește navigarea pe internet zi de zi";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Firefox blochează, în medie, peste 3.000 de elemente de urmărire per user în fiecare lună. Fă-l browserul implicit pentru confidențialitate și liniște interioară.";
+"DefaultBrowserCard.PeaceOfMind.Description.v108" = "Ecosia blochează, în medie, peste 3.000 de elemente de urmărire per user în fiecare lună. Fă-l browserul implicit pentru confidențialitate și liniște interioară.";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Firefox îți protejează viața privată";
+"DefaultBrowserCard.PeaceOfMind.Title.v108" = "Ecosia îți protejează viața privată";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.Title" = "Schimbă browserul implicit";
@@ -35,7 +35,7 @@
 "DefaultBrowserOnboarding.Description2" = "2. Atinge Setează ca browser implicit";
 
 /* Description for default browser onboarding card. */
-"DefaultBrowserOnboarding.Description3" = "3. Selectează Firefox";
+"DefaultBrowserOnboarding.Description3" = "3. Selectează Ecosia";
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "Browser implicit";

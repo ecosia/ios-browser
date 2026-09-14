@@ -1,0 +1,286 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Common
+import ComponentLibrary
+import Ecosia
+
+/// A view representing an individual impact row, used in the New Tab Page to display environmental impact information.
+@MainActor
+final class NTPImpactRowView: UIView, ThemeApplicable {
+
+    // MARK: - UX Constants
+
+    struct UX {
+        static let horizontalSpacing: CGFloat = .ecosia.space._m
+        static let padding: CGFloat = .ecosia.space._s
+        static let titleSubtitleGap: CGFloat = .ecosia.space._2s
+        static let imageHeight: CGFloat = 24
+        static let glassBorderWidth: CGFloat = 1
+    }
+
+    // MARK: - UI Elements
+
+    // Gaussian blur glass background (see ADR 0003)
+    private let glassBackground: NTPImpactGlassBackgroundView = {
+        let view = NTPImpactGlassBackgroundView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    private let mainContainerView: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.spacing = UX.horizontalSpacing
+        return stack
+    }()
+
+    // alignment = .fill gives each label an explicit width constraint from the stack so UILabel
+    // always knows its available width for line-wrapping — including after device rotation.
+    // (With .leading, no width constraint is applied and preferredMaxLayoutWidth stays stale.)
+    private let labelsStack: UIStackView = {
+        let stack = UIStackView()
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.axis = .vertical
+        stack.alignment = .fill
+        stack.spacing = UX.titleSubtitleGap
+        return stack
+    }()
+
+    private lazy var imageContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
+    private lazy var imageView: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        image.contentMode = .scaleAspectFit
+        return image
+    }()
+
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .ecosiaFamilyBrand(size: .ecosia.font._3l)
+        label.adjustsFontSizeToFitWidth = true
+        label.adjustsFontForContentSizeCategory = true
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        return label
+    }()
+
+    private lazy var subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = .preferredFont(forTextStyle: .footnote)
+        label.numberOfLines = 0
+        label.adjustsFontForContentSizeCategory = true
+        // Force word-wrap so words are never split mid-word across lines.
+        label.lineBreakMode = .byWordWrapping
+        return label
+    }()
+
+    /// A resizable button for performing actions related to the row (referral row only).
+    private lazy var actionButton: ResizableButton = {
+        let button = ResizableButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .footnote).semibold()
+        button.titleLabel?.textAlignment = .right
+        // ResizableButton defaults to numberOfLines=0; force single line so the button
+        // never expands the referral row taller than the trees/invested rows.
+        button.titleLabel?.numberOfLines = 1
+        button.configuration?.titleLineBreakMode = .byTruncatingTail
+        button.contentHorizontalAlignment = .right
+        button.contentVerticalAlignment = .center
+        button.buttonEdgeInsets = .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+        button.setContentCompressionResistancePriority(.required, for: .horizontal)
+        button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        button.clipsToBounds = true
+        return button
+    }()
+
+    // MARK: - Properties
+
+    weak var delegate: NTPImpactCellDelegate?
+
+    var info: ClimateImpactInfo {
+        didSet {
+            imageView.image = info.image
+            imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
+            titleLabel.text = info.title
+            subtitleLabel.text = info.subtitle
+            actionButton.isHidden = forceHideActionButton ? true : info.buttonTitle == nil
+            actionButton.setTitle(info.buttonTitle, for: .normal)
+        }
+    }
+
+    var forceHideActionButton: Bool = false {
+        didSet {
+            actionButton.isHidden = forceHideActionButton
+        }
+    }
+
+    var customBackgroundColor: UIColor?
+
+    // MARK: - Initialization
+
+    init(info: ClimateImpactInfo) {
+        self.info = info
+        super.init(frame: .zero)
+        defer {
+            // Trigger the didSet observer so subviews are populated on first configure.
+            self.info = info
+        }
+        // Ecosia: Refuse vertical compression so the impact row keeps its
+        // intrinsic height (icon + labels + padding) even when the enclosing
+        // cell is given less space than expected by the section layout.
+        setContentCompressionResistancePriority(.required, for: .vertical)
+        setupView()
+        setupConstraints()
+        setupTapGestureIfNeeded()
+    }
+
+    required init?(coder: NSCoder) { nil }
+
+    // MARK: - Setup Methods
+
+    private func setupView() {
+        translatesAutoresizingMaskIntoConstraints = false
+        layer.cornerRadius = .ecosia.borderRadius._l
+        // Don't clip — single-line labels (especially with Dynamic Type
+        // bumped up) need to render their full intrinsic height even when
+        // the row is sized smaller. The glass background and border still
+        // honour the corner radius via `layer.cornerRadius`, so the rounded
+        // card outline stays intact.
+        clipsToBounds = false
+        // Mirror the row's rounding on the glass background so its sharp
+        // rectangle corners don't peek past the rounded border outline.
+        // Without this, the trailing top/bottom corners look ragged.
+        glassBackground.layer.cornerRadius = .ecosia.borderRadius._l
+        addSubview(glassBackground)
+
+        labelsStack.addArrangedSubview(titleLabel)
+        labelsStack.addArrangedSubview(subtitleLabel)
+        labelsStack.isAccessibilityElement = true
+        labelsStack.shouldGroupAccessibilityChildren = true
+        labelsStack.accessibilityLabel = info.accessibilityLabel
+        labelsStack.accessibilityIdentifier = info.accessibilityIdentifier
+
+        imageContainer.addSubview(imageView)
+        mainContainerView.addArrangedSubview(imageContainer)
+        mainContainerView.addArrangedSubview(labelsStack)
+        mainContainerView.addArrangedSubview(actionButton)
+
+        addSubview(mainContainerView)
+    }
+
+    private func setupConstraints() {
+        // Ecosia: Pin top/bottom equal (not greaterThanOrEqual/lessThanOrEqual) so the row's
+        // height is exactly `mainContainerView.height + padding * 2`. Without this the row has
+        // no derivable intrinsic height in the vertical axis, which lets `tilesStack`'s `.fill`
+        // distribution stretch the rows to fill an oversized impact section on iPad
+        // (the previously inequality-only setup gave the row infinite vertical freedom).
+        NSLayoutConstraint.activate([
+            glassBackground.topAnchor.constraint(equalTo: topAnchor),
+            glassBackground.leadingAnchor.constraint(equalTo: leadingAnchor),
+            glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
+            glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            mainContainerView.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
+            mainContainerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
+            mainContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
+            mainContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
+
+            imageContainer.heightAnchor.constraint(equalToConstant: UX.imageHeight),
+            imageContainer.widthAnchor.constraint(equalTo: imageContainer.heightAnchor),
+
+            imageView.topAnchor.constraint(equalTo: imageContainer.topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: imageContainer.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
+            imageView.bottomAnchor.constraint(equalTo: imageContainer.bottomAnchor),
+        ])
+    }
+
+    // MARK: - ThemeApplicable
+
+    /// Applies literal display values for snapshot tests; bypasses `ClimateImpactInfo` formatting.
+    func applySnapshotDisplay(
+        title: String,
+        subtitle: String,
+        buttonTitle: String?,
+        image: UIImage?
+    ) {
+        imageView.image = image
+        titleLabel.text = title
+        subtitleLabel.text = subtitle
+        actionButton.isHidden = buttonTitle == nil
+        actionButton.setTitle(buttonTitle, for: .normal)
+    }
+
+    func applyTheme(theme: Theme) {
+        let ecosia = (theme.colors as? EcosiaThemeColourPalette)?.ecosia
+        backgroundColor = .clear
+        layer.borderWidth = UX.glassBorderWidth
+        layer.borderColor = (ecosia?.borderGlassStatic ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
+        glassBackground.applyTheme(theme: theme)
+        glassBackground.loadCurrentWallpaper()
+        titleLabel.textColor = .white
+        subtitleLabel.textColor = .white
+        actionButton.setTitleColor(.white, for: .normal)
+        imageView.tintColor = .white
+        // Re-apply content to ensure rows added after initial layout are fully populated.
+        imageView.image = info.image
+        imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
+        titleLabel.text = info.title
+        subtitleLabel.text = info.subtitle
+        actionButton.isHidden = forceHideActionButton ? true : info.buttonTitle == nil
+        actionButton.setTitle(info.buttonTitle, for: .normal)
+    }
+
+    // MARK: - Private Setup
+
+    /// Adds a full-tile tap gesture for counter tiles that have a destination URL
+    /// (tree counter → plants page; money counter → financial reports).
+    private func setupTapGestureIfNeeded() {
+        guard info.destinationURL != nil else { return }
+        isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleTileTap))
+        addGestureRecognizer(tap)
+    }
+
+    // MARK: - Touch Highlight (mirrors NTPGlassButtonStyle pressed state)
+
+    // Ecosia: Provide the same glass-active pressed feedback as EcosiaCustomizeButton.
+    // The tintView steps from buttonBgGlassStatic (32 %) to buttonBgGlassStaticActive (64 %)
+    // while the finger is down, exactly matching NTPGlassButtonStyle's behaviour.
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        glassBackground.setHighlighted(true)
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        glassBackground.setHighlighted(false)
+    }
+
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
+        glassBackground.setHighlighted(false)
+    }
+
+    // MARK: - Actions
+
+    @objc private func handleTileTap() {
+        HapticFeedback.impact()
+        delegate?.impactCellButtonClickedWithInfo(info)
+    }
+
+    @objc private func buttonAction() {
+        HapticFeedback.impact()
+        delegate?.impactCellButtonClickedWithInfo(info)
+    }
+}

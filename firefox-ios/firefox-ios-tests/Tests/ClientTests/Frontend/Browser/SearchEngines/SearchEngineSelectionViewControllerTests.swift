@@ -12,15 +12,15 @@ final class SearchEngineSelectionViewControllerTests: XCTestCase {
     private let windowUUID: WindowUUID = .XCTestDefaultUUID
     private var mockCoordinator: MockSearchEngineSelectionCoordinator!
 
-    override func setUp() async throws {
-        try await super.setUp()
+    override func setUp() {
+        super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         mockCoordinator = MockSearchEngineSelectionCoordinator()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
         DependencyHelperMock().reset()
-        try await super.tearDown()
+        super.tearDown()
     }
 
     func testSearchEngineSelectionViewController_simpleCreation_hasNoLeaks() {

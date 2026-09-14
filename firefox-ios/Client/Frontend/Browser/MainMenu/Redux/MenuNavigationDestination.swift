@@ -15,6 +15,8 @@ enum MainMenuNavigationDestination: Equatable {
     case history
     case passwords
     case readerView
+    // Ecosia: Reading List added for the compact menu
+    case readingList
     case settings
     case siteProtections
     case syncSignIn
@@ -25,6 +27,9 @@ enum MainMenuNavigationDestination: Equatable {
     case webpageSummary(config: SummarizerConfig?)
     case zoom
     case translatePage
+    // Ecosia: Help and Report Issue destinations for the compact menu
+    case help
+    case reportIssue
 
     /// NOTE: This is only used in tests. Right now, we have three entrypoints for the summarizer and 
     /// it's difficult to find a way to pass custom configs to the summarizers from all three. 
@@ -42,6 +47,8 @@ enum MainMenuNavigationDestination: Equatable {
             .history,
             .passwords,
             .readerView,
+            // Ecosia: Reading List added for the compact menu
+            .readingList,
             .settings,
             .siteProtections,
             .syncSignIn,
@@ -51,7 +58,10 @@ enum MainMenuNavigationDestination: Equatable {
             .saveAsPDF,
             .webpageSummary(config: SummarizerConfig(instructions: "", options: [:])),
             .zoom,
-            .translatePage
+            .translatePage,
+            // Ecosia: Help and Report Issue destinations for the compact menu
+            .help,
+            .reportIssue
         ]
     }
 }

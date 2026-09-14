@@ -1,0 +1,83 @@
+diff --git a/firefox-ios/Client/Frontend/Settings/HomepageSettings/HomePageSettingViewController.swift b/firefox-ios/Client/Frontend/Settings/HomepageSettings/HomePageSettingViewController.swift
+index 10e4c67fef..85ed0dcb18 100644
+--- a/firefox-ios/Client/Frontend/Settings/HomepageSettings/HomePageSettingViewController.swift
++++ b/firefox-ios/Client/Frontend/Settings/HomepageSettings/HomePageSettingViewController.swift
+@@ -5,6 +5,7 @@
+ import Foundation
+ import Shared
+ import Common
++import Ecosia
+ 
+ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggable {
+     // MARK: - Variables
+@@ -72,10 +73,13 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
+     // MARK: - Methods
+     override func generateSettings() -> [SettingSection] {
+         let customizeFirefoxHomeSection = customizeFirefoxSettingSection()
+-        let customizeHomePageSection = customizeHomeSettingSection()
+         let startAtHomeSection = setupStartAtHomeSection()
+ 
++        /* Ecosia: Remove the "Current Homepage" (custom URL) section — not applicable to Ecosia
++        let customizeHomePageSection = customizeHomeSettingSection()
+         return [startAtHomeSection, customizeFirefoxHomeSection, customizeHomePageSection]
++         */
++        return [startAtHomeSection, customizeFirefoxHomeSection]
+     }
+ 
+     private func customizeHomeSettingSection() -> SettingSection {
+@@ -127,6 +131,13 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
+         // Section ordering
+         sectionItems.append(TopSitesSettings(settings: self))
+ 
++        // Ecosia: Climate Impact toggle to show/hide impact rows on the NTP
++        sectionItems.append(ClimateImpactSettings(settings: self))
++
++        /* Ecosia: Ecosia's NTP never shows Jump Back In or Bookmarks sections, so their
++           settings toggles must never appear regardless of feature-flag state. The original
++           Firefox guard (shouldHideSections) only suppresses them when .homepageStoriesRedesign
++           is enabled at build time, which is not the case on release builds.
+         let shouldHideSections = featureFlags.isFeatureEnabled(.homepageStoriesRedesign, checking: .buildOnly)
+         let isStoriesRedesignV2Enabled = featureFlags.isFeatureEnabled(.homepageStoriesRedesignV2, checking: .buildOnly)
+ 
+@@ -171,6 +182,7 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
+             }
+             sectionItems.append(bookmarksSetting)
+         }
++        */
+ 
+         // TODO: FXIOS-12980: Replace "Stories" title with "Top Stories" string once it is translated in v143
+         if isPocketSectionEnabled, let profile {
+@@ -353,3 +365,33 @@ extension HomePageSettingViewController {
+         }
+     }
+ }
++
++// MARK: - Ecosia: ClimateImpactSettings
++extension HomePageSettingViewController {
++    class ClimateImpactSettings: BoolSetting {
++        private static let prefKey = "ecosia.showClimateImpact"
++
++        init(settings: SettingsTableViewController) {
++            let prefs = settings.profile?.prefs
++            super.init(
++                prefs: prefs,
++                prefKey: ClimateImpactSettings.prefKey,
++                defaultValue: User.shared.showClimateImpact,
++                attributedTitleText: NSAttributedString(string: .localized(.climateImpact))
++            )
++            // Sync User's persisted value into prefs so the base class's
++            // displayBool reads the correct state on every launch.
++            prefs?.setBool(User.shared.showClimateImpact, forKey: ClimateImpactSettings.prefKey)
++        }
++
++        override func writeBool(_ control: UISwitch) {
++            User.shared.showClimateImpact = control.isOn
++            // Keep prefs in sync so displayBool (base class) shows the right state.
++            prefs?.setBool(control.isOn, forKey: ClimateImpactSettings.prefKey)
++            Analytics.shared.ntpCustomisation(
++                control.isOn ? .enable : .disable,
++                label: .impact
++            )
++        }
++    }
++}

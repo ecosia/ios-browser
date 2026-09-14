@@ -6,9 +6,12 @@ import Foundation
 import Storage
 import XCTest
 
+@testable import Client
+
+@MainActor
 class FileAccessorTests: XCTestCase {
     fileprivate var testDir: String!
-    fileprivate var files: FileAccessor!
+    fileprivate var files: ProfileFileAccessor!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -17,16 +20,18 @@ class FileAccessorTests: XCTestCase {
             .userDomainMask,
             true
         )[0] as NSString
-        files = MockFiles(rootPath: docPath.appendingPathComponent("filetest"))
+        var accessor = ProfileFileAccessor(localName: "filetest")
+        accessor.rootPath = docPath.appendingPathComponent("filetest")
+        files = accessor
 
         testDir = try files.getAndEnsureDirectory()
         try files.removeFilesInDirectory()
     }
 
     override func tearDown() {
+        super.tearDown()
         files = nil
         testDir = nil
-        super.tearDown()
     }
 
     func testFileAccessor() {

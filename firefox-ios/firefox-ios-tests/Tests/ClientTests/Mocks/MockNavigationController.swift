@@ -5,6 +5,7 @@
 import UIKit
 @testable import Client
 
+@MainActor
 class MockNavigationController: NavigationController {
     var transitionCoordinator: UIViewControllerTransitionCoordinator?
     var presentedViewController: UIViewController?

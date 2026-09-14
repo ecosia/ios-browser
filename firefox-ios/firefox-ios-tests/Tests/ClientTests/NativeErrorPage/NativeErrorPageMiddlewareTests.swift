@@ -78,8 +78,15 @@ final class NativeErrorPageMiddlewareTests: XCTestCase, StoreTestUtility {
 
     func setupAppState() -> AppState {
         return AppState(
+            /* Ecosia: This file is new in 155.1 but was never added to upstream's Xcode project, so
+               upstream never compiles it and it does not build as written: `PresentedComponentState`
+               and its `screens:` label do not exist. Ecosia's Tuist globs the ClientTests tree, so
+               the file has to compile here.
             presentedComponents: PresentedComponentState(
                 screens: [
+             */
+            presentedComponents: PresentedComponentsState(
+                components: [
                     .browserViewController(
                         BrowserViewControllerState(windowUUID: .XCTestDefaultUUID)
                     )

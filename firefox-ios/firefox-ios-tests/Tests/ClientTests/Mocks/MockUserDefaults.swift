@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+@testable import Client
 
 final class MockUserDefaults: UserDefaultsInterface, @unchecked Sendable {
     // MARK: - Properties

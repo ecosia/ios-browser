@@ -146,7 +146,10 @@ final class MenuCell: UITableViewCell, ReusableCell, ThemeApplicable {
         if model.isActive {
             titleLabel.textColor = theme.colors.textAccent
             descriptionLabel.textColor = theme.colors.textSecondary
+            /* Ecosia: Use textAccent so the icon tint matches the title and aligns with the toggle's active colour
             iconImageView.tintColor = theme.isNova ? theme.colors.iconAccent : theme.colors.iconAccentBlue
+            */
+            iconImageView.tintColor = theme.colors.textAccent
         } else if !model.isEnabled {
             titleLabel.textColor = theme.colors.textDisabled
             descriptionLabel.textColor = theme.colors.textDisabled

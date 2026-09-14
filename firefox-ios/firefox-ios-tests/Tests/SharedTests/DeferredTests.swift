@@ -98,7 +98,7 @@ class DeferredTests: XCTestCase {
 
     // MARK: Test `all`
 
-    @MainActor // Test explicitly calling `all` on the main thread
+    @MainActor
     func testDeferredAll_calledOnMainThread() {
         let expectation = self.expectation(description: "All blocks ran")
 
@@ -122,7 +122,7 @@ class DeferredTests: XCTestCase {
         waitForExpectations(timeout: 3, handler: nil)
     }
 
-    @MainActor // Test explicitly calling `all` on the main thread
+    @MainActor
     func testDeferredAll_calledOnMainThread_withFailure() {
         let expectation = self.expectation(description: "All blocks ran")
 
@@ -137,7 +137,6 @@ class DeferredTests: XCTestCase {
             XCTAssertEqual(results.count, 4)
 
             if let failure = results.first(where: { $0.isFailure }) {
-                // We expect one of the results to be a failure
                 expectation.fulfill()
                 return deferMaybe(failure.failureValue!)
             }
@@ -158,7 +157,6 @@ class DeferredTests: XCTestCase {
             Success(value: Maybe(success: ()), defaultQueue: .global())
         ]
 
-        // Run from a background thread
         Task {
             _ = all(deferreds).bind { results -> Success in
                 XCTAssertEqual(results.count, 2)
@@ -187,13 +185,11 @@ class DeferredTests: XCTestCase {
             Success(value: Maybe(failure: NSError()), defaultQueue: .main)
         ]
 
-        // Run from a background thread
         Task {
             _ = all(deferreds).bind { results -> Success in
                 XCTAssertEqual(results.count, 4)
 
                 if let failure = results.first(where: { $0.isFailure }) {
-                    // We expect one of the results to be a failure
                     expectation.fulfill()
                     return deferMaybe(failure.failureValue!)
                 }

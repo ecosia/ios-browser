@@ -8,10 +8,10 @@
 "New Tab" = "Nova langeto";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox povas uzi vian filmilon por skani kodojn QR, foti aŭ filmi.";
+"NSCameraUsageDescription" = "Ecosia povas uzi vian filmilon por skani kodojn QR, foti aŭ filmi.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox postulas Face ID por aliri viajn konservitajn legitimilojn kaj pagmetodojn.";
+"NSFaceIDUsageDescription" = "Ecosia postulas Face ID por aliri viajn konservitajn legitimilojn kaj pagmetodojn.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Retejoj vizititaj de vi povas peti vian lokon.";
@@ -23,7 +23,7 @@
 "NSPhotoLibraryAddUsageDescription" = "Tio ĉi permesas al vi konservi fotojn.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Por serĉi per voĉo Firefox uzas parolrekonon, kiu konvertas vian voĉon en tekston.";
+"NSSpeechRecognitionUsageDescription" = "Por serĉi per voĉo Ecosia uzas parolrekonon, kiu konvertas vian voĉon en tekston.";
 
 /* (No Comment) */
 "Scan QR Code" = "Skani kodon QR";

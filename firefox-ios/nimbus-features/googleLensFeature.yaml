@@ -10,9 +10,14 @@ features:
         type: Boolean
         default: false
     defaults:
+      # Ecosia: Google Lens is not part of the Ecosia product; suppressed on every channel including
+      # developer, so no Google Lens entry point is ever reachable. Upstream's code is kept intact —
+      # every entry point (address-toolbar action, web-image context menu, search-settings row) also
+      # requires `defaultEngine.isGoogleEngine`, which is false for Ecosia, so this flag is the
+      # belt-and-braces gate rather than the only one.
       - channel: beta
         value:
           enabled: false
       - channel: developer
         value:
-          enabled: true
+          enabled: false

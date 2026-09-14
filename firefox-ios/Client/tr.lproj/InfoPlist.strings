@@ -8,22 +8,22 @@
 "New Tab" = "Yeni sekme";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Firefox, QR kodlarını taramak, fotoğraf ve video çekmek için kameranızı kullanabilir.";
+"NSCameraUsageDescription" = "Ecosia, QR kodlarını taramak, fotoğraf ve video çekmek için kameranızı kullanabilir.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Firefox, kayıtlı parolalarınıza ve ödeme yöntemlerinize erişmek için Face ID’ye ihtiyaç duyar.";
+"NSFaceIDUsageDescription" = "Ecosia, kayıtlı parolalarınıza ve ödeme yöntemlerinize erişmek için Face ID’ye ihtiyaç duyar.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Ziyaret ettiğiniz web siteleri konumunuzu isteyebilir.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Firefox, ses kaydetmek ve yüklemek için mikrofonunuzu kullanır.";
+"NSMicrophoneUsageDescription" = "Ecosia, ses kaydetmek ve yüklemek için mikrofonunuzu kullanır.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Fotoğraf kaydetmenize olanak sağlar.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Firefox, sesli arama için sesinizi metne dönüştürmek amacıyla konuşma tanıma özelliğini kullanır.";
+"NSSpeechRecognitionUsageDescription" = "Ecosia, sesli arama için sesinizi metne dönüştürmek amacıyla konuşma tanıma özelliğini kullanır.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR kodu tara";

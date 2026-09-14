@@ -8,16 +8,17 @@ import XCTest
 @testable import Client
 
 @MainActor
-final class GeneralizedImageFetcherTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
+final class GeneralizedImageFetcherTests: XCTestCase, @unchecked Sendable {
+    override func setUp() {
+        super.setUp()
 
         clearState()
     }
 
-    override func tearDown() async throws {
+    override func tearDown() {
+        super.tearDown()
+
         clearState()
-        try await super.tearDown()
     }
 
     func testErrorResponse() {

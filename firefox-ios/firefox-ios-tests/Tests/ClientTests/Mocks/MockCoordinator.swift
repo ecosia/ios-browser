@@ -7,6 +7,7 @@ import TestKit
 import UIKit
 @testable import Client
 
+@MainActor
 class MockCoordinator: Coordinator {
     var id = UUID()
     var childCoordinators: [Coordinator] = []

@@ -1,0 +1,19 @@
+diff --git a/firefox-ios/Client/Application/RemoteSettings/Application Services/ASSearchEngineProvider.swift b/firefox-ios/Client/Application/RemoteSettings/Application Services/ASSearchEngineProvider.swift
+index 2da714bebb..9ebeebc88e 100644
+--- a/firefox-ios/Client/Application/RemoteSettings/Application Services/ASSearchEngineProvider.swift	
++++ b/firefox-ios/Client/Application/RemoteSettings/Application Services/ASSearchEngineProvider.swift	
+@@ -19,9 +19,11 @@ final class ASSearchEngineProvider: SearchEngineProvider, Sendable {
+          iconDataFetcher: ASSearchEngineIconDataFetcherProtocol? = ASSearchEngineIconDataFetcher()) {
+         self.logger = logger
+         self.iconDataFetcher = iconDataFetcher
+-        let profile = (AppContainer.shared.resolve() as Profile)
+-        if selector == nil {
+-            self.selector = ASSearchEngineSelector(service: profile.remoteSettingsService )
++        // Ecosia: Use resolveOptional() so that init does not crash when AppContainer is reset during
++        // unit-test setUp. If profile is unavailable, selector stays nil and getUnorderedBundledEnginesFor
++        // will call completion([]) safely.
++        if selector == nil, let profile: Profile = AppContainer.shared.resolveOptional() {
++            self.selector = ASSearchEngineSelector(service: profile.remoteSettingsService)
+         } else {
+             self.selector = selector
+         }

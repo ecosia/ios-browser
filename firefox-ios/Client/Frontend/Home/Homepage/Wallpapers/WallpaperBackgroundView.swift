@@ -48,6 +48,40 @@ class WallpaperBackgroundView: UIView {
         updateImageToCurrentWallpaper()
     }
 
+    // Ecosia: Propagates the card corner radius to both the container layer and the inner
+    // pictureView layer. Because pictureView has its own clipsToBounds = true and fills
+    // the container exactly, only setting cornerRadius on `self` is not sufficient —
+    // pictureView's rectangular clip wins in the CA render tree before the parent mask
+    // is applied. Setting the radius on pictureView ensures the image pixels are actually
+    // clipped to the rounded shape.
+    func applyEcosiaCornerRadius(_ radius: CGFloat) {
+        layer.cornerRadius = radius
+        clipsToBounds = true
+        pictureView.layer.cornerRadius = radius
+        pictureView.clipsToBounds = true
+    }
+
+    // Ecosia: BrowserViewController.embedContent calls
+    // `viewController.view.subviews.forEach { $0.clipsToBounds = false }` to allow toolbar
+    // translucency blur to bleed through content. This resets the clipsToBounds we set in
+    // applyEcosiaCornerRadius, causing the bottom corners to appear square.
+    //
+    // A CAShapeLayer applied as layer.mask is immune to clipsToBounds being overridden:
+    // masksToBounds controls whether the *layer's own bounds* are used as a clip rect,
+    // but layer.mask is a separate compositing mask that is always honoured by Core Animation
+    // regardless of masksToBounds. Setting it here (on every layout pass so it tracks
+    // bounds changes from rotation/safe-area updates) guarantees all four corners stay
+    // clipped even after BrowserViewController forces clipsToBounds = false.
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        guard layer.cornerRadius > 0, !bounds.isEmpty else { return }
+        clipsToBounds = true
+        pictureView.clipsToBounds = true
+        let mask = CAShapeLayer()
+        mask.path = UIBezierPath(roundedRect: bounds, cornerRadius: layer.cornerRadius).cgPath
+        layer.mask = mask
+    }
+
     private func updateImageToCurrentWallpaper() {
         guard let state = wallpaperState else { return }
         ensureMainThread {

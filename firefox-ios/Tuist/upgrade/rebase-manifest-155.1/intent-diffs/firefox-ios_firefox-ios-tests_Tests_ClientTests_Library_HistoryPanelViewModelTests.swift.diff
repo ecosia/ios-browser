@@ -1,0 +1,38 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Library/HistoryPanelViewModelTests.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Library/HistoryPanelViewModelTests.swift
+index 49258bc8ef..a3a9a6201c 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/Library/HistoryPanelViewModelTests.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/Library/HistoryPanelViewModelTests.swift
+@@ -10,6 +10,12 @@ import XCTest
+ 
+ @testable import Client
+ 
++// Ecosia: Synced to upstream v147.5. The previous version wrapped HistoryPanelViewModel.reloadData's completion
++// in MainActor.assumeIsolated { }, but reloadData delivers its completion on DispatchQueue.global() (background),
++// so assumeIsolated trapped and crashed every fetch-based test. HistoryPanelViewModel is @unchecked Sendable
++// (not @MainActor), so upstream uses a LOCAL subject from createSubject() and asserts directly off-main — no
++// assumeIsolated. Also dropped the direct AppContainer.shared.reset() in tearDown (use DependencyHelperMock().
++// reset()). Kept Ecosia section-title strings in testHistorySectionTitle. (MOB-4384)
+ @MainActor
+ class HistoryPanelViewModelTests: XCTestCase {
+     var profile: MockProfile!
+@@ -34,14 +40,16 @@ class HistoryPanelViewModelTests: XCTestCase {
+     func testHistorySectionTitle() {
+         HistoryPanelViewModel.Sections.allCases.forEach({ section in
+             switch section {
++            // Ecosia: section titles use the .LibraryPanel.Sections.* strings (our production), not upstream's
++            // ClearHistorySheet.*Option strings. (MOB-4384)
+             case .lastHour:
+-                XCTAssertEqual(section.title, .LibraryPanel.History.ClearHistorySheet.LastHourOption)
++                XCTAssertEqual(section.title, .LibraryPanel.Sections.LastHour)
+             case .lastTwentyFourHours:
+-                XCTAssertEqual(section.title, .LibraryPanel.History.ClearHistorySheet.LastTwentyFourHoursOption)
++                XCTAssertEqual(section.title, .LibraryPanel.Sections.LastTwentyFourHours)
+             case .lastSevenDays:
+-                XCTAssertEqual(section.title, .LibraryPanel.History.ClearHistorySheet.LastSevenDaysOption)
++                XCTAssertEqual(section.title, .LibraryPanel.Sections.LastSevenDays)
+             case .lastFourWeeks:
+-                XCTAssertEqual(section.title, .LibraryPanel.History.ClearHistorySheet.LastFourWeeksOption)
++                XCTAssertEqual(section.title, .LibraryPanel.Sections.LastFourWeeks)
+             case .older:
+                 XCTAssertEqual(section.title, .LibraryPanel.Sections.Older)
+             case .additionalHistoryActions, .searchResults:

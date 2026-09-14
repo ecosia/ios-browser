@@ -194,6 +194,9 @@ final class MainMenuMiddleware {
         case .readerView:
             telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.readerView)
 
+        // Ecosia: Reading List, Help, and Report Issue telemetry — no-op for now
+        case .readingList, .help, .reportIssue: break
+
         case .settings:
             telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.settings)
 

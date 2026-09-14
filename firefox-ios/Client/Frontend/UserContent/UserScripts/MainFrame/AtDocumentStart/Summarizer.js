@@ -6,9 +6,25 @@
 import { Readability, isProbablyReaderable} from "@mozilla/readability";
 import { findRecipeJSONLD } from "./JSONLD";
 
+/* Ecosia: Hostnames whose search-results pages pass isProbablyReaderable() as a
+   false positive. Summarising a SERP is not useful and should be suppressed. */
+/* Ecosia: Suppress the summarizer on all Ecosia SERP pages (all verticals) — mirrors
+   EcosiaSearchVertical in URL+Extensions.swift: search, images, news, videos. */
+const ECOSIA_SERP_HOSTS = ["www.ecosia.org", "ecosia.org", "www.ecosia-staging.xyz", "ecosia-staging.xyz"];
+const ECOSIA_SERP_PATHS = ["/search", "/images", "/news", "/videos"];
+const isEcosiaSERP = () =>
+  ECOSIA_SERP_HOSTS.includes(document.location.hostname) &&
+  ECOSIA_SERP_PATHS.some(p => document.location.pathname.startsWith(p));
+
 const CONTENT_TYPES = {generic: "generic", recipe: "recipe"};
 
 const extractContent = () => {
+  /* Ecosia: Readability 0.6.0 changed the constructor from new Readability(uri, doc)
+     to new Readability(doc, options) — the uri object is no longer accepted.
+     Use document.cloneNode(true) so Readability can destructively mutate the DOM
+     without affecting the live page, and inject a <base href> so relative URLs
+     inside the clone resolve correctly.
+
   const uri = {
     spec: document.location.href,
     host: document.location.host,
@@ -30,6 +46,12 @@ const extractContent = () => {
   const clean = DOMPurify.sanitize(docStr, { WHOLE_DOCUMENT: true });
   const doc = new DOMParser().parseFromString(clean, "text/html");
   const readability = new Readability(uri, doc);
+  */
+  const docClone = document.cloneNode(true);
+  const base = docClone.createElement("base");
+  base.href = document.location.href;
+  docClone.head?.prepend(base);
+  const readability = new Readability(docClone);
   const readabilityResult = readability.parse();
   const rawContent = readabilityResult.textContent ?? readabilityResult.content;
   return rawContent
@@ -76,6 +98,16 @@ const checkSummarization = async (maxWords) => {
 
   // 1. Readerable check
   if (!isProbablyReaderable(document)) {
+    return {
+      canSummarize: false,
+      reason: "documentNotReadable",
+      wordCount: 0,
+    };
+  }
+
+  /* Ecosia: Suppress summarisation on Ecosia SERP pages — isProbablyReaderable()
+     returns a false positive there because the page contains enough text nodes. */
+  if (isEcosiaSERP()) {
     return {
       canSummarize: false,
       reason: "documentNotReadable",

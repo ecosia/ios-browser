@@ -5,6 +5,7 @@
 import Foundation
 import Shared
 import OnboardingKit
+import Ecosia
 
 protocol IntroScreenManagerProtocol {
     var shouldShowIntroScreen: Bool { get }
@@ -19,11 +20,20 @@ struct IntroScreenManager: FeatureFlaggable, IntroScreenManagerProtocol {
     var prefs: Prefs
 
     var shouldShowIntroScreen: Bool {
+        /* Ecosia: Prevent welcome screen re-appearing for users upgrading from main.
+         On main, welcomeDidFinish did not call didSeeIntroScreen(), so IntroSeen was
+         never written. firstTime=false (set by handleFirstTimeUserActions on first
+         browser load) is the reliable signal that a user has already been through the
+         app — treat them as having seen the intro.
         prefs.intForKey(PrefsKeys.IntroSeen) == nil
+        */
+        prefs.intForKey(PrefsKeys.IntroSeen) == nil && User.shared.firstTime
     }
 
     func didSeeIntroScreen() {
         prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        // Ecosia: Keep firstTime in sync with IntroSeen so first-time-only logic (e.g. handleFirstTimeUserActions) is consistent.
+        User.shared.firstTime = false
     }
 
     var isModernOnboardingEnabled: Bool {

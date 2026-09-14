@@ -1,0 +1,14 @@
+diff --git a/firefox-ios/firefox-ios-tests/Tests/ClientTests/DownloadProgressManagerTests.swift b/firefox-ios/firefox-ios-tests/Tests/ClientTests/DownloadProgressManagerTests.swift
+index c143554391..e2fedea477 100644
+--- a/firefox-ios/firefox-ios-tests/Tests/ClientTests/DownloadProgressManagerTests.swift
++++ b/firefox-ios/firefox-ios-tests/Tests/ClientTests/DownloadProgressManagerTests.swift
+@@ -51,7 +51,8 @@ class DownloadProgressManagerTests: XCTestCase {
+         downloadProgressManager.addDownload(download2)
+ 
+         XCTAssertEqual(mockDelegate.didCallUpdateCombinedTotalBytesExpectedCount, 1)
+-        XCTAssertEqual(mockDelegate.totalBytesExpectedParameter, 40)
++        // Ecosia: MockDownload defaults totalBytesExpected to 1024, so two downloads combine to 2048.
++        XCTAssertEqual(mockDelegate.totalBytesExpectedParameter, 2048)
+     }
+ 
+     @available(iOS 17, *)

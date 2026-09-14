@@ -8,22 +8,22 @@
 "New Tab" = "Νέα καρτέλα";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Το Firefox μπορεί να χρησιμοποιήσει την κάμερα για σάρωση κωδικών QR ή λήψη φωτογραφιών και βίντεο.";
+"NSCameraUsageDescription" = "Το Ecosia μπορεί να χρησιμοποιήσει την κάμερα για σάρωση κωδικών QR ή λήψη φωτογραφιών και βίντεο.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Το Firefox απαιτεί το Face ID για την πρόσβαση σε αποθηκευμένα συνθηματικά και μεθόδους πληρωμής.";
+"NSFaceIDUsageDescription" = "Το Ecosia απαιτεί το Face ID για την πρόσβαση σε αποθηκευμένα συνθηματικά και μεθόδους πληρωμής.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Οι ιστότοποι που επισκέπτεστε ενδέχεται να ζητήσουν την τοποθεσία σας.";
 
 /* Privacy - Microphone Usage Description */
-"NSMicrophoneUsageDescription" = "Το Firefox χρησιμοποιεί το μικρόφωνο για την καταγραφή και τη μεταφόρτωση ήχου.";
+"NSMicrophoneUsageDescription" = "Το Ecosia χρησιμοποιεί το μικρόφωνο για την καταγραφή και τη μεταφόρτωση ήχου.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Επιτρέπει την αποθήκευση φωτογραφιών.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Το Firefox χρησιμοποιεί την αναγνώριση ομιλίας για να μετατρέψει τη φωνή σας σε κείμενο για φωνητική αναζήτηση.";
+"NSSpeechRecognitionUsageDescription" = "Το Ecosia χρησιμοποιεί την αναγνώριση ομιλίας για να μετατρέψει τη φωνή σας σε κείμενο για φωνητική αναζήτηση.";
 
 /* (No Comment) */
 "Scan QR Code" = "Σάρωση κωδικού QR";
