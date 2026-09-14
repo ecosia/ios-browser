@@ -4,6 +4,7 @@
 
 import Ecosia
 import Foundation
+import Shared
 
 extension Tab {
 
@@ -31,5 +32,13 @@ extension Tab {
         }
         updated.url = updated.url.map { $0.ecosified(isIncognitoEnabled: isPrivate) }
         return updated
+    }
+
+    /// Structured NTP page view on a real homepage load or reload for this tab.
+    /// Matches web `trackPageView()`: first load and refresh, not become-visible.
+    /// Back/forward, tab switch, modal dismiss, and zombie restore do not call this.
+    func ecosiaTrackNTPPageViewIfNeeded(url: URL?) {
+        guard let url, InternalURL(url)?.isAboutHomeURL == true else { return }
+        Analytics.shared.ntpViewed()
     }
 }

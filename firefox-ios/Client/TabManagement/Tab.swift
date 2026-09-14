@@ -662,6 +662,8 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
     func loadRequest(_ request: URLRequest) -> WKNavigation? {
         cancelTemporaryDocumentDownload(forceReload: false)
         if let webView = webView {
+            // Ecosia: NTP page-view equivalent — fire on homepage load, not appear
+            ecosiaTrackNTPPageViewIfNeeded(url: request.url)
             // Convert about:reader?url=http://example.com URLs to local ReaderMode URLs
             if let url = request.url,
                let syncedReaderModeURL = url.decodeReaderModeURL,
@@ -726,6 +728,8 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
             logger.log("restoring webView from scratch",
                        level: .debug,
                        category: .tabs)
+            // Ecosia: Explicit NTP refresh (toolbar reload). Zombie restore has a nil URL and is skipped.
+            ecosiaTrackNTPPageViewIfNeeded(url: webView.url)
             restore(webView)
         }
     }
