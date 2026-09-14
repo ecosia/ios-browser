@@ -142,9 +142,9 @@ class BrowserViewController: UIViewController,
         view.accessibilityIdentifier = AccessibilityIdentifiers.Browser.statusBarOverlay
     }
 
-    // Ecosia: Bridges eligibility (checked in decidePolicyFor, where WKNavigationAction
-    // and its navigationType are available) to the actual tracking call in didCommit.
-    // Set when eligible, cleared on commit or on the next navigation.
+    // Ecosia: Bridges eligibility (checked in decidePolicyFor) to the tracking call in didCommit,
+    // gated on a successful navigation response. Cleared on commit or on the next navigation,
+    // but retained past a commit that ran before the response so the late arrival stays detectable.
     var pendingInappSearch: PendingInappSearch?
 
     /* Ecosia: TabTrayFlagManager removed in Firefox upgrade; tab tray refactor is always enabled
