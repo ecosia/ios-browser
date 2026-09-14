@@ -9,7 +9,7 @@ import Foundation
 /// Keyed to the Auth0 `sub` that saved it, so a different account logging in on the same device
 /// never inherits stale numbers from the previous one - `load(forUserId:)` returns `nil` unless the
 /// stored snapshot belongs to the requested user.
-public final class UserDefaultsLoggedInImpactCache: LoggedInImpactCacheProtocol {
+public final class LoggedInImpactCache: LoggedInImpactCacheProtocol {
 
     private static let seedCountKey = "LoggedInImpactCache.seedCount"
     private static let currentLevelNumberKey = "LoggedInImpactCache.currentLevelNumber"

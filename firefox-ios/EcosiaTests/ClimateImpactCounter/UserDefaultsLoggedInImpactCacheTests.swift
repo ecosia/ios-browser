@@ -9,54 +9,54 @@ final class UserDefaultsLoggedInImpactCacheTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        UserDefaultsLoggedInImpactCache.clear()
+        LoggedInImpactCache.clear()
     }
 
     override func tearDown() {
-        UserDefaultsLoggedInImpactCache.clear()
+        LoggedInImpactCache.clear()
         super.tearDown()
     }
 
     func test_load_returnsNil_whenNothingCached() {
-        XCTAssertNil(UserDefaultsLoggedInImpactCache.load(forUserId: "user-a"))
+        XCTAssertNil(LoggedInImpactCache.load(forUserId: "user-a"))
     }
 
     func test_save_thenLoad_returnsSameSnapshot_forSameUser() {
         let snapshot = ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6)
 
-        UserDefaultsLoggedInImpactCache.save(snapshot, userId: "user-a")
+        LoggedInImpactCache.save(snapshot, userId: "user-a")
 
-        XCTAssertEqual(UserDefaultsLoggedInImpactCache.load(forUserId: "user-a"), snapshot)
+        XCTAssertEqual(LoggedInImpactCache.load(forUserId: "user-a"), snapshot)
     }
 
     func test_load_returnsNil_forDifferentUser() {
         let snapshot = ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6)
-        UserDefaultsLoggedInImpactCache.save(snapshot, userId: "user-a")
+        LoggedInImpactCache.save(snapshot, userId: "user-a")
 
-        XCTAssertNil(UserDefaultsLoggedInImpactCache.load(forUserId: "user-b"),
+        XCTAssertNil(LoggedInImpactCache.load(forUserId: "user-b"),
                      "A different account must never inherit another account's cached numbers")
     }
 
     func test_clear_removesCachedSnapshot() {
-        UserDefaultsLoggedInImpactCache.save(
+        LoggedInImpactCache.save(
             ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6),
             userId: "user-a"
         )
 
-        UserDefaultsLoggedInImpactCache.clear()
+        LoggedInImpactCache.clear()
 
-        XCTAssertNil(UserDefaultsLoggedInImpactCache.load(forUserId: "user-a"))
+        XCTAssertNil(LoggedInImpactCache.load(forUserId: "user-a"))
     }
 
     func test_clearOnLogout_isEquivalentToClear() {
-        UserDefaultsLoggedInImpactCache.save(
+        LoggedInImpactCache.save(
             ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.6),
             userId: "user-a"
         )
 
-        UserDefaultsLoggedInImpactCache.clearOnLogout()
+        LoggedInImpactCache.clearOnLogout()
 
-        XCTAssertNil(UserDefaultsLoggedInImpactCache.load(forUserId: "user-a"),
+        XCTAssertNil(LoggedInImpactCache.load(forUserId: "user-a"),
                      "clearOnLogout() is the shared vocabulary with SeedProgressManagerProtocol - should behave exactly like clear()")
     }
 }

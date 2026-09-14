@@ -60,9 +60,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         guard userProfile?.pictureURL?.baseDomain != gravatarURL?.baseDomain else { return nil }
         return userProfile?.pictureURL
     }
-    nonisolated(unsafe) private static var loggedOutImpactCacheType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
+    nonisolated(unsafe) private static var loggedOutImpactCacheType: SeedProgressManagerProtocol.Type = SeedProgressManager.self
     /// Not `private`: swapped for a mock from tests via `@testable import`.
-    nonisolated(unsafe) static var loggedInImpactCacheType: LoggedInImpactCacheProtocol.Type = UserDefaultsLoggedInImpactCache.self
+    nonisolated(unsafe) static var loggedInImpactCacheType: LoggedInImpactCacheProtocol.Type = LoggedInImpactCache.self
 
     // MARK: - Singleton
 
@@ -175,7 +175,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
         // Listen for seed progress updates (for logged-out users)
         seedProgressObserver = NotificationCenter.default.addObserver(
-            forName: UserDefaultsSeedProgressManager.progressUpdatedNotification,
+            forName: SeedProgressManager.progressUpdatedNotification,
             object: nil,
             queue: .main
         ) { [weak self] _ in

@@ -27,9 +27,9 @@ import Foundation
 ///
 /// This manager should only be used for logged-out users. Server-based seed management
 /// takes precedence for authenticated users.
-public final class UserDefaultsSeedProgressManager: SeedProgressManagerProtocol {
+public final class SeedProgressManager: SeedProgressManagerProtocol {
 
-    private static let className = String(describing: UserDefaultsSeedProgressManager.self)
+    private static let className = String(describing: SeedProgressManager.self)
     public static let maxSeedsForLoggedOutUsers = 3
     public static var progressUpdatedNotification: Notification.Name { .init("\(className).SeedProgressUpdated") }
     public static var levelUpNotification: Notification.Name { .init("\(className).SeedLevelUp") }
