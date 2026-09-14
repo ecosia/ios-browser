@@ -728,8 +728,6 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
             logger.log("restoring webView from scratch",
                        level: .debug,
                        category: .tabs)
-            // Ecosia: Explicit NTP refresh (toolbar reload). Zombie restore has a nil URL and is skipped.
-            ecosiaTrackNTPPageViewIfNeeded(url: webView.url)
             restore(webView)
         }
     }

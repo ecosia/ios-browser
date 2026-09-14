@@ -242,7 +242,9 @@ final class TabEcosiaExtensionTests: XCTestCase {
         tab.stop()
     }
 
-    func testReloadDoesNotTrackNTPPageViewWhenWebViewURLIsNil() {
+    func testReloadDoesNotTrackNTPPageView() {
+        // Firefox reloads homepage tabs on every select (FXIOS-10612), including
+        // opening the same NTP tab from the tab tray. Reload is not a page view.
         let spy = AnalyticsSpy()
         Analytics.shared = spy
         let tab = makeTab(isPrivate: false)
