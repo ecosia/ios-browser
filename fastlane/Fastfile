@@ -63,7 +63,8 @@ platform :ios do
       # Resolve SPM packages into a fixed dir so CI can cache them across runs
       # (see the SPM restore_cache/save_cache steps in .circleci/config.yml).
       cloned_source_packages_path: "firefox-ios/SourcePackages",
-      export_options: {iCloudContainerEnvironment: 'Development'}
+      export_options: {iCloudContainerEnvironment: 'Development'},
+      verbose: true,
     )
 
     upload_dsym_to_sentry
