@@ -14,8 +14,14 @@ target_folder_path = "firefox-ios/#{target_name}"
 project_path = "#{target_folder_path}.xcodeproj"
 workspace_path = "#{target_folder_path}.xcworkspace"
 pbx_project_file = "#{project_path}/project.pbxproj"
-testflight_archive_args = "GCC_TREAT_WARNINGS_AS_ERRORS='NO' SWIFT_TREAT_WARNINGS_AS_ERRORS='NO' VERSIONING_SYSTEM='apple-generic' CURRENT_PROJECT_VERSION='0' FUSE_BUILD_SCRIPT_PHASES='NO'"
-firebase_archive_args = "GCC_TREAT_WARNINGS_AS_ERRORS='NO' SWIFT_TREAT_WARNINGS_AS_ERRORS='NO' FUSE_BUILD_SCRIPT_PHASES='NO'"
+# Ecosia: CI resolves SPM packages from scratch on every run (see the SPM
+# restore_cache/save_cache steps in .circleci/config.yml), so Xcode has no
+# prior trust decision for macro plugins like ModifiedCopy's. With nobody
+# there to click "Trust & Enable" it fails ComputeTargetDependencyGraph with
+# "Macro ... must be enabled before it can be used" - skip that validation.
+macro_validation_args = "-skipMacroValidation -skipPackagePluginValidation"
+testflight_archive_args = "GCC_TREAT_WARNINGS_AS_ERRORS='NO' SWIFT_TREAT_WARNINGS_AS_ERRORS='NO' VERSIONING_SYSTEM='apple-generic' CURRENT_PROJECT_VERSION='0' FUSE_BUILD_SCRIPT_PHASES='NO' #{macro_validation_args}"
+firebase_archive_args = "GCC_TREAT_WARNINGS_AS_ERRORS='NO' SWIFT_TREAT_WARNINGS_AS_ERRORS='NO' FUSE_BUILD_SCRIPT_PHASES='NO' #{macro_validation_args}"
 
 if ENV['IS_CIRCLECI']
   import_build_tools(
