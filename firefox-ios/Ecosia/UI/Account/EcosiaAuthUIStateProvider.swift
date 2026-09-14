@@ -26,7 +26,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     /// Current seed count (server-based for logged in users, local for guests)
     /// Placeholder only: `init` always overwrites this synchronously via `resolveInitialImpactSnapshot`
-    /// before the object is observable, so `UserDefaultsSeedProgressManager` is read from one place.
+    /// before the object is observable, so `SeedProgressManager` is read from one place.
     @Published public private(set) var seedCount: Int = 0
 
     /// Current user avatar URL

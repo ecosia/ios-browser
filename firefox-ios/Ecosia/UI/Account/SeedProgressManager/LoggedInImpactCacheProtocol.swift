@@ -6,7 +6,7 @@ import Foundation
 
 /// Persists the last known server-reported seed/level/progress for a logged-in user, so the UI can
 /// show real numbers immediately on cold launch instead of the logged-out cap
-/// (`UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers`) while a fresh value is fetched.
+/// (`SeedProgressManager.maxSeedsForLoggedOutUsers`) while a fresh value is fetched.
 public protocol LoggedInImpactCacheProtocol {
     /// Returns the cached snapshot, or `nil` if there is none or it belongs to a different user.
     static func load(forUserId userId: String) -> ImpactSnapshot?

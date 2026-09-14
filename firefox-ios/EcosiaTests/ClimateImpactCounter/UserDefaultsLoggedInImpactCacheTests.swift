@@ -5,7 +5,7 @@
 @testable import Ecosia
 import XCTest
 
-final class UserDefaultsLoggedInImpactCacheTests: XCTestCase {
+final class LoggedInImpactCacheTests: XCTestCase {
 
     override func setUp() {
         super.setUp()

@@ -40,7 +40,7 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
     }
 
     override func tearDown() {
-        EcosiaAuthUIStateProvider.loggedInImpactCacheType = UserDefaultsLoggedInImpactCache.self
+        EcosiaAuthUIStateProvider.loggedInImpactCacheType = LoggedInImpactCache.self
         MockLoggedInImpactCache.reset()
         super.tearDown()
     }
@@ -66,10 +66,10 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
         let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: false, userId: "auth0|user-a")
 
         // Compared against a live call rather than a hardcoded literal, since
-        // UserDefaultsSeedProgressManager.calculateInnerProgress() depends on seedCounterConfig,
+        // SeedProgressManager.calculateInnerProgress() depends on seedCounterConfig,
         // which other test files may have set - this stays correct regardless of test order.
         let expectedMessage = "Logged-out must read the real local snapshot, not fall back to nil/hardcoded defaults"
-        XCTAssertEqual(resolved, UserDefaultsSeedProgressManager.currentSnapshot(), expectedMessage)
+        XCTAssertEqual(resolved, SeedProgressManager.currentSnapshot(), expectedMessage)
 
         let isolationMessage = "Logged-out must never read from the logged-in cache, even if an entry exists for this id"
         XCTAssertNotEqual(resolved?.seedCount, 999, isolationMessage)

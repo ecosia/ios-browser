@@ -15,7 +15,7 @@ public struct EcosiaAccountNavButton: View {
     private let showSeedSparkles: Bool
     private var showSeedCoundLock: Bool {
         !authStateProvider.isLoggedIn &&
-        seedCount == UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
+        seedCount == SeedProgressManager.maxSeedsForLoggedOutUsers
     }
     private let windowUUID: WindowUUID
     @State private var theme = EcosiaAccountNavButtonTheme()
