@@ -4,24 +4,19 @@
 
 import Foundation
 
-/// `UserDefaults`-backed implementation of `LoggedInImpactCacheProtocol`.
-///
-/// Keyed to the Auth0 `sub` that saved it, so a different account logging in on the same device
-/// never inherits stale numbers from the previous one - `load(forUserId:)` returns `nil` unless the
-/// stored snapshot belongs to the requested user.
+/// `UserDefaults`-backed implementation of `LoggedInImpactCacheProtocol`. A single slot, cleared
+/// on logout before a different account could read it.
 public final class LoggedInImpactCache: LoggedInImpactCacheProtocol {
 
     private static let seedCountKey = "LoggedInImpactCache.seedCount"
     private static let currentLevelNumberKey = "LoggedInImpactCache.currentLevelNumber"
     private static let currentProgressKey = "LoggedInImpactCache.currentProgress"
-    private static let userIdKey = "LoggedInImpactCache.userId"
 
     private init() {}
 
-    public static func load(forUserId userId: String) -> ImpactSnapshot? {
+    public static func load() -> ImpactSnapshot? {
         let defaults = UserDefaults.standard
-        guard defaults.string(forKey: userIdKey) == userId,
-              defaults.object(forKey: seedCountKey) != nil else {
+        guard defaults.object(forKey: seedCountKey) != nil else {
             return nil
         }
         return ImpactSnapshot(
@@ -31,12 +26,11 @@ public final class LoggedInImpactCache: LoggedInImpactCacheProtocol {
         )
     }
 
-    public static func save(_ snapshot: ImpactSnapshot, userId: String) {
+    public static func save(_ snapshot: ImpactSnapshot) {
         let defaults = UserDefaults.standard
         defaults.set(snapshot.seedCount, forKey: seedCountKey)
         defaults.set(snapshot.currentLevelNumber, forKey: currentLevelNumberKey)
         defaults.set(snapshot.currentProgress, forKey: currentProgressKey)
-        defaults.set(userId, forKey: userIdKey)
     }
 
     public static func clear() {
@@ -44,6 +38,5 @@ public final class LoggedInImpactCache: LoggedInImpactCacheProtocol {
         defaults.removeObject(forKey: seedCountKey)
         defaults.removeObject(forKey: currentLevelNumberKey)
         defaults.removeObject(forKey: currentProgressKey)
-        defaults.removeObject(forKey: userIdKey)
     }
 }

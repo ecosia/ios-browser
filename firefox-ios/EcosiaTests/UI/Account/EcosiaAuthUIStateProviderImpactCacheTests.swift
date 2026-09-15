@@ -8,24 +8,24 @@ import XCTest
 /// Records calls instead of touching real `UserDefaults`, so tests don't depend on
 /// `EcosiaAuthenticationService.shared`'s live (unmockable) singleton state.
 private final class MockLoggedInImpactCache: LoggedInImpactCacheProtocol {
-    nonisolated(unsafe) static var stored: [String: ImpactSnapshot] = [:]
+    nonisolated(unsafe) static var stored: ImpactSnapshot?
     nonisolated(unsafe) static var clearCallCount = 0
 
-    static func load(forUserId userId: String) -> ImpactSnapshot? {
-        stored[userId]
+    static func load() -> ImpactSnapshot? {
+        stored
     }
 
-    static func save(_ snapshot: ImpactSnapshot, userId: String) {
-        stored[userId] = snapshot
+    static func save(_ snapshot: ImpactSnapshot) {
+        stored = snapshot
     }
 
     static func clear() {
         clearCallCount += 1
-        stored.removeAll()
+        stored = nil
     }
 
     static func reset() {
-        stored.removeAll()
+        stored = nil
         clearCallCount = 0
     }
 }
@@ -49,36 +49,34 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
 
     func test_resolveInitialSnapshot_returnsCachedValues_whenLoggedInAndCacheHit() {
         let snapshot = ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8)
-        MockLoggedInImpactCache.save(snapshot, userId: "auth0|user-a")
+        MockLoggedInImpactCache.save(snapshot)
 
         let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: true, userId: "auth0|user-a")
 
-        XCTAssertEqual(resolved, snapshot, "A logged-in user with a cached snapshot must not fall back to the logged-out default")
+        XCTAssertEqual(resolved, snapshot)
     }
 
-    func test_resolveInitialSnapshot_returnsLocalManagerSnapshot_whenLoggedOut() {
-        // A stale cache entry under the same id must never leak into the logged-out branch.
-        MockLoggedInImpactCache.save(
-            ImpactSnapshot(seedCount: 999, currentLevelNumber: 9, currentProgress: 0.99),
-            userId: "auth0|user-a"
-        )
+    func test_resolveInitialSnapshot_prefersCachedSnapshot_whileAuthStateStillResolving() {
+        // isLoggedIn/userId can still read false/nil at cold launch while auth state resolves
+        // (the keychain/userinfo calls haven't completed yet) for a user who really is logged in.
+        // A cached snapshot from last session must be shown immediately regardless, not the
+        // logged-out number - otherwise a returning logged-in user sees exactly the flash this
+        // resolver exists to prevent.
+        let snapshot = ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8)
+        MockLoggedInImpactCache.save(snapshot)
 
-        let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: false, userId: "auth0|user-a")
+        let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: false, userId: nil)
+
+        XCTAssertEqual(resolved, snapshot)
+    }
+
+    func test_resolveInitialSnapshot_returnsLocalManagerSnapshot_whenLoggedOutWithNoCache() {
+        let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: false, userId: nil)
 
         // Compared against a live call rather than a hardcoded literal, since
         // SeedProgressManager.calculateInnerProgress() depends on seedCounterConfig,
         // which other test files may have set - this stays correct regardless of test order.
-        let expectedMessage = "Logged-out must read the real local snapshot, not fall back to nil/hardcoded defaults"
-        XCTAssertEqual(resolved, SeedProgressManager.currentSnapshot(), expectedMessage)
-
-        let isolationMessage = "Logged-out must never read from the logged-in cache, even if an entry exists for this id"
-        XCTAssertNotEqual(resolved?.seedCount, 999, isolationMessage)
-    }
-
-    func test_resolveInitialSnapshot_returnsNil_whenNoUserId() {
-        let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: true, userId: nil)
-
-        XCTAssertNil(resolved)
+        XCTAssertEqual(resolved, SeedProgressManager.currentSnapshot())
     }
 
     func test_resolveInitialSnapshot_returnsNil_whenLoggedInButNoCacheEntry() {
@@ -87,24 +85,10 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
         XCTAssertNil(resolved)
     }
 
-    func test_resolveInitialSnapshot_returnsNil_forDifferentUsersCachedEntry() {
-        MockLoggedInImpactCache.save(
-            ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8),
-            userId: "auth0|previous-user"
-        )
-
-        let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: true, userId: "auth0|new-user")
-
-        XCTAssertNil(resolved, "A newly logged-in account must not briefly show a previous account's numbers")
-    }
-
     // MARK: - Logout clears the cache (via the real notification flow)
 
     func test_userLoggedOutNotification_clearsLoggedInImpactCache() async {
-        MockLoggedInImpactCache.save(
-            ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8),
-            userId: "auth0|user-a"
-        )
+        MockLoggedInImpactCache.save(ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8))
 
         let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider())
         let notification = Notification(
@@ -120,14 +104,11 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
     // MARK: - clearOnLogout shared vocabulary
 
     func test_clearOnLogout_isEquivalentToClear() {
-        MockLoggedInImpactCache.save(
-            ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8),
-            userId: "auth0|user-a"
-        )
+        MockLoggedInImpactCache.save(ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8))
 
         MockLoggedInImpactCache.clearOnLogout()
 
         XCTAssertEqual(MockLoggedInImpactCache.clearCallCount, 1, "clearOnLogout() should delegate straight to clear()")
-        XCTAssertNil(MockLoggedInImpactCache.load(forUserId: "auth0|user-a"))
+        XCTAssertNil(MockLoggedInImpactCache.load())
     }
 }

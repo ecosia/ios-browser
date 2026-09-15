@@ -102,12 +102,20 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     /// (rather than inlined in `init`) so it can be unit tested directly against a mock
     /// `loggedInImpactCacheType`, independent of the live `EcosiaAuthenticationService.shared`
     /// state `init` otherwise reads from.
+    ///
+    /// Checks the logged-in cache first, regardless of `isLoggedIn`: at cold launch, auth state
+    /// can still be resolving (`isLoggedIn` can read `false` for however long the keychain/userinfo
+    /// calls take), and this must never flash the logged-out number for a returning logged-in user
+    /// while that resolves. Only once nothing is cached there does it fall back to the logged-out
+    /// snapshot, or - if actually logged in - a placeholder for `registerVisitIfNeeded()` to fill in.
     static func resolveInitialImpactSnapshot(isLoggedIn: Bool, userId: String?) -> ImpactSnapshot? {
+        if let cached = loggedInImpactCacheType.load() {
+            return cached
+        }
         guard isLoggedIn else {
             return loggedOutImpactCacheType.currentSnapshot()
         }
-        guard let userId else { return nil }
-        return loggedInImpactCacheType.load(forUserId: userId)
+        return nil
     }
 
     deinit {
@@ -298,10 +306,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     /// Writes through to `loggedInImpactCacheType` so a cold launch (or the profile screen) can
     /// seed from these values next time, instead of flashing the logged-out cap.
     private func persistLoggedInImpactSnapshot(seedCount: Int, currentLevelNumber: Int, currentProgress: Double) {
-        guard isLoggedIn, let userId = userProfile?.sub else { return }
+        guard isLoggedIn, userProfile?.sub != nil else { return }
         Self.loggedInImpactCacheType.save(
-            ImpactSnapshot(seedCount: seedCount, currentLevelNumber: currentLevelNumber, currentProgress: currentProgress),
-            userId: userId
+            ImpactSnapshot(seedCount: seedCount, currentLevelNumber: currentLevelNumber, currentProgress: currentProgress)
         )
     }
 

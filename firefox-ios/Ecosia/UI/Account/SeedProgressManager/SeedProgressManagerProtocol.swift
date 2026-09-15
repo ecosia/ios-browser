@@ -23,7 +23,7 @@ public protocol SeedProgressManagerProtocol {
 }
 
 extension SeedProgressManagerProtocol {
-    /// Logged-out counterpart to `LoggedInImpactCacheProtocol.load(forUserId:)`: same `ImpactSnapshot`
+    /// Logged-out counterpart to `LoggedInImpactCacheProtocol.load()`: same `ImpactSnapshot`
     /// shape, computed from local state instead of a cached server value, since logged-out users
     /// don't have one. Composed entirely from the load methods above, so no conforming type needs
     /// to implement this itself.
