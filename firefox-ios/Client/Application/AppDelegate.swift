@@ -324,7 +324,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         // it without driving the rest of applicationDidBecomeActive. (MOB-4384)
         ecosiaTrackBecomeActiveLifecycle()
 
+        /* Ecosia: disabled firefox wallpapers
         updateWallpaperMetadata()
+         */
         loadBackgroundTabs()
         ingestFirefoxSuggestions(in: application)
         logger.log("applicationDidBecomeActive end",
