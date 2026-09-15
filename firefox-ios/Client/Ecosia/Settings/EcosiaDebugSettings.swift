@@ -707,8 +707,8 @@ final class DebugAddSeedsLoggedOut: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        let maxSeeds = UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
-        let currentSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+        let maxSeeds = SeedProgressManager.maxSeedsForLoggedOutUsers
+        let currentSeeds = SeedProgressManager.loadTotalSeedsCollected()
         let remaining = max(0, maxSeeds - currentSeeds)
         return NSAttributedString(string: "\(currentSeeds)/\(maxSeeds) seeds | \(remaining) remaining (cap always ON)", attributes: [:])
     }
@@ -726,8 +726,8 @@ final class DebugAddSeedsLoggedOut: HiddenSetting {
             return
         }
 
-        let currentSeeds = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        let maxSeeds = UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
+        let currentSeeds = SeedProgressManager.loadTotalSeedsCollected()
+        let maxSeeds = SeedProgressManager.maxSeedsForLoggedOutUsers
 
         // Check if already at cap
         if currentSeeds >= maxSeeds {
@@ -755,7 +755,7 @@ final class DebugAddSeedsLoggedOut: HiddenSetting {
             }
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 10_000_000_000)
-                UserDefaultsSeedProgressManager.addSeeds(1)
+                SeedProgressManager.addSeeds(1)
                 EcosiaLogger.accounts.info("Debug: Added 1 seed for logged-out user")
             }
         }

@@ -25,8 +25,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     @Published public private(set) var userProfile: UserProfile?
 
     /// Current seed count (server-based for logged in users, local for guests)
-    /// Initialized with local storage value to prevent flickering on app launch
-    @Published public private(set) var seedCount: Int = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+    /// Placeholder only: `init` always overwrites this synchronously via `resolveInitialImpactSnapshot`
+    /// before the object is observable, so `SeedProgressManager` is read from one place.
+    @Published public private(set) var seedCount: Int = 0
 
     /// Current user avatar URL
     @Published public private(set) var avatarURL: URL?
@@ -59,7 +60,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         guard userProfile?.pictureURL?.baseDomain != gravatarURL?.baseDomain else { return nil }
         return userProfile?.pictureURL
     }
-    nonisolated(unsafe) private static var seedProgressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
+    nonisolated(unsafe) private static var loggedOutImpactCacheType: SeedProgressManagerProtocol.Type = SeedProgressManager.self
+    /// Not `private`: swapped for a mock from tests via `@testable import`.
+    nonisolated(unsafe) static var loggedInImpactCacheType: LoggedInImpactCacheProtocol.Type = LoggedInImpactCache.self
 
     // MARK: - Singleton
 
@@ -82,10 +85,27 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         self.avatarURL = normalizedAvatarURL
         self.username = userProfile?.name
 
-        // If logged out, ensure seed count is loaded (already done in property initializer)
-        // If logged in, seed count will be updated from API when the NTP header appears
+        // Seed real state synchronously so the UI never flashes a placeholder: logged-out reads
+        // the local snapshot, logged-in reads the last known server snapshot from cache (falls
+        // through to the placeholder above only on a first-ever login with nothing cached yet -
+        // `registerVisitIfNeeded()`, triggered separately, fills that in shortly after).
+        if let snapshot = Self.resolveInitialImpactSnapshot(isLoggedIn: isLoggedIn, userId: userProfile?.sub) {
+            seedCount = snapshot.seedCount
+            currentLevelNumber = snapshot.currentLevelNumber
+            currentProgress = snapshot.currentProgress
+        }
 
         setupAuthStateMonitoring()
+    }
+
+    static func resolveInitialImpactSnapshot(isLoggedIn: Bool, userId: String?) -> ImpactSnapshot? {
+        if let cached = loggedInImpactCacheType.load() {
+            return cached
+        }
+        guard isLoggedIn else {
+            return loggedOutImpactCacheType.currentSnapshot()
+        }
+        return nil
     }
 
     deinit {
@@ -153,7 +173,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
         // Listen for seed progress updates (for logged-out users)
         seedProgressObserver = NotificationCenter.default.addObserver(
-            forName: UserDefaultsSeedProgressManager.progressUpdatedNotification,
+            forName: SeedProgressManager.progressUpdatedNotification,
             object: nil,
             queue: .main
         ) { [weak self] _ in
@@ -163,7 +183,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }
 
-    private func handleAuthStateChange(_ notification: Notification) async {
+    /// Not `private`: tests call this directly on their own instance instead of posting a real
+    /// `NotificationCenter` notification, which `.shared` would also receive and react to.
+    func handleAuthStateChange(_ notification: Notification) async {
         // Handle specific auth actions (business logic can be nonisolated)
         if let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType {
             switch actionType {
@@ -195,7 +217,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         // Only handle for logged-out users
         guard !isLoggedIn else { return }
 
-        let newSeedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
+        let newSeedCount = Self.loggedOutImpactCacheType.loadTotalSeedsCollected()
 
         // If seed count increased, show animation
         if newSeedCount > seedCount {
@@ -254,6 +276,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         currentLevelNumber = newLevelNumber
         currentProgress = newProgress
 
+        persistLoggedInImpactSnapshot(seedCount: newSeedCount, currentLevelNumber: newLevelNumber, currentProgress: newProgress)
+
         // Trigger level-up animation if user leveled up
         if response.didLevelUp {
             EcosiaLogger.accounts.info("Level up detected: triggering animation for level \(newLevelNumber)")
@@ -267,6 +291,15 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount), level=\(newLevelNumber), progress=\(newProgress)")
             seedCount = newSeedCount
         }
+    }
+
+    /// Writes through to `loggedInImpactCacheType` so a cold launch (or the profile screen) can
+    /// seed from these values next time, instead of flashing the logged-out cap.
+    private func persistLoggedInImpactSnapshot(seedCount: Int, currentLevelNumber: Int, currentProgress: Double) {
+        guard isLoggedIn, userProfile?.sub != nil else { return }
+        Self.loggedInImpactCacheType.save(
+            ImpactSnapshot(seedCount: seedCount, currentLevelNumber: currentLevelNumber, currentProgress: currentProgress)
+        )
     }
 
     @MainActor
@@ -301,9 +334,13 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     private func resetToLocalSeedCollection() {
         EcosiaLogger.accounts.info("Resetting to local seed collection system")
 
-        Self.seedProgressManagerType.resetLocalSeedProgress()
+        // Same vocabulary on both stores: the local manager re-arms collection from zero, the
+        // logged-in cache drops the stale server snapshot - so a later login by a different
+        // account doesn't briefly show this account's numbers either way.
+        Self.loggedOutImpactCacheType.clearOnLogout()
+        Self.loggedInImpactCacheType.clearOnLogout()
 
-        seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
+        seedCount = Self.loggedOutImpactCacheType.loadTotalSeedsCollected()
         currentLevelNumber = 1
         currentProgress = 0.25
     }
@@ -314,8 +351,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     @MainActor
     private func handleLocalSeedCollection() {
         EcosiaLogger.accounts.info("Handling local seed collection for logged-out user")
-        Self.seedProgressManagerType.collectDailySeed()
-        let newSeedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
+        Self.loggedOutImpactCacheType.collectDailySeed()
+        let newSeedCount = Self.loggedOutImpactCacheType.loadTotalSeedsCollected()
 
         if newSeedCount > seedCount {
             let increment = newSeedCount - seedCount

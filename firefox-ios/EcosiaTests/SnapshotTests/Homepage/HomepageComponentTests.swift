@@ -95,7 +95,7 @@ private extension HomepageComponentTests {
         makeNTPHeaderSnapshotHostingController(
             content: {
                 EcosiaAccountNavButton(
-                    seedCount: UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers,
+                    seedCount: SeedProgressManager.maxSeedsForLoggedOutUsers,
                     enableAnimation: false,
                     showSeedSparkles: false,
                     windowUUID: .snapshotTestDefaultUUID,
@@ -178,9 +178,9 @@ private extension HomepageComponentTests {
 private extension HomepageComponentTests {
 
     func prepareLoggedOutAccountState() {
-        UserDefaultsSeedProgressManager.resetLocalSeedProgress()
-        UserDefaultsSeedProgressManager.addSeeds(
-            UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
+        SeedProgressManager.resetLocalSeedProgress()
+        SeedProgressManager.addSeeds(
+            SeedProgressManager.maxSeedsForLoggedOutUsers
         )
     }
 

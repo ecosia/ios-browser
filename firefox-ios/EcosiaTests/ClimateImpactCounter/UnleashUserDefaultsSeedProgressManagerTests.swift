@@ -8,7 +8,7 @@ import XCTest
 
 /// Tests for local seed collection system. Logged-out users start at 0 seeds and level 1.
 /// They are capped at 3 seeds and always remain at level 1 (no level progression).
-final class UnleashUserDefaultsSeedProgressManagerTests: XCTestCase {
+final class UnleashSeedProgressManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
@@ -21,7 +21,7 @@ final class UnleashUserDefaultsSeedProgressManagerTests: XCTestCase {
     // Test that logged-out users are capped at 3 seeds even with config override
     func test_experimental_cap_respected_with_json_provided_levels() {
         // Update the config to use experimental cap with JSON-provided levels
-        UserDefaultsSeedProgressManager.seedCounterConfig = SeedCounterConfig(
+        SeedProgressManager.seedCounterConfig = SeedCounterConfig(
             sparklesAnimationDuration: 10,
             maxCappedLevel: 2,
             maxCappedSeeds: 10,
@@ -33,11 +33,11 @@ final class UnleashUserDefaultsSeedProgressManagerTests: XCTestCase {
         )
 
         // Attempt to add seeds beyond the 3-seed cap for logged-out users
-        UserDefaultsSeedProgressManager.addSeeds(3) // +3 seeds; total: 3 seeds (capped)
+        SeedProgressManager.addSeeds(3) // +3 seeds; total: 3 seeds (capped)
 
         // Ensure user is capped at 3 seeds and stays at level 1
-        let totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        let currentLevel = UserDefaultsSeedProgressManager.loadCurrentLevel()
+        let totalSeedsCollected = SeedProgressManager.loadTotalSeedsCollected()
+        let currentLevel = SeedProgressManager.loadCurrentLevel()
 
         XCTAssertEqual(currentLevel, 1, "User should always stay at level 1.")
         XCTAssertEqual(totalSeedsCollected, 3, "Total seeds should be capped at 3 for logged-out users.")
@@ -46,7 +46,7 @@ final class UnleashUserDefaultsSeedProgressManagerTests: XCTestCase {
     // Test that logged-out users never level up regardless of config
     func test_add_seeds_with_json_provided_levels() {
         // Update the config to use current Unleash's JSON-provided levels
-        UserDefaultsSeedProgressManager.seedCounterConfig = SeedCounterConfig(
+        SeedProgressManager.seedCounterConfig = SeedCounterConfig(
             sparklesAnimationDuration: 10,
             maxCappedLevel: nil,
             maxCappedSeeds: nil,
@@ -58,17 +58,17 @@ final class UnleashUserDefaultsSeedProgressManagerTests: XCTestCase {
         )
 
         // Add seeds up to the 3-seed cap
-        UserDefaultsSeedProgressManager.addSeeds(2) // +2 seeds; total: 2 seeds
-        var totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        var currentLevel = UserDefaultsSeedProgressManager.loadCurrentLevel()
+        SeedProgressManager.addSeeds(2) // +2 seeds; total: 2 seeds
+        var totalSeedsCollected = SeedProgressManager.loadTotalSeedsCollected()
+        var currentLevel = SeedProgressManager.loadCurrentLevel()
 
         XCTAssertEqual(currentLevel, 1, "User should always stay at level 1.")
         XCTAssertEqual(totalSeedsCollected, 2, "Total seeds should be 2.")
 
         // Add more seeds to reach 3-seed cap
-        UserDefaultsSeedProgressManager.addSeeds(1) // +1 seed; total: 3 seeds
-        totalSeedsCollected = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
-        currentLevel = UserDefaultsSeedProgressManager.loadCurrentLevel()
+        SeedProgressManager.addSeeds(1) // +1 seed; total: 3 seeds
+        totalSeedsCollected = SeedProgressManager.loadTotalSeedsCollected()
+        currentLevel = SeedProgressManager.loadCurrentLevel()
 
         XCTAssertEqual(currentLevel, 1, "User should always stay at level 1.")
         XCTAssertEqual(totalSeedsCollected, 3, "Total seeds should be capped at 3.")
