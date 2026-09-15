@@ -98,16 +98,6 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         setupAuthStateMonitoring()
     }
 
-    /// Resolves the snapshot to seed `init`'s state with. Pulled out as a pure static function
-    /// (rather than inlined in `init`) so it can be unit tested directly against a mock
-    /// `loggedInImpactCacheType`, independent of the live `EcosiaAuthenticationService.shared`
-    /// state `init` otherwise reads from.
-    ///
-    /// Checks the logged-in cache first, regardless of `isLoggedIn`: at cold launch, auth state
-    /// can still be resolving (`isLoggedIn` can read `false` for however long the keychain/userinfo
-    /// calls take), and this must never flash the logged-out number for a returning logged-in user
-    /// while that resolves. Only once nothing is cached there does it fall back to the logged-out
-    /// snapshot, or - if actually logged in - a placeholder for `registerVisitIfNeeded()` to fill in.
     static func resolveInitialImpactSnapshot(isLoggedIn: Bool, userId: String?) -> ImpactSnapshot? {
         if let cached = loggedInImpactCacheType.load() {
             return cached
