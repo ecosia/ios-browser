@@ -6,10 +6,17 @@
 import SwiftUI
 
 /// The seed jar illustration driven entirely by `levelProgress` (0…1).
-/// Draw the jar as SwiftUI shapes so the fill can be animated by `levelProgress`.
-/// The frame is always 80 × 82 pt as measured in the design spec.
+/// Draw the jar as SwiftUI shapes so the fill can be driven by `levelProgress`.
+/// Geometry, seed sizes and seed positions come from `SeedJarMetrics` so the same component
+/// serves all three widget families.
 struct SeedJarView: View {
     let levelProgress: Double
+    let metrics: SeedJarMetrics
+
+    init(levelProgress: Double, metrics: SeedJarMetrics = .small) {
+        self.levelProgress = levelProgress
+        self.metrics = metrics
+    }
 
     @Environment(\.colorScheme) private var colorScheme
 
@@ -25,28 +32,23 @@ struct SeedJarView: View {
         colorScheme == .dark ? Color(uiColor: EcosiaColor.Gray60) : Color(uiColor: EcosiaColor.Gray30)
     }
 
-    // MARK: Layout constants (points, from spec)
-
-    private let lidHeight: CGFloat = 11
-    private let lidInset: CGFloat = 8
-    private let bodyTopOffset: CGFloat = 9
-
     // MARK: Body
 
     var body: some View {
         ZStack(alignment: .top) {
             lidView
-            bodyContainerView.padding(.top, bodyTopOffset)
+            bodyContainerView.padding(.top, metrics.bodyTopOffset)
         }
+        .frame(width: metrics.width, height: metrics.height)
     }
 
     // MARK: Lid
 
     private var lidView: some View {
         Color(uiColor: EcosiaColor.Grellow100)
-            .frame(height: lidHeight)
-            .clipShape(RoundedRectangle(cornerRadius: 5))
-            .padding(.horizontal, lidInset)
+            .frame(height: metrics.lidHeight)
+            .clipShape(RoundedRectangle(cornerRadius: metrics.lidRadius))
+            .padding(.horizontal, metrics.lidInset)
     }
 
     // MARK: Body container
@@ -73,22 +75,22 @@ struct SeedJarView: View {
     @available(iOSApplicationExtension 16.0, *)
     private func jarWithUnevenShape(bh: CGFloat, bw: CGFloat, fh: CGFloat) -> some View {
         let shape = UnevenRoundedRectangle(
-            topLeadingRadius: 11, bottomLeadingRadius: 26,
-            bottomTrailingRadius: 26, topTrailingRadius: 11
+            topLeadingRadius: metrics.bodyTopRadius, bottomLeadingRadius: metrics.bodyBottomRadius,
+            bottomTrailingRadius: metrics.bodyBottomRadius, topTrailingRadius: metrics.bodyTopRadius
         )
         return ZStack {
             shape.fill(bodyFill)
             interiorView(bh: bh, bw: bw, fh: fh).clipShape(shape)
-            shape.stroke(strokeColor, lineWidth: 2.5)
+            shape.stroke(strokeColor, lineWidth: metrics.strokeWidth)
         }
     }
 
     private func jarWithRoundedRect(bh: CGFloat, bw: CGFloat, fh: CGFloat) -> some View {
-        let shape = RoundedRectangle(cornerRadius: 18)
+        let shape = RoundedRectangle(cornerRadius: (metrics.bodyTopRadius + metrics.bodyBottomRadius) / 2)
         return ZStack {
             shape.fill(bodyFill)
             interiorView(bh: bh, bw: bw, fh: fh).clipShape(shape)
-            shape.stroke(strokeColor, lineWidth: 2.5)
+            shape.stroke(strokeColor, lineWidth: metrics.strokeWidth)
         }
     }
 
@@ -109,38 +111,28 @@ struct SeedJarView: View {
                     .offset(y: bh - fh)
             }
 
-            // Empty-jar ghost seed — centred on the floor (spec: left:31, bottom:4, w:18).
+            // Empty-jar resting seed, centred on the floor. Lifted in dark mode, where the
+            // light opacity of the light theme disappears against the dark interior.
             if clamped == 0 {
-                seedView(w: 18, rot: 0, op: 0.22)
-                    .offset(x: 31, y: bh - 4 - 18)
+                let seed = metrics.restingSeed
+                seedView(seed, opacity: colorScheme == .dark ? max(seed.opacity, 0.3) : seed.opacity)
+                    .offset(x: seed.x, y: bh - seed.y - seed.size)
             }
 
-            // Air seeds — 2 seeds drifting above the fill.
-            // Shown only when 0.3 ≤ progress ≤ 0.9 (spec rule).
+            // Air seeds drifting above the fill — nothing to sprinkle over a near-empty jar,
+            // and no room above a nearly full one.
             if (0.3...0.9) ~= clamped {
-                // left:16, top:6, w:14
-                seedView(w: 14, rot: -24, op: 0.5).offset(x: 16, y: 6)
-                // left:42, top:17, w:12
-                seedView(w: 12, rot: 30, op: 0.35).offset(x: 42, y: 17)
+                ForEach(Array(metrics.airSeeds.enumerated()), id: \.offset) { _, seed in
+                    seedView(seed).offset(x: seed.x, y: seed.y)
+                }
             }
 
-            // Fill seeds — positioned relative to the fill's top edge.
-            // `t` is the y-coordinate of the fill's top in body-local space.
+            // Fill seeds ride on the fill's top edge, so they rise with the progress value.
             if clamped > 0 {
-                let t = bh - fh
-                if clamped >= 0.3 {
-                    // 6 seeds (rotations: −16 / 8 / −30 / 22 / 40 / −12)
-                    seedView(w: 16, rot: -16, op: 1.0).offset(x: 1,  y: t - 7)
-                    seedView(w: 16, rot:   8, op: 1.0).offset(x: 19, y: t - 10)
-                    seedView(w: 16, rot: -30, op: 1.0).offset(x: 36, y: t - 7)
-                    seedView(w: 16, rot:  22, op: 1.0).offset(x: 53, y: t - 9)
-                    seedView(w: 15, rot:  40, op: 0.55).offset(x: 11, y: t + 11)
-                    seedView(w: 15, rot: -12, op: 0.55).offset(x: 44, y: t + 14)
-                } else {
-                    // 3 seeds (rotations: −16 / 12 / −26)
-                    seedView(w: 16, rot: -16, op: 1.0).offset(x: 4,  y: t - 7)
-                    seedView(w: 16, rot:  12, op: 1.0).offset(x: 24, y: t - 10)
-                    seedView(w: 16, rot: -26, op: 1.0).offset(x: 46, y: t - 7)
+                let fillTop = bh - fh
+                let seeds = clamped >= 0.3 ? metrics.fillSeeds : metrics.lowFillSeeds
+                ForEach(Array(seeds.enumerated()), id: \.offset) { _, seed in
+                    seedView(seed).offset(x: seed.x, y: fillTop + seed.y)
                 }
             }
         }
@@ -148,12 +140,14 @@ struct SeedJarView: View {
 
     // MARK: Seed helper
 
-    private func seedView(w: CGFloat, rot: Double, op: Double) -> some View {
+    private func seedView(_ seed: SeedPlacement, opacity: Double? = nil) -> some View {
         Image("seed")
             .resizable()
-            .frame(width: w, height: w)
-            .rotationEffect(.degrees(rot))
-            .opacity(op)
+            .frame(width: seed.size, height: seed.size)
+            .rotationEffect(.degrees(seed.rotation))
+            .opacity(opacity ?? seed.opacity)
+            // Decorative: the widget carries one combined accessibility label.
+            .accessibilityHidden(true)
     }
 }
 
@@ -162,23 +156,24 @@ struct SeedJarView: View {
 struct SeedJarView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            SeedJarView(levelProgress: 0.62)
-                .frame(width: 80, height: 82)
-                .previewDisplayName("62 %")
+            HStack(alignment: .bottom, spacing: 12) {
+                SeedJarView(levelProgress: 0.62, metrics: .small)
+                SeedJarView(levelProgress: 0.62, metrics: .medium)
+                SeedJarView(levelProgress: 0.62, metrics: .large)
+            }
+            .previewDisplayName("62 % · all families")
 
-            SeedJarView(levelProgress: 0.22)
-                .frame(width: 80, height: 82)
-                .previewDisplayName("22 %")
-
-            SeedJarView(levelProgress: 0)
-                .frame(width: 80, height: 82)
-                .previewDisplayName("empty")
-
-            SeedJarView(levelProgress: 1)
-                .frame(width: 80, height: 82)
-                .previewDisplayName("full")
+            HStack(alignment: .bottom, spacing: 12) {
+                SeedJarView(levelProgress: 0, metrics: .medium)
+                SeedJarView(levelProgress: 0.18, metrics: .medium)
+                SeedJarView(levelProgress: 0.95, metrics: .medium)
+                SeedJarView(levelProgress: 1, metrics: .medium)
+            }
+            .previewDisplayName("4×2 · empty / low / high / full")
         }
+        .padding()
         .background(Color.white)
+        .previewLayout(.sizeThatFits)
     }
 }
 #endif

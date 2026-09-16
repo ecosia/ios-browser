@@ -10,7 +10,57 @@ import WidgetKit
 // must therefore be qualified as @SwiftUI.Environment to avoid ambiguity.
 import Ecosia
 
+/// Picks the layout for the requested family and applies what all three share: the single tap
+/// target and one combined accessibility label with the children ignored.
 struct SeedCounterEntryView: View {
+    let entry: SeedCounterProvider.Entry
+
+    @SwiftUI.Environment(\.widgetFamily) private var family
+
+    var body: some View {
+        layout
+            .widgetURL(seedCounterWidgetURL)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(accessibilityLabel)
+    }
+
+    @ViewBuilder
+    private var layout: some View {
+        switch family {
+        case .systemMedium:
+            SeedCounterMediumView(entry: entry)
+        case .systemLarge:
+            SeedCounterLargeView(entry: entry)
+        default:
+            SeedCounterSmallView(entry: entry)
+        }
+    }
+
+    // MARK: Deep link
+
+    /// The whole widget is the tap target: it opens the account screen, which shows the
+    /// signed-out state — and therefore the sign-in entry point — when there is no account.
+    private var seedCounterWidgetURL: URL {
+        linkToContainingApp(query: "widget-seed-counter-open-impact")
+    }
+
+    // MARK: Accessibility
+
+    private var accessibilityLabel: String {
+        switch family {
+        case .systemMedium:
+            return entry.mediumAccessibilityLabel
+        case .systemLarge:
+            return entry.largeAccessibilityLabel
+        default:
+            let progressPercent = Int(entry.levelProgress * 100)
+            return "\(entry.seedCount) seeds. \(progressPercent) percent of the way to the next level."
+        }
+    }
+}
+
+/// 2×2 · systemSmall — the ambient count.
+struct SeedCounterSmallView: View {
     let entry: SeedCounterProvider.Entry
 
     @SwiftUI.Environment(\.colorScheme) private var colorScheme
@@ -41,16 +91,12 @@ struct SeedCounterEntryView: View {
             // Jar: 80 × 82, horizontally centred, bottom 6
             VStack(spacing: 0) {
                 Spacer()
-                SeedJarView(levelProgress: entry.levelProgress)
-                    .frame(width: 80, height: 82)
+                SeedJarView(levelProgress: entry.levelProgress, metrics: .small)
                     .frame(maxWidth: .infinity)
                     .padding(.bottom, 6)
             }
         }
         .widgetBackground(Color.ecosiaBundledColorWithName("PrimaryBackground"))
-        .widgetURL(seedCounterWidgetURL)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(accessibilityLabel)
     }
 
     // MARK: Count block
@@ -70,19 +116,6 @@ struct SeedCounterEntryView: View {
                 .foregroundColor(seedsLabelColor)
         }
     }
-
-    // MARK: Deep link
-
-    private var seedCounterWidgetURL: URL {
-        linkToContainingApp(query: "widget-seed-counter-open-impact")
-    }
-
-    // MARK: Accessibility
-
-    private var accessibilityLabel: String {
-        let progressPercent = Int(entry.levelProgress * 100)
-        return "\(entry.seedCount) seeds. \(progressPercent) percent of the way to the next level."
-    }
 }
 
 // MARK: - Additional localized string
@@ -101,30 +134,23 @@ extension String {
 struct SeedCounterEntryView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            SeedCounterEntryView(
-                entry: SeedCounterEntry(date: .now, seedCount: 128, levelProgress: 0.62, isSignedIn: true)
-            )
-            .previewContext(WidgetPreviewContext(family: .systemSmall))
-            .previewDisplayName("Signed in · light")
+            SeedCounterEntryView(entry: .galleryPreview)
+                .previewContext(WidgetPreviewContext(family: .systemSmall))
+                .previewDisplayName("Small · signed in")
 
-            SeedCounterEntryView(
-                entry: SeedCounterEntry(date: .now, seedCount: 128, levelProgress: 0.62, isSignedIn: true)
-            )
-            .previewContext(WidgetPreviewContext(family: .systemSmall))
-            .environment(\.colorScheme, .dark)
-            .previewDisplayName("Signed in · dark")
+            SeedCounterEntryView(entry: .galleryPreview)
+                .previewContext(WidgetPreviewContext(family: .systemMedium))
+                .previewDisplayName("Medium · signed in")
+
+            SeedCounterEntryView(entry: .galleryPreview)
+                .previewContext(WidgetPreviewContext(family: .systemLarge))
+                .previewDisplayName("Large · signed in")
 
             SeedCounterEntryView(
                 entry: SeedCounterEntry(date: .now, seedCount: 2, levelProgress: 0.22, isSignedIn: false)
             )
             .previewContext(WidgetPreviewContext(family: .systemSmall))
-            .previewDisplayName("Signed out")
-
-            SeedCounterEntryView(
-                entry: SeedCounterEntry(date: .now, seedCount: 0, levelProgress: 0, isSignedIn: false)
-            )
-            .previewContext(WidgetPreviewContext(family: .systemSmall))
-            .previewDisplayName("Empty · 0 seeds")
+            .previewDisplayName("Small · signed out")
         }
     }
 }

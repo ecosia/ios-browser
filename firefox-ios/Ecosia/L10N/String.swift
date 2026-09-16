@@ -348,5 +348,23 @@ extension String {
         case goToProvider = "Go to %@"
         case back = "Back"
         case createAccount = "Create account"
+
+        // MARK: - Seed counter widget
+        case seedsWidgetLabel = "seeds"
+        case seedsCollectedWidgetLabel = "seeds collected"
+        case yourSeeds = "Your seeds"
+        case growthPointsToLevel = "%d growth points to %@"
+        case growthPointsToGo = "%d growth points to go"
+        case nextLevelName = "Next: %@"
+        case searchToPlantYourFirstSeed = "Search with Ecosia to plant your first seed"
+        case searchToEarnGrowthPoints = "Search to earn growth points"
+        case topLevelReached = "Top level reached"
+        case signUpToKeepSeedsAndLevelUp = "Sign up to keep your seeds and start levelling up."
+        case signUpToKeepSeedsAndUnlockLevels = "Sign up to keep your seeds and unlock levels."
+        case levelsUnlocked = "Levels unlocked"
+        case levelsYouWillUnlock = "Levels you'll unlock"
+        case widgetLevelAccessibilityLabel = "Level %d, %@"
+        case widgetUnlockedLevelsAccessibilityLabel = "Unlocked: %@"
+        case widgetNextLevelLockedAccessibilityLabel = "Next: %@, locked"
     }
 }

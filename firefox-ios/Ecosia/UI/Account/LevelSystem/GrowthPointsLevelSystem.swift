@@ -10,6 +10,17 @@ public struct GrowthPointsLevelSystem {
 
     // MARK: - Level Information
 
+    /// The number of levels in the ladder.
+    public static let maxLevel = 20
+
+    /// Localized names of every level, ordered by level; index 0 is level 1.
+    ///
+    /// Resolved app-side and handed to the seed widget as finished strings, so the widget
+    /// extension never re-derives a level name.
+    public static var allLevelNames: [String] {
+        (1...maxLevel).map(levelName(for:))
+    }
+
     /// Gets the current level number from API response
     public static func currentLevel(from response: AccountVisitResponse) -> Int {
         return response.growthPoints.level.number

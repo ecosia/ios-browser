@@ -351,3 +351,27 @@
 // Accessiblity Strings for File Uploads
 "Uploading attachment" = "Uploading attachment";
 "Attached image" = "Attached image";
+
+// Seed counter widget
+/* Label following the seed count in the 4x2 widget, e.g. "128 seeds". */
+"seeds" = "seeds";
+"seeds collected" = "seeds collected";
+"Your seeds" = "Your seeds";
+/* %d is the number of growth points remaining, %@ the name of the next level. */
+"%d growth points to %@" = "%d growth points to %@";
+"%d growth points to go" = "%d growth points to go";
+/* %@ is the name of the next level. */
+"Next: %@" = "Next: %@";
+"Search with Ecosia to plant your first seed" = "Search with Ecosia to plant your first seed";
+"Search to earn growth points" = "Search to earn growth points";
+"Top level reached" = "Top level reached";
+"Sign up to keep your seeds and start levelling up." = "Sign up to keep your seeds and start levelling up.";
+"Sign up to keep your seeds and unlock levels." = "Sign up to keep your seeds and unlock levels.";
+"Levels unlocked" = "Levels unlocked";
+"Levels you'll unlock" = "Levels you'll unlock";
+/* VoiceOver. %d is the level number, %@ the level name. */
+"Level %d, %@" = "Level %d, %@";
+/* VoiceOver. %@ is a comma separated list of unlocked level names. */
+"Unlocked: %@" = "Unlocked: %@";
+/* VoiceOver. %@ is the name of the next, still locked level. */
+"Next: %@, locked" = "Next: %@, locked";

@@ -12,7 +12,7 @@ struct SeedCounterWidget: Widget {
             SeedCounterEntryView(entry: entry)
         }
         .contentMarginsDisabled()
-        .supportedFamilies([.systemSmall])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .configurationDisplayName(String.SeedCounterWidgetTitle)
         .description(String.SeedCounterWidgetDescription)
     }

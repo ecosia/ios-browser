@@ -43,6 +43,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     /// Current progress towards next level (from API for logged-in users, default 0.25 for initial state)
     @Published public private(set) var currentProgress: Double = 0.25
 
+    /// Growth points still needed to reach the next level (from API for logged-in users)
+    @Published public private(set) var growthPointsRemaining: Int = 0
+
     /// Error state for register visit failures (read-only externally, set only by this class)
     @Published public private(set) var hasRegisterVisitError: Bool = false
 
@@ -253,6 +256,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         // Update level and progress from API
         currentLevelNumber = newLevelNumber
         currentProgress = newProgress
+        let growthPointsRequired = GrowthPointsLevelSystem.growthPointsRequired(from: response)
+        let growthPointsEarned = GrowthPointsLevelSystem.growthPointsEarned(from: response)
+        growthPointsRemaining = max(0, growthPointsRequired - growthPointsEarned)
 
         // Trigger level-up animation if user leveled up
         if response.didLevelUp {

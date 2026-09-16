@@ -58,6 +58,7 @@ public enum ClientTarget {
                 "WidgetKit/DownloadManager/DownloadLiveActivity.swift",
                 "WidgetKit/OpenTabs/SimpleTab.swift",
                 "WidgetKit/SeedCounter/SeedWidgetSnapshot.swift",
+                "WidgetKit/SeedCounter/SeedLevelLadder.swift",
                 "Extensions/NotificationService/NotificationPayloads.swift"
             ],
             resources: [
