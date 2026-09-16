@@ -4,7 +4,7 @@
 
 import Foundation
 
-public enum URLProvider {
+public enum URLProvider: Sendable {
 
     case production
     case staging
@@ -215,6 +215,7 @@ public enum URLProvider {
         case ntp = "newtabbutton"
         case autocomplete = "autocomplete_app"
         case omnibox = "omnibox_app"
+        case planetPulse = "planet_pulse_widget"
     }
 
     /// Builds the AI chat URL, optionally tagged with where the user came

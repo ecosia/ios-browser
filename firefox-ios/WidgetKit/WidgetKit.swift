@@ -16,6 +16,10 @@ struct EcosiaWidgets: WidgetBundle {
         SearchQuickLinksWidget()
         OpenTabsWidget()
         TopSitesWidget()
+        // Ecosia: Register the Planet Pulse widget
+        if #available(iOS 17.0, *) {
+            PlanetPulseWidget()
+        }
     }
 }
 #endif

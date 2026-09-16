@@ -8,6 +8,8 @@ import UIKit
 // https://www.figma.com/design/8T2rTBVwynJKSdY6MQo5PQ/%E2%9A%9B%EF%B8%8F--Foundations?node-id=13-83
 // Only values present on the above link should be added here and you should avoid using any spacing values outside these.
 public struct EcosiaSpacing: Sendable {
+    public init() {}
+
     public let _2s: CGFloat = 4
     public let _1s: CGFloat = 8
     public let _s: CGFloat = 12

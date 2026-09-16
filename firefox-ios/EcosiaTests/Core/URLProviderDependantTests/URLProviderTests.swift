@@ -189,6 +189,11 @@ final class URLProviderTests: XCTestCase {
         XCTAssertTrue(url.absoluteString.contains("/ai-chat?origin=autocomplete_app"))
     }
 
+    func testAIChatWithPlanetPulseOrigin() {
+        let url = urlProvider.aiChat(origin: .planetPulse)
+        XCTAssertTrue(url.absoluteString.contains("/ai-chat?origin=planet_pulse_widget"))
+    }
+
     func testAIChatWithQueryAndFiles() throws {
         let files = [
             AIChatFileQuery(
