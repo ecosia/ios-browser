@@ -37,11 +37,13 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
         super.setUp()
         MockLoggedInImpactCache.reset()
         EcosiaAuthUIStateProvider.loggedInImpactCacheType = MockLoggedInImpactCache.self
+        EcosiaAuthenticationService.wasLoggedIn = false
     }
 
     override func tearDown() {
         EcosiaAuthUIStateProvider.loggedInImpactCacheType = LoggedInImpactCache.self
         MockLoggedInImpactCache.reset()
+        EcosiaAuthenticationService.wasLoggedIn = false
         super.tearDown()
     }
 
@@ -99,5 +101,43 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
         await provider.handleAuthStateChange(notification)
 
         XCTAssertEqual(MockLoggedInImpactCache.clearCallCount, 1)
+    }
+
+    // MARK: - authStateLoaded clears the cache only for a session that was actually logged in
+
+    func test_authStateLoadedNotification_clearsImpactCache_whenPreviousSessionWasLoggedIn() async {
+        // Simulates a token that expired between launches: credential retrieval resolves to
+        // logged-out (authStateLoaded, not userLoggedOut), but the previous session's cached
+        // server snapshot is still sitting in the shared cache and must not leak to a guest.
+        MockLoggedInImpactCache.save(ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8))
+        EcosiaAuthenticationService.wasLoggedIn = true
+
+        let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider())
+        let notification = Notification(
+            name: .EcosiaAuthStateChanged,
+            object: nil,
+            userInfo: ["actionType": EcosiaAuthActionType.authStateLoaded]
+        )
+        await provider.handleAuthStateChange(notification)
+
+        XCTAssertEqual(MockLoggedInImpactCache.clearCallCount, 1)
+        XCTAssertFalse(EcosiaAuthenticationService.wasLoggedIn, "Should be reset once the transition is handled")
+    }
+
+    func test_authStateLoadedNotification_doesNotClearImpactCache_forAnOrdinaryGuest() async {
+        // A guest resolves to authStateLoaded/isLoggedIn=false on every single cold launch too -
+        // this must not wipe their own accumulated local progress.
+        MockLoggedInImpactCache.save(ImpactSnapshot(seedCount: 2, currentLevelNumber: 1, currentProgress: 0.5))
+        EcosiaAuthenticationService.wasLoggedIn = false
+
+        let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider())
+        let notification = Notification(
+            name: .EcosiaAuthStateChanged,
+            object: nil,
+            userInfo: ["actionType": EcosiaAuthActionType.authStateLoaded]
+        )
+        await provider.handleAuthStateChange(notification)
+
+        XCTAssertEqual(MockLoggedInImpactCache.clearCallCount, 0)
     }
 }

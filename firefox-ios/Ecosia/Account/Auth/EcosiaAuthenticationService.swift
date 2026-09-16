@@ -57,6 +57,19 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// reader that can't tell the two apart may mistake "not yet checked" for "confirmed logged out".
     public private(set) var hasResolvedAuthState: Bool = false
 
+    private static let wasLoggedInKey = "EcosiaAuthenticationService.wasLoggedIn"
+
+    /// Whether the user was logged in as of the last confirmed transition (login, logout, or a
+    /// successful credential renewal/retrieval) - persisted across launches, unlike `isLoggedIn`,
+    /// which always restarts at `false` until this launch's own credential check resolves. Lets a
+    /// reader tell "this session's stored credentials just turned out to be invalid" (e.g. an
+    /// expired token) apart from "this device was never logged in to begin with", since both
+    /// resolve to the same `isLoggedIn == false` on cold launch.
+    public static var wasLoggedIn: Bool {
+        get { UserDefaults.standard.bool(forKey: wasLoggedInKey) }
+        set { UserDefaults.standard.set(newValue, forKey: wasLoggedInKey) }
+    }
+
     /// The current user's profile information from Auth0.
     /// This includes name, email, profile picture URL, etc.
     public private(set) var userProfile: UserProfile? {
@@ -280,19 +293,20 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
 
     /// Helper method to setup tokens and login flag
     private func setupTokensWithCredentials(_ credentials: Credentials?,
-                                            settingLoggedInStateTo isLoggedIn: Bool = false,
+                                            settingLoggedInStateTo newIsLoggedIn: Bool = false,
                                             accountOrigin: AccountOrigin? = nil) {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
         self.grantedScope = credentials?.scope
         self.refreshToken = credentials?.refreshToken
-        let wasLoggedIn = self.isLoggedIn
-        self.isLoggedIn = isLoggedIn
+        let previousIsLoggedIn = self.isLoggedIn
+        self.isLoggedIn = newIsLoggedIn
+        Self.wasLoggedIn = newIsLoggedIn
 
         // Only dispatch the auth state change when the login state actually transitions,
         // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
         // on every token refresh when the user is already logged in.
-        guard wasLoggedIn != isLoggedIn else { return }
+        guard previousIsLoggedIn != newIsLoggedIn else { return }
         Task {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false, accountOrigin: accountOrigin)
         }
