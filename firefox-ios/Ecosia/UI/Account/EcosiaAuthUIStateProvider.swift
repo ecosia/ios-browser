@@ -9,6 +9,11 @@ import Common
 
 /// Centralized, reactive authentication state provider for consistent UI state across all components
 /// This eliminates the need for individual components to manage their own auth state observers
+///
+/// This is a thin `@Published` mirror of the shared impact cache: it doesn't fetch or persist
+/// anything itself. `LoggedInImpactUpdater` and `LoggedOutSeedProgressManager` each own writing
+/// their own side of `ImpactCacheProtocol` and post `.EcosiaImpactCacheUpdated` when they do; this
+/// class just observes that notification and applies the result to published state/animations.
 @MainActor
 public class EcosiaAuthUIStateProvider: ObservableObject {
 
@@ -25,8 +30,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     @Published public private(set) var userProfile: UserProfile?
 
     /// Current seed count (server-based for logged in users, local for guests)
-    /// Initialized with local storage value to prevent flickering on app launch
-    @Published public private(set) var seedCount: Int = UserDefaultsSeedProgressManager.loadTotalSeedsCollected()
+    @Published public private(set) var seedCount: Int = 0
 
     /// Current user avatar URL
     @Published public private(set) var avatarURL: URL?
@@ -50,8 +54,14 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     private var authStateObserver: NSObjectProtocol?
     private var userProfileObserver: NSObjectProtocol?
-    private var seedProgressObserver: NSObjectProtocol?
+    private var impactCacheObserver: NSObjectProtocol?
+    private var impactUpdateFailedObserver: NSObjectProtocol?
+
     private let accountsProvider: AccountsProviderProtocol
+    private let authenticationService: EcosiaAuthenticationService
+    private let loggedOutManager: LoggedOutSeedProgressManager
+    private let loggedInUpdater: LoggedInImpactUpdater
+
     /// Normalizing the avatar to match Web's Product behaviour.
     /// Our Auth Provider (Auth0) sends us a Gravatar URL when no profile image is retrieved from a user
     /// (e.g. Apple Sign In). As of now, we replace it with our tree-image in `EcosiaAvatar` by not setting any URL
@@ -59,7 +69,6 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         guard userProfile?.pictureURL?.baseDomain != gravatarURL?.baseDomain else { return nil }
         return userProfile?.pictureURL
     }
-    nonisolated(unsafe) private static var seedProgressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
 
     // MARK: - Singleton
 
@@ -73,31 +82,46 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }()
 
-    public init(accountsProvider: AccountsProviderProtocol) {
+    public init(
+        accountsProvider: AccountsProviderProtocol,
+        cache: ImpactCacheProtocol = ImpactCache(),
+        authenticationService: EcosiaAuthenticationService = .shared
+    ) {
         self.accountsProvider = accountsProvider
+        self.authenticationService = authenticationService
+        self.loggedOutManager = LoggedOutSeedProgressManager(cache: cache, authenticationService: authenticationService)
+        self.loggedInUpdater = LoggedInImpactUpdater(cache: cache, accountsProvider: accountsProvider, authenticationService: authenticationService)
 
         // Initialize state synchronously to prevent flickering
-        self.isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-        self.userProfile = EcosiaAuthenticationService.shared.userProfile
+        self.isLoggedIn = authenticationService.isLoggedIn
+        self.userProfile = authenticationService.userProfile
         self.avatarURL = normalizedAvatarURL
         self.username = userProfile?.name
 
-        // If logged out, ensure seed count is loaded (already done in property initializer)
-        // If logged in, seed count will be updated from API when the NTP header appears
+        // Seed real state synchronously so the UI never flashes a placeholder. `loggedInUpdater`
+        // reacts to auth state on its own and will fetch/persist the real logged-in value shortly
+        // after; for logged-out this already IS the real value.
+        let snapshot = currentSnapshot()
+        seedCount = snapshot.seedCount
+        currentLevelNumber = snapshot.currentLevelNumber
+        currentProgress = snapshot.currentProgress
 
-        setupAuthStateMonitoring()
+        setupObservers()
     }
 
     deinit {
         MainActor.assumeIsolated {
-            if let observer = authStateObserver {
-                NotificationCenter.default.removeObserver(observer)
+            if let authStateObserver {
+                NotificationCenter.default.removeObserver(authStateObserver)
             }
-            if let observer = userProfileObserver {
-                NotificationCenter.default.removeObserver(observer)
+            if let userProfileObserver {
+                NotificationCenter.default.removeObserver(userProfileObserver)
             }
-            if let observer = seedProgressObserver {
-                NotificationCenter.default.removeObserver(observer)
+            if let impactCacheObserver {
+                NotificationCenter.default.removeObserver(impactCacheObserver)
+            }
+            if let impactUpdateFailedObserver {
+                NotificationCenter.default.removeObserver(impactUpdateFailedObserver)
             }
         }
     }
@@ -128,8 +152,32 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Private Methods
 
-    private func setupAuthStateMonitoring() {
-        // Listen for auth state changes
+    private func currentSnapshot() -> ImpactSnapshot {
+        if isLoggedIn, let userID = userProfile?.sub, let cached = loggedInUpdater.cachedSnapshot(for: userID) {
+            return cached
+        }
+
+        // `isLoggedIn` always starts false on a cold launch, regardless of whether this device
+        // actually has a session - it only flips once EcosiaAuthenticationService's async
+        // credential retrieval resolves, moments after this initializer runs. If a session is
+        // plausibly still stored (a refresh token exists locally - no network call) and the shared
+        // cache still holds a logged-in snapshot from last time, show that as a same-frame best
+        // guess instead of the guest's local count. The reactive flow (LoggedInImpactUpdater's
+        // auto-fetch once login is confirmed, or the stale-guess correction in
+        // handleAuthStateChange's `.authStateLoaded` case if it turns out we're not actually logged
+        // in) corrects this within moments either way - this only avoids flashing the wrong
+        // identity's balance on every single cold launch for a returning logged-in user.
+        if authenticationService.hasStoredSession, let cachedLoggedIn = loggedInUpdater.anyLoggedInSnapshot() {
+            return cachedLoggedIn
+        }
+
+        return loggedOutManager.load()
+    }
+
+    private func setupObservers() {
+        // Auth state (login/logout/loaded) - just keeps published auth fields in sync. Fetching
+        // and persisting the logged-in balance is `loggedInUpdater`'s own job; it observes the
+        // same notification independently.
         authStateObserver = NotificationCenter.default.addObserver(
             forName: .EcosiaAuthStateChanged,
             object: nil,
@@ -140,132 +188,127 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             }
         }
 
-        // Listen for user profile updates
         userProfileObserver = NotificationCenter.default.addObserver(
             forName: .EcosiaUserProfileUpdated,
             object: nil,
             queue: .main
         ) { [weak self] _ in
             Task {
-                await self?.handleUserProfileUpdate()
+                await self?.syncAuthState()
             }
         }
 
-        // Listen for seed progress updates (for logged-out users)
-        seedProgressObserver = NotificationCenter.default.addObserver(
-            forName: UserDefaultsSeedProgressManager.progressUpdatedNotification,
+        // The single reactive entry point for both logged-in and logged-out balance updates.
+        impactCacheObserver = NotificationCenter.default.addObserver(
+            forName: .EcosiaImpactCacheUpdated,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            guard let snapshot = notification.userInfo?[ImpactCache.snapshotUserInfoKey] as? ImpactSnapshot else { return }
+            let seedsIncrement = notification.userInfo?[ImpactCache.seedsIncrementUserInfoKey] as? Int
+            let didLevelUp = notification.userInfo?[ImpactCache.didLevelUpUserInfoKey] as? Bool ?? false
+            self?.apply(snapshot: snapshot, seedsIncrement: seedsIncrement, didLevelUp: didLevelUp)
+        }
+
+        impactUpdateFailedObserver = NotificationCenter.default.addObserver(
+            forName: .EcosiaImpactUpdateFailed,
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            Task {
-                await self?.handleSeedProgressUpdate()
+            self?.hasRegisterVisitError = true
+            if #available(iOS 16.0, *) {
+                EcosiaErrorToastPresenter.shared.presentRegisterVisitError()
             }
         }
     }
 
     private func handleAuthStateChange(_ notification: Notification) async {
-        // Handle specific auth actions (business logic can be nonisolated)
-        if let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType {
-            switch actionType {
-            case .userLoggedIn:
-                EcosiaLogger.accounts.info("User logged in - registering visit")
-                registerVisitIfNeeded()
-            case .userLoggedOut:
-                EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
-                await resetToLocalSeedCollection()
-                await handleLocalSeedCollection()
-            case .authStateLoaded:
-                break // State already updated above
+        guard let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType else { return }
+        switch actionType {
+        case .userLoggedIn:
+            EcosiaLogger.accounts.info("User logged in")
+            syncAuthState()
+        case .userLoggedOut:
+            EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
+            syncAuthState()
+            // Cancel explicitly, before resetting the cache, rather than relying on
+            // LoggedInImpactUpdater's own independent observer happening to run first - it does
+            // today only because of construction order, which isn't a guarantee worth depending on.
+            loggedInUpdater.cancelInFlight()
+            loggedOutManager.reset()
+            // reset() just cleared the last-app-open date, so this collects immediately - matches
+            // "opening the app as a guest for the first time today" rather than leaving it at 0.
+            loggedOutManager.collectDailySeedIfDue()
+        case .authStateLoaded:
+            syncAuthState()
+            if !isLoggedIn, loggedInUpdater.anyLoggedInSnapshot() != nil {
+                // The cold-launch credential check just confirmed we're NOT actually logged in,
+                // but the shared cache is still tagged to a logged-in user - either this
+                // provider's own optimistic guess in currentSnapshot() was wrong (a stored
+                // session that turned out to be revoked/expired), or the cache was left stale by
+                // a previous run that never went through a real logout. Only correct it in this
+                // specific case - a guest cold launch reaches this same branch on every single
+                // launch too, and must not have its local progress wiped every time.
+                EcosiaLogger.accounts.info("Cold-launch check confirmed logged out - clearing a stale logged-in cache entry")
+                loggedInUpdater.cancelInFlight()
+                loggedOutManager.reset()
+                loggedOutManager.collectDailySeedIfDue()
             }
         }
     }
 
+    /// Refreshes `isLoggedIn`/`userProfile` (and the properties derived from it) from
+    /// `authenticationService`.
     @MainActor
-    private func handleUserProfileUpdate() {
-        Task { @MainActor in
-            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-        }
-        userProfile = EcosiaAuthenticationService.shared.userProfile
+    private func syncAuthState() {
+        isLoggedIn = authenticationService.isLoggedIn
+        userProfile = authenticationService.userProfile
         username = userProfile?.name
         avatarURL = normalizedAvatarURL
     }
 
-    @MainActor
-    private func handleSeedProgressUpdate() {
-        // Only handle for logged-out users
-        guard !isLoggedIn else { return }
-
-        let newSeedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
-
-        // If seed count increased, show animation
-        if newSeedCount > seedCount {
-            let increment = newSeedCount - seedCount
-            EcosiaLogger.accounts.info("Seed progress updated for logged-out user: \(seedCount) → \(newSeedCount) (+\(increment))")
-            animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
-        } else {
-            seedCount = newSeedCount
-        }
-    }
-
     // MARK: - Seed Count Management
 
-    /// Registers a user visit to fetch the latest balance from the backend.
-    ///
-    /// Only proceeds if a valid access token is available (user is logged in).
-    /// Updates the balance and level information on success.
-    /// Sets `hasRegisterVisitError` to `true` on failure.
-    private func registerVisitIfNeeded() {
-        Task {
-            do {
-                guard let accessToken = EcosiaAuthenticationService.shared.accessToken, !accessToken.isEmpty else {
-                    EcosiaLogger.accounts.notice("Cannot register visit - no access token available")
-                    return
-                }
-
-                EcosiaLogger.accounts.info("Registering user visit for balance update")
-                let response = try await accountsProvider.registerVisit(accessToken: accessToken)
-                await updateBalance(response)
-
-                // Clear error on success
-                await MainActor.run {
-                    hasRegisterVisitError = false
-                }
-            } catch {
-                EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
-
-                // Set error state
-                await MainActor.run {
-                    hasRegisterVisitError = true
-                    if #available(iOS 16.0, *) {
-                        EcosiaErrorToastPresenter.shared.presentRegisterVisitError()
-                    }
-                }
-            }
-        }
+    /// A snapshot is only relevant if it belongs to whoever is currently active - defense in depth
+    /// alongside `LoggedInImpactUpdater`'s own identity check, in case a write and an auth
+    /// transition ever race each other. Checked against `EcosiaAuthenticationService` directly,
+    /// not `self.isLoggedIn`/`userProfile` - those are a `@Published` mirror that can lag the real
+    /// auth state by one run-loop turn (see `syncAuthState()`), which is fine for what they render
+    /// but not for a check that decides whether to accept a write.
+    private func isRelevant(_ snapshot: ImpactSnapshot) -> Bool {
+        authenticationService.isLoggedIn
+            ? snapshot.loggedInUserID == authenticationService.userProfile?.sub
+            : snapshot.loggedInUserID == nil
     }
 
+    /// Applies a new snapshot to published state and animates it as needed. Shared by the real
+    /// `.EcosiaImpactCacheUpdated` notification (logged-in or logged-out) and `debugUpdateBalance(_:)`
+    /// (a synthetic logged-in one, via the same cache write), so all paths go through the same
+    /// level-up/animation decisions.
+    ///
+    /// `seedsIncrement`/`didLevelUp` come from the writer, not from diffing `snapshot` against the
+    /// currently displayed values: on a first login the account's real balance/level can differ
+    /// wildly from the guest's local ones without anything having just been earned, so a diff-based
+    /// check would misfire a celebratory animation for a value that was simply never shown before.
     @MainActor
-    private func updateBalance(_ response: AccountVisitResponse) {
-        let newSeedCount = response.seeds.balanceAmount
-        let newLevelNumber = response.growthPoints.level.number
-        let newProgress = response.progressToNextLevel
+    private func apply(snapshot: ImpactSnapshot, seedsIncrement: Int?, didLevelUp: Bool) {
+        guard isRelevant(snapshot) else { return }
 
-        // Update level and progress from API
-        currentLevelNumber = newLevelNumber
-        currentProgress = newProgress
+        hasRegisterVisitError = false
+        currentLevelNumber = snapshot.currentLevelNumber
+        currentProgress = snapshot.currentProgress
 
-        // Trigger level-up animation if user leveled up
-        if response.didLevelUp {
-            EcosiaLogger.accounts.info("Level up detected: triggering animation for level \(newLevelNumber)")
+        if didLevelUp {
+            EcosiaLogger.accounts.info("Level up detected: triggering animation for level \(snapshot.currentLevelNumber)")
             triggerLevelUpAnimation()
         }
 
-        if let increment = response.seedsIncrement {
-            EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(newSeedCount) (+\(increment)), level=\(newLevelNumber), progress=\(newProgress)")
-            animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
+        if let increment = seedsIncrement, increment > 0 {
+            EcosiaLogger.accounts.info("Balance updated with animation: \(seedCount) → \(snapshot.seedCount) (+\(increment)), level=\(snapshot.currentLevelNumber), progress=\(snapshot.currentProgress)")
+            animateBalanceChange(from: seedCount, to: snapshot.seedCount, increment: increment)
         } else {
-            EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount), level=\(newLevelNumber), progress=\(newProgress)")
-            seedCount = newSeedCount
+            EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(snapshot.seedCount), level=\(snapshot.currentLevelNumber), progress=\(snapshot.currentProgress)")
+            seedCount = snapshot.seedCount
         }
     }
 
@@ -294,52 +337,25 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         )
     }
 
-    /// Resets to local seed collection system after logout.
-    ///
-    /// Resets seeds to 0, level to 1, and clears lastAppOpenDate to allow immediate seed collection.
-    @MainActor
-    private func resetToLocalSeedCollection() {
-        EcosiaLogger.accounts.info("Resetting to local seed collection system")
-
-        Self.seedProgressManagerType.resetLocalSeedProgress()
-
-        seedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
-        currentLevelNumber = 1
-        currentProgress = 0.25
-    }
-
-    /// Handles daily seed collection for logged-out users.
-    ///
-    /// Collects one seed per day and animates the increment if a new seed was collected.
-    @MainActor
-    private func handleLocalSeedCollection() {
-        EcosiaLogger.accounts.info("Handling local seed collection for logged-out user")
-        Self.seedProgressManagerType.collectDailySeed()
-        let newSeedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
-
-        if newSeedCount > seedCount {
-            let increment = newSeedCount - seedCount
-            animateBalanceChange(from: seedCount, to: newSeedCount, increment: increment)
-        } else {
-            seedCount = newSeedCount
-        }
-    }
-
     // MARK: - Public Methods
 
     /// Refreshes seed state based on authentication status.
     ///
     /// Should be called when the NTP appears or app returns from background.
-    /// - For logged-in users: Registers a visit to fetch latest balance from server
-    /// - For logged-out users: Checks and collects daily seed
+    /// - For logged-in users: triggers `LoggedInImpactUpdater` to register a visit
+    /// - For logged-out users: checks and collects the daily seed
+    ///
+    /// Checked against `EcosiaAuthenticationService` directly, not `self.isLoggedIn` - this can be
+    /// called at any arbitrary moment unrelated to an auth transition (NTP appearing, foreground),
+    /// and the published mirror can briefly lag the real value right after a transition.
     @MainActor
     public func refreshSeedState() {
-        if isLoggedIn {
+        if authenticationService.isLoggedIn {
             EcosiaLogger.accounts.debug("Refreshing seed state for logged-in user (server fetch)")
-            registerVisitIfNeeded()
+            loggedInUpdater.refresh()
         } else {
             EcosiaLogger.accounts.debug("Refreshing seed state for logged-out user (daily seed check)")
-            handleLocalSeedCollection()
+            loggedOutManager.collectDailySeedIfDue()
         }
     }
 
@@ -350,7 +366,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     /// Available in all builds, accessible through hidden debug menu
     @MainActor
     public func debugUpdateBalance(_ response: AccountVisitResponse) {
-        updateBalance(response)
+        guard authenticationService.isLoggedIn, let userID = authenticationService.userProfile?.sub else { return }
+        // Posts .EcosiaImpactCacheUpdated, applied synchronously via apply(snapshot:)
+        loggedInUpdater.debugApply(response, userID: userID)
         EcosiaLogger.accounts.info("Debug: Balance updated via debug method")
     }
 
