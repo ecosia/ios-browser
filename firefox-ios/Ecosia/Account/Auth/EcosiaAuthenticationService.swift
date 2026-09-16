@@ -63,6 +63,13 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// For testing: Skip fetching user info from Auth0 to avoid HTTP calls
     var skipUserInfoFetch: Bool = false
 
+    /// For testing: sets `userProfile` directly, bypassing the real Auth0 userinfo network call
+    /// that `skipUserInfoFetch` skips - lets tests reach a state with a known `sub` without a
+    /// real network dependency.
+    func setUserProfileForTesting(_ profile: UserProfile?) {
+        userProfile = profile
+    }
+
     // MARK: - Initialization
 
     /**

@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class LoggedInImpactUpdaterTests: XCTestCase {
@@ -210,3 +211,4 @@ final class LoggedInImpactUpdaterTests: XCTestCase {
         XCTAssertEqual(cache.lastDidLevelUp, true)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

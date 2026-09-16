@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class LoggedOutSeedProgressManagerTests: XCTestCase {
@@ -138,3 +139,4 @@ final class LoggedOutSeedProgressManagerTests: XCTestCase {
         XCTAssertNil(cache.lastSeedsIncrement, "A reset is not an earned seed and must never animate")
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional

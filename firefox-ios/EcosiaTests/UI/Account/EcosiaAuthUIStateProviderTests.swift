@@ -4,6 +4,7 @@
 
 @testable import Ecosia
 import XCTest
+// swiftlint:disable implicitly_unwrapped_optional
 
 @MainActor
 final class EcosiaAuthUIStateProviderTests: XCTestCase {
@@ -302,3 +303,4 @@ final class EcosiaAuthUIStateProviderTests: XCTestCase {
         NotificationCenter.default.post(name: .EcosiaImpactCacheUpdated, object: nil, userInfo: userInfo)
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional
