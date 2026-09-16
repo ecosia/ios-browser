@@ -144,6 +144,9 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
                     return .search(url: nil, isPrivate: false)
                 }
 
+            case .widgetSeedCounterOpenImpact:
+                return .action(action: .openEcosiaAccount)
+
             case .fxaSignIn:
                 return nil
 
@@ -273,6 +276,8 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
             sendAppExtensionTelemetry(object: .searchText)
         case .openUrl:
             sendAppExtensionTelemetry(object: .url)
+        case .widgetSeedCounterOpenImpact:
+            return
         }
     }
 

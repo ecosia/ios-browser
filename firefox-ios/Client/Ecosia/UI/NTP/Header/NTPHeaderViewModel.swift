@@ -81,6 +81,16 @@ final class NTPHeaderViewModel: ObservableObject {
                 self?.triggerSeedSparkles()
             }
         }
+
+        NotificationCenter.default.addObserver(
+            forName: .EcosiaOpenAccountImpact,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.presentAccountImpact()
+            }
+        }
     }
 
     private func triggerSeedSparkles() {

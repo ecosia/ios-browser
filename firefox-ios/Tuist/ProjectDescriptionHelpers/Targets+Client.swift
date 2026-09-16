@@ -57,6 +57,7 @@ public enum ClientTarget {
                 "TranslationsEngine.html",
                 "WidgetKit/DownloadManager/DownloadLiveActivity.swift",
                 "WidgetKit/OpenTabs/SimpleTab.swift",
+                "WidgetKit/SeedCounter/SeedWidgetSnapshot.swift",
                 "Extensions/NotificationService/NotificationPayloads.swift"
             ],
             resources: [

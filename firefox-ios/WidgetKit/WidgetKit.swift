@@ -16,6 +16,7 @@ struct EcosiaWidgets: WidgetBundle {
         SearchQuickLinksWidget()
         OpenTabsWidget()
         TopSitesWidget()
+        SeedCounterWidget()
     }
 }
 #endif

@@ -194,6 +194,7 @@ final class AppLaunchUtil: Sendable {
 
         updateSessionCount()
 //        adjustHelper.setupAdjust()
+        Task { @MainActor in SeedWidgetSnapshotWriter.shared.setup() }
         AppEventQueue.signal(event: .postLaunchDependenciesComplete)
     }
 

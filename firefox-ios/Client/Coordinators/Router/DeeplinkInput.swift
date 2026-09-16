@@ -23,6 +23,7 @@ enum DeeplinkInput {
         case widgetMediumQuickLinkClosePrivateTabs = "widget-medium-quicklink-close-private-tabs"
         case widgetTabsMediumOpenUrl = "widget-tabs-medium-open-url"
         case widgetTabsLargeOpenUrl = "widget-tabs-large-open-url"
+        case widgetSeedCounterOpenImpact = "widget-seed-counter-open-impact"
 
         var shouldRouteDeeplinkToSpecificIPadWindow: Bool {
             switch self {
@@ -54,7 +55,8 @@ enum DeeplinkInput {
                     .widgetSmallQuickLinkOpenCopied, .widgetMediumQuickLinkOpenCopied:
                 return urlQuery?.isWebPage() ?? true
             case .deepLink, .fxaSignIn, .glean,
-                    .widgetSmallQuickLinkClosePrivateTabs, .widgetMediumQuickLinkClosePrivateTabs:
+                    .widgetSmallQuickLinkClosePrivateTabs, .widgetMediumQuickLinkClosePrivateTabs,
+                    .widgetSeedCounterOpenImpact:
                 return true
             }
         }

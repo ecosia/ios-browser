@@ -13,6 +13,9 @@ extension Notification.Name {
     /// Posted when user levels up
     /// UserInfo may contain: newLevel (Int), newProgress (Double)
     public static let EcosiaAccountLevelUp = Notification.Name("EcosiaAccountLevelUp")
+
+    /// Posted to request that the account / impact sheet be opened (e.g. from a widget tap).
+    public static let EcosiaOpenAccountImpact = Notification.Name("EcosiaOpenAccountImpact")
 }
 
 /// Keys for notification userInfo dictionaries

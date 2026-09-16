@@ -394,6 +394,8 @@ class BrowserCoordinator: BaseCoordinator,
                 handleClosePrivateTabsWidgetAction()
             case .showIntroOnboarding:
                 showIntroOnboarding()
+            case .openEcosiaAccount:
+                NotificationCenter.default.post(name: .EcosiaOpenAccountImpact, object: nil)
             }
 
         case let .fxaSignIn(params):

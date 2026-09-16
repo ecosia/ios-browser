@@ -266,6 +266,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         } else {
             EcosiaLogger.accounts.info("Balance updated without animation: \(seedCount) → \(newSeedCount), level=\(newLevelNumber), progress=\(newProgress)")
             seedCount = newSeedCount
+            // Notify the widget writer immediately since there is no animation delay here.
+            EcosiaAccountNotificationCenter.postProgressUpdated(progress: newProgress, level: newLevelNumber)
         }
     }
 
@@ -277,6 +279,12 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             withAnimation(.easeIn(duration: 0.3)) {
                 self.seedCount = newValue
             }
+
+            // Notify the widget writer now that seedCount has been committed.
+            EcosiaAccountNotificationCenter.postProgressUpdated(
+                progress: self.currentProgress,
+                level: self.currentLevelNumber
+            )
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                 withAnimation(.linear(duration: 0.57)) {
