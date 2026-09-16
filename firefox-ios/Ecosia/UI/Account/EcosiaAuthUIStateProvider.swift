@@ -229,15 +229,15 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
                 await resetToLocalSeedCollection()
                 await handleLocalSeedCollection()
             case .authStateLoaded:
-                if !isLoggedIn, EcosiaAuthenticationService.wasLoggedIn {
-                    // Credential resolution confirmed logged-out, but the previous session ended
-                    // logged in (e.g. an expired token) rather than an explicit logout - the
-                    // shared cache still holds that account's server snapshot. Clear it the same
-                    // way, before the replay below can otherwise show it, so it doesn't leak to
-                    // whoever uses the device next.
-                    EcosiaLogger.accounts.info("Auth resolved to logged-out but previous session was logged in - clearing shared cache")
-                    await resetToLocalSeedCollection()
-                    EcosiaAuthenticationService.wasLoggedIn = false
+                if !isLoggedIn, let snapshot = Self.resolveInitialImpactSnapshot(isLoggedIn: false) {
+                    // EcosiaAuthenticationService already clears the shared logged-in cache
+                    // whenever this resolves to logged-out following a logged-in session (e.g.
+                    // an expired token) - re-resolve here to move off whatever this object showed
+                    // at init (possibly that now-stale cache) onto the current local snapshot.
+                    // A no-op for an ordinary continuing guest, who was already showing this.
+                    seedCount = snapshot.seedCount
+                    currentLevelNumber = snapshot.currentLevelNumber
+                    currentProgress = snapshot.currentProgress
                 }
 
                 // Cold launch can dispatch both userLoggedIn and authStateLoaded for the same
@@ -386,8 +386,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         )
     }
 
-    /// Resets to local seed collection system - after an explicit logout, or after auth resolves
-    /// to logged-out because the previous session's credentials turned out to be invalid.
+    /// Resets to local seed collection system after logout.
     ///
     /// Resets seeds to 0, level to 1, and clears lastAppOpenDate to allow immediate seed collection.
     @MainActor

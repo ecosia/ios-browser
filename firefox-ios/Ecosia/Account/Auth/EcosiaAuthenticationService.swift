@@ -474,7 +474,32 @@ extension EcosiaAuthenticationService {
             actionType = .userLoggedOut
         }
 
+        if !isLoggedIn {
+            clearLoggedInImpactCacheIfNeeded(actionType: actionType)
+        }
+
         // Dispatch to the new state management system
         EcosiaBrowserWindowAuthManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType, accountOrigin: accountOrigin)
+    }
+
+    /// Clears the shared logged-in impact cache directly, here, rather than relying on a UI
+    /// observer to react to the notification dispatched above: `EcosiaBrowserWindowAuthManager`
+    /// only notifies registered browser windows, and can have none registered yet when this
+    /// resolves (e.g. very early in launch) - in which case no observer would ever hear about it
+    /// and the cache would stay stale on disk for the next launch to read.
+    private func clearLoggedInImpactCacheIfNeeded(actionType: EcosiaAuthActionType) {
+        switch actionType {
+        case .userLoggedOut:
+            // An explicit logout always means a logged-in account's snapshot is now stale.
+            LoggedInImpactCache.clear()
+        case .authStateLoaded where Self.wasLoggedIn:
+            // Credential resolution confirmed logged-out, but the previous session was logged
+            // in (e.g. an expired token) rather than an explicit logout. An ordinary continuing
+            // guest, whose wasLoggedIn is already false, is unaffected.
+            LoggedInImpactCache.clear()
+            Self.wasLoggedIn = false
+        default:
+            break
+        }
     }
 }
