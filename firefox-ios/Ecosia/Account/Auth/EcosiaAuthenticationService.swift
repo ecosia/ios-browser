@@ -52,6 +52,11 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// This property is automatically updated when login/logout operations complete successfully.
     public private(set) var isLoggedIn: Bool = false
 
+    /// Whether `isLoggedIn` reflects a confirmed state rather than the initial default.
+    /// `isLoggedIn` starts `false` before the stored-credentials check on launch completes, so a
+    /// reader that can't tell the two apart may mistake "not yet checked" for "confirmed logged out".
+    public private(set) var hasResolvedAuthState: Bool = false
+
     /// The current user's profile information from Auth0.
     /// This includes name, email, profile picture URL, etc.
     public private(set) var userProfile: UserProfile? {
@@ -443,6 +448,8 @@ extension EcosiaAuthenticationService {
      -   fromCredentialRetrieval: Whether this is from credential retrieval (for state loaded)
      */
     private func dispatchAuthStateChange(isLoggedIn: Bool, fromCredentialRetrieval: Bool, accountOrigin: AccountOrigin? = nil) async {
+        hasResolvedAuthState = true
+
         // Determine the correct action type
         let actionType: EcosiaAuthActionType
         if fromCredentialRetrieval {
