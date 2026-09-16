@@ -16,7 +16,16 @@ final class MockAccountsProvider: AccountsProviderProtocol, @unchecked Sendable 
     func registerVisit(accessToken: String) async throws -> AccountVisitResponse {
         receivedAccessTokens.append(accessToken)
         if delayNanoseconds > 0 {
-            try await Task.sleep(nanoseconds: delayNanoseconds)
+            do {
+                try await Task.sleep(nanoseconds: delayNanoseconds)
+            } catch {
+                // A real cancelled `URLSession.data(for:)` call throws `URLError(.cancelled)`, not
+                // `CancellationError` (verified empirically) - mirror that here rather than letting
+                // `Task.sleep`'s clean `CancellationError` through, so tests exercise the same error
+                // shape production code actually sees instead of a friendlier one that would hide a
+                // `catch is CancellationError`-shaped bug.
+                throw URLError(.cancelled)
+            }
         }
         return try result.get()
     }

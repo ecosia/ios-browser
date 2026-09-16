@@ -8,6 +8,15 @@ import Foundation
 /// state on its own - starts a fetch when a login (and its user id) becomes known, and cancels any
 /// in-flight one on logout - so callers only need an explicit `refresh()` for triggers that aren't
 /// an auth transition (e.g. NTP appearing or the app returning to foreground).
+///
+/// Not `@MainActor`: `inFlightTask`/`autoFetchedUserID` are only safe to mutate from one thread at
+/// a time, and today that's guaranteed only by convention (every real caller happens to already be
+/// on the main thread) rather than by the compiler. Isolating the type would close that gap, but
+/// `deinit` for an `@MainActor` class is `nonisolated` and can't touch actor-isolated stored
+/// properties without `MainActor.assumeIsolated` - which reintroduces the same "traps if the last
+/// reference is released off the main thread" risk `EcosiaAuthUIStateProvider.deinit` already has,
+/// just in a second place. Left as a documented risk rather than "fixed" by trading one hazard for
+/// another.
 public final class LoggedInImpactUpdater: @unchecked Sendable {
 
     private let cache: ImpactCacheProtocol
@@ -57,10 +66,28 @@ public final class LoggedInImpactUpdater: @unchecked Sendable {
         startFetch(userID: userID)
     }
 
+    /// Cancels any in-flight fetch without starting a new one. `LoggedInImpactUpdater` already
+    /// does this on its own via `.EcosiaAuthStateChanged`/`.userLoggedOut`; exposed so a caller that
+    /// also needs to reset other state on logout (e.g. `EcosiaAuthUIStateProvider` clearing the
+    /// shared cache) can guarantee the cancel happens first, rather than relying on the order two
+    /// independent notification observers happen to be registered in.
+    public func cancelInFlight() {
+        cancelInFlightFetch()
+        autoFetchedUserID = nil
+    }
+
     /// Reads the cached snapshot if it currently belongs to `userID`, or `nil` otherwise (nothing
     /// cached yet, or the shared slot still holds a different identity's data). A pure read.
     public func cachedSnapshot(for userID: String) -> ImpactSnapshot? {
         guard let cached = cache.load(), cached.loggedInUserID == userID else { return nil }
+        return cached
+    }
+
+    /// Reads the cached snapshot if it belongs to *any* logged-in user, regardless of which one.
+    /// For the narrow cold-launch window before the real signed-in user id is known - see
+    /// `EcosiaAuthUIStateProvider.currentSnapshot()`.
+    public func anyLoggedInSnapshot() -> ImpactSnapshot? {
+        guard let cached = cache.load(), cached.loggedInUserID != nil else { return nil }
         return cached
     }
 
@@ -93,8 +120,7 @@ public final class LoggedInImpactUpdater: @unchecked Sendable {
                 self?.autoFetchIfNeeded()
             case .userLoggedOut:
                 EcosiaLogger.accounts.info("User logged out - cancelling any in-flight visit")
-                self?.cancelInFlightFetch()
-                self?.autoFetchedUserID = nil
+                self?.cancelInFlight()
             case .authStateLoaded:
                 break
             }
@@ -164,9 +190,15 @@ public final class LoggedInImpactUpdater: @unchecked Sendable {
                 loggedInUserID: expectedUserID
             )
             cache.save(snapshot, seedsIncrement: response.seedsIncrement, didLevelUp: response.didLevelUp)
-        } catch is CancellationError {
-            EcosiaLogger.accounts.debug("registerVisit cancelled - session changed while in flight")
         } catch {
+            // Checked on the error type, not caught as `CancellationError`: a real `URLSession`
+            // request cancelled mid-flight throws `URLError(.cancelled)`, not `CancellationError`
+            // - only a Task cancelled before it ever starts throws the latter. Checking
+            // `Task.isCancelled` instead of matching a specific error type catches both.
+            guard !Task.isCancelled else {
+                EcosiaLogger.accounts.debug("registerVisit cancelled - session changed while in flight")
+                return
+            }
             EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
             NotificationCenter.default.post(name: .EcosiaImpactUpdateFailed, object: nil)
         }

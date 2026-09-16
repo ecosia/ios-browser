@@ -65,6 +65,72 @@ final class EcosiaAuthUIStateProviderTests: XCTestCase {
         XCTAssertNil(provider.balanceIncrement, "Revealing a pre-existing balance on cold launch must not animate as a fresh earn")
     }
 
+    // MARK: - Cold-launch flicker: optimistic same-frame guess from the shared cache
+
+    func test_coldLaunch_optimisticallyShowsCachedLoggedInBalance_beforeAuthResolves() {
+        // Given a device with a plausibly-stored session (a refresh token exists) and a cache still
+        // tagged to that user from last time - constructed synchronously, with nothing awaited, so
+        // EcosiaAuthenticationService's own async credential-retrieval Task from its init has had no
+        // chance to run yet: isLoggedIn is still false, exactly like the real cold-launch window.
+        let mockProvider = MockAuth0Provider()
+        mockProvider.hasStoredCredentials = true
+        let auth = EcosiaAuthenticationService(auth0Provider: mockProvider)
+        auth.skipUserInfoFetch = true
+        XCTAssertFalse(auth.isLoggedIn, "Precondition: isLoggedIn hasn't resolved yet")
+        XCTAssertTrue(auth.hasStoredSession, "Precondition: a session is plausibly stored")
+        cache.stored = ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.5, loggedInUserID: "auth0|returning-user")
+
+        // When the provider resolves its initial state
+        let provider = EcosiaAuthUIStateProvider(accountsProvider: accountsProvider, cache: cache, authenticationService: auth)
+
+        // Then it shows the cached logged-in balance immediately, not the guest's zero
+        XCTAssertEqual(provider.seedCount, 120)
+        XCTAssertEqual(provider.currentLevelNumber, 4)
+    }
+
+    func test_coldLaunch_withNoStoredSession_doesNotGuessLoggedIn_evenIfCacheIsStale() {
+        // A stale logged-in-tagged cache entry (e.g. left behind by a crash) must not be trusted if
+        // there's no plausible stored session backing it up.
+        let auth = ImpactTestAuth.makeLoggedOut() // hasStoredCredentials defaults to false
+        XCTAssertFalse(auth.hasStoredSession)
+        cache.stored = ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.5, loggedInUserID: "auth0|stale-user")
+
+        let provider = EcosiaAuthUIStateProvider(accountsProvider: accountsProvider, cache: cache, authenticationService: auth)
+
+        XCTAssertEqual(provider.seedCount, 0)
+    }
+
+    func test_coldLaunch_confirmedLoggedOut_clearsStaleLoggedInCacheEntry() async {
+        // Given a stale logged-in-tagged cache entry - however it got there (a wrong optimistic
+        // guess, or a previous run that never cleanly logged out)
+        cache.stored = ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.5, loggedInUserID: "auth0|stale-user")
+        let auth = ImpactTestAuth.makeLoggedOut()
+        let provider = EcosiaAuthUIStateProvider(accountsProvider: accountsProvider, cache: cache, authenticationService: auth)
+
+        // When the cold-launch credential check confirms we're not actually logged in
+        postAuthStateChanged(.authStateLoaded)
+        await waitUntil { self.cache.stored?.loggedInUserID == nil }
+
+        // Then the stale entry is cleared and the guest state takes over
+        XCTAssertNil(cache.stored?.loggedInUserID)
+        XCTAssertEqual(provider.seedCount, 0)
+    }
+
+    func test_coldLaunch_asGuest_authStateLoaded_doesNotWipeExistingGuestProgress() async {
+        // Regression guard: `.authStateLoaded` fires on EVERY cold launch, logged-in or logged-out.
+        // The fix for the stale-guess case above must not reset a guest's own real local progress
+        // just because they happen to also be logged out (the overwhelmingly common case).
+        cache.stored = ImpactSnapshot(seedCount: 2, currentLevelNumber: 1, currentProgress: 0.4, loggedInUserID: nil)
+        let auth = ImpactTestAuth.makeLoggedOut()
+        let provider = EcosiaAuthUIStateProvider(accountsProvider: accountsProvider, cache: cache, authenticationService: auth)
+        XCTAssertEqual(provider.seedCount, 2)
+
+        postAuthStateChanged(.authStateLoaded)
+        try? await Task.sleep(nanoseconds: 100_000_000)
+
+        XCTAssertEqual(provider.seedCount, 2, "A guest's existing local progress must never be wiped by a routine authStateLoaded(false)")
+    }
+
     // MARK: - Regression: logout lands on 0, then immediately collects back to 1
 
     func test_logout_resetsToZero_thenImmediatelyCollectsTodaysSeed() async {

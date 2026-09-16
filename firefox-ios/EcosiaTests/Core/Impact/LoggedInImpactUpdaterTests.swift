@@ -107,6 +107,10 @@ final class LoggedInImpactUpdaterTests: XCTestCase {
     }
 
     func test_cancelledFetch_doesNotPostFailureNotification() async {
+        // Regression: a real cancelled `URLSession` call throws `URLError(.cancelled)`, not
+        // `CancellationError` - MockAccountsProvider mirrors that (see its `delayNanoseconds`
+        // handling) specifically so this test would have failed against the old
+        // `catch is CancellationError` implementation instead of giving false confidence.
         let auth = await ImpactTestAuth.makeLoggedIn(sub: "auth0|user-a", accessToken: "token-a")
         accountsProvider.result = .success(ImpactTestFixtures.visitResponse(seedCount: 1))
         accountsProvider.delayNanoseconds = 300_000_000
@@ -123,6 +127,33 @@ final class LoggedInImpactUpdaterTests: XCTestCase {
 
         try? await Task.sleep(nanoseconds: 400_000_000)
         XCTAssertFalse(failurePosted, "A cancellation is an expected session change, not a failure worth surfacing to the user")
+        _ = updater
+    }
+
+    func test_refreshCancellingAnAutoFetch_doesNotPostFailureNotification_andSecondFetchSucceeds() async {
+        // The same cancellation bug also reachable without a logout: refresh() (NTP appear /
+        // foreground) can cancel an auto-fetch that's already in flight from login. That cancelled
+        // request must not surface a failure toast, and the fetch refresh() itself triggered must
+        // still land normally right after.
+        let auth = await ImpactTestAuth.makeLoggedIn(sub: "auth0|user-a", accessToken: "token-a")
+        accountsProvider.result = .success(ImpactTestFixtures.visitResponse(seedCount: 999))
+        accountsProvider.delayNanoseconds = 300_000_000
+        let updater = LoggedInImpactUpdater(cache: cache, accountsProvider: accountsProvider, authenticationService: auth)
+        var failurePosted = false
+        let observer = NotificationCenter.default.addObserver(forName: .EcosiaImpactUpdateFailed, object: nil, queue: .main) { _ in
+            failurePosted = true
+        }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        postAuthStateChanged(.userLoggedIn) // starts a slow auto-fetch
+        try? await Task.sleep(nanoseconds: 50_000_000)
+
+        accountsProvider.delayNanoseconds = 0
+        accountsProvider.result = .success(ImpactTestFixtures.visitResponse(seedCount: 5))
+        await waitForImpactCacheUpdate { updater.refresh() } // cancels the auto-fetch, starts a fresh one
+
+        XCTAssertEqual(cache.stored?.seedCount, 5, "refresh()'s own fetch must land normally")
+        XCTAssertFalse(failurePosted, "Cancelling the superseded auto-fetch must not surface a failure toast")
         _ = updater
     }
 
@@ -209,6 +240,50 @@ final class LoggedInImpactUpdaterTests: XCTestCase {
         XCTAssertEqual(cache.stored?.seedCount, 12)
         XCTAssertEqual(cache.stored?.loggedInUserID, "auth0|user-a")
         XCTAssertEqual(cache.lastDidLevelUp, true)
+    }
+
+    // MARK: - anyLoggedInSnapshot() (cold-launch optimistic guess support)
+
+    func test_anyLoggedInSnapshot_returnsNil_whenNothingCached() {
+        let updater = LoggedInImpactUpdater(cache: cache, accountsProvider: accountsProvider, authenticationService: ImpactTestAuth.makeLoggedOut())
+
+        XCTAssertNil(updater.anyLoggedInSnapshot())
+    }
+
+    func test_anyLoggedInSnapshot_returnsNil_whenCacheIsGuestTagged() {
+        cache.stored = .loggedOutZero
+        let updater = LoggedInImpactUpdater(cache: cache, accountsProvider: accountsProvider, authenticationService: ImpactTestAuth.makeLoggedOut())
+
+        XCTAssertNil(updater.anyLoggedInSnapshot())
+    }
+
+    func test_anyLoggedInSnapshot_returnsSnapshot_regardlessOfWhichUserItBelongsTo() {
+        let snapshot = ImpactSnapshot(seedCount: 40, currentLevelNumber: 2, currentProgress: 0.3, loggedInUserID: "auth0|anyone")
+        cache.stored = snapshot
+        let updater = LoggedInImpactUpdater(cache: cache, accountsProvider: accountsProvider, authenticationService: ImpactTestAuth.makeLoggedOut())
+
+        XCTAssertEqual(updater.anyLoggedInSnapshot(), snapshot)
+    }
+
+    // MARK: - cancelInFlight()
+
+    func test_cancelInFlight_cancelsAndClearsAutoFetchTracking_soANewLoginForTheSameUserRefetches() async {
+        let auth = await ImpactTestAuth.makeLoggedIn(sub: "auth0|user-a", accessToken: "token-a")
+        accountsProvider.result = .success(ImpactTestFixtures.visitResponse(seedCount: 1))
+        accountsProvider.delayNanoseconds = 300_000_000
+        let updater = LoggedInImpactUpdater(cache: cache, accountsProvider: accountsProvider, authenticationService: auth)
+
+        postAuthStateChanged(.userLoggedIn) // starts a slow fetch, tracked under auth0|user-a
+        try? await Task.sleep(nanoseconds: 50_000_000)
+        updater.cancelInFlight()
+
+        // Without clearing autoFetchedUserID, a subsequent login as the SAME user would be treated
+        // as already-fetched and silently skipped.
+        accountsProvider.delayNanoseconds = 0
+        accountsProvider.result = .success(ImpactTestFixtures.visitResponse(seedCount: 8))
+        await waitForImpactCacheUpdate { postAuthStateChanged(.userLoggedIn) }
+
+        XCTAssertEqual(cache.stored?.seedCount, 8)
     }
 }
 // swiftlint:enable implicitly_unwrapped_optional

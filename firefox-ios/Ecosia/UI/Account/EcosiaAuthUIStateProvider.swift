@@ -153,10 +153,25 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     // MARK: - Private Methods
 
     private func currentSnapshot() -> ImpactSnapshot {
-        guard isLoggedIn, let userID = userProfile?.sub, let cached = loggedInUpdater.cachedSnapshot(for: userID) else {
-            return loggedOutManager.load()
+        if isLoggedIn, let userID = userProfile?.sub, let cached = loggedInUpdater.cachedSnapshot(for: userID) {
+            return cached
         }
-        return cached
+
+        // `isLoggedIn` always starts false on a cold launch, regardless of whether this device
+        // actually has a session - it only flips once EcosiaAuthenticationService's async
+        // credential retrieval resolves, moments after this initializer runs. If a session is
+        // plausibly still stored (a refresh token exists locally - no network call) and the shared
+        // cache still holds a logged-in snapshot from last time, show that as a same-frame best
+        // guess instead of the guest's local count. The reactive flow (LoggedInImpactUpdater's
+        // auto-fetch once login is confirmed, or the stale-guess correction in
+        // handleAuthStateChange's `.authStateLoaded` case if it turns out we're not actually logged
+        // in) corrects this within moments either way - this only avoids flashing the wrong
+        // identity's balance on every single cold launch for a returning logged-in user.
+        if authenticationService.hasStoredSession, let cachedLoggedIn = loggedInUpdater.anyLoggedInSnapshot() {
+            return cachedLoggedIn
+        }
+
+        return loggedOutManager.load()
     }
 
     private func setupObservers() {
@@ -216,12 +231,29 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         case .userLoggedOut:
             EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
             syncAuthState()
+            // Cancel explicitly, before resetting the cache, rather than relying on
+            // LoggedInImpactUpdater's own independent observer happening to run first - it does
+            // today only because of construction order, which isn't a guarantee worth depending on.
+            loggedInUpdater.cancelInFlight()
             loggedOutManager.reset()
             // reset() just cleared the last-app-open date, so this collects immediately - matches
             // "opening the app as a guest for the first time today" rather than leaving it at 0.
             loggedOutManager.collectDailySeedIfDue()
         case .authStateLoaded:
             syncAuthState()
+            if !isLoggedIn, loggedInUpdater.anyLoggedInSnapshot() != nil {
+                // The cold-launch credential check just confirmed we're NOT actually logged in,
+                // but the shared cache is still tagged to a logged-in user - either this
+                // provider's own optimistic guess in currentSnapshot() was wrong (a stored
+                // session that turned out to be revoked/expired), or the cache was left stale by
+                // a previous run that never went through a real logout. Only correct it in this
+                // specific case - a guest cold launch reaches this same branch on every single
+                // launch too, and must not have its local progress wiped every time.
+                EcosiaLogger.accounts.info("Cold-launch check confirmed logged out - clearing a stale logged-in cache entry")
+                loggedInUpdater.cancelInFlight()
+                loggedOutManager.reset()
+                loggedOutManager.collectDailySeedIfDue()
+            }
         }
     }
 
