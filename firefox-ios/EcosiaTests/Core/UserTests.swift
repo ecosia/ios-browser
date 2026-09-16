@@ -354,10 +354,27 @@ final class UserTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(count, 1, "Expected searchSettingsChanged when toggling aiFreeSearching")
     }
 
-    /// `User.shared` posts `searchSettingsChanged` on the main queue, so posts from
-    /// earlier suites can still be queued and would be counted as this test's own.
+    /// `User.shared` posts `searchSettingsChanged` via `DispatchQueue.main.async`, so mutations
+    /// from earlier, unrelated test classes can still have a post queued on the main queue by the
+    /// time this test starts - spin until a full quiet window passes with no further post, rather
+    /// than a fixed duration, so this holds regardless of how many are queued or how slow the
+    /// environment is (a fixed short spin was observed to still flake in CI under load).
     private func drainPendingSearchSettingsPosts() {
-        RunLoop.main.run(until: Date().addingTimeInterval(0.2))
+        var lastPostAt = Date()
+        let observer = NotificationCenter.default.addObserver(
+            forName: .searchSettingsChanged,
+            object: nil,
+            queue: .main
+        ) { _ in
+            lastPostAt = Date()
+        }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        let quietWindow: TimeInterval = 0.2
+        let overallDeadline = Date().addingTimeInterval(5)
+        while Date().timeIntervalSince(lastPostAt) < quietWindow && Date() < overallDeadline {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        }
     }
 
     func testSelectedProviderNormalizesStoredIdentifier() {
