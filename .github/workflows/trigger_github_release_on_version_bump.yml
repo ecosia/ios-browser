@@ -1,0 +1,74 @@
+name: Trigger GitHub Release on Version Bump
+
+# MARKETING_VERSION in EcosiaCommon.xcconfig is bumped for every release (see
+# the comment on that line), so a push to main that changes it means the
+# version being bumped *away from* just finished its release cycle — its
+# latest v_<version>_<build> tag is the build that got tested and released.
+#
+# Resolve that tag from the old version explicitly, rather than letting
+# create_github_release.yml fall back to "whatever the latest tag is": by
+# the time this job runs, the build pipeline may have already tagged this
+# same bump commit under the *new* version, and that tag would sort higher.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig'
+
+permissions: {}
+
+jobs:
+  resolve_bumped_version_tag:
+    runs-on: ubuntu-latest
+    name: Resolve tag for the version bumped away from
+    timeout-minutes: 5
+    outputs:
+      tag: ${{ steps.diff.outputs.tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Diff MARKETING_VERSION and resolve its latest tag
+        id: diff
+        env:
+          FILE: firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          OLD_VERSION=$(git show "${BEFORE_SHA}:${FILE}" 2>/dev/null | grep -E '^MARKETING_VERSION' | sed -E 's/^MARKETING_VERSION *= *//') || true
+          NEW_VERSION=$(grep -E '^MARKETING_VERSION' "$FILE" | sed -E 's/^MARKETING_VERSION *= *//') || true
+
+          if [[ -z "$OLD_VERSION" || "$OLD_VERSION" == "$NEW_VERSION" ]]; then
+            echo "MARKETING_VERSION didn't change in this push, nothing to release"
+            exit 0
+          fi
+
+          if [[ ! "$OLD_VERSION" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+            echo "Previous MARKETING_VERSION '$OLD_VERSION' doesn't look like a version number, skipping" >&2
+            exit 0
+          fi
+
+          echo "MARKETING_VERSION bumped from $OLD_VERSION to $NEW_VERSION"
+
+          ESCAPED_OLD_VERSION=${OLD_VERSION//./\\.}
+          TAG=$(git tag -l "v_${OLD_VERSION}_*" | grep -E "^v_${ESCAPED_OLD_VERSION}_[0-9]+$" | sort -V | tail -1) || true
+          if [[ -z "$TAG" ]]; then
+            echo "No v_${OLD_VERSION}_<build> tag found to release" >&2
+            exit 1
+          fi
+
+          echo "Resolved release tag: $TAG"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+  create_release:
+    needs: resolve_bumped_version_tag
+    if: needs.resolve_bumped_version_tag.outputs.tag != ''
+    permissions:
+      contents: write
+    uses: ./.github/workflows/create_github_release.yml
+    with:
+      tag: ${{ needs.resolve_bumped_version_tag.outputs.tag }}
