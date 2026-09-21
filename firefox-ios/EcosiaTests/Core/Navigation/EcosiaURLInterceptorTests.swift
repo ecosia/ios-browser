@@ -11,7 +11,7 @@ final class EcosiaURLInterceptorTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = EcosiaURLInterceptor(urlProvider: .production, isAccountsDisabled: false)
+        sut = EcosiaURLInterceptor(urlProvider: .production)
     }
 
     override func tearDown() {
@@ -24,10 +24,7 @@ final class EcosiaURLInterceptorTests: XCTestCase {
     func testShouldIntercept_whenIPad_returnsFalse() {
         // Given
         let url = URL(string: "https://www.ecosia.org/accounts/sign-in")!
-        let sut = EcosiaURLInterceptor(
-            urlProvider: .production,
-            isAccountsDisabled: AccountsDisabled.isActive(for: .pad)
-        )
+        let sut = EcosiaURLInterceptor(urlProvider: .production)
 
         // When
         let result = sut.shouldIntercept(url)
@@ -39,10 +36,7 @@ final class EcosiaURLInterceptorTests: XCTestCase {
     func testShouldIntercept_whenIPhone_returnsTrue() {
         // Given
         let url = URL(string: "https://www.ecosia.org/accounts/sign-in")!
-        let sut = EcosiaURLInterceptor(
-            urlProvider: .production,
-            isAccountsDisabled: AccountsDisabled.isActive(for: .phone)
-        )
+        let sut = EcosiaURLInterceptor(urlProvider: .production)
 
         // When
         let result = sut.shouldIntercept(url)
@@ -54,10 +48,7 @@ final class EcosiaURLInterceptorTests: XCTestCase {
     func testInterceptedType_whenIPad_returnsNone() {
         // Given
         let url = URL(string: "https://www.ecosia.org/accounts/profile")!
-        let sut = EcosiaURLInterceptor(
-            urlProvider: .production,
-            isAccountsDisabled: AccountsDisabled.isActive(for: .pad)
-        )
+        let sut = EcosiaURLInterceptor(urlProvider: .production)
 
         // When
         let result = sut.interceptedType(for: url)
@@ -69,10 +60,7 @@ final class EcosiaURLInterceptorTests: XCTestCase {
     func testInterceptedType_whenIPhone_returnsProfile() {
         // Given
         let url = URL(string: "https://www.ecosia.org/accounts/profile")!
-        let sut = EcosiaURLInterceptor(
-            urlProvider: .production,
-            isAccountsDisabled: AccountsDisabled.isActive(for: .phone)
-        )
+        let sut = EcosiaURLInterceptor(urlProvider: .production)
 
         // When
         let result = sut.interceptedType(for: url)
