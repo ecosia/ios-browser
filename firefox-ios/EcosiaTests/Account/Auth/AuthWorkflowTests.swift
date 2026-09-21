@@ -341,6 +341,16 @@ final class AuthWorkflowTests: XCTestCase {
         XCTAssertNotNil(auth.refreshToken)
     }
 
+    // MARK: - hasStoredSession
+
+    func testHasStoredSession_reflectsWhetherAStoredSessionIsPlausiblyRenewable() {
+        mockProvider.hasStoredCredentials = false
+        XCTAssertFalse(auth.hasStoredSession)
+
+        mockProvider.hasStoredCredentials = true
+        XCTAssertTrue(auth.hasStoredSession, "Should be true synchronously, with no login/retrieval performed")
+    }
+
     // MARK: - Edge Cases Tests
 
     func testEdgeCase_logoutWithoutLogin_handledGracefully() async {

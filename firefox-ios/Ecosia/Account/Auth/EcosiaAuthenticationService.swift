@@ -52,6 +52,15 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// This property is automatically updated when login/logout operations complete successfully.
     public private(set) var isLoggedIn: Bool = false
 
+    /// Whether a session is plausibly still stored on this device (a refresh token exists in the
+    /// keychain) - synchronous, local, no network call. Unlike `isLoggedIn`, which only becomes
+    /// true once `retrieveStoredCredentials()`'s async validation confirms it, this is available
+    /// immediately at launch - before that resolves - for callers that need a same-frame best
+    /// guess (e.g. showing a returning logged-in user's last-known state instead of a guest's).
+    public var hasStoredSession: Bool {
+        auth0Provider.canRenewCredentials()
+    }
+
     /// The current user's profile information from Auth0.
     /// This includes name, email, profile picture URL, etc.
     public private(set) var userProfile: UserProfile? {
@@ -62,6 +71,13 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
 
     /// For testing: Skip fetching user info from Auth0 to avoid HTTP calls
     var skipUserInfoFetch: Bool = false
+
+    /// For testing: sets `userProfile` directly, bypassing the real Auth0 userinfo network call
+    /// that `skipUserInfoFetch` skips - lets tests reach a state with a known `sub` without a
+    /// real network dependency.
+    func setUserProfileForTesting(_ profile: UserProfile?) {
+        userProfile = profile
+    }
 
     // MARK: - Initialization
 
