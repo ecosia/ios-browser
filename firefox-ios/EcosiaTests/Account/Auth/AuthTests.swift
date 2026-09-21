@@ -376,6 +376,25 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(remainingNames.contains(Cookie.authSession.rawValue))
     }
 
+    func testLogout_clearsLoggedInImpactCache() async {
+        // An explicit logout always means a logged-in account's cached snapshot is now stale -
+        // cleared here, in the service, rather than relying on a UI observer to react to the
+        // notification (which requires at least one registered browser window to even arrive).
+        await setupLoggedInState()
+        LoggedInImpactCache.save(ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.5))
+        defer { LoggedInImpactCache.clear() }
+
+        // Act
+        do {
+            try await auth.logout()
+        } catch {
+            XCTFail("Logout should succeed, but failed with: \(error)")
+        }
+
+        // Assert
+        XCTAssertNil(LoggedInImpactCache.load())
+    }
+
     // MARK: - Retrieve Stored Credentials Tests
 
     func testRetrieveStoredCredentials_withValidCredentials_updatesState() async {
@@ -421,6 +440,47 @@ final class AuthTests: XCTestCase {
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
         XCTAssertNil(auth.refreshToken)
+    }
+
+    func testRetrieveStoredCredentials_withFailureAfterPreviousLogin_clearsLoggedInImpactCacheAndWasLoggedIn() async {
+        // Arrange: flush the init-time automatic retrieval first, then simulate the previous
+        // session having ended logged in (persisted across launches) before the explicit retry -
+        // this represents credentials that turned out to be invalid (e.g. an expired token)
+        // rather than an explicit logout.
+        mockProvider.shouldFailRetrieveCredentials = true
+        await waitForInitCredentialRetrieval()
+
+        EcosiaAuthenticationService.wasLoggedIn = true
+        LoggedInImpactCache.save(ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.5))
+        defer {
+            LoggedInImpactCache.clear()
+            EcosiaAuthenticationService.wasLoggedIn = false
+        }
+
+        // Act
+        await auth.retrieveStoredCredentials()
+
+        // Assert
+        XCTAssertNil(LoggedInImpactCache.load())
+        XCTAssertFalse(EcosiaAuthenticationService.wasLoggedIn)
+    }
+
+    func testRetrieveStoredCredentials_withFailureWhileWasLoggedInIsFalse_doesNotClearLoggedInImpactCache() async {
+        // An ordinary continuing guest resolves to logged-out on every cold launch too - this
+        // must not disturb a cache it never populated in the first place.
+        mockProvider.shouldFailRetrieveCredentials = true
+        await waitForInitCredentialRetrieval()
+
+        EcosiaAuthenticationService.wasLoggedIn = false
+        let snapshot = ImpactSnapshot(seedCount: 7, currentLevelNumber: 2, currentProgress: 0.3)
+        LoggedInImpactCache.save(snapshot)
+        defer { LoggedInImpactCache.clear() }
+
+        // Act
+        await auth.retrieveStoredCredentials()
+
+        // Assert
+        XCTAssertEqual(LoggedInImpactCache.load(), snapshot)
     }
 
     // MARK: - Renew Credentials Tests
