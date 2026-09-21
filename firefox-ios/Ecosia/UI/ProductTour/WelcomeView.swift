@@ -234,7 +234,6 @@ public struct WelcomeView: View {
                             Analytics.shared.introWelcome(action: .click, property: .maybeLater)
                             startExitAnimation()
                         }
-                        
                     }
                     .padding(.top, UX.bottomGradientTopOffset)
                 }
@@ -486,9 +485,8 @@ extension WelcomeView {
 
     // Bottom gradient extends from above the buttons down to the bottom of the screen
     private var bottomGradientHeight: CGFloat {
-        // Covers the button area plus padding plus safe area
-        let buttonCount = 2
-        let buttonsHeight = UX.buttonHeight * CGFloat(buttonCount) + UX.contentPadding
+        // Covers the sign in and maybe later buttons plus padding plus safe area
+        let buttonsHeight = UX.buttonHeight * 2 + UX.contentPadding
         return buttonsHeight + UX.bottomGradientTopOffset + UX.contentPadding + safeAreaBottom
     }
 }

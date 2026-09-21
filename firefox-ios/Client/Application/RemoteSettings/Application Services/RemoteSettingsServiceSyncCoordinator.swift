@@ -23,7 +23,6 @@ final class RemoteSettingsServiceSyncCoordinator: @unchecked Sendable, Notifiabl
         self.prefs = prefs
         self.logger = logger
 
-        // TODO: Ecosia: disable
         startObservingNotifications(
             withNotificationCenter: NotificationCenter.default,
             forObserver: self,
