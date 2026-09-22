@@ -40,6 +40,7 @@ struct NTPOmniboxSheetPresenter: View {
                     provider: sheetState.provider,
                     selectedChatMode: sheetState.selectedChatMode,
                     isAuthenticated: sheetState.isAuthenticated,
+                    hasOptedOutOfChatThreads: sheetState.hasOptedOutOfChatThreads,
                     onSelect: { option in sheetState.handleUploadOptionSelected(option) },
                     onSelectChatMode: { mode in sheetState.handleChatModeSelected(mode) },
                     onLogin: { sheetState.handleLoginRequested() }

@@ -260,6 +260,10 @@ final class EcosiaAuth {
         authService.userProfile
     }
 
+    var hasOptedOutOfChatThreads: Bool {
+        authService.hasOptedOutOfChatThreads
+    }
+
     func renewCredentialsIfNeeded() async throws {
         try await authService.renewCredentialsIfNeeded()
     }
