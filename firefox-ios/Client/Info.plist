@@ -2,6 +2,106 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>EcosiaLight</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>EcosiaLight</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>EcosiaWood</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>EcosiaWood</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>EcosiaSea</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>EcosiaSea</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>EcosiaMushroom</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>EcosiaMushroom</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>EcosiaMountain</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>EcosiaMountain</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>EcosiaLeaf</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>EcosiaLeaf</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>EcosiaForest</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>EcosiaForest</string>
+				</array>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+			</dict>
+			<key>EcosiaDark</key>
+			<dict>
+				<key>UIPrerenderedIcon</key>
+				<false/>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>EcosiaDark</string>
+				</array>
+			</dict>
+		</dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconName</key>
+			<string></string>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>EcosiaLight</string>
+			</array>
+			<key>UIPrerenderedIcon</key>
+			<false/>
+		</dict>
+		<key>UINewsstandIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string></string>
+			</array>
+			<key>UINewsstandBindingType</key>
+			<string>UINewsstandBindingTypeMagazine</string>
+			<key>UINewsstandBindingEdge</key>
+			<string>UINewsstandBindingEdgeLeft</string>
+		</dict>
+	</dict>
 	<key>AUTH0_CLIENT_ID</key>
 	<string>$(AUTH0_CLIENT_ID)</string>
 	<key>AdjustAppToken</key>
@@ -120,7 +220,6 @@
 	<string>$(NIMBUS_URL)</string>
 	<key>PocketEnvironmentAPIKey</key>
 	<string>$(POCKET_API_KEY)</string>
-	<!-- Ecosia: Feeds AppConstants.buildChannel, gating Sentry send/breadcrumb behavior for beta vs release builds. -->
 	<key>CHANNEL</key>
 	<string>$(CHANNEL)</string>
 	<key>SentryCloudDSN</key>
@@ -131,7 +230,7 @@
 		<string>NewYorkMedium-BoldItalic.otf</string>
 		<string>NewYorkMedium-Regular.otf</string>
 		<string>NewYorkMedium-RegularItalic.otf</string>
-        <string>FoundersGroteskCondensed-Semibold.ttf</string>
+		<string>FoundersGroteskCondensed-Semibold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

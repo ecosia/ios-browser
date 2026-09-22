@@ -55,7 +55,10 @@ struct AppIconView: View, ThemeApplicable {
     }
 
     @ViewBuilder private var subView: some View {
+        /** Ecosia: use our own app icons (https://ecosia.atlassian.net/browse/MOB-3994)
         if let image = UIImage(named: appIcon.imageSetAssetName) {
+        */
+        if let image = UIImage.ecosia(named: appIcon.imageSetAssetName) {
             button(for: image)
         } else {
             EmptyView()
