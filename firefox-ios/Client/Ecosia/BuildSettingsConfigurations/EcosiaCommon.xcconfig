@@ -32,6 +32,9 @@ EAGER_LINKING = NO
 // Ecosia: Swift language version.
 SWIFT_VERSION = 6.2
 
+// Ecosia: Compile the alternate app icon sets so they can be applied at runtime.
+ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = EcosiaLightAppIcon EcosiaDarkAppIcon EcosiaForestAppIcon EcosiaMushroomAppIcon EcosiaLeafAppIcon EcosiaWoodAppIcon EcosiaSeaAppIcon EcosiaMountainAppIcon
+
 // Ecosia: Activate the ECOSIA compilation flag so all #if ECOSIA blocks are live.
 // Must come last to pick up DEBUG (or other flags) set by the variant xcconfigs
 // that are included before this file.
