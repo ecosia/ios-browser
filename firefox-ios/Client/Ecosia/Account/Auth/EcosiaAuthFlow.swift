@@ -246,7 +246,7 @@ final class EcosiaAuthFlow {
                         if success {
                             // Only now is the account usable on both sides, and for a new account
                             // the web flow has provisioned it server-side.
-                            EcosiaAuthUIStateProvider.shared.handleSuccessfulLogin()
+                            EcosiaAuthUIStateProvider.shared.handleSuccessfulAuthentication()
                         } else {
                             await self?.logOutNativelyAfterFailedSessionTransfer()
                         }
