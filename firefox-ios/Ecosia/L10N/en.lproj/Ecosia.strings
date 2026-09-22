@@ -331,6 +331,8 @@
 "The file is too large, the maximum file size is 5MB." = "The file is too large, the maximum file size is 5MB.";
 "The file type is not supported. Please upload a JPG, JPEG, PNG, PDF, DOC or text file." = "The file type is not supported. Please upload a JPG, JPEG, PNG, PDF, DOC or text file.";
 "Something went wrong with uploading your file. Please try again." = "Something went wrong with uploading your file. Please try again.";
+// Omnibox file upload (chat-history opt-out)
+"Chat history is turned off. Please switch it on in the AI Chat settings to upload files." = "Chat history is turned off. Please switch it on in the AI Chat settings to upload files.";
 // Omnibox file upload (logged-out gate)
 "Sign in to upload files" = "Sign in to upload files";
 "To use this feature you need to be signed in to an Ecosia account." = "To use this feature you need to be signed in to an Ecosia account.";

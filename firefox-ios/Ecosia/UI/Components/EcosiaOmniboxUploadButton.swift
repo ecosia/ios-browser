@@ -44,6 +44,13 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
         }
     }
 
+    /// Dims the icon like `isEnabled = false` while the control stays tappable (e.g. chat-history opt-out).
+    public var showsUploadRestrictedAppearance = false {
+        didSet {
+            applyEnabledAppearance()
+        }
+    }
+
     override public var isEnabled: Bool {
         get { super.isEnabled }
         set {
@@ -81,7 +88,8 @@ public final class EcosiaOmniboxUploadButton: UIButton, ThemeApplicable {
     }
 
     private func applyEnabledAppearance() {
-        iconView.alpha = isEnabled ? 1 : UX.disabledIconOpacity
+        let isActive = isEnabled && !showsUploadRestrictedAppearance
+        iconView.alpha = isActive ? 1 : UX.disabledIconOpacity
     }
 
     public func applyTheme(theme: any Theme) {

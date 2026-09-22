@@ -210,15 +210,40 @@ extension BrowserViewController: NTPSearchBarDelegate {
 
     func ntpSearchBarDidTapUpload() {
         guard SearchProviderSelection.showsOmniboxAIFeatures else { return }
-        let hasOptedOut = ecosiaAuth?.hasOptedOutOfChatThreads == true
-        guard OmniboxFileUploadAvailability.isOmniboxControlEnabled(
-            hasOptedOutOfChatThreads: hasOptedOut,
-            isChatModesEnabled: ChatModesFeatureFlag.isEnabled,
-            usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
-        ) else {
-            EcosiaLogger.auth.info("chat-threads-opt-out ignored paperclip tap optedOut=\(hasOptedOut)")
-            return
+
+        Task { @MainActor in
+            await refreshChatThreadsOptOutStateForUploadIfNeeded()
+            guard !presentChatHistoryOptOutErrorIfNeededForUpload() else { return }
+            continueNtpSearchBarUploadAfterOptOutCheck()
         }
+    }
+
+    private func refreshChatThreadsOptOutStateForUploadIfNeeded() async {
+        guard ecosiaAuth?.isLoggedIn == true else { return }
+        try? await ecosiaAuth?.renewCredentialsIfNeeded()
+        ntpOmniboxAnchorView?.refreshUploadControl()
+        if let homepage = contentContainer.contentController as? HomepageViewController {
+            homepage.ecosiaAdapter?.omniboxSheetState.hasOptedOutOfChatThreads =
+                EcosiaAuthenticationService.shared.hasOptedOutOfChatThreads
+        }
+    }
+
+    @discardableResult
+    private func presentChatHistoryOptOutErrorIfNeededForUpload() -> Bool {
+        let hasOptedOut = ecosiaAuth?.hasOptedOutOfChatThreads == true
+        guard OmniboxFileUploadAvailability.shouldPresentChatHistoryOptOutErrorOnUploadTap(
+            hasOptedOutOfChatThreads: hasOptedOut,
+            usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
+        ) else { return false }
+
+        EcosiaLogger.auth.info("chat-threads-opt-out presenting upload blocked error optedOut=true")
+        if #available(iOS 16.0, *) {
+            showEcosiaErrorToast(message: String.localized(.uploadChatHistoryTurnedOff))
+        }
+        return true
+    }
+
+    private func continueNtpSearchBarUploadAfterOptOutCheck() {
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
 
         switch SearchProviderSelection.aiBehavior {
@@ -600,16 +625,11 @@ extension BrowserViewController {
         guard let homepage = contentContainer.contentController as? HomepageViewController,
               let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
 
-        let hasOptedOut = ecosiaAuth?.hasOptedOutOfChatThreads == true
-        // Upload-only paperclip: don't open a drawer of disabled tiles.
-        // Chat modes still opens so the user can pick a mode.
-        if SearchProviderSelection.usesEcosiaAIBackend,
-           hasOptedOut,
-           !ChatModesFeatureFlag.isEnabled {
-            EcosiaLogger.auth.info("chat-threads-opt-out skipped upload-only drawer optedOut=true")
+        if presentChatHistoryOptOutErrorIfNeededForUpload() {
             return
         }
 
+        let hasOptedOut = ecosiaAuth?.hasOptedOutOfChatThreads == true
         registerOmniboxLogoutObserverIfNeeded()
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
@@ -630,9 +650,7 @@ extension BrowserViewController {
                 isAuthenticated: self.ecosiaAuth?.isLoggedIn == true,
                 hasOptedOutOfChatThreads: self.ecosiaAuth?.hasOptedOutOfChatThreads == true
             ) else {
-                EcosiaLogger.auth.info(
-                    "chat-threads-opt-out blocked Camera/Photos/Files picker isLoggedIn=\(self.ecosiaAuth?.isLoggedIn == true) optedOut=\(self.ecosiaAuth?.hasOptedOutOfChatThreads == true)"
-                )
+                self.presentChatHistoryOptOutErrorIfNeededForUpload()
                 return
             }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,
