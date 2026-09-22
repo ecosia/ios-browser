@@ -258,7 +258,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
         let isLoggedIn = ecosiaAuth?.isLoggedIn == true
         let hasUploadScopes = EcosiaAuthenticationService.shared.hasConversationScopes
         if !isLoggedIn || !hasUploadScopes {
-            if #available(iOS 16.0, *), !AccountsDisabled.isActive {
+            if #available(iOS 16.0, *) {
                 guard ecosiaAuth != nil else { return }
                 presentOmniboxSignInSheetForUpload()
             } else {
