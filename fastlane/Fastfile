@@ -177,7 +177,7 @@ platform :ios do
     upload_dsym_to_sentry
 
     inject_appstore_connect_api
-
+    
     pilot(
       apple_id: "670881887",
       itc_provider: "33YMRSYD2L",
@@ -213,21 +213,12 @@ platform :ios do
 
   desc 'This lane performs the expected git steps when releasing'
   private_lane :tag_and_push do |options|
-
+    
     version_number = options[:version_number]
     build_number = options[:build_number]
 
     add_git_tag(
       tag: "v_#{version_number}_#{build_number}",
-      force: true
-    )
-
-    # A second, distinct tag so trigger_github_release_on_version_bump.yml has
-    # something to watch for — testflight_live only runs for a version-bump
-    # build in the first place (CircleCI's check-version-bump job gates it),
-    # so every tag pushed here already corresponds to a real release.
-    add_git_tag(
-      tag: "release_v_#{version_number}_#{build_number}",
       force: true
     )
 
