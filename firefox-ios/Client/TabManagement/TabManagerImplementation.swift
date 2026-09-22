@@ -786,7 +786,10 @@ class TabManagerImplementation: NSObject,
     }
 
     private func generateTabDataForSaving() -> [TabData] {
+        /* Ecosia: exclude invisible tabs — `isInvisible` is in-memory only, so a persisted auth tab restores as a normal tab pointing at an auth URL
         var tabsToSave = tabs
+         */
+        var tabsToSave = tabs.filter { !$0.isInvisible }
         if shouldClearPrivateTabs() {
             tabsToSave = normalTabs
         }
