@@ -8,6 +8,8 @@ import Auth0
 
 final class CredentialsChatThreadsOptOutTests: XCTestCase {
 
+    private let chatThreadsOptOutClaim = "https://ecosia.org/chat_threads_opt_out"
+
     func testMissingClaimDefaultsToFalse() throws {
         let credentials = try makeCredentials(claims: [
             "sub": "auth0|12345",
@@ -19,27 +21,27 @@ final class CredentialsChatThreadsOptOutTests: XCTestCase {
 
     func testTrueClaimReturnsTrue() throws {
         let credentials = try makeCredentials(claims: [
-            URLProvider.production.chatThreadsOptOutClaim: true
+            chatThreadsOptOutClaim: true
         ])
 
-        XCTAssertTrue(credentials.hasOptedOutOfChatThreads(urlProvider: .production))
+        XCTAssertTrue(credentials.hasOptedOutOfChatThreads)
     }
 
     func testFalseClaimReturnsFalse() throws {
         let credentials = try makeCredentials(claims: [
-            URLProvider.production.chatThreadsOptOutClaim: false
+            chatThreadsOptOutClaim: false
         ])
 
-        XCTAssertFalse(credentials.hasOptedOutOfChatThreads(urlProvider: .production))
+        XCTAssertFalse(credentials.hasOptedOutOfChatThreads)
     }
 
-    func testStagingClaimIsNotReadAsProduction() throws {
+    func testStagingEnvironmentTokenUsesProductionClaimKey() throws {
         let credentials = try makeCredentials(claims: [
-            URLProvider.staging.chatThreadsOptOutClaim: true
+            chatThreadsOptOutClaim: true,
+            "https://ecosia-staging.xyz/chat_threads_opt_out": false
         ])
 
-        XCTAssertTrue(credentials.hasOptedOutOfChatThreads(urlProvider: .staging))
-        XCTAssertFalse(credentials.hasOptedOutOfChatThreads(urlProvider: .production))
+        XCTAssertTrue(credentials.hasOptedOutOfChatThreads)
     }
 
     func testUndecodableIdTokenDefaultsToFalse() {
@@ -69,16 +71,16 @@ final class CredentialsChatThreadsOptOutTests: XCTestCase {
         XCTAssertFalse(undecodable.chatThreadsOptOutClaimLogDetails().contains(token))
 
         let missing = try makeCredentials(claims: ["sub": "auth0|12345"])
-        XCTAssertTrue(missing.chatThreadsOptOutClaimLogDetails(urlProvider: .production).contains("present=false"))
+        XCTAssertTrue(missing.chatThreadsOptOutClaimLogDetails().contains("present=false"))
         XCTAssertFalse(missing.chatThreadsOptOutClaimLogDetails().contains(missing.idToken))
 
         let optedOut = try makeCredentials(claims: [
-            URLProvider.production.chatThreadsOptOutClaim: true
+            chatThreadsOptOutClaim: true
         ])
-        let details = optedOut.chatThreadsOptOutClaimLogDetails(urlProvider: .production)
+        let details = optedOut.chatThreadsOptOutClaimLogDetails()
         XCTAssertTrue(details.contains("present=true"))
         XCTAssertTrue(details.contains("value=true"))
-        XCTAssertTrue(details.contains(URLProvider.production.chatThreadsOptOutClaim))
+        XCTAssertTrue(details.contains(chatThreadsOptOutClaim))
         XCTAssertFalse(details.contains(optedOut.idToken))
     }
 
