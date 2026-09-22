@@ -13,8 +13,8 @@ on:
   workflow_call:
     inputs:
       tag:
-        description: 'Tag to release, passed by the calling workflow (e.g. trigger_github_release_on_version_bump.yml). Falls back to the most recent v_<version>_<build> tag if omitted.'
-        required: false
+        description: 'Tag to release, passed by the calling workflow (e.g. trigger_github_release_on_version_bump.yml).'
+        required: true
         type: string
 
 permissions: {}
