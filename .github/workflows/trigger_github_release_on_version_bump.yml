@@ -1,0 +1,38 @@
+name: Trigger GitHub Release on Version Bump
+
+# testflight_live (fastlane/Fastfile) pushes a release_v_<version>_<build> tag —
+# via the SSH deploy key it already uses for every git push — once match/gym/
+# pilot/tag_and_push have all succeeded, and only for a build where
+# MARKETING_VERSION changed since the previous commit. That tag is this
+# workflow's trigger, so creating the actual release needs no GitHub API
+# credential in CircleCI: this workflow uses its own automatic GITHUB_TOKEN
+# for that (via create_github_release.yml).
+on:
+  push:
+    tags:
+      - 'release_v_*'
+
+permissions: {}
+
+jobs:
+  resolve_tag:
+    runs-on: ubuntu-latest
+    name: Resolve the real tag from the marker tag
+    timeout-minutes: 2
+    outputs:
+      tag: ${{ steps.strip.outputs.tag }}
+
+    steps:
+      - name: Strip the release_ marker prefix
+        id: strip
+        env:
+          MARKER_TAG: ${{ github.ref_name }}
+        run: echo "tag=${MARKER_TAG#release_}" >> "$GITHUB_OUTPUT"
+
+  create_release:
+    needs: resolve_tag
+    permissions:
+      contents: write
+    uses: ./.github/workflows/create_github_release.yml
+    with:
+      tag: ${{ needs.resolve_tag.outputs.tag }}

@@ -195,14 +195,9 @@ platform :ios do
 
     tag_and_push(
       version_number: version_number,
-      build_number: udpated_build_number
+      build_number: udpated_build_number,
+      is_release: is_version_bump
     )
-
-    if is_version_bump
-      trigger_github_release(tag: "v_#{version_number}_#{udpated_build_number}")
-    else
-      UI.message("MARKETING_VERSION unchanged — not creating a GitHub Release for this build")
-    end
 
   end
 
@@ -225,21 +220,6 @@ platform :ios do
     bumped
   end
 
-  desc 'Ask the create_github_release GitHub Actions workflow to release a tag'
-  private_lane :trigger_github_release do |options|
-    tag = options[:tag]
-
-    ensure_env_vars(env_vars: ['GITHUB_RELEASE_TRIGGER_TOKEN'])
-
-    github_api(
-      server_url: "https://api.github.com",
-      api_token: ENV["GITHUB_RELEASE_TRIGGER_TOKEN"],
-      http_method: "POST",
-      path: "/repos/ecosia/ios-browser/actions/workflows/create_github_release.yml/dispatches",
-      body: { ref: "main", inputs: { tag: tag } }
-    )
-  end
-
   desc 'Upload release notes to the AppStore'
   lane :upload_release_notes do
     
@@ -259,14 +239,28 @@ platform :ios do
 
   desc 'This lane performs the expected git steps when releasing'
   private_lane :tag_and_push do |options|
-    
+
     version_number = options[:version_number]
     build_number = options[:build_number]
+    is_release = options[:is_release]
 
     add_git_tag(
       tag: "v_#{version_number}_#{build_number}",
       force: true
     )
+
+    if is_release
+      # A second, distinct tag — v_* is pushed for every successful build, not
+      # just ones where MARKETING_VERSION was bumped, so it can't be the signal
+      # a GitHub Release should get created. trigger_github_release_on_version_bump.yml
+      # watches for this one instead, and only this one needs GitHub API access
+      # (via its own automatic GITHUB_TOKEN) — pushing it needs nothing beyond
+      # the SSH access already used below.
+      add_git_tag(
+        tag: "release_v_#{version_number}_#{build_number}",
+        force: true
+      )
+    end
 
     push_to_git_remote
 

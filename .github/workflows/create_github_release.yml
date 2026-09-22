@@ -1,11 +1,21 @@
 name: Create GitHub Release
 
-# Run manually once a build has actually been released to the App Store —
-# not automatically on tag push, since a tag is created for every successful
-# TestFlight upload and some of those never make it to an actual release
-# (e.g. superseded by a follow-up patch version).
+# Normally triggered by trigger_github_release_on_version_bump.yml, itself
+# triggered by the release_v_* marker tag that testflight_live (fastlane/Fastfile)
+# pushes for a version-bump build once it's built and uploaded successfully — not
+# on every v_<version>_<build> tag, since one of those is pushed for every
+# successful TestFlight upload and most never make it to an actual release.
+#
+# Also runnable by hand (e.g. to recover from a run that failed after the tag
+# was already pushed) via workflow_dispatch.
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Git tag to release (e.g. v_12.5.1_3324). Defaults to the most recent v_<version>_<build> tag if omitted.'
+        required: false
+        type: string
+  workflow_call:
     inputs:
       tag:
         description: 'Git tag to release (e.g. v_12.5.1_3324). Defaults to the most recent v_<version>_<build> tag if omitted.'
