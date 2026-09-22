@@ -215,7 +215,10 @@ extension BrowserViewController: NTPSearchBarDelegate {
             hasOptedOutOfChatThreads: hasOptedOut,
             isChatModesEnabled: ChatModesFeatureFlag.isEnabled,
             usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
-        ) else { return }
+        ) else {
+            EcosiaLogger.auth.info("chat-threads-opt-out ignored paperclip tap optedOut=\(hasOptedOut)")
+            return
+        }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
 
         switch SearchProviderSelection.aiBehavior {
@@ -603,6 +606,7 @@ extension BrowserViewController {
         if SearchProviderSelection.usesEcosiaAIBackend,
            hasOptedOut,
            !ChatModesFeatureFlag.isEnabled {
+            EcosiaLogger.auth.info("chat-threads-opt-out skipped upload-only drawer optedOut=true")
             return
         }
 
@@ -625,7 +629,12 @@ extension BrowserViewController {
                 isEcosiaProvider: true,
                 isAuthenticated: self.ecosiaAuth?.isLoggedIn == true,
                 hasOptedOutOfChatThreads: self.ecosiaAuth?.hasOptedOutOfChatThreads == true
-            ) else { return }
+            ) else {
+                EcosiaLogger.auth.info(
+                    "chat-threads-opt-out blocked Camera/Photos/Files picker isLoggedIn=\(self.ecosiaAuth?.isLoggedIn == true) optedOut=\(self.ecosiaAuth?.hasOptedOutOfChatThreads == true)"
+                )
+                return
+            }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,
                                                               from: self,
                                                               sourceView: sourceView)
