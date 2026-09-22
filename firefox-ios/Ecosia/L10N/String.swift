@@ -340,6 +340,9 @@ extension String {
         case uploadErrorUnsupportedFileType = "The file type is not supported. Please upload a JPG, JPEG, PNG, PDF, DOC or text file."
         case uploadErrorGeneric = "Something went wrong with uploading your file. Please try again."
 
+        // Omnibox file upload (chat-history opt-out)
+        case uploadChatHistoryTurnedOff = "Chat history is turned off. Please switch it on in the AI Chat settings to upload files."
+
         // Omnibox file upload (logged-out gate)
         case signInToUploadFiles = "Sign in to upload files"
         case signInToUploadFilesMessage = "To use this feature you need to be signed in to an Ecosia account."

@@ -441,18 +441,21 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
         XCTAssertFalse(button.isHidden)
     }
 
-    func testUploadButtonDisabledWhenChatThreadsOptedOut() throws {
+    func testUploadButtonShowsRestrictedAppearanceWhenChatThreadsOptedOut() throws {
         let bar = NTPSearchBarView(frame: CGRect(x: 0, y: 0, width: 320, height: 110))
         let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first
         let button = try XCTUnwrap(uploadButton)
 
         XCTAssertTrue(button.isEnabled)
+        XCTAssertFalse(button.showsUploadRestrictedAppearance)
 
         bar.updateFileUploadAvailability(hasOptedOutOfChatThreads: true)
-        XCTAssertFalse(button.isEnabled)
+        XCTAssertTrue(button.isEnabled)
+        XCTAssertTrue(button.showsUploadRestrictedAppearance)
 
         bar.updateFileUploadAvailability(hasOptedOutOfChatThreads: false)
         XCTAssertTrue(button.isEnabled)
+        XCTAssertFalse(button.showsUploadRestrictedAppearance)
     }
 
     private static func enableFileUploadAndAIFreeSearching() {

@@ -19,15 +19,33 @@ public enum OmniboxFileUploadAvailability {
         return isAuthenticated && !hasOptedOutOfChatThreads
     }
 
-    /// Whether the NTP + / paperclip control itself stays tappable.
-    /// Chat modes keeps the plus button available so modes can still be picked.
-    /// Third-party upload is a site redirect, not Ecosia chat history.
-    public static func isOmniboxControlEnabled(
+    /// Whether Ecosia file upload is blocked because chat history / threads are off.
+    public static func blocksEcosiaUploadDueToChatHistoryOptOut(
         hasOptedOutOfChatThreads: Bool,
-        isChatModesEnabled: Bool,
         usesEcosiaAIBackend: Bool
     ) -> Bool {
-        if isChatModesEnabled || !usesEcosiaAIBackend { return true }
-        return !hasOptedOutOfChatThreads
+        usesEcosiaAIBackend && hasOptedOutOfChatThreads
+    }
+
+    /// Dims the NTP + / paperclip while keeping it tappable so we can show the opt-out error.
+    public static func shouldDimOmniboxUploadControlForChatHistoryOptOut(
+        hasOptedOutOfChatThreads: Bool,
+        usesEcosiaAIBackend: Bool
+    ) -> Bool {
+        blocksEcosiaUploadDueToChatHistoryOptOut(
+            hasOptedOutOfChatThreads: hasOptedOutOfChatThreads,
+            usesEcosiaAIBackend: usesEcosiaAIBackend
+        )
+    }
+
+    /// Whether tapping the control should show the chat-history opt-out error instead of upload UI.
+    public static func shouldPresentChatHistoryOptOutErrorOnUploadTap(
+        hasOptedOutOfChatThreads: Bool,
+        usesEcosiaAIBackend: Bool
+    ) -> Bool {
+        blocksEcosiaUploadDueToChatHistoryOptOut(
+            hasOptedOutOfChatThreads: hasOptedOutOfChatThreads,
+            usesEcosiaAIBackend: usesEcosiaAIBackend
+        )
     }
 }
