@@ -11,12 +11,6 @@ on:
         description: 'Git tag to release (e.g. v_12.5.1_3324). Defaults to the most recent v_<version>_<build> tag if omitted.'
         required: false
         type: string
-  workflow_call:
-    inputs:
-      tag:
-        description: 'Git tag to release (e.g. v_12.5.1_3324). Defaults to the most recent v_<version>_<build> tag if omitted.'
-        required: false
-        type: string
 
 permissions: {}
 

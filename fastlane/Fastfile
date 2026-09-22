@@ -153,6 +153,12 @@ platform :ios do
       name: 'MARKETING_VERSION'
     )
 
+    # Captured before match/gym/pilot run, but only acted on after they succeed —
+    # this lane can also be triggered manually without a version bump (CircleCI's
+    # "Manual Deploy release version to TestFlight" workflow), so we can't rely on
+    # CI to only ever call testflight_live on a version bump.
+    is_version_bump = marketing_version_bumped?(current_version: version_number)
+
     ci_run_build_number = ENV["CIRCLE_BUILD_NUM"]
 
     udpated_build_number = increment_build_number(
@@ -177,7 +183,7 @@ platform :ios do
     upload_dsym_to_sentry
 
     inject_appstore_connect_api
-    
+
     pilot(
       apple_id: "670881887",
       itc_provider: "33YMRSYD2L",
@@ -192,6 +198,46 @@ platform :ios do
       build_number: udpated_build_number
     )
 
+    if is_version_bump
+      trigger_github_release(tag: "v_#{version_number}_#{udpated_build_number}")
+    else
+      UI.message("MARKETING_VERSION unchanged — not creating a GitHub Release for this build")
+    end
+
+  end
+
+  desc 'Whether MARKETING_VERSION changed since the previous commit on this branch'
+  private_lane :marketing_version_bumped? do |options|
+    current_version = options[:current_version]
+    xcconfig_path = "#{target_folder_path}/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig"
+
+    previous_version = sh(
+      "git show HEAD~1:#{xcconfig_path} 2>/dev/null | grep 'MARKETING_VERSION' | cut -d ' ' -f3",
+      log: false
+    ).strip
+
+    bumped = previous_version.empty? || previous_version != current_version
+    UI.message(
+      bumped ?
+        "MARKETING_VERSION bumped (#{previous_version.empty? ? 'none' : previous_version} -> #{current_version})" :
+        "MARKETING_VERSION unchanged (#{current_version})"
+    )
+    bumped
+  end
+
+  desc 'Ask the create_github_release GitHub Actions workflow to release a tag'
+  private_lane :trigger_github_release do |options|
+    tag = options[:tag]
+
+    ensure_env_vars(env_vars: ['GITHUB_RELEASE_TRIGGER_TOKEN'])
+
+    github_api(
+      server_url: "https://api.github.com",
+      api_token: ENV["GITHUB_RELEASE_TRIGGER_TOKEN"],
+      http_method: "POST",
+      path: "/repos/ecosia/ios-browser/actions/workflows/create_github_release.yml/dispatches",
+      body: { ref: "main", inputs: { tag: tag } }
+    )
   end
 
   desc 'Upload release notes to the AppStore'
