@@ -71,8 +71,8 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     }
 
     /// Whether the authenticated user has opted out of chat history / chat threads.
-    /// `false` when signed out, when the ID token cannot be decoded, or when the
-    /// environment's `chatThreadsOptOutClaim` is missing.
+    /// `false` when signed out, when the ID token cannot be decoded, or when
+    /// the `https://ecosia.org/chat_threads_opt_out` ID-token claim is missing.
     public private(set) var hasOptedOutOfChatThreads: Bool = false
 
     /// The current user's profile information from Auth0.
@@ -331,11 +331,17 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             "chat-threads-opt-out applied source=\(source.rawValue) environment=\(Environment.current) isLoggedIn=\(newIsLoggedIn) \(claimDetails)"
         )
 
-        NotificationCenter.default.post(
-            name: .EcosiaAuthCredentialsDidUpdate,
-            object: nil,
-            userInfo: ["hasOptedOutOfChatThreads": hasOptedOutOfChatThreads]
-        )
+        // Observers (NTP upload control) touch UIKit and must run on the main queue.
+        // `setupTokensWithCredentials` is called from auth Tasks on cooperative threads
+        // (login, logout, stored-credentials retrieval, token renew).
+        let optedOutForNotification = hasOptedOutOfChatThreads
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: .EcosiaAuthCredentialsDidUpdate,
+                object: nil,
+                userInfo: ["hasOptedOutOfChatThreads": optedOutForNotification]
+            )
+        }
 
         // Only dispatch the auth state change when the login state actually transitions,
         // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
