@@ -246,7 +246,11 @@ final class EcosiaAuthFlow {
                     Task { @MainActor in
                         self?.activeSession = nil // Release session
                         EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
-                        if !success {
+                        if success {
+                            // Only now is the account usable on both sides, and for a new account
+                            // the web flow has provisioned it server-side.
+                            EcosiaAuthUIStateProvider.shared.handleSuccessfulLogin()
+                        } else {
                             await self?.logOutNativelyAfterFailedSessionTransfer()
                         }
                         onFlowCompleted?(success)
