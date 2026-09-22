@@ -155,7 +155,10 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         do {
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
-                setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, accountOrigin: accountOrigin)
+                setupTokensWithCredentials(credentials,
+                                           settingLoggedInStateTo: true,
+                                           accountOrigin: accountOrigin,
+                                           source: .login)
                 if !skipUserInfoFetch {
                     await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
                 }
@@ -207,7 +210,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         let credentialsCleared = auth0Provider.clearCredentials()
 
         if credentialsCleared {
-            setupTokensWithCredentials(nil)
+            setupTokensWithCredentials(nil, source: .logout)
 
             // Stale SSO credentials would otherwise let getSessionTokenCookie() hand out
             // the previous user's session transfer token before the next login refreshes it.
@@ -255,7 +258,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     public func retrieveStoredCredentials() async {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
-            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, source: .stored)
             if !skipUserInfoFetch {
                 await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
             }
@@ -270,6 +273,9 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             }
         } catch {
             EcosiaLogger.auth.error("Failed to retrieve credentials: \(error)")
+            EcosiaLogger.auth.info(
+                "chat-threads-opt-out no stored credentials environment=\(Environment.current) isLoggedIn=false optedOut=false"
+            )
             // Even if retrieval fails, dispatch state loaded as false
             await dispatchAuthStateChange(isLoggedIn: false, fromCredentialRetrieval: true)
         }
@@ -288,7 +294,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
 
         do {
             let credentials = try await auth0Provider.renewCredentials()
-            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, source: .renew)
             EcosiaLogger.auth.info("Renewed credentials successfully")
         } catch {
             EcosiaLogger.auth.error("Failed to renew credentials: \(error)")
@@ -296,17 +302,34 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         }
     }
 
+    private enum CredentialApplySource: String {
+        case login
+        case logout
+        case stored
+        case renew
+    }
+
     /// Helper method to setup tokens and login flag
     private func setupTokensWithCredentials(_ credentials: Credentials?,
                                             settingLoggedInStateTo newIsLoggedIn: Bool = false,
-                                            accountOrigin: AccountOrigin? = nil) {
+                                            accountOrigin: AccountOrigin? = nil,
+                                            source: CredentialApplySource) {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
         self.grantedScope = credentials?.scope
         self.refreshToken = credentials?.refreshToken
+        // Decode only when credentials (and therefore an ID token) are present.
+        // Signed-out / no-account states keep the default `false` and never read a claim.
+        self.hasOptedOutOfChatThreads = credentials?.hasOptedOutOfChatThreads ?? false
         let previousIsLoggedIn = self.isLoggedIn
         self.isLoggedIn = newIsLoggedIn
         Self.wasLoggedIn = newIsLoggedIn
+
+        let claimDetails = credentials?.chatThreadsOptOutClaimLogDetails()
+            ?? "no-credentials optedOut=false"
+        EcosiaLogger.auth.info(
+            "chat-threads-opt-out applied source=\(source.rawValue) environment=\(Environment.current) isLoggedIn=\(newIsLoggedIn) \(claimDetails)"
+        )
 
         NotificationCenter.default.post(
             name: .EcosiaAuthCredentialsDidUpdate,

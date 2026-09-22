@@ -55,6 +55,33 @@ final class CredentialsChatThreadsOptOutTests: XCTestCase {
         XCTAssertFalse(credentials.hasOptedOutOfChatThreads)
     }
 
+    func testLogDetailsDescribeMissingAndPresentClaimsWithoutTheToken() throws {
+        let token = "not-a-jwt"
+        let undecodable = Credentials(
+            accessToken: "access",
+            tokenType: "Bearer",
+            idToken: token,
+            refreshToken: "refresh",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid"
+        )
+        XCTAssertTrue(undecodable.chatThreadsOptOutClaimLogDetails().contains("decode=failed"))
+        XCTAssertFalse(undecodable.chatThreadsOptOutClaimLogDetails().contains(token))
+
+        let missing = try makeCredentials(claims: ["sub": "auth0|12345"])
+        XCTAssertTrue(missing.chatThreadsOptOutClaimLogDetails(urlProvider: .production).contains("present=false"))
+        XCTAssertFalse(missing.chatThreadsOptOutClaimLogDetails().contains(missing.idToken))
+
+        let optedOut = try makeCredentials(claims: [
+            URLProvider.production.chatThreadsOptOutClaim: true
+        ])
+        let details = optedOut.chatThreadsOptOutClaimLogDetails(urlProvider: .production)
+        XCTAssertTrue(details.contains("present=true"))
+        XCTAssertTrue(details.contains("value=true"))
+        XCTAssertTrue(details.contains(URLProvider.production.chatThreadsOptOutClaim))
+        XCTAssertFalse(details.contains(optedOut.idToken))
+    }
+
     private func makeCredentials(claims: [String: Any]) throws -> Credentials {
         Credentials(
             accessToken: "access",

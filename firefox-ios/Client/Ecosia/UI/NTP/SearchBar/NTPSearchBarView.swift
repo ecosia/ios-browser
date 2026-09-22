@@ -444,6 +444,9 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             hasOptedOutOfChatThreads: EcosiaAuthenticationService.shared.hasOptedOutOfChatThreads
         )
         updateUploadButtonVisibility()
+        EcosiaLogger.auth.info(
+            "chat-threads-opt-out omnibox control hidden=\(uploadButton.isHidden) enabled=\(uploadButton.isEnabled) optedOut=\(hasOptedOutOfChatThreads) chatModes=\(ChatModesFeatureFlag.isEnabled) ecosiaAI=\(SearchProviderSelection.usesEcosiaAIBackend)"
+        )
     }
 
     func updateFileUploadAvailability(hasOptedOutOfChatThreads: Bool) {
