@@ -213,7 +213,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             switch actionType {
             case .userLoggedIn:
                 // Credential restoration on launch dispatches this too, so it can't stand in for
-                // an actual sign-in - `handleSuccessfulLogin()` covers that.
+                // an actual sign-in - `handleSuccessfulAuthentication()` covers that.
                 break
             case .userLoggedOut:
                 pendingSeedStateRefresh = false
@@ -232,9 +232,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
                     currentProgress = snapshot.currentProgress
                 }
 
-                // A restored session refreshes on its own even with no refresh pending, so a
-                // launch that never reaches the NTP still registers the visit.
-                guard pendingSeedStateRefresh || isLoggedIn else { break }
+                // `dispatchAuthState` posts this once per registered browser window, so consuming
+                // the pending refresh is also what keeps multi-window launches to a single visit.
+                guard pendingSeedStateRefresh else { break }
                 pendingSeedStateRefresh = false
                 refreshSeedState()
             }
@@ -413,15 +413,15 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Public Methods
 
-    /// Registers the visit for a sign-in that has just completed end to end.
+    /// Registers the visit for a login or sign-up that has just completed end to end.
     ///
     /// Driven explicitly by the auth flow rather than by `.EcosiaAuthStateChanged`, whose
     /// `userLoggedIn` action is also dispatched by credential restoration on launch.
     @MainActor
-    public func handleSuccessfulLogin() {
+    public func handleSuccessfulAuthentication() {
         // This call answers whatever refresh was still waiting on auth state to resolve.
         pendingSeedStateRefresh = false
-        EcosiaLogger.accounts.info("Sign-in completed - registering visit")
+        EcosiaLogger.accounts.info("Authentication completed - registering visit")
         registerVisitIfNeeded()
     }
 
