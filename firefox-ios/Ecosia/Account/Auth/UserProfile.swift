@@ -5,7 +5,7 @@
 import Foundation
 
 /// User profile information retrieved from Auth0
-public struct UserProfile: Codable, Equatable {
+public struct UserProfile: Codable, Equatable, Sendable {
     /// User's display name (falls back to nickname if name is nil)
     public let name: String?
 

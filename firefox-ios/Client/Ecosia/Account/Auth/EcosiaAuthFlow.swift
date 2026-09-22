@@ -120,6 +120,18 @@ final class EcosiaAuthFlow {
 
         EcosiaLogger.auth.info("Starting \(type) flow")
 
+        // `userLoggedIn` lands as soon as native Auth0 auth completes, well before the web session
+        // transfer below - hold refresh-driven visits until this flow settles either way.
+        let registersVisit = type != .logout
+        if registersVisit {
+            EcosiaAuthUIStateProvider.shared.setAuthenticationInFlight(true)
+        }
+        defer {
+            if registersVisit {
+                EcosiaAuthUIStateProvider.shared.setAuthenticationInFlight(false)
+            }
+        }
+
         do {
             switch type {
             case .login:
