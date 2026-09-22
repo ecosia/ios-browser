@@ -153,12 +153,6 @@ platform :ios do
       name: 'MARKETING_VERSION'
     )
 
-    # Captured before match/gym/pilot run, but only acted on after they succeed —
-    # this lane can also be triggered manually without a version bump (CircleCI's
-    # "Manual Deploy release version to TestFlight" workflow), so we can't rely on
-    # CI to only ever call testflight_live on a version bump.
-    is_version_bump = marketing_version_bumped?(current_version: version_number)
-
     ci_run_build_number = ENV["CIRCLE_BUILD_NUM"]
 
     udpated_build_number = increment_build_number(
@@ -195,29 +189,9 @@ platform :ios do
 
     tag_and_push(
       version_number: version_number,
-      build_number: udpated_build_number,
-      is_release: is_version_bump
+      build_number: udpated_build_number
     )
 
-  end
-
-  desc 'Whether MARKETING_VERSION changed since the previous commit on this branch'
-  private_lane :marketing_version_bumped? do |options|
-    current_version = options[:current_version]
-    xcconfig_path = "#{target_folder_path}/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig"
-
-    previous_version = sh(
-      "git show HEAD~1:#{xcconfig_path} 2>/dev/null | grep 'MARKETING_VERSION' | cut -d ' ' -f3",
-      log: false
-    ).strip
-
-    bumped = previous_version.empty? || previous_version != current_version
-    UI.message(
-      bumped ?
-        "MARKETING_VERSION bumped (#{previous_version.empty? ? 'none' : previous_version} -> #{current_version})" :
-        "MARKETING_VERSION unchanged (#{current_version})"
-    )
-    bumped
   end
 
   desc 'Upload release notes to the AppStore'
@@ -242,25 +216,20 @@ platform :ios do
 
     version_number = options[:version_number]
     build_number = options[:build_number]
-    is_release = options[:is_release]
 
     add_git_tag(
       tag: "v_#{version_number}_#{build_number}",
       force: true
     )
 
-    if is_release
-      # A second, distinct tag — v_* is pushed for every successful build, not
-      # just ones where MARKETING_VERSION was bumped, so it can't be the signal
-      # a GitHub Release should get created. trigger_github_release_on_version_bump.yml
-      # watches for this one instead, and only this one needs GitHub API access
-      # (via its own automatic GITHUB_TOKEN) — pushing it needs nothing beyond
-      # the SSH access already used below.
-      add_git_tag(
-        tag: "release_v_#{version_number}_#{build_number}",
-        force: true
-      )
-    end
+    # A second, distinct tag so trigger_github_release_on_version_bump.yml has
+    # something to watch for — testflight_live only runs for a version-bump
+    # build in the first place (CircleCI's check-version-bump job gates it),
+    # so every tag pushed here already corresponds to a real release.
+    add_git_tag(
+      tag: "release_v_#{version_number}_#{build_number}",
+      force: true
+    )
 
     push_to_git_remote
 
