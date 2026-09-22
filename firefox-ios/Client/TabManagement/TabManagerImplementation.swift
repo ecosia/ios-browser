@@ -634,8 +634,14 @@ class TabManagerImplementation: NSObject,
     private func generateTabs(from windowData: WindowData) {
         // Clear in memory tabs for tab restore
         tabs = [Tab]()
+        /* Ecosia: needs to be var so auth tabs can be filtered out below
         let filteredTabs = filterPrivateTabs(from: windowData,
                                              clearPrivateTabs: shouldClearPrivateTabs())
+         */
+        var filteredTabs = filterPrivateTabs(from: windowData,
+                                             clearPrivateTabs: shouldClearPrivateTabs())
+        // Ecosia: drop tabs restored onto an intercepted auth URL
+        filteredTabs = filterEcosiaAuthTabs(from: filteredTabs)
         var tabToSelect: Tab?
 
         for tabData in filteredTabs {
@@ -739,6 +745,17 @@ class TabManagerImplementation: NSObject,
             savedTabs = windowData.tabData.filter { !$0.isPrivate }
         }
         return savedTabs
+    }
+
+    // Ecosia: a visible tab never commits an intercepted auth URL because detection cancels that
+    // navigation, so a restored one is an invisible auth tab orphaned by a kill mid-flow - restoring it
+    // reports an inconsistency and forces a logout on every selection and reload
+    private func filterEcosiaAuthTabs(from savedTabs: [TabData]) -> [TabData] {
+        let interceptor = EcosiaURLInterceptor()
+        return savedTabs.filter { tabData in
+            guard let url = URL(string: tabData.siteUrl) else { return true }
+            return !interceptor.shouldIntercept(url)
+        }
     }
 
     /// Creates the webview so needs to live on the main thread
