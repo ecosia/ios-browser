@@ -14,6 +14,31 @@ public enum AccountOrigin: Equatable, Sendable {
     case existingAccount
 }
 
+private enum ChatThreadsOptOutClaimState {
+    case undecodable(claim: String)
+    case missing(claim: String)
+    case nonBoolean(claim: String)
+    case boolean(claim: String, value: Bool)
+
+    var isOptedOut: Bool {
+        if case .boolean(_, true) = self { return true }
+        return false
+    }
+
+    var logDetails: String {
+        switch self {
+        case .undecodable(let claim):
+            return "decode=failed claim=\(claim) optedOut=false"
+        case .missing(let claim):
+            return "decode=ok claim=\(claim) present=false optedOut=false"
+        case .nonBoolean(let claim):
+            return "decode=ok claim=\(claim) present=true valueType=non-boolean optedOut=false"
+        case .boolean(let claim, let value):
+            return "decode=ok claim=\(claim) present=true value=\(value) optedOut=\(value)"
+        }
+    }
+}
+
 extension Credentials {
 
     /// The namespace prefix used to scope custom claims in Auth0 ID tokens.
@@ -61,8 +86,31 @@ extension Credentials {
     }
 
     func hasOptedOutOfChatThreads(urlProvider: URLProvider) -> Bool {
-        guard let jwt = try? decode(jwt: idToken) else { return false }
-        return jwt[urlProvider.chatThreadsOptOutClaim].boolean == true
+        chatThreadsOptOutClaimState(urlProvider: urlProvider).isOptedOut
+    }
+
+    /// Console-safe claim parse details. Never includes the ID token.
+    func chatThreadsOptOutClaimLogDetails(
+        urlProvider: URLProvider = Environment.current.urlProvider
+    ) -> String {
+        chatThreadsOptOutClaimState(urlProvider: urlProvider).logDetails
+    }
+
+    private func chatThreadsOptOutClaimState(
+        urlProvider: URLProvider
+    ) -> ChatThreadsOptOutClaimState {
+        let claim = urlProvider.chatThreadsOptOutClaim
+        guard let jwt = try? decode(jwt: idToken) else {
+            return .undecodable(claim: claim)
+        }
+        let parsed = jwt[claim]
+        if parsed.rawValue == nil {
+            return .missing(claim: claim)
+        }
+        if let value = parsed.boolean {
+            return .boolean(claim: claim, value: value)
+        }
+        return .nonBoolean(claim: claim)
     }
 
     /// ISO 8601 formatter configured to handle fractional seconds (e.g. `2026-03-04T10:44:47.942Z`).
