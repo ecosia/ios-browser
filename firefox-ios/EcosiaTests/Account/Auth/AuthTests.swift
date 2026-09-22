@@ -844,7 +844,7 @@ final class AuthTests: XCTestCase {
         let idToken = try makeJWT(claims: [
             "sub": "auth0|12345",
             "iat": Date().timeIntervalSince1970,
-            Environment.current.urlProvider.chatThreadsOptOutClaim: chatThreadsOptOut
+            "https://ecosia.org/chat_threads_opt_out": chatThreadsOptOut
         ])
         return Credentials(
             accessToken: "test-access-token",

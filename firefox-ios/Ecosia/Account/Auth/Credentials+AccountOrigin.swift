@@ -51,6 +51,8 @@ extension Credentials {
     /// Set via an Auth0 Post-Login Action: ``api.idToken.setCustomClaim(`${CUSTOM_CLAIM_NAMESPACE}/created_at`, event.user.created_at);``
     private static let createdAtClaim = "\(customClaimNamespace)/created_at"
 
+    private static let chatThreadsOptOutClaim = "\(customClaimNamespace)/chat_threads_opt_out"
+
     /// A UTC calendar used for same-day comparisons.
     private static let utcCalendar: Calendar = {
         var calendar = Calendar(identifier: .gregorian)
@@ -77,29 +79,20 @@ extension Credentials {
 
     /// Whether the user has opted out of chat history / chat threads.
     ///
-    /// Reads `URLProvider.chatThreadsOptOutClaim` from the ID token, matching
-    /// Auth0.swift's JWTDecode guidance for custom claims. A missing, non-boolean,
-    /// or undecodable claim is treated as `false` so upload stays available for
-    /// users who have not opted out.
+    /// Reads ``chatThreadsOptOutClaim`` from the ID token, matching Auth0.swift's JWTDecode
+    /// guidance for custom claims. A missing, non-boolean, or undecodable claim is treated
+    /// as `false` so upload stays available for users who have not opted out.
     var hasOptedOutOfChatThreads: Bool {
-        hasOptedOutOfChatThreads(urlProvider: Environment.current.urlProvider)
-    }
-
-    func hasOptedOutOfChatThreads(urlProvider: URLProvider) -> Bool {
-        chatThreadsOptOutClaimState(urlProvider: urlProvider).isOptedOut
+        chatThreadsOptOutClaimState().isOptedOut
     }
 
     /// Console-safe claim parse details. Never includes the ID token.
-    func chatThreadsOptOutClaimLogDetails(
-        urlProvider: URLProvider = Environment.current.urlProvider
-    ) -> String {
-        chatThreadsOptOutClaimState(urlProvider: urlProvider).logDetails
+    func chatThreadsOptOutClaimLogDetails() -> String {
+        chatThreadsOptOutClaimState().logDetails
     }
 
-    private func chatThreadsOptOutClaimState(
-        urlProvider: URLProvider
-    ) -> ChatThreadsOptOutClaimState {
-        let claim = urlProvider.chatThreadsOptOutClaim
+    private func chatThreadsOptOutClaimState() -> ChatThreadsOptOutClaimState {
+        let claim = Self.chatThreadsOptOutClaim
         guard let jwt = try? decode(jwt: idToken) else {
             return .undecodable(claim: claim)
         }
