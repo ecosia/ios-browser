@@ -93,6 +93,7 @@ struct AppIconSelectionView: View, ThemeApplicable, FeatureFlaggable {
 
         // If the user is resetting to the default app icon, we need to set the alternative icon to nil.
         UIApplication.shared.setAlternateIconName(appIcon.appIconAssetName) { error in
+            /* Ecosia MOB-3994 (https://ecosia.atlassian.net/browse/MOB-3994)
             guard error == nil else {
                 logger.log("Failed to set an alternative app icon [\(appIcon)]", level: .fatal, category: .appIcon)
                 ensureMainThread {
@@ -104,8 +105,11 @@ struct AppIconSelectionView: View, ThemeApplicable, FeatureFlaggable {
 
                 return
             }
-
-            telemetry.selectedIcon(appIcon, previousIcon: previousIcon)
+            */
+            guard let error else {
+                telemetry.selectedIcon(appIcon, previousIcon: previousIcon)
+                return
+            }
         }
     }
 }

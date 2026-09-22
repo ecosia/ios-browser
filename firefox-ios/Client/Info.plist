@@ -2,6 +2,88 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- Ecosia MOB-3994 (https://ecosia.atlassian.net/browse/MOB-3994) Custom App Icons -->
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconName</key>
+			<string></string>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>EcosiaLight</string>
+			</array>
+			<key>UIPrerenderedIcon</key>
+			<false/>
+		</dict>
+        <key>CFBundleAlternateIcons</key>
+           <dict>
+               <key>EcosiaDarkAppIcon</key>
+               <dict>
+                   <key>CFBundleIconFiles</key>
+                   <array>
+                       <string>EcosiaDarkAppIcon</string>
+                   </array>
+                   <key>UIPrerenderedIcon</key>
+                   <false/>
+               </dict>
+               <key>EcosiaForestAppIcon</key>
+               <dict>
+                   <key>CFBundleIconFiles</key>
+                   <array>
+                       <string>EcosiaForestAppIcon</string>
+                   </array>
+                   <key>UIPrerenderedIcon</key>
+                   <false/>
+               </dict>
+               <key>EcosiaLeafAppIcon</key>
+               <dict>
+                   <key>CFBundleIconFiles</key>
+                   <array>
+                       <string>EcosiaLeafAppIcon</string>
+                   </array>
+                   <key>UIPrerenderedIcon</key>
+                   <false/>
+               </dict>
+               <key>EcosiaMountainAppIcon</key>
+               <dict>
+                   <key>CFBundleIconFiles</key>
+                   <array>
+                       <string>EcosiaMountainAppIcon</string>
+                   </array>
+                   <key>UIPrerenderedIcon</key>
+                   <false/>
+               </dict>
+               <key>EcosiaMushroomAppIcon</key>
+               <dict>
+                   <key>CFBundleIconFiles</key>
+                   <array>
+                       <string>EcosiaMushroomAppIcon</string>
+                   </array>
+                   <key>UIPrerenderedIcon</key>
+                   <false/>
+               </dict>
+               <key>EcosiaSeaAppIcon</key>
+               <dict>
+                   <key>CFBundleIconFiles</key>
+                   <array>
+                       <string>EcosiaSeaAppIcon</string>
+                   </array>
+                   <key>UIPrerenderedIcon</key>
+                   <false/>
+               </dict>
+               <key>EcosiaWoodAppIcon</key>
+               <dict>
+                   <key>CFBundleIconFiles</key>
+                   <array>
+                       <string>EcosiaWoodAppIcon</string>
+                   </array>
+                   <key>UIPrerenderedIcon</key>
+                   <false/>
+               </dict>
+           </dict>
+	</dict>
+	<!-- Ecosia MOB-3994 End -->
 	<key>AUTH0_CLIENT_ID</key>
 	<string>$(AUTH0_CLIENT_ID)</string>
 	<key>AdjustAppToken</key>
@@ -120,7 +202,7 @@
 	<string>$(NIMBUS_URL)</string>
 	<key>PocketEnvironmentAPIKey</key>
 	<string>$(POCKET_API_KEY)</string>
-	<!-- Ecosia: Feeds AppConstants.buildChannel, gating Sentry send/breadcrumb behavior for beta vs release builds. -->
+    <!-- Ecosia: Feeds AppConstants.buildChannel, gating Sentry send/breadcrumb behavior for beta vs release builds. -->
 	<key>CHANNEL</key>
 	<string>$(CHANNEL)</string>
 	<key>SentryCloudDSN</key>
