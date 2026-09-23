@@ -459,6 +459,9 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                    ])]
         }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
+        /* Ecosia: use our own app icons (https://ecosia.atlassian.net/browse/MOB-3994)
+        let generalSettings: [Setting] = [
+        */
         var generalSettings: [Setting] = [
             OpenWithSetting(settings: self, settingsDelegate: parentCoordinator),
             ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
@@ -483,10 +486,13 @@ class AppSettingsTableViewController: SettingsTableViewController,
             )
         ]
 
+        
+        // Ecosia: use our own app icons (https://ecosia.atlassian.net/browse/MOB-3994)
         if UIApplication.shared.supportsAlternateIcons {
             let appIconSetting = AppIconSetting(theme: themeManager.getCurrentTheme(for: windowUUID), settingsDelegate: parentCoordinator)
             generalSettings.insert(contentsOf: [appIconSetting], at: 3)
         }
+        // Ecosia (End).
 
         return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
                                children: generalSettings)]
