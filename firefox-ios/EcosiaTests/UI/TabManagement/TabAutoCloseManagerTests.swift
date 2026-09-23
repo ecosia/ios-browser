@@ -300,6 +300,32 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         XCTAssertTrue(mockTabManager.tabs.contains(regularTab), "Regular tab should remain")
     }
 
+    func testCloseTrackedTabRemovesTabBeforeTimeout() {
+        // Given
+        let tab = createMockTab(uuid: "landed-tab")
+        mockTabManager.tabs = [tab]
+        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: 10.0)
+
+        // When
+        manager.closeTrackedTab(tab.tabUUID)
+
+        // Then
+        XCTAssertFalse(mockTabManager.tabs.contains(tab), "Tab should be removed without waiting for the timeout")
+        XCTAssertEqual(manager.trackedTabCount, 0, "Should cleanup tracking after closing")
+    }
+
+    func testCloseTrackedTabIgnoresUntrackedTab() {
+        // Given
+        let tab = createMockTab(uuid: "untracked-tab")
+        mockTabManager.tabs = [tab]
+
+        // When
+        manager.closeTrackedTab(tab.tabUUID)
+
+        // Then
+        XCTAssertTrue(mockTabManager.tabs.contains(tab), "Untracked tab should not be closed")
+    }
+
     // MARK: - Cleanup Tests
 
     func testCleanupAllObservers() {
