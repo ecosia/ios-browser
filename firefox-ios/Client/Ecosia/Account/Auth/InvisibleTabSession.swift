@@ -128,9 +128,9 @@ final class InvisibleTabSession: TabEventHandler {
         let timeout = timeout
 
         Task { @MainActor in
-            InvisibleTabAutoCloseManager.shared.setTabManager(tabManager)
             InvisibleTabAutoCloseManager.shared.setupAutoCloseForTab(
                 tabUUID: tabUUID,
+                in: tabManager,
                 on: .EcosiaAuthStateChanged,
                 timeout: timeout
             )
