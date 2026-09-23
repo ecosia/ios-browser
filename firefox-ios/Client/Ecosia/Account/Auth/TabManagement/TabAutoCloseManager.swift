@@ -41,9 +41,6 @@ final class InvisibleTabAutoCloseManager {
     /// Weak reference to tab manager for tab removal operations
     private weak var tabManager: TabManager?
 
-    /// Ecosia: Single observer for TabEvent.didChangeURL (replaces .OnLocationChange); nil until first setup
-    private var didChangeURLObserver: NSObjectProtocol?
-
     // MARK: - Initialization
 
     /// Private initializer to enforce singleton pattern
@@ -109,8 +106,6 @@ final class InvisibleTabAutoCloseManager {
     private func createObserver(for tabUUID: TabUUID,
                                 notification: Notification.Name,
                                 timeout: TimeInterval) {
-        ensureDidChangeURLObserver()
-
         let observer = notificationCenter.addObserver(
             forName: notification,
             object: nil,
@@ -133,37 +128,6 @@ final class InvisibleTabAutoCloseManager {
 
         fallbackTimeouts[tabUUID] = fallbackTask
         EcosiaLogger.invisibleTabs.info("Auto-close setup completed for tab: \(tabUUID)")
-    }
-
-    /// Ecosia: Single observer for TabEvent.didChangeURL (replaces .OnLocationChange)
-    private func ensureDidChangeURLObserver() {
-        guard didChangeURLObserver == nil else { return }
-        let name = Notification.Name(TabEventLabel.didChangeURL.rawValue)
-        didChangeURLObserver = notificationCenter.addObserver(
-            forName: name,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            // Ecosia: Extract on main queue to avoid sending non-Sendable Notification; then hop to MainActor for actor work
-            guard let tab = notification.object as? Tab,
-                  let payload = notification.userInfo?["payload"] as? TabEvent,
-                  case .didChangeURL(let url) = payload else { return }
-            let tabUUID = tab.tabUUID
-            EcosiaLogger.invisibleTabs.debug("didChangeURL: \(url) for tab: \(tabUUID)")
-            Task { @MainActor in
-                await self?.handlePageLoadFromNotification(tabUUID: tabUUID, url: url)
-            }
-        }
-    }
-
-    /// Handles page load (didChangeURL) for a tracked tab
-    private func handlePageLoadFromNotification(tabUUID: TabUUID, url: URL) {
-        guard authTabObservers[tabUUID] != nil else { return }
-        EcosiaLogger.invisibleTabs.info("Ecosia page load detected for invisible tab: \(url)")
-        Task { @MainActor [weak self] in
-            try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
-            await self?.handleAuthenticationCompletion(for: tabUUID)
-        }
     }
 
     /// Handles authentication completion by closing the tab
@@ -234,6 +198,12 @@ final class InvisibleTabAutoCloseManager {
             task.cancel()
             fallbackTimeouts.removeValue(forKey: tabUUID)
         }
+    }
+
+    /// Closes a tracked tab now instead of waiting for its notification or fallback timeout
+    func closeTrackedTab(_ tabUUID: TabUUID) {
+        guard authTabObservers[tabUUID] != nil else { return }
+        handleAuthenticationCompletion(for: tabUUID)
     }
 
     // MARK: - Public Cleanup
