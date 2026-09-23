@@ -385,7 +385,7 @@ extension BrowserViewController {
         )
 
         let hostingController = UIHostingController(rootView: profileView)
-        hostingController.modalPresentationStyle = .pageSheet
+        hostingController.modalPresentationStyle = .formSheet
 
         if let sheet = hostingController.sheetPresentationController {
             sheet.detents = [UISheetPresentationController.Detent.large()]
