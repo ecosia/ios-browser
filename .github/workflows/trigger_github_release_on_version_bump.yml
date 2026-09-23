@@ -1,0 +1,22 @@
+name: Trigger GitHub Release on Version Bump
+
+# testflight_live (fastlane/Fastfile) only runs for a version-bump build in the
+# first place — CircleCI's check-version-bump job (check_marketing_version.sh)
+# gates it in the normal flow — so every v_<version>_<build> tag it pushes here
+# already corresponds to a real release. Uses this workflow's own automatic
+# GITHUB_TOKEN to create it, since this runs inside GitHub Actions rather than
+# being dispatched from CircleCI (which has no GitHub API credential).
+on:
+  push:
+    tags:
+      - 'v_*'
+
+permissions: {}
+
+jobs:
+  create_release:
+    permissions:
+      contents: write
+    uses: ./.github/workflows/create_github_release.yml
+    with:
+      tag: ${{ github.ref_name }}
