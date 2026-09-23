@@ -90,7 +90,7 @@ final class InvisibleTabSession: TabEventHandler {
 
     // MARK: - Private Implementation
 
-    /// Ecosia: `addInvisibleTab` marks the tab before tab manager delegates are notified, so no UI ever shows it
+    /// `addInvisibleTab` marks the tab before tab manager delegates are notified, so no UI ever shows it
     private static func createInvisibleTab(url: URL, browserViewController: BrowserViewController) throws -> Tab {
         let tabManager = browserViewController.tabManager
 
