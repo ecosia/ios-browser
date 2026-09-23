@@ -75,12 +75,9 @@ class MockTabManager: TabManager {
         return tab
     }
 
-    // Ecosia: invisible auth tabs
-    func addInvisibleTab(_ request: URLRequest) -> Tab {
-        let tab = Tab(profile: MockProfile(), isPrivate: false, windowUUID: windowUUID)
-        tab.isInvisible = true
+    // Ecosia: inserts a caller-created tab
+    func addTab(_ tab: Tab, request: URLRequest) {
         tabs.append(tab)
-        return tab
     }
 
     func getMostRecentHomepageTab() -> Tab? {

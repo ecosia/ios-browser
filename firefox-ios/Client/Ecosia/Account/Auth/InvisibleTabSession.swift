@@ -90,12 +90,15 @@ final class InvisibleTabSession: TabEventHandler {
 
     // MARK: - Private Implementation
 
-    /// `addInvisibleTab` marks the tab before tab manager delegates are notified, so no UI ever shows it
+    /// Marks the tab invisible before adding it: adding inserts the tab and notifies tab manager delegates,
+    /// and the iPad top tabs insert whatever `didAddTab` hands them, so marking afterwards flashes the
+    /// auth tab in the tab strip.
     private static func createInvisibleTab(url: URL, browserViewController: BrowserViewController) throws -> Tab {
         let tabManager = browserViewController.tabManager
 
-        let newTab = tabManager.addInvisibleTab(URLRequest(url: url))
-        newTab.url = url
+        let newTab = Tab(profile: browserViewController.profile, isPrivate: false, windowUUID: tabManager.windowUUID)
+        newTab.isInvisible = true
+        tabManager.addTab(newTab, request: URLRequest(url: url))
 
         EcosiaLogger.invisibleTabs.info("Invisible tab created: \(newTab.tabUUID)")
         return newTab

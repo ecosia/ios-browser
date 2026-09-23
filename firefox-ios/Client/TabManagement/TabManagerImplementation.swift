@@ -423,14 +423,9 @@ class TabManagerImplementation: NSObject,
         return tab
     }
 
-    // Ecosia: mark before `configureTab` - it inserts the tab and notifies delegates, and the iPad top tabs
-    // insert whatever `didAddTab` hands them, so marking afterwards flashes the auth tab in the tab strip
-    @discardableResult
-    func addInvisibleTab(_ request: URLRequest) -> Tab {
-        let tab = Tab(profile: profile, isPrivate: false, windowUUID: windowUUID)
-        tab.isInvisible = true
+    // Ecosia: inserts a tab the caller has already created, so it can be set up before delegates are notified
+    func addTab(_ tab: Tab, request: URLRequest) {
         configureTab(tab, request: request, flushToDisk: true, zombie: false)
-        return tab
     }
 
     // MARK: - Get Tab
