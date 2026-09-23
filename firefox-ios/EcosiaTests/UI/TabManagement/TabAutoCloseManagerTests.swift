@@ -350,6 +350,25 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         XCTAssertTrue(mockTabManager.tabs.contains(tab), "Untracked tab should not be closed")
     }
 
+    func testCloseTrackedTabUsesTabsOwnTabManagerAfterLaterSetupInOtherWindow() {
+        // Given
+        let otherTabManager = TabAutoCloseTestMockTabManager()
+        let tab = createMockTab(uuid: "window-a-tab")
+        let otherTab = createMockTab(uuid: "window-b-tab")
+        mockTabManager.tabs = [tab]
+        otherTabManager.tabs = [otherTab]
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(otherTab, in: otherTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
+
+        // When
+        manager.closeTrackedTab(tab.tabUUID)
+
+        // Then
+        XCTAssertFalse(mockTabManager.tabs.contains(tab), "Tab should be removed from its own tab manager")
+        XCTAssertTrue(otherTabManager.tabs.contains(otherTab), "Other window's tab should be untouched")
+        XCTAssertTrue(manager.trackedTabUUIDs.contains(otherTab.tabUUID), "Other window's tab should still be tracked")
+    }
+
     // MARK: - Cleanup Tests
 
     func testCleanupAllObservers() {
