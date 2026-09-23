@@ -57,7 +57,7 @@ final class InvisibleTabSession: TabEventHandler {
 
         // Ecosia: Attach as early as possible (not in startMonitoring) to avoid missing a fast
         // redirect chain that finishes before monitoring starts.
-        urlObservation = tab.webView?.observe(\.url, options: [.new]) { [weak self] _, change in
+        urlObservation = tab.webView?.observe(\.url, options: [.initial, .new]) { [weak self] _, change in
             guard let newURL = change.newValue ?? nil else { return }
             Task { @MainActor in
                 self?.lastKnownURL = newURL

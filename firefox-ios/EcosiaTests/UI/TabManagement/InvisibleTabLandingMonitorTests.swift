@@ -115,6 +115,11 @@ final class InvisibleTabLandingMonitorTests: XCTestCase {
         XCTAssertTrue(hasLanded(on: "https://www.ecosia.org/accounts/error", from: urlProvider.signUpURL))
     }
 
+    func testHasLandedOnErrorPageThatIsAlsoTheStartPage() {
+        let errorURL = URL(string: "https://www.ecosia.org/accounts/error")!
+        XCTAssertTrue(InvisibleTabLandingMonitor.hasLanded(on: errorURL, from: errorURL, urlProvider: urlProvider))
+    }
+
     func testHasNotLandedOnSignIn() {
         XCTAssertFalse(hasLanded(on: "https://www.ecosia.org/accounts/sign-in", from: urlProvider.signUpURL))
         XCTAssertFalse(hasLanded(on: "https://www.ecosia.org/accounts/sign-in?returnTo=x", from: urlProvider.logoutURL))
