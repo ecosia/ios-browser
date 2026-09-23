@@ -486,7 +486,6 @@ class AppSettingsTableViewController: SettingsTableViewController,
             )
         ]
 
-        
         // Ecosia: use our own app icons (https://ecosia.atlassian.net/browse/MOB-3994)
         if UIApplication.shared.supportsAlternateIcons {
             let appIconSetting = AppIconSetting(theme: themeManager.getCurrentTheme(for: windowUUID), settingsDelegate: parentCoordinator)
