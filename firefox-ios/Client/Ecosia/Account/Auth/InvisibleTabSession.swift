@@ -90,21 +90,12 @@ final class InvisibleTabSession: TabEventHandler {
 
     // MARK: - Private Implementation
 
-    /// Ecosia: Use TabManager.addTab (LegacyTabManager/configureTab removed in Firefox upgrade)
+    /// Ecosia: `addInvisibleTab` marks the tab before tab manager delegates are notified, so no UI ever shows it
     private static func createInvisibleTab(url: URL, browserViewController: BrowserViewController) throws -> Tab {
-        let profile = browserViewController.profile
         let tabManager = browserViewController.tabManager
 
-        let newTab = tabManager.addTab(
-            URLRequest(url: url),
-            afterTab: nil,
-            zombie: false,
-            isPrivate: false
-        )
+        let newTab = tabManager.addInvisibleTab(URLRequest(url: url))
         newTab.url = url
-        newTab.isInvisible = true
-
-        InvisibleTabManager.shared.markTabAsInvisible(newTab)
 
         EcosiaLogger.invisibleTabs.info("Invisible tab created: \(newTab.tabUUID)")
         return newTab

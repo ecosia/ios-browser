@@ -51,6 +51,10 @@ protocol TabManager: AnyObject {
                 zombie: Bool,
                 isPrivate: Bool) -> Tab
 
+    // Ecosia: adds a tab already marked invisible, so no delegate ever sees it as a visible tab
+    @discardableResult
+    func addInvisibleTab(_ request: URLRequest) -> Tab
+
     /// Remove tab option using tabUUID.
     /// - Parameter tabUUID: UUID from the tab
     func removeTab(_ tabUUID: TabUUID)
