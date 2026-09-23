@@ -54,11 +54,12 @@ final class InvisibleTabLandingMonitor {
         evaluate()
     }
 
-    /// Done once resting on a www page other than the start page; Auth0 hops happen on another host.
+    /// Done once resting on an error page, or a www page other than the start page; Auth0 hops happen on another host.
     /// Sign-in is excluded because it can hand off to Auth0 client-side, so a pause there isn't final.
     static func hasLanded(on currentURL: URL, from startURL: URL, urlProvider: URLProvider) -> Bool {
         guard currentURL.host == urlProvider.root.host else { return false }
         let path = currentURL.path.lowercased()
+        if urlProvider.errorPaths.contains(where: { $0.lowercased() == path }) { return true }
         return path != startURL.path.lowercased() && !path.hasPrefix(urlProvider.signInURL.path.lowercased())
     }
 
