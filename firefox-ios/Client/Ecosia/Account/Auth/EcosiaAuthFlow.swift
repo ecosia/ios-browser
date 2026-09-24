@@ -120,6 +120,18 @@ final class EcosiaAuthFlow {
 
         EcosiaLogger.auth.info("Starting \(type) flow")
 
+        // `userLoggedIn` lands as soon as native Auth0 auth completes, well before the web session
+        // transfer below - hold refresh-driven visits until this flow settles either way.
+        let registersVisit = type != .logout
+        if registersVisit {
+            EcosiaAuthUIStateProvider.shared.setAuthenticationInFlight(true)
+        }
+        defer {
+            if registersVisit {
+                EcosiaAuthUIStateProvider.shared.setAuthenticationInFlight(false)
+            }
+        }
+
         do {
             switch type {
             case .login:
@@ -246,7 +258,11 @@ final class EcosiaAuthFlow {
                     Task { @MainActor in
                         self?.activeSession = nil // Release session
                         EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
-                        if !success {
+                        if success {
+                            // Only now is the account usable on both sides, and for a new account
+                            // the web flow has provisioned it server-side.
+                            EcosiaAuthUIStateProvider.shared.handleSuccessfulAuthentication()
+                        } else {
                             await self?.logOutNativelyAfterFailedSessionTransfer()
                         }
                         onFlowCompleted?(success)

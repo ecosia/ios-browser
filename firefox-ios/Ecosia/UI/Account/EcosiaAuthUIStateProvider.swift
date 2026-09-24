@@ -59,12 +59,12 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     /// Set when `refreshSeedState()` is called before auth state has resolved, so the call isn't
     /// answered with a guess; replayed once `handleAuthStateChange` confirms the real value.
     private var pendingSeedStateRefresh = false
-    /// Guards against firing more than one initial `registerVisitIfNeeded()`/`handleLocalSeedCollection()`
-    /// for a single resolution: cold launch can dispatch both `userLoggedIn` and `authStateLoaded`
-    /// for the same "already logged in" event, in unspecified order, so whichever arrives first
-    /// claims it and the other is a no-op. Reset on logout so a later login fires its own.
-    private var hasHandledCurrentResolution = false
     private let accountsProvider: AccountsProviderProtocol
+    private let authState: EcosiaAuthStateReading
+    /// Set while an explicit login/sign-up is running. `userLoggedIn` lands as soon as native
+    /// Auth0 auth completes, so without this a refresh during the web session transfer would
+    /// take the logged-in branch and register the visit before that transfer established it.
+    private var isAuthenticationInFlight = false
     /// Normalizing the avatar to match Web's Product behaviour.
     /// Our Auth Provider (Auth0) sends us a Gravatar URL when no profile image is retrieved from a user
     /// (e.g. Apple Sign In). As of now, we replace it with our tree-image in `EcosiaAvatar` by not setting any URL
@@ -88,8 +88,10 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }()
 
-    public init(accountsProvider: AccountsProviderProtocol) {
+    public init(accountsProvider: AccountsProviderProtocol,
+                authState: EcosiaAuthStateReading = EcosiaAuthenticationService.shared) {
         self.accountsProvider = accountsProvider
+        self.authState = authState
 
         // Observers must be registered before the synchronous reads below: EcosiaAuthenticationService
         // resolves on its own Task, so it could otherwise finish and post its notification in the gap
@@ -98,9 +100,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         setupAuthStateMonitoring()
 
         // Initialize state synchronously to prevent flickering
-        self.isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-        self.hasResolvedAuthState = EcosiaAuthenticationService.shared.hasResolvedAuthState
-        self.userProfile = EcosiaAuthenticationService.shared.userProfile
+        self.isLoggedIn = authState.isLoggedIn
+        self.hasResolvedAuthState = authState.hasResolvedAuthState
+        self.userProfile = authState.userProfile
         self.avatarURL = normalizedAvatarURL
         self.username = userProfile?.name
 
@@ -210,20 +212,17 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     func handleAuthStateChange(_ notification: Notification) async {
         // Every dispatch of this notification means EcosiaAuthenticationService has a confirmed
         // isLoggedIn value now, whether this is the launch-time resolution or a later login/logout.
-        isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+        isLoggedIn = authState.isLoggedIn
         hasResolvedAuthState = true
 
         // Handle specific auth actions (business logic can be nonisolated)
         if let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType {
             switch actionType {
             case .userLoggedIn:
-                pendingSeedStateRefresh = false
-                guard !hasHandledCurrentResolution else { break }
-                hasHandledCurrentResolution = true
-                EcosiaLogger.accounts.info("User logged in - registering visit")
-                registerVisitIfNeeded()
+                // Credential restoration on launch dispatches this too, so it can't stand in for
+                // an actual sign-in - `handleSuccessfulAuthentication()` covers that.
+                break
             case .userLoggedOut:
-                hasHandledCurrentResolution = false
                 pendingSeedStateRefresh = false
                 EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
                 await resetToLocalSeedCollection()
@@ -240,12 +239,10 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
                     currentProgress = snapshot.currentProgress
                 }
 
-                // Cold launch can dispatch both userLoggedIn and authStateLoaded for the same
-                // "already logged in" event, in unspecified order - hasHandledCurrentResolution
-                // makes sure only whichever arrives first triggers the refresh.
-                guard pendingSeedStateRefresh, !hasHandledCurrentResolution else { break }
+                // `dispatchAuthState` posts this once per registered browser window, so consuming
+                // the pending refresh is also what keeps multi-window launches to a single visit.
+                guard pendingSeedStateRefresh else { break }
                 pendingSeedStateRefresh = false
-                hasHandledCurrentResolution = true
                 refreshSeedState()
             }
         }
@@ -254,9 +251,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     @MainActor
     private func handleUserProfileUpdate() {
         Task { @MainActor in
-            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+            isLoggedIn = authState.isLoggedIn
         }
-        userProfile = EcosiaAuthenticationService.shared.userProfile
+        userProfile = authState.userProfile
         username = userProfile?.name
         avatarURL = normalizedAvatarURL
     }
@@ -288,7 +285,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     private func registerVisitIfNeeded() {
         Task {
             do {
-                guard let accessToken = EcosiaAuthenticationService.shared.accessToken, !accessToken.isEmpty else {
+                guard let accessToken = authState.accessToken, !accessToken.isEmpty else {
                     EcosiaLogger.accounts.notice("Cannot register visit - no access token available")
                     return
                 }
@@ -299,7 +296,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
                 // The token can change (logout, or a different account logging in) while this
                 // request is in flight; applying a response addressed to that earlier session
                 // would store its balance under whichever account is current when it lands.
-                guard EcosiaAuthenticationService.shared.accessToken == accessToken else {
+                guard authState.accessToken == accessToken else {
                     EcosiaLogger.accounts.notice("Discarding register visit response - session changed while in flight")
                     return
                 }
@@ -423,6 +420,27 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Public Methods
 
+    /// Brackets an explicit login/sign-up so refresh-driven visits wait for it to finish.
+    ///
+    /// The caller clears this on every exit - success, failure and cancellation - so a flow that
+    /// ends without reaching `handleSuccessfulAuthentication()` can't strand refreshes.
+    @MainActor
+    public func setAuthenticationInFlight(_ inFlight: Bool) {
+        isAuthenticationInFlight = inFlight
+    }
+
+    /// Registers the visit for a login or sign-up that has just completed end to end.
+    ///
+    /// Driven explicitly by the auth flow rather than by `.EcosiaAuthStateChanged`, whose
+    /// `userLoggedIn` action is also dispatched by credential restoration on launch.
+    @MainActor
+    public func handleSuccessfulAuthentication() {
+        // This call answers whatever refresh was still waiting on auth state to resolve.
+        pendingSeedStateRefresh = false
+        EcosiaLogger.accounts.info("Authentication completed - registering visit")
+        registerVisitIfNeeded()
+    }
+
     /// Refreshes seed state based on authentication status.
     ///
     /// Should be called when the NTP appears or app returns from background.
@@ -435,8 +453,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
             // resolution notification only reaches registered browser windows, so it can resolve
             // without ever notifying this provider (e.g. none were registered yet) - leaving
             // hasResolvedAuthState stuck false forever and every future call deferring for nothing.
-            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-            hasResolvedAuthState = EcosiaAuthenticationService.shared.hasResolvedAuthState
+            isLoggedIn = authState.isLoggedIn
+            hasResolvedAuthState = authState.hasResolvedAuthState
         }
 
         // isLoggedIn can still be the initial default here (auth resolution runs
@@ -450,6 +468,10 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         }
 
         if isLoggedIn {
+            guard !isAuthenticationInFlight else {
+                EcosiaLogger.accounts.debug("Deferring seed state refresh until authentication completes")
+                return
+            }
             EcosiaLogger.accounts.debug("Refreshing seed state for logged-in user (server fetch)")
             registerVisitIfNeeded()
         } else {
