@@ -53,14 +53,15 @@ final class OmniboxUploadDrawerTests: XCTestCase {
     }
 
     func testChatModesExposeAllCases() {
-        XCTAssertEqual(OmniboxChatMode.allCases.count, 4)
-        XCTAssertEqual(OmniboxChatMode.allCases, [.standard, .thinkLonger, .displaySources, .learning])
+        XCTAssertEqual(OmniboxChatMode.allCases.count, 5)
+        XCTAssertEqual(OmniboxChatMode.allCases, [.standard, .thinkLonger, .generateImage, .displaySources, .learning])
     }
 
     func testChatModeAccessibilityMetadata() {
         XCTAssertEqual(OmniboxChatMode.standard.accessibilityLabel, String.localized(.chatModeStandard))
         XCTAssertEqual(OmniboxChatMode.standard.accessibilityIdentifier, "OmniboxChatModeStandardOption")
         XCTAssertEqual(OmniboxChatMode.thinkLonger.accessibilityIdentifier, "OmniboxChatModeThinkLongerOption")
+        XCTAssertEqual(OmniboxChatMode.generateImage.accessibilityIdentifier, "OmniboxChatModeGenerateImageOption")
         XCTAssertEqual(OmniboxChatMode.displaySources.accessibilityIdentifier, "OmniboxChatModeDisplaySourcesOption")
         XCTAssertEqual(OmniboxChatMode.learning.accessibilityIdentifier, "OmniboxChatModeLearningOption")
     }
@@ -68,6 +69,7 @@ final class OmniboxUploadDrawerTests: XCTestCase {
     func testChatModeIconsLoadFromFrameworkBundle() {
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-standard-ai-chat"))
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-think-longer"))
+        XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-generate-images"))
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-display-sources"))
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-learning"))
     }
@@ -76,6 +78,8 @@ final class OmniboxUploadDrawerTests: XCTestCase {
         XCTAssertTrue(OmniboxChatMode.standard.aiChatQueryItems.isEmpty)
         XCTAssertEqual(OmniboxChatMode.thinkLonger.aiChatQueryItems,
                        [URLQueryItem(name: "t", value: "1")])
+        XCTAssertEqual(OmniboxChatMode.generateImage.aiChatQueryItems,
+                       [URLQueryItem(name: "mode", value: "generate_image")])
         XCTAssertEqual(OmniboxChatMode.displaySources.aiChatQueryItems,
                        [URLQueryItem(name: "m", value: "2")])
         XCTAssertEqual(OmniboxChatMode.learning.aiChatQueryItems,
@@ -398,6 +402,27 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
         button.sendActions(for: .touchUpInside)
 
         XCTAssertTrue(spy.didTapUpload)
+    }
+
+    func testGenerateImageModeSwapsPlaceholderAndRestoresItWhenCleared() {
+        let bar = NTPSearchBarView(frame: CGRect(x: 0, y: 0, width: 320, height: 110))
+        let placeholderTexts = { bar.subviews.compactMap { ($0 as? UILabel)?.text } }
+        XCTAssertTrue(placeholderTexts().contains(String.localized(.askSearchBrowse)))
+
+        bar.setSelectedChatMode(.generateImage)
+        XCTAssertTrue(placeholderTexts().contains(String.localized(.chatModeGenerateImagePlaceholder)))
+        XCTAssertFalse(placeholderTexts().contains(String.localized(.askSearchBrowse)))
+
+        bar.setSelectedChatMode(nil)
+        XCTAssertTrue(placeholderTexts().contains(String.localized(.askSearchBrowse)))
+    }
+
+    func testOnlyGenerateImageModeOverridesThePlaceholder() {
+        for mode in OmniboxChatMode.allCases where mode != .generateImage {
+            XCTAssertNil(mode.placeholder, "\(mode) should keep the default placeholder")
+        }
+        XCTAssertEqual(OmniboxChatMode.generateImage.placeholder,
+                       String.localized(.chatModeGenerateImagePlaceholder))
     }
 
     func testUploadButtonHiddenWhenFileUploadFlagDisabled() throws {

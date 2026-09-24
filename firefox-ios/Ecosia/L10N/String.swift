@@ -313,15 +313,19 @@ extension String {
         case aiToolsDoneAccessibilityHint = "Dismisses the AI tools menu"
         case chatModeStandard = "Standard AI Chat"
         case chatModeThinkLonger = "Think longer"
+        case chatModeGenerateImage = "Generate images"
         case chatModeDisplaySources = "Display sources"
         case chatModeLearning = "Learning"
         case chatModeStandardSubtitle = "Answers everyday tasks and queries"
         case chatModeThinkLongerSubtitle = "Solves complex problems"
+        case chatModeGenerateImageSubtitle = "Creates visuals from your ideas"
+        case chatModeGenerateImagePlaceholder = "Describe your image..."
         case chatModeDisplaySourcesSubtitle = "Shows sources for every answer"
         case chatModeLearningSubtitle = "Breaks down topics step by step"
         // Appended to the user's prompt for providers that take no mode parameter.
         // The leading space separates the instruction from the prompt and must be kept.
         case chatModeThinkLongerPrompt = " Think deeply about it before answering."
+        case chatModeGenerateImagePrompt = " Generate an image of this."
         case chatModeDisplaySourcesPrompt = " Search the web for this and cite your sources."
         case chatModeLearningPrompt = " Explain this like a tutor, step by step, and suggest what to learn next."
 

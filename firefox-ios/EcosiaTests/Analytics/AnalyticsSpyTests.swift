@@ -968,6 +968,15 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(payload["logged_in"] as? Bool, true)
     }
 
+    func testAIToolsMenuChatModeSelectionGenerateImageTracksItsModeIdentifier() throws {
+        User.shared.sendAnonymousUsageData = true
+
+        analyticsSpy.aiToolsMenuChatModeSelection(mode: .generateImage, action: .select, isLoggedIn: true)
+
+        let payload = try decodeProperty(try lastStructuredEvent())
+        XCTAssertEqual(payload["mode"] as? String, "generate_image")
+    }
+
     func testAIToolsMenuChatModeSelectionDeselectLoggedOutTracksJSONPayload() throws {
         User.shared.sendAnonymousUsageData = true
 
