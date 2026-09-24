@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import WebKit
 import Ecosia
 import Common
 
@@ -16,7 +17,6 @@ final class InvisibleTabSession: TabEventHandler {
     private let url: URL
     private let timeout: TimeInterval
     private weak var browserViewController: BrowserViewController?
-    private let authService: Ecosia.EcosiaAuthenticationService
 
     // State
     private var isCompleted = false
@@ -33,15 +33,12 @@ final class InvisibleTabSession: TabEventHandler {
     /// - Parameters:
     ///   - url: URL to load in the tab
     ///   - browserViewController: Browser view controller for tab operations
-    ///   - authService: Authentication service for session operations
     ///   - timeout: Fallback timeout for completion
     init(url: URL,
          browserViewController: BrowserViewController,
-         authService: Ecosia.EcosiaAuthenticationService,
          timeout: TimeInterval = 10.0) throws {
         self.url = url
         self.browserViewController = browserViewController
-        self.authService = authService
         self.timeout = timeout
 
         // Create the tab immediately
@@ -62,17 +59,23 @@ final class InvisibleTabSession: TabEventHandler {
 
     // MARK: - Session Management
 
-    /// Sets up session cookies for the tab
-    func setupSessionCookies() {
+    /// Installs the SSO session cookie into the shared non-private cookie store.
+    ///
+    /// Must finish before the session's tab exists: creating the tab starts the transfer load
+    /// immediately, and a load that beats the cookie authenticates nothing and lands back on sign-in.
+    @MainActor
+    static func installSessionCookie(from authService: Ecosia.EcosiaAuthenticationService) async {
         guard let sessionCookie = authService.getSessionTokenCookie() else {
             EcosiaLogger.cookies.notice("No session cookie available for tab")
             return
         }
 
-        Task { @MainActor in
-            tab.webView?.configuration.websiteDataStore.httpCookieStore.setCookie(sessionCookie)
-            EcosiaLogger.cookies.info("Session cookie set for tab: \(self.tab.tabUUID)")
+        await withCheckedContinuation { continuation in
+            WKWebsiteDataStore.default().httpCookieStore.setCookie(sessionCookie) {
+                continuation.resume()
+            }
         }
+        EcosiaLogger.cookies.info("Session cookie installed for session transfer")
     }
 
     /// Starts monitoring for session completion (page load + auth)
@@ -87,21 +90,15 @@ final class InvisibleTabSession: TabEventHandler {
 
     // MARK: - Private Implementation
 
-    /// Ecosia: Use TabManager.addTab (LegacyTabManager/configureTab removed in Firefox upgrade)
+    /// Marks the tab invisible before adding it: adding inserts the tab and notifies tab manager delegates,
+    /// and the iPad top tabs insert whatever `didAddTab` hands them, so marking afterwards flashes the
+    /// auth tab in the tab strip.
     private static func createInvisibleTab(url: URL, browserViewController: BrowserViewController) throws -> Tab {
-        let profile = browserViewController.profile
         let tabManager = browserViewController.tabManager
 
-        let newTab = tabManager.addTab(
-            URLRequest(url: url),
-            afterTab: nil,
-            zombie: false,
-            isPrivate: false
-        )
-        newTab.url = url
+        let newTab = Tab(profile: browserViewController.profile, isPrivate: false, windowUUID: tabManager.windowUUID)
         newTab.isInvisible = true
-
-        InvisibleTabManager.shared.markTabAsInvisible(newTab)
+        tabManager.addTab(newTab, request: URLRequest(url: url))
 
         EcosiaLogger.invisibleTabs.info("Invisible tab created: \(newTab.tabUUID)")
         return newTab
@@ -113,9 +110,9 @@ final class InvisibleTabSession: TabEventHandler {
         let timeout = timeout
 
         Task { @MainActor in
-            InvisibleTabAutoCloseManager.shared.setTabManager(tabManager)
             InvisibleTabAutoCloseManager.shared.setupAutoCloseForTab(
                 tabUUID: tabUUID,
+                in: tabManager,
                 on: .EcosiaAuthStateChanged,
                 timeout: timeout
             )

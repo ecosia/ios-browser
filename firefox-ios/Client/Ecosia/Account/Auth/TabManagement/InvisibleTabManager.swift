@@ -16,7 +16,10 @@ final class InvisibleTabManager {
     // MARK: - Private Properties
 
     private let queue = DispatchQueue(label: "ecosia.invisible.tabs", attributes: .concurrent)
-    private var _invisibleTabUUIDs: Set<TabUUID> = []
+    /// Keyed by tab, valued by owning window: the registry is process-wide but `cleanupRemovedTabs` is
+    /// called per window, so entries must be attributable to a window to avoid one window's cleanup
+    /// dropping another window's in-flight auth tab.
+    private var _invisibleTabWindows: [TabUUID: WindowUUID] = [:]
 
     // MARK: - Initialization
 
@@ -27,7 +30,7 @@ final class InvisibleTabManager {
     /// Array of invisible tab UUIDs
     var invisibleTabUUIDs: [TabUUID] {
         return queue.sync {
-            Array(_invisibleTabUUIDs)
+            Array(_invisibleTabWindows.keys)
         }
     }
 
@@ -36,7 +39,7 @@ final class InvisibleTabManager {
     /// - Returns: True if the tab is invisible
     func isTabInvisible(_ tab: Tab) -> Bool {
         return queue.sync {
-            _invisibleTabUUIDs.contains(tab.tabUUID)
+            _invisibleTabWindows[tab.tabUUID] != nil
         }
     }
 
@@ -44,7 +47,7 @@ final class InvisibleTabManager {
     /// - Parameter tab: The tab to mark as invisible
     func markTabAsInvisible(_ tab: Tab) {
         queue.sync(flags: .barrier) {
-            _invisibleTabUUIDs.insert(tab.tabUUID)
+            _invisibleTabWindows[tab.tabUUID] = tab.windowUUID
         }
     }
 
@@ -52,7 +55,7 @@ final class InvisibleTabManager {
     /// - Parameter tab: The tab to mark as visible
     func markTabAsVisible(_ tab: Tab) {
         queue.sync(flags: .barrier) {
-            _invisibleTabUUIDs.remove(tab.tabUUID)
+            _invisibleTabWindows.removeValue(forKey: tab.tabUUID)
         }
     }
 
@@ -61,7 +64,7 @@ final class InvisibleTabManager {
     /// - Returns: Array of visible tabs
     func getVisibleTabs(from tabs: [Tab]) -> [Tab] {
         return queue.sync {
-            tabs.filter { !_invisibleTabUUIDs.contains($0.tabUUID) }
+            tabs.filter { _invisibleTabWindows[$0.tabUUID] == nil }
         }
     }
 
@@ -70,22 +73,26 @@ final class InvisibleTabManager {
     /// - Returns: Array of invisible tabs
     func getInvisibleTabs(from tabs: [Tab]) -> [Tab] {
         return queue.sync {
-            tabs.filter { _invisibleTabUUIDs.contains($0.tabUUID) }
+            tabs.filter { _invisibleTabWindows[$0.tabUUID] != nil }
         }
     }
 
     /// Clean up tracking for removed tabs
-    /// - Parameter existingTabUUIDs: Set of tab UUIDs that still exist
-    func cleanupRemovedTabs(existingTabUUIDs: Set<TabUUID>) {
+    /// - Parameters:
+    ///   - existingTabUUIDs: Set of tab UUIDs that still exist
+    ///   - windowUUID: Window the caller owns; entries from other windows are left untouched
+    func cleanupRemovedTabs(existingTabUUIDs: Set<TabUUID>, in windowUUID: WindowUUID) {
         queue.sync(flags: .barrier) {
-            _invisibleTabUUIDs = _invisibleTabUUIDs.intersection(existingTabUUIDs)
+            _invisibleTabWindows = _invisibleTabWindows.filter {
+                $0.value != windowUUID || existingTabUUIDs.contains($0.key)
+            }
         }
     }
 
     /// Clear all invisible tabs (useful for testing)
     func clearAllInvisibleTabs() {
         queue.sync(flags: .barrier) {
-            _invisibleTabUUIDs.removeAll()
+            _invisibleTabWindows.removeAll()
         }
     }
 }

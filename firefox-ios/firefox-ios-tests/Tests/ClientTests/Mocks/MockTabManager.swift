@@ -75,6 +75,11 @@ class MockTabManager: TabManager {
         return tab
     }
 
+    // Ecosia: inserts a caller-created tab
+    func addTab(_ tab: Tab, request: URLRequest) {
+        tabs.append(tab)
+    }
+
     func getMostRecentHomepageTab() -> Tab? {
         return addTab(nil, afterTab: nil, isPrivate: false)
     }
