@@ -44,6 +44,6 @@ extension TabManager {
     /// Cleanup invisible tab tracking when tabs are removed
     func cleanupInvisibleTabTracking() {
         let existingTabUUIDs = Set(tabs.map { $0.tabUUID })
-        InvisibleTabManager.shared.cleanupRemovedTabs(existingTabUUIDs: existingTabUUIDs)
+        InvisibleTabManager.shared.cleanupRemovedTabs(existingTabUUIDs: existingTabUUIDs, in: windowUUID)
     }
 }

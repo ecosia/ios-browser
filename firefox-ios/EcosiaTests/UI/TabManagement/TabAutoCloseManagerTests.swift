@@ -33,7 +33,6 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         mockNotificationCenter = TabAutoCloseManagerMockNotificationCenter()
 
         manager = InvisibleTabAutoCloseManager.shared
-        manager.setTabManager(mockTabManager)
     }
 
     override func tearDown() {
@@ -69,7 +68,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         mockTabManager.tabs = [tab]
 
         // When
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
 
         // Then
         XCTAssertEqual(manager.trackedTabCount, 1, "Should track one tab")
@@ -86,7 +85,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         mockTabManager.tabs = tabs
 
         // When
-        tabs.forEach { manager.setupAutoCloseForTab($0, on: .EcosiaAuthStateChanged, timeout: 10.0) }
+        tabs.forEach { manager.setupAutoCloseForTab($0, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0) }
 
         // Then
         XCTAssertEqual(manager.trackedTabCount, 3, "Should track all tabs")
@@ -101,7 +100,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         // Given
         let tab = createMockTab(uuid: "cancel-tab")
         mockTabManager.tabs = [tab]
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
         XCTAssertEqual(manager.trackedTabCount, 1)
 
         // When
@@ -131,7 +130,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
             createMockTab(uuid: "tab3")
         ]
         mockTabManager.tabs = tabs
-        tabs.forEach { manager.setupAutoCloseForTab($0, on: .EcosiaAuthStateChanged, timeout: 10.0) }
+        tabs.forEach { manager.setupAutoCloseForTab($0, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0) }
         XCTAssertEqual(manager.trackedTabCount, 3)
 
         // When
@@ -147,7 +146,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         // Given
         let tab = createMockTab(uuid: "notification-tab")
         mockTabManager.tabs = [tab]
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
 
         // When
         NotificationCenter.default.post(name: .EcosiaAuthStateChanged, object: nil)
@@ -168,7 +167,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         let tab = createMockTab(uuid: "custom-notification-tab")
         mockTabManager.tabs = [tab]
         let customNotification = Notification.Name("CustomAuthNotification")
-        manager.setupAutoCloseForTab(tab, on: customNotification, timeout: 10.0)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: customNotification, timeout: 10.0)
 
         // When
         NotificationCenter.default.post(name: customNotification, object: nil)
@@ -190,8 +189,8 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         let regularTab = createMockTab(uuid: "regular-tab")
         mockTabManager.tabs = [authTab, regularTab]
 
-        manager.setupAutoCloseForTab(authTab, on: .EcosiaAuthStateChanged, timeout: 10.0)
-        manager.setupAutoCloseForTab(regularTab, on: Notification.Name("DifferentNotification"), timeout: 10.0)
+        manager.setupAutoCloseForTab(authTab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(regularTab, in: mockTabManager, on: Notification.Name("DifferentNotification"), timeout: 10.0)
 
         // When
         NotificationCenter.default.post(name: .EcosiaAuthStateChanged, object: nil)
@@ -218,7 +217,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         let shortTimeout: TimeInterval = 0.1
 
         // When
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: shortTimeout)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: shortTimeout)
 
         // Wait for timeout to trigger
         let expectation = XCTestExpectation(description: "Timeout processed")
@@ -238,7 +237,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         let timeout: TimeInterval = 0.2
 
         // When
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: timeout)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: timeout)
 
         // Send notification before timeout
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -262,7 +261,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         // Given
         let tab = createMockTab(uuid: "remove-tab")
         mockTabManager.tabs = [tab]
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
 
         // When
         NotificationCenter.default.post(name: .EcosiaAuthStateChanged, object: nil)
@@ -278,12 +277,37 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         XCTAssertFalse(mockTabManager.tabs.contains(tab), "Tab should be removed from tab manager")
     }
 
+    func testAutoCloseRemovesEachTabFromItsOwnTabManager() {
+        // Given
+        let otherTabManager = TabAutoCloseTestMockTabManager()
+        let tab = createMockTab(uuid: "window-a-tab")
+        let otherTab = createMockTab(uuid: "window-b-tab")
+        mockTabManager.tabs = [tab]
+        otherTabManager.tabs = [otherTab]
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(otherTab, in: otherTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
+
+        // When
+        NotificationCenter.default.post(name: .EcosiaAuthStateChanged, object: nil)
+
+        // Allow some processing time
+        let expectation = XCTestExpectation(description: "Tab removal processed")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            expectation.fulfill()
+        }
+        wait(for: [expectation], timeout: 1.0)
+
+        // Then
+        XCTAssertFalse(mockTabManager.tabs.contains(tab), "Tab should be removed from its own tab manager")
+        XCTAssertFalse(otherTabManager.tabs.contains(otherTab), "Other window's tab should be removed from its tab manager")
+    }
+
     func testAutoCloseWithMultipleTabsRemovesCorrectTab() {
         // Given
         let autoCloseTab = createMockTab(uuid: "auto-close-tab")
         let regularTab = createMockTab(uuid: "regular-tab")
         mockTabManager.tabs = [autoCloseTab, regularTab]
-        manager.setupAutoCloseForTab(autoCloseTab, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(autoCloseTab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
 
         // When
         NotificationCenter.default.post(name: .EcosiaAuthStateChanged, object: nil)
@@ -300,6 +324,51 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         XCTAssertTrue(mockTabManager.tabs.contains(regularTab), "Regular tab should remain")
     }
 
+    func testCloseTrackedTabRemovesTabBeforeTimeout() {
+        // Given
+        let tab = createMockTab(uuid: "landed-tab")
+        mockTabManager.tabs = [tab]
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
+
+        // When
+        manager.closeTrackedTab(tab.tabUUID)
+
+        // Then
+        XCTAssertFalse(mockTabManager.tabs.contains(tab), "Tab should be removed without waiting for the timeout")
+        XCTAssertEqual(manager.trackedTabCount, 0, "Should cleanup tracking after closing")
+    }
+
+    func testCloseTrackedTabIgnoresUntrackedTab() {
+        // Given
+        let tab = createMockTab(uuid: "untracked-tab")
+        mockTabManager.tabs = [tab]
+
+        // When
+        manager.closeTrackedTab(tab.tabUUID)
+
+        // Then
+        XCTAssertTrue(mockTabManager.tabs.contains(tab), "Untracked tab should not be closed")
+    }
+
+    func testCloseTrackedTabUsesTabsOwnTabManagerAfterLaterSetupInOtherWindow() {
+        // Given
+        let otherTabManager = TabAutoCloseTestMockTabManager()
+        let tab = createMockTab(uuid: "window-a-tab")
+        let otherTab = createMockTab(uuid: "window-b-tab")
+        mockTabManager.tabs = [tab]
+        otherTabManager.tabs = [otherTab]
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(otherTab, in: otherTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
+
+        // When
+        manager.closeTrackedTab(tab.tabUUID)
+
+        // Then
+        XCTAssertFalse(mockTabManager.tabs.contains(tab), "Tab should be removed from its own tab manager")
+        XCTAssertTrue(otherTabManager.tabs.contains(otherTab), "Other window's tab should be untouched")
+        XCTAssertTrue(manager.trackedTabUUIDs.contains(otherTab.tabUUID), "Other window's tab should still be tracked")
+    }
+
     // MARK: - Cleanup Tests
 
     func testCleanupAllObservers() {
@@ -310,7 +379,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
             createMockTab(uuid: "tab3")
         ]
         mockTabManager.tabs = tabs
-        tabs.forEach { manager.setupAutoCloseForTab($0, on: .EcosiaAuthStateChanged, timeout: 10.0) }
+        tabs.forEach { manager.setupAutoCloseForTab($0, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0) }
         XCTAssertEqual(manager.trackedTabCount, 3)
 
         // When
@@ -324,7 +393,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         // Given
         let tab = createMockTab(uuid: "idempotent-tab")
         mockTabManager.tabs = [tab]
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
 
         // When
         manager.cleanupAllObservers()
@@ -347,7 +416,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         mockTabManager.tabs = tabs
 
         // When
-        tabs.forEach { manager.setupAutoCloseForTab($0, on: .EcosiaAuthStateChanged, timeout: 10.0) }
+        tabs.forEach { manager.setupAutoCloseForTab($0, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0) }
 
         // Then
         XCTAssertEqual(manager.trackedTabCount, manager.trackedTabUUIDs.count, "Count should match UUID array size")
@@ -361,8 +430,8 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         let tab1 = createMockTab(uuid: "tab1")
         let tab2 = createMockTab(uuid: "tab2")
         mockTabManager.tabs = [tab1, tab2]
-        manager.setupAutoCloseForTab(tab1, on: .EcosiaAuthStateChanged, timeout: 10.0)
-        manager.setupAutoCloseForTab(tab2, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(tab1, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(tab2, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
 
         // When
         manager.cancelAutoCloseForTab(tab1.tabUUID)
@@ -381,9 +450,9 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         mockTabManager.tabs = [tab]
 
         // When
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: 10.0)
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: 5.0)
-        manager.setupAutoCloseForTab(tab, on: .EcosiaAuthStateChanged, timeout: 15.0)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 5.0)
+        manager.setupAutoCloseForTab(tab, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 15.0)
 
         // Then
         XCTAssertEqual(manager.trackedTabCount, 1, "Should only track tab once, regardless of multiple setups")
@@ -395,7 +464,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
         // Given
         var tab: Tab? = createMockTab(uuid: "memory-tab")
         mockTabManager.tabs = [tab!]
-        manager.setupAutoCloseForTab(tab!, on: .EcosiaAuthStateChanged, timeout: 10.0)
+        manager.setupAutoCloseForTab(tab!, in: mockTabManager, on: .EcosiaAuthStateChanged, timeout: 10.0)
 
         // When
         manager.cleanupAllObservers()

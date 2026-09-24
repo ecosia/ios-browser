@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import WebKit
 import Ecosia
 import Common
 
@@ -16,7 +17,6 @@ final class InvisibleTabSession: TabEventHandler {
     private let url: URL
     private let timeout: TimeInterval
     private weak var browserViewController: BrowserViewController?
-    private let authService: Ecosia.EcosiaAuthenticationService
 
     // State
     private var isCompleted = false
@@ -26,6 +26,8 @@ final class InvisibleTabSession: TabEventHandler {
     // runs, so tab.webView?.url would read back nil there.
     private var lastKnownURL: URL?
     private var urlObservation: NSKeyValueObservation?
+    private var loadingObservation: NSKeyValueObservation?
+    private var landingMonitor: InvisibleTabLandingMonitor?
 
     // MARK: - Initialization
 
@@ -33,15 +35,12 @@ final class InvisibleTabSession: TabEventHandler {
     /// - Parameters:
     ///   - url: URL to load in the tab
     ///   - browserViewController: Browser view controller for tab operations
-    ///   - authService: Authentication service for session operations
     ///   - timeout: Fallback timeout for completion
     init(url: URL,
          browserViewController: BrowserViewController,
-         authService: Ecosia.EcosiaAuthenticationService,
          timeout: TimeInterval = 10.0) throws {
         self.url = url
         self.browserViewController = browserViewController
-        self.authService = authService
         self.timeout = timeout
 
         // Create the tab immediately
@@ -50,29 +49,48 @@ final class InvisibleTabSession: TabEventHandler {
 
         EcosiaLogger.invisibleTabs.info("InvisibleTabSession created for: \(url)")
 
+        let tabUUID = tab.tabUUID
+        landingMonitor = InvisibleTabLandingMonitor(startURL: url, urlProvider: urlProvider) { landedURL in
+            EcosiaLogger.invisibleTabs.info("Invisible tab landed on: \(landedURL.redactedForLogging)")
+            InvisibleTabAutoCloseManager.shared.closeTrackedTab(tabUUID)
+        }
+
         // Ecosia: Attach as early as possible (not in startMonitoring) to avoid missing a fast
         // redirect chain that finishes before monitoring starts.
-        urlObservation = tab.webView?.observe(\.url, options: [.new]) { [weak self] _, change in
+        urlObservation = tab.webView?.observe(\.url, options: [.initial, .new]) { [weak self] _, change in
             guard let newURL = change.newValue ?? nil else { return }
             Task { @MainActor in
                 self?.lastKnownURL = newURL
+                self?.landingMonitor?.urlChanged(to: newURL)
+            }
+        }
+        loadingObservation = tab.webView?.observe(\.isLoading, options: [.new]) { [weak self] _, change in
+            let isLoading = change.newValue ?? false
+            Task { @MainActor in
+                self?.landingMonitor?.loadingChanged(isLoading: isLoading)
             }
         }
     }
 
     // MARK: - Session Management
 
-    /// Sets up session cookies for the tab
-    func setupSessionCookies() {
+    /// Installs the SSO session cookie into the shared non-private cookie store.
+    ///
+    /// Must finish before the session's tab exists: creating the tab starts the transfer load
+    /// immediately, and a load that beats the cookie authenticates nothing and lands back on sign-in.
+    @MainActor
+    static func installSessionCookie(from authService: Ecosia.EcosiaAuthenticationService) async {
         guard let sessionCookie = authService.getSessionTokenCookie() else {
             EcosiaLogger.cookies.notice("No session cookie available for tab")
             return
         }
 
-        Task { @MainActor in
-            tab.webView?.configuration.websiteDataStore.httpCookieStore.setCookie(sessionCookie)
-            EcosiaLogger.cookies.info("Session cookie set for tab: \(self.tab.tabUUID)")
+        await withCheckedContinuation { continuation in
+            WKWebsiteDataStore.default().httpCookieStore.setCookie(sessionCookie) {
+                continuation.resume()
+            }
         }
+        EcosiaLogger.cookies.info("Session cookie installed for session transfer")
     }
 
     /// Starts monitoring for session completion (page load + auth)
@@ -113,13 +131,14 @@ final class InvisibleTabSession: TabEventHandler {
         let timeout = timeout
 
         Task { @MainActor in
-            InvisibleTabAutoCloseManager.shared.setTabManager(tabManager)
             InvisibleTabAutoCloseManager.shared.setupAutoCloseForTab(
                 tabUUID: tabUUID,
+                in: tabManager,
                 on: .EcosiaAuthStateChanged,
                 timeout: timeout
             )
             register(self, forTabEvents: .didClose)
+            landingMonitor?.start(isLoading: tab.isLoading)
         }
     }
 
@@ -161,6 +180,8 @@ final class InvisibleTabSession: TabEventHandler {
     }
 
     private func cleanup() {
+        landingMonitor?.stop()
+        loadingObservation = nil
         Task { @MainActor in
             InvisibleTabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
         }
