@@ -73,6 +73,7 @@ public extension OmniboxUploadOption {
 public enum OmniboxChatMode: CaseIterable, Hashable {
     case standard
     case thinkLonger
+    case generateImage
     case displaySources
     case learning
 }
@@ -82,6 +83,7 @@ public extension OmniboxChatMode {
         switch self {
         case .standard: return "chatmodes-standard-ai-chat"
         case .thinkLonger: return "chatmodes-think-longer"
+        case .generateImage: return "chatmodes-generate-images"
         case .displaySources: return "chatmodes-display-sources"
         case .learning: return "chatmodes-learning"
         }
@@ -91,6 +93,7 @@ public extension OmniboxChatMode {
         switch self {
         case .standard: return String.localized(.chatModeStandard)
         case .thinkLonger: return String.localized(.chatModeThinkLonger)
+        case .generateImage: return String.localized(.chatModeGenerateImage)
         case .displaySources: return String.localized(.chatModeDisplaySources)
         case .learning: return String.localized(.chatModeLearning)
         }
@@ -100,6 +103,7 @@ public extension OmniboxChatMode {
         switch self {
         case .standard: return String.localized(.chatModeStandardSubtitle)
         case .thinkLonger: return String.localized(.chatModeThinkLongerSubtitle)
+        case .generateImage: return String.localized(.chatModeGenerateImageSubtitle)
         case .displaySources: return String.localized(.chatModeDisplaySourcesSubtitle)
         case .learning: return String.localized(.chatModeLearningSubtitle)
         }
@@ -112,6 +116,7 @@ public extension OmniboxChatMode {
         switch self {
         case .standard: return "standard"
         case .thinkLonger: return "think_longer"
+        case .generateImage: return "generate_image"
         case .displaySources: return "display_sources"
         case .learning: return "learning"
         }
@@ -125,6 +130,7 @@ public extension OmniboxChatMode {
         switch self {
         case .standard: return "OmniboxChatModeStandardOption"
         case .thinkLonger: return "OmniboxChatModeThinkLongerOption"
+        case .generateImage: return "OmniboxChatModeGenerateImageOption"
         case .displaySources: return "OmniboxChatModeDisplaySourcesOption"
         case .learning: return "OmniboxChatModeLearningOption"
         }
@@ -133,11 +139,13 @@ public extension OmniboxChatMode {
     /// Extra query items appended to the AI Chat URL so the backend opens the
     /// conversation in this mode. `standard` carries none (plain `/ai-chat`);
     /// the others map to the agreed backend flags:
-    /// Think longer → `t=1`, Display sources → `m=2`, Learning → `m=1`.
+    /// Think longer → `t=1`, Generate images → `mode=generate_image`,
+    /// Display sources → `m=2`, Learning → `m=1`.
     var aiChatQueryItems: [URLQueryItem] {
         switch self {
         case .standard: return []
         case .thinkLonger: return [URLQueryItem(name: "t", value: "1")]
+        case .generateImage: return [URLQueryItem(name: "mode", value: "generate_image")]
         case .displaySources: return [URLQueryItem(name: "m", value: "2")]
         case .learning: return [URLQueryItem(name: "m", value: "1")]
         }
@@ -149,8 +157,17 @@ public extension OmniboxChatMode {
         switch self {
         case .standard: return nil
         case .thinkLonger: return .localized(.chatModeThinkLongerPrompt)
+        case .generateImage: return .localized(.chatModeGenerateImagePrompt)
         case .displaySources: return .localized(.chatModeDisplaySourcesPrompt)
         case .learning: return .localized(.chatModeLearningPrompt)
+        }
+    }
+
+    /// Omnibox placeholder while this mode is active, or `nil` to keep the default.
+    var placeholder: String? {
+        switch self {
+        case .generateImage: return .localized(.chatModeGenerateImagePlaceholder)
+        case .standard, .thinkLonger, .displaySources, .learning: return nil
         }
     }
 

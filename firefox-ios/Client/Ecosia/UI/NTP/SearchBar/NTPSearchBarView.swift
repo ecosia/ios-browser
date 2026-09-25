@@ -492,6 +492,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     /// changes (mode picked in the drawer, or deselected).
     func setSelectedChatMode(_ mode: OmniboxChatMode?) {
         selectedChatMode = mode
+        placeholderLabel.text = mode?.placeholder ?? String.localized(.askSearchBrowse)
         if let mode {
             chatModeChipIcon.image = UIImage.ecosia(named: mode.iconName)?
                 .withRenderingMode(.alwaysTemplate)
