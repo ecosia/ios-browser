@@ -25,8 +25,10 @@ on:
       - 'check_snapshot_updates.sh'
       - 'generate_snapshot_coverage_docs.sh'
       - 'perform_snapshot_tests.sh'
+  # Caches saved by pull requests are only visible to that pull request; running on main saves a
+  # compilation cache that every pull request can restore.
   push:
-    branches: [dc-mob-4907-xcode-compilation-cache]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -48,19 +50,10 @@ jobs:
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
-      - name: Identify Xcode compilation cache generation
-        id: xcode-compilation-cache
-        run: |
-          echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
-          echo "toolchain=$(xcodebuild -version | shasum -a 256 | cut -c1-12)" >> "$GITHUB_OUTPUT"
-
-      - name: Restore Xcode compilation cache
-        uses: actions/cache@v4
+      - name: Xcode compilation cache
+        uses: ./.github/actions/xcode_compilation_cache
         with:
-          path: DerivedData/CompilationCache.noindex
-          key: xcode-compilation-unit-tests-${{ runner.os }}-${{ runner.arch }}-${{ steps.xcode-compilation-cache.outputs.toolchain }}-${{ steps.xcode-compilation-cache.outputs.week }}
-          restore-keys: |
-            xcode-compilation-unit-tests-${{ runner.os }}-${{ runner.arch }}-${{ steps.xcode-compilation-cache.outputs.toolchain }}-
+          cache-name: unit-tests
 
       - name: Perform Unit Tests and Publish Test reports
         id: perform-tests

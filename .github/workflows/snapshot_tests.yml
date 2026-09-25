@@ -3,8 +3,6 @@ name: Snapshot Tests
 on:
   pull_request:
     branches: [main]
-  push:
-    branches: [dc-mob-4907-xcode-compilation-cache]
   workflow_dispatch:
 
 jobs:
@@ -61,19 +59,10 @@ jobs:
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
-      - name: Identify Xcode compilation cache generation
-        id: xcode-compilation-cache
-        run: |
-          echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
-          echo "toolchain=$(xcodebuild -version | shasum -a 256 | cut -c1-12)" >> "$GITHUB_OUTPUT"
-
-      - name: Restore Xcode compilation cache
-        uses: actions/cache@v4
+      - name: Xcode compilation cache
+        uses: ./.github/actions/xcode_compilation_cache
         with:
-          path: DerivedData/CompilationCache.noindex
-          key: xcode-compilation-snapshot-tests-${{ runner.os }}-${{ runner.arch }}-${{ steps.xcode-compilation-cache.outputs.toolchain }}-${{ steps.xcode-compilation-cache.outputs.week }}
-          restore-keys: |
-            xcode-compilation-snapshot-tests-${{ runner.os }}-${{ runner.arch }}-${{ steps.xcode-compilation-cache.outputs.toolchain }}-
+          cache-name: snapshot-tests
 
       - name: Perform Snapshot Tests and Publish Test reports
         id: perform-snapshot-tests

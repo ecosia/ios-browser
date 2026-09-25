@@ -34,4 +34,4 @@ jobs:
       - name: Check snapshot coverage documentation
         run: |
           ./generate_snapshot_coverage_docs.sh
-          git diff --exit-code -- firefox-ios/Ecosia/Ecosia.docc/SNAPSHOT_TESTING_WIKI.md
+          git diff --exit-code -- firefox-ios/Ecosia/Ecosia.docc/SNAPSHOT_COVERAGE_MAP.md
