@@ -348,5 +348,15 @@ extension String {
         case goToProvider = "Go to %@"
         case back = "Back"
         case createAccount = "Create account"
+
+        // App Icon Names
+        case appIconEcosiaLight = "Light"
+        case appIconEcosiaDark = "Dark"
+        case appIconEcosiaForest = "Forest"
+        case appIconEcosiaMushroom = "Mushroom"
+        case appIconEcosiaLeaf = "Leaf"
+        case appIconEcosiaWood = "Wood"
+        case appIconEcosiaSea = "Sea"
+        case appIconEcosiaMountain = "Mountain"
     }
 }

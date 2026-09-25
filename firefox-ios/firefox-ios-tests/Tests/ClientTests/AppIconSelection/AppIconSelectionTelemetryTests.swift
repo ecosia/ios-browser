@@ -19,6 +19,7 @@ final class AppIconSelectionTelemetryTests: XCTestCase {
         mockGleanWrapper = MockGleanWrapper()
     }
 
+    /* Ecosia: Disable test, we have our own icons (https://ecosia.atlassian.net/browse/MOB-3994)
     func testSelectedIcon_firesSelected() throws {
         // The event and event extras type under test
         let event = GleanMetrics.SettingsAppIcon.selected
@@ -45,6 +46,7 @@ final class AppIconSelectionTelemetryTests: XCTestCase {
         XCTAssertEqual(savedExtras.oldName, expectedOldAppIcon.telemetryName)
         XCTAssert(resultMetricType == expectedMetricType, debugMessage.text)
     }
+    */
 
     func createSubject() -> AppIconSelectionTelemetry {
         return AppIconSelectionTelemetry(gleanWrapper: mockGleanWrapper)
