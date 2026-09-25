@@ -110,6 +110,7 @@ mapfile -t shared_source_patterns <<< "$shared_source_output"
 snapshot_infrastructure_patterns=(
   ".github/actions/perform_snapshot_tests/**"
   ".github/actions/prepare_environment/**"
+  ".github/actions/xcode_compilation_cache/**"
   ".github/scripts/disable_nimbus_checksum_refresh.py"
   ".github/workflows/snapshot_tests.yml"
   "check_snapshot_updates.sh"
@@ -147,7 +148,7 @@ for file in "${changed_files[@]}"; do
      matches_any_pattern "$file" "${shared_source_patterns[@]}"; then
     should_run=true
     case "$file" in
-      *.swift|*.xcassets/*|*.xib|*.storyboard|*.strings|*.mp4|*.png|*.pdf|*.svg|*.json)
+      *.swift|*.xcassets/*|*.xib|*.storyboard|*.strings|*.stringsdict|*.mp4|*.png|*.pdf|*.svg|*.json)
         is_ui_change=true
         ui_changes+=("$file")
         ;;

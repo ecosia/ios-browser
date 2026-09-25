@@ -63,7 +63,7 @@
     {
       "area": "Pinned top site cell",
       "sources": [
-        "firefox-ios/Client/Frontend/Home/TopSites/**"
+        "firefox-ios/Client/Ecosia/Frontend/Home/TopSites/**"
       ],
       "snapshotTest": "HomepageComponentTests.testTopSiteItemCell_pinned",
       "localesThemes": "en, light + dark"
