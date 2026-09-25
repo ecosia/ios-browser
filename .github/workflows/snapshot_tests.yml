@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig'
+      - '.github/workflows/snapshot_tests.yml'
 
 jobs:
   execute_snapshot_tests:
@@ -16,10 +17,25 @@ jobs:
         uses: actions/checkout@v5
         with:
           lfs: true
-          submodules: true
           # Keep GITHUB_TOKEN out of .git/config, where later steps could read it.
-          # LFS and submodules are fetched by this step, while it still has auth.
           persist-credentials: false
+
+      # GITHUB_TOKEN can only read this repository, so the private SnapshotArtifacts submodule is
+      # fetched with a read-only deploy key registered on ecosia/ios-snapshot-tests-files.
+      - name: Checkout snapshot artifacts
+        env:
+          DEPLOY_KEY: ${{ secrets.SNAPSHOT_ARTIFACTS_DEPLOY_KEY }}
+        run: |
+          ssh_dir="$RUNNER_TEMP/snapshot-artifacts-ssh"
+          mkdir -p "$ssh_dir"
+          trap 'rm -rf "$ssh_dir"' EXIT
+          printf '%s\n' "$DEPLOY_KEY" > "$ssh_dir/key"
+          chmod 600 "$ssh_dir/key"
+          curl -fsSL --retry 3 https://api.github.com/meta \
+            | jq -r '.ssh_keys[] | "github.com " + .' > "$ssh_dir/known_hosts"
+          export GIT_SSH_COMMAND="ssh -i $ssh_dir/key -o IdentitiesOnly=yes -o UserKnownHostsFile=$ssh_dir/known_hosts -o StrictHostKeyChecking=yes"
+          git submodule update --init --depth=1 firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts
+          git -C firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts lfs pull
 
       - uses: ./.github/actions/setup-safe-chain
 
