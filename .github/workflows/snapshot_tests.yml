@@ -36,6 +36,10 @@ jobs:
           export GIT_SSH_COMMAND="ssh -i $ssh_dir/key -o IdentitiesOnly=yes -o UserKnownHostsFile=$ssh_dir/known_hosts -o StrictHostKeyChecking=yes"
           git submodule update --init --depth=1 firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts
           git -C firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts lfs pull
+          if git -C firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts lfs ls-files | grep -q ' - '; then
+            echo "Some snapshot references are still Git LFS pointers"
+            exit 1
+          fi
 
       - uses: ./.github/actions/setup-safe-chain
 
