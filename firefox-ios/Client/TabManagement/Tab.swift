@@ -662,6 +662,8 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
     func loadRequest(_ request: URLRequest) -> WKNavigation? {
         cancelTemporaryDocumentDownload(forceReload: false)
         if let webView = webView {
+            // Ecosia: NTP page-view equivalent — fire on homepage load, not appear
+            ecosiaTrackNTPPageViewIfNeeded(url: request.url)
             // Convert about:reader?url=http://example.com URLs to local ReaderMode URLs
             if let url = request.url,
                let syncedReaderModeURL = url.decodeReaderModeURL,

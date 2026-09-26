@@ -35,6 +35,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
         User.shared.analyticsId = savedAnalyticsId
         User.shared.sendAnonymousUsageData = savedSendAnonymousUsageData
         User.shared.cookieConsentValue = savedCookieConsentValue
+        Analytics.shared = Analytics()
         windowUUID = nil
         DependencyHelperMock().reset()
         super.tearDown()
@@ -173,6 +174,86 @@ final class TabEcosiaExtensionTests: XCTestCase {
         waitForExpectations(timeout: 10)
         XCTAssertEqual(spy.capturedURL?.queryItem(named: "_sp"),
                        UUID(uuid: UUID_NULL).uuidString)
+    }
+
+    // MARK: - NTP page view
+
+    func testNTPPageViewTracksAboutHomeURL() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+
+        tab.ecosiaTrackNTPPageViewIfNeeded(url: HomePanelType.topSites.internalUrl)
+
+        XCTAssertTrue(spy.ntpViewedCalled)
+    }
+
+    func testNTPPageViewDoesNotTrackSERP() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+
+        tab.ecosiaTrackNTPPageViewIfNeeded(url: ecosiaURL("/search?q=cats"))
+
+        XCTAssertFalse(spy.ntpViewedCalled)
+    }
+
+    func testNTPPageViewDoesNotTrackNilURL() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+
+        tab.ecosiaTrackNTPPageViewIfNeeded(url: nil)
+
+        XCTAssertFalse(spy.ntpViewedCalled)
+    }
+
+    func testLoadRequestTracksNTPPageViewForAboutHome() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+        tab.createWebview(configuration: WKWebViewConfiguration())
+
+        tab.loadRequest(URLRequest(url: HomePanelType.topSites.internalUrl))
+
+        XCTAssertTrue(spy.ntpViewedCalled)
+        tab.stop()
+    }
+
+    func testLoadRequestDoesNotTrackNTPPageViewWithoutWebView() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+
+        tab.loadRequest(URLRequest(url: HomePanelType.topSites.internalUrl))
+
+        XCTAssertFalse(spy.ntpViewedCalled)
+    }
+
+    func testLoadRequestDoesNotTrackNTPPageViewForSERP() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+        tab.createWebview(configuration: WKWebViewConfiguration())
+
+        tab.loadRequest(URLRequest(url: ecosiaURL("/search?q=cats&tt=iosapp")))
+
+        XCTAssertFalse(spy.ntpViewedCalled)
+        tab.stop()
+    }
+
+    func testReloadDoesNotTrackNTPPageView() {
+        // Firefox reloads homepage tabs on every select (FXIOS-10612), including
+        // opening the same NTP tab from the tab tray. Reload is not a page view.
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+        tab.createWebview(configuration: WKWebViewConfiguration())
+        tab.url = HomePanelType.topSites.internalUrl
+
+        tab.reload()
+
+        XCTAssertFalse(spy.ntpViewedCalled)
     }
 
     // MARK: - Helpers

@@ -3043,8 +3043,14 @@ class BrowserViewController: UIViewController,
             didTapOnForward()
             startNavigationButtonDoubleTapTimer()
         case .reloadNoCache:
+            // Ecosia: Toolbar NTP refresh is a page view. Do not hook `Tab.reload()` —
+            // homepage tabs also reload on every select (FXIOS-10612).
+            tabManager.selectedTab?.ecosiaTrackNTPPageViewIfNeeded(url: tabManager.selectedTab?.url)
             tabManager.selectedTab?.reload(bypassCache: true)
         case .reload:
+            // Ecosia: Toolbar NTP refresh is a page view. Do not hook `Tab.reload()` —
+            // homepage tabs also reload on every select (FXIOS-10612).
+            tabManager.selectedTab?.ecosiaTrackNTPPageViewIfNeeded(url: tabManager.selectedTab?.url)
             tabManager.selectedTab?.reload()
         case .stopLoading:
             tabManager.selectedTab?.stop()
