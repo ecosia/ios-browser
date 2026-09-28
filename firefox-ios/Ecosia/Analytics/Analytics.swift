@@ -226,10 +226,8 @@ open class Analytics {
 
     // MARK: NTP
     /// Structured-event stand-in for a Snowplow page view of the new-tab page.
-    /// Fire once per tab NTP load or reload (web `trackPageView()`), not when the
-    /// homepage merely becomes visible. iOS has no `page_view`, and screen-view
-    /// autotracking is off because Firefox's view-controller graph would flood
-    /// the pipeline.
+    /// iOS has no `page_view`, and screen-view autotracking is off because
+    /// Firefox's view-controller graph would flood the pipeline.
     public func ntpViewed() {
         track(Structured(category: Category.ntp.rawValue,
                          action: Action.view.rawValue))

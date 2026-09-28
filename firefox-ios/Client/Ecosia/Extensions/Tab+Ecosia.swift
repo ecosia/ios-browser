@@ -34,10 +34,11 @@ extension Tab {
         return updated
     }
 
-    /// Structured NTP page view on a real homepage load for this tab.
-    /// Matches web `trackPageView()`: first load and refresh, not become-visible.
-    /// Call from `loadRequest` and user toolbar reload only. Do not call from
-    /// `Tab.reload()`: Firefox reloads homepage tabs on every select (FXIOS-10612).
+    /// Structured NTP page view when this tab loads the homepage, matching web
+    /// `trackPageView()` on document load rather than on becoming visible.
+    /// Call from `loadRequest` only. Do not call from `Tab.reload()`: Firefox
+    /// reloads homepage tabs on every select (FXIOS-10612). Restored tabs load
+    /// through `restore(_:)`, not `loadRequest`, so they are not counted.
     func ecosiaTrackNTPPageViewIfNeeded(url: URL?) {
         guard let url, InternalURL(url)?.isAboutHomeURL == true else { return }
         Analytics.shared.ntpViewed()
