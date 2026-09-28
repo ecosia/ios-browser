@@ -207,38 +207,32 @@ public struct WelcomeView: View {
 
                     // Buttons
                     VStack {
-                        if AccountsDisabled.isActive {
-                            maybeLaterStyleButton(title: .localized(.getStarted)) {
-                                startExitAnimation()
+                        // Sign in button (primary style with icon)
+                        Button(action: {
+                            Analytics.shared.introWelcome(action: .click, property: .signIn)
+                            startExitAnimation(skipFinish: true) {
+                                onSignIn()
                             }
-                        } else {
-                            // Sign in button (primary style with icon)
-                            Button(action: {
-                                Analytics.shared.introWelcome(action: .click, property: .signIn)
-                                startExitAnimation(skipFinish: true) {
-                                    onSignIn()
-                                }
-                            }) {
-                                HStack(spacing: 8) {
-                                    Image.ecosia("sign-in")
-                                        .renderingMode(.template)
-                                        .foregroundColor(theme.buttonTextColor)
-                                        .accessibilityHidden(true)
-                                    Text(verbatim: .localized(.signIn))
-                                }
-                                .font(.body)
-                                .foregroundColor(theme.buttonTextColor)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: UX.buttonHeight)
-                                .background(theme.buttonBackgroundColor)
-                                .cornerRadius(UX.buttonCornerRadius)
+                        }) {
+                            HStack(spacing: 8) {
+                                Image.ecosia("sign-in")
+                                    .renderingMode(.template)
+                                    .foregroundColor(theme.buttonTextColor)
+                                    .accessibilityHidden(true)
+                                Text(verbatim: .localized(.signIn))
                             }
+                            .font(.body)
+                            .foregroundColor(theme.buttonTextColor)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: UX.buttonHeight)
+                            .background(theme.buttonBackgroundColor)
+                            .cornerRadius(UX.buttonCornerRadius)
+                        }
 
-                            // Maybe later button (outlined style)
-                            maybeLaterStyleButton(title: .localized(.maybeLater)) {
-                                Analytics.shared.introWelcome(action: .click, property: .maybeLater)
-                                startExitAnimation()
-                            }
+                        // Maybe later button (outlined style)
+                        maybeLaterStyleButton(title: .localized(.maybeLater)) {
+                            Analytics.shared.introWelcome(action: .click, property: .maybeLater)
+                            startExitAnimation()
                         }
                     }
                     .padding(.top, UX.bottomGradientTopOffset)
@@ -491,9 +485,8 @@ extension WelcomeView {
 
     // Bottom gradient extends from above the buttons down to the bottom of the screen
     private var bottomGradientHeight: CGFloat {
-        // Covers the button area plus padding plus safe area
-        let buttonCount = AccountsDisabled.isActive ? 1 : 2
-        let buttonsHeight = UX.buttonHeight * CGFloat(buttonCount) + UX.contentPadding
+        // Covers the sign in and maybe later buttons plus padding plus safe area
+        let buttonsHeight = UX.buttonHeight * 2 + UX.contentPadding
         return buttonsHeight + UX.bottomGradientTopOffset + UX.contentPadding + safeAreaBottom
     }
 }
