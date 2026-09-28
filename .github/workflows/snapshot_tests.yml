@@ -25,14 +25,19 @@ jobs:
       - name: Checkout snapshot artifacts
         env:
           DEPLOY_KEY: ${{ secrets.SNAPSHOT_ARTIFACTS_DEPLOY_KEY }}
+          # Unauthenticated API calls share a per-IP rate limit with other jobs on the same runner.
+          GH_TOKEN: ${{ github.token }}
         run: |
           ssh_dir="$RUNNER_TEMP/snapshot-artifacts-ssh"
           mkdir -p "$ssh_dir"
           trap 'rm -rf "$ssh_dir"' EXIT
           printf '%s\n' "$DEPLOY_KEY" > "$ssh_dir/key"
           chmod 600 "$ssh_dir/key"
-          curl -fsSL --retry 3 https://api.github.com/meta \
-            | jq -r '.ssh_keys[] | "github.com " + .' > "$ssh_dir/known_hosts"
+          gh api meta --jq '.ssh_keys[] | "github.com " + .' > "$ssh_dir/known_hosts"
+          if [ ! -s "$ssh_dir/known_hosts" ]; then
+            echo "Could not fetch GitHub's SSH host keys"
+            exit 1
+          fi
           export GIT_SSH_COMMAND="ssh -i $ssh_dir/key -o IdentitiesOnly=yes -o UserKnownHostsFile=$ssh_dir/known_hosts -o StrictHostKeyChecking=yes"
           git submodule update --init --depth=1 firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts
           git -C firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts lfs pull
