@@ -287,6 +287,20 @@ We manage translations using [Transifex](https://docs.transifex.com/client/intro
    - The engineer who added the initial source strings should monitor, review, and merge this PR.
    - Translation completeness is also surfaced on the release PR via a non-blocking CI check.
 
+### Fallback: English source changed on Transifex
+
+The GitHub integration only syncs English from the repo to Transifex, never back. If someone edits an English string directly on Transifex, bring it into the codebase before the next English change on `main` overwrites it.
+
+**Optional setup:** install the [Transifex CLI](https://developers.transifex.com/docs/cli) (`brew install transifex-cli`) and get the API token from Bitwarden under "[iOS Dev] Transifex API token". Either export it as `TX_TOKEN` in your shell profile or prepend it to the command. Never commit it.
+
+Pull the English source files (paths are defined in `.tx/config`) and open a PR with the diff:
+
+```bash
+# From the repository root
+TX_TOKEN="xxx" tx pull --source --force 'ecosia-ios-search-app.*'
+git diff firefox-ios/Ecosia/L10N/en.lproj
+```
+
 ### Ecosify Mozilla Strings (only needed after upgrade)
 
 We do a rebrand of the Strings from Mozilla. Usually this step is only needed after an upgrade as we keep our changes in version control (as of opposite to Mozilla).
@@ -320,7 +334,7 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 
 ### Add language translations
 
-- Make sure that all languages are translated in the transifex [web interface](https://app.transifex.com/ecosia/ecosia-ios-search-app/release_notestxt/) and found their way to `main`
+- Make sure that all languages are translated in the transifex [web interface](https://app.transifex.com/ecosia/ecosia-ios-release-notes/) and found their way to `main`
 
 - Verify the translations in the Transifex-made PR
 

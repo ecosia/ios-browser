@@ -1,7 +1,7 @@
 [main]
 host = https://www.transifex.com
 
-[o:ecosia:p:ecosia-ios-search-app:r:release_notestxt]
+[o:ecosia:p:ecosia-ios-release-notes:r:51e54bd291e981c90c0c0a3be4edcece]
 source_file = fastlane/metadata/en-US/release_notes.txt
 file_filter = fastlane/metadata/<lang>/release_notes.txt
 source_lang = en
@@ -12,25 +12,25 @@ trans.nl    = fastlane/metadata/nl-NL/release_notes.txt
 trans.de    = fastlane/metadata/de-DE/release_notes.txt
 trans.es    = fastlane/metadata/es-ES/release_notes.txt
 
-[o:ecosia:p:ecosia-ios-search-app:r:ecosiastrings]
-source_file = Client/Ecosia/L10N/en.lproj/Ecosia.strings
-file_filter = Client/Ecosia/L10N/<lang>.lproj/Ecosia.strings
+[o:ecosia:p:ecosia-ios-search-app:r:8cf4df88cec42f0996d9b3affaece5f9]
+source_file = firefox-ios/Ecosia/L10N/en.lproj/Ecosia.strings
+file_filter = firefox-ios/Ecosia/L10N/<lang>.lproj/Ecosia.strings
 source_lang = en
 type        = STRINGS
-trans.de    = Client/Ecosia/L10N/de.lproj/Ecosia.strings
-trans.es    = Client/Ecosia/L10N/es.lproj/Ecosia.strings
-trans.fr    = Client/Ecosia/L10N/fr.lproj/Ecosia.strings
-trans.it    = Client/Ecosia/L10N/it.lproj/Ecosia.strings
-trans.nl    = Client/Ecosia/L10N/nl.lproj/Ecosia.strings
+trans.de    = firefox-ios/Ecosia/L10N/de.lproj/Ecosia.strings
+trans.es    = firefox-ios/Ecosia/L10N/es.lproj/Ecosia.strings
+trans.fr    = firefox-ios/Ecosia/L10N/fr.lproj/Ecosia.strings
+trans.it    = firefox-ios/Ecosia/L10N/it.lproj/Ecosia.strings
+trans.nl    = firefox-ios/Ecosia/L10N/nl.lproj/Ecosia.strings
 
-[o:ecosia:p:ecosia-ios-search-app:r:pluralsstringsdict]
-source_file = Client/Ecosia/L10N/en.lproj/Plurals.stringsdict
-file_filter = Client/Ecosia/L10N/<lang>.lproj/Plurals.strings
+[o:ecosia:p:ecosia-ios-search-app:r:495b27ca5a6174447f51a86e6df9ebc7]
+source_file = firefox-ios/Ecosia/L10N/en.lproj/Plurals.stringsdict
+file_filter = firefox-ios/Ecosia/L10N/<lang>.lproj/Plurals.stringsdict
 source_lang = en
 type        = STRINGSDICT
-trans.de    = Client/Ecosia/L10N/de.lproj/Plurals.stringsdict
-trans.es    = Client/Ecosia/L10N/es.lproj/Plurals.stringsdict
-trans.fr    = Client/Ecosia/L10N/fr.lproj/Plurals.stringsdict
-trans.it    = Client/Ecosia/L10N/it.lproj/Plurals.stringsdict
-trans.nl    = Client/Ecosia/L10N/nl.lproj/Plurals.stringsdict
+trans.de    = firefox-ios/Ecosia/L10N/de.lproj/Plurals.stringsdict
+trans.es    = firefox-ios/Ecosia/L10N/es.lproj/Plurals.stringsdict
+trans.fr    = firefox-ios/Ecosia/L10N/fr.lproj/Plurals.stringsdict
+trans.it    = firefox-ios/Ecosia/L10N/it.lproj/Plurals.stringsdict
+trans.nl    = firefox-ios/Ecosia/L10N/nl.lproj/Plurals.stringsdict
 
