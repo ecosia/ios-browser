@@ -26,8 +26,10 @@ final class InvisibleTabSession: TabEventHandler {
     // runs, so tab.webView?.url would read back nil there.
     private var lastKnownURL: URL?
     private var urlObservation: NSKeyValueObservation?
-    private var loadingObservation: NSKeyValueObservation?
-    private var landingMonitor: InvisibleTabLandingMonitor?
+    private var pendingLandingClose: Task<Void, Never>?
+
+    /// Grace period after a page finishes, so a JS or form-post redirect can start the next load before we close
+    private static let landingSettleDelay: TimeInterval = 0.5
 
     // MARK: - Initialization
 
@@ -49,25 +51,12 @@ final class InvisibleTabSession: TabEventHandler {
 
         EcosiaLogger.invisibleTabs.info("InvisibleTabSession created for: \(url)")
 
-        let tabUUID = tab.tabUUID
-        landingMonitor = InvisibleTabLandingMonitor(startURL: url, urlProvider: urlProvider) { landedURL in
-            EcosiaLogger.invisibleTabs.info("Invisible tab landed on: \(landedURL.redactedForLogging)")
-            InvisibleTabAutoCloseManager.shared.closeTrackedTab(tabUUID)
-        }
-
         // Ecosia: Attach as early as possible (not in startMonitoring) to avoid missing a fast
         // redirect chain that finishes before monitoring starts.
         urlObservation = tab.webView?.observe(\.url, options: [.initial, .new]) { [weak self] _, change in
             guard let newURL = change.newValue ?? nil else { return }
             Task { @MainActor in
                 self?.lastKnownURL = newURL
-                self?.landingMonitor?.urlChanged(to: newURL)
-            }
-        }
-        loadingObservation = tab.webView?.observe(\.isLoading, options: [.new]) { [weak self] _, change in
-            let isLoading = change.newValue ?? false
-            Task { @MainActor in
-                self?.landingMonitor?.loadingChanged(isLoading: isLoading)
             }
         }
     }
@@ -131,9 +120,36 @@ final class InvisibleTabSession: TabEventHandler {
                 on: .EcosiaAuthStateChanged,
                 timeout: timeout
             )
-            register(self, forTabEvents: .didClose)
-            landingMonitor?.start(isLoading: tab.isLoading)
+            // One call for both events: a second register call on the same object drops the first one's observers
+            register(self, forTabEvents: .didClose, .didChangeURL)
+            if !tab.isLoading, let lastKnownURL {
+                scheduleCloseIfLanded(on: lastKnownURL)
+            }
         }
+    }
+
+    private func scheduleCloseIfLanded(on url: URL) {
+        pendingLandingClose?.cancel()
+        pendingLandingClose = nil
+
+        guard !isCompleted, Self.hasLanded(on: url, from: self.url, urlProvider: urlProvider) else { return }
+
+        let tabUUID = tab.tabUUID
+        pendingLandingClose = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(Self.landingSettleDelay * 1_000_000_000))
+            guard let self, !Task.isCancelled, !self.tab.isLoading else { return }
+            EcosiaLogger.invisibleTabs.info("Invisible tab landed on: \(url.redactedForLogging)")
+            InvisibleTabAutoCloseManager.shared.closeTrackedTab(tabUUID)
+        }
+    }
+
+    /// Done once resting on an error page, or a www page other than the start page; Auth0 hops happen on another host.
+    /// Sign-in is excluded because it can hand off to Auth0 client-side, so a pause there isn't final.
+    static func hasLanded(on currentURL: URL, from startURL: URL, urlProvider: URLProvider) -> Bool {
+        guard currentURL.host == urlProvider.root.host else { return false }
+        let path = currentURL.path.lowercased()
+        if urlProvider.errorPaths.contains(where: { $0.lowercased() == path }) { return true }
+        return path != startURL.path.lowercased() && !path.hasPrefix(urlProvider.signInURL.path.lowercased())
     }
 
     private func handleTabClosed() {
@@ -174,8 +190,8 @@ final class InvisibleTabSession: TabEventHandler {
     }
 
     private func cleanup() {
-        landingMonitor?.stop()
-        loadingObservation = nil
+        pendingLandingClose?.cancel()
+        pendingLandingClose = nil
         Task { @MainActor in
             InvisibleTabAutoCloseManager.shared.cancelAutoCloseForTab(tab.tabUUID)
         }
@@ -202,6 +218,12 @@ final class InvisibleTabSession: TabEventHandler {
     var tabEventWindowResponseType: TabEventHandlerWindowResponseType {
         // Only respond to events for the specific window this session belongs to
         return .singleWindow(browserViewController?.tabManager.windowUUID ?? WindowUUID.unavailable)
+    }
+
+    /// Posted when a page finishes loading, and on title or same-origin URL changes
+    func tab(_ tab: Tab, didChangeURL url: URL) {
+        guard tab.tabUUID == self.tab.tabUUID else { return }
+        scheduleCloseIfLanded(on: url)
     }
 
     func tabDidClose(_ tab: Tab) {
