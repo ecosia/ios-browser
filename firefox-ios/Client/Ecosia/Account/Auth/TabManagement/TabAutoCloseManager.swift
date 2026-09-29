@@ -44,6 +44,9 @@ final class InvisibleTabAutoCloseManager {
     /// Ecosia: Single observer for TabEvent.didChangeURL (replaces .OnLocationChange); nil until first setup
     private var didChangeURLObserver: NSObjectProtocol?
 
+    /// UUIDs of leaked invisible tabs already reported, so each leak is only sent once
+    private var reportedLeakedTabUUIDs: Set<TabUUID> = []
+
     // MARK: - Initialization
 
     /// Private initializer to enforce singleton pattern
@@ -196,7 +199,31 @@ final class InvisibleTabAutoCloseManager {
         tabManager.removeTab(tab.tabUUID)
         selectAppropriateTabAfterRemoval(tabManager: tabManager)
         tabManager.cleanupInvisibleTabTracking()
+
+        if tabManager.tabs.contains(where: { $0.tabUUID == tabUUID }) {
+            EcosiaLogger.invisibleTabs.sentry("Invisible tab was not destroyed after removeTab: \(tabUUID)")
+            return
+        }
         EcosiaLogger.invisibleTabs.info("Tab closed successfully: \(tabUUID)")
+    }
+
+    // MARK: - Leak Detection
+
+    /// Reports invisible tabs that are no longer tracked for auto-close, i.e. their session ended without destroying them.
+    /// Invisibility is only held in memory, so such a tab would be persisted and restored as a regular tab on next launch.
+    /// - Parameter tabManager: Tab manager whose tabs to inspect
+    func reportLeakedInvisibleTabs(in tabManager: TabManager) {
+        let trackedTabUUIDs = Set(trackedTabUUIDs)
+        let leakedTabs = tabManager.invisibleTabs.filter {
+            !trackedTabUUIDs.contains($0.tabUUID) && !reportedLeakedTabUUIDs.contains($0.tabUUID)
+        }
+
+        for tab in leakedTabs {
+            reportedLeakedTabUUIDs.insert(tab.tabUUID)
+            EcosiaLogger.invisibleTabs.sentry(
+                "Invisible tab was not destroyed: \(tab.tabUUID), url: \(tab.url?.redactedForLogging ?? "nil")"
+            )
+        }
     }
 
     /// Selects an appropriate tab after removal if no tab is currently selected

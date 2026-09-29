@@ -1263,6 +1263,8 @@ extension TabManagerImplementation: Notifiable {
         ensureMainThread {
             switch name {
             case UIApplication.willResignActiveNotification:
+                // Ecosia: Report invisible tabs left behind by auth flows before they're persisted as regular tabs
+                InvisibleTabAutoCloseManager.shared.reportLeakedInvisibleTabs(in: self)
                 self.saveAllTabData()
             case .TabMimeTypeDidSet:
                 guard self.windowUUID == notificationWindowUUID else { return }
