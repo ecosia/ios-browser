@@ -213,7 +213,7 @@ final class InvisibleTabAutoCloseManager {
     /// Invisibility is only held in memory, so such a tab would be persisted and restored as a regular tab on next launch.
     /// - Parameter tabManager: Tab manager whose tabs to inspect
     func reportLeakedInvisibleTabs(in tabManager: TabManager) {
-        let trackedTabUUIDs = Set(trackedTabUUIDs)
+let trackedTabUUIDs = Set(self.trackedTabUUIDs)
         let leakedTabs = tabManager.invisibleTabs.filter {
             !trackedTabUUIDs.contains($0.tabUUID) && !reportedLeakedTabUUIDs.contains($0.tabUUID)
         }
