@@ -30,7 +30,8 @@ elif [ -n "$GITHUB_ACTIONS" ]; then
   echo "Running on GitHub Actions, checking against the main branch"
   
   # Fetch the main branch
-  git fetch origin main || { echo "Failed to fetch main branch"; exit 1; }
+  # The SnapshotArtifacts submodule needs separate credentials and is not needed for this comparison.
+  git fetch --no-recurse-submodules origin main || { echo "Failed to fetch main branch"; exit 1; }
 
   # Get the MARKETING_VERSION from the main branch
   OLD_VERSION=$(git show origin/main:firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig | grep 'MARKETING_VERSION' | cut -d ' ' -f3)
