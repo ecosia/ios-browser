@@ -79,7 +79,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     /// Loads AI Chat seeded with the typed message and tagged with the active
-    /// chat mode's backend flags (see `OmniboxChatMode.aiChatQueryItems`).
+    /// chat mode's `mode` parameter (see `OmniboxChatMode.aiChatQueryItems`).
     private func submitOmniboxChatMode(_ mode: OmniboxChatMode,
                                        query: String,
                                        chatFiles: [AIChatFileQuery] = [],
