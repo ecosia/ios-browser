@@ -165,10 +165,7 @@ public extension OmniboxChatMode {
 
     /// Omnibox placeholder while this mode is active, or `nil` to keep the default.
     var placeholder: String? {
-        switch self {
-        case .generateImage: return .localized(.chatModeGenerateImagePlaceholder)
-        case .standard, .thinkLonger, .displaySources, .learning: return nil
-        }
+        .generateImage == self ? .localized(.chatModeGenerateImagePlaceholder) : nil
     }
 
     /// Modes offered for `provider`. Conversational providers have no separate
