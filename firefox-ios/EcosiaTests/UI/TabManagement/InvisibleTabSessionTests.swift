@@ -11,7 +11,6 @@ import Common
 @MainActor
 final class InvisibleTabSessionTests: XCTestCase {
 
-    private let urlProvider: URLProvider = .production
     private let settleDelay: TimeInterval = 0.05
     private var tabManager: TabAutoCloseTestMockTabManager!
     private var browserViewController: BrowserViewController!
@@ -79,6 +78,15 @@ final class InvisibleTabSessionTests: XCTestCase {
         XCTAssertTrue(tabManager.tabs.contains(tab), "Only a landed page should close the tab")
     }
 
+    func testErrorPageClosesTabEvenWhenItIsTheStartPage() async throws {
+        let errorURL = sessionURLProvider.root.appendingPathComponent("accounts/error")
+        let tab = try await startSession(url: errorURL)
+
+        TabEvent.post(.didChangeURL(errorURL), for: tab)
+
+        try await waitUntil { !self.tabManager.tabs.contains(tab) }
+    }
+
     func testLandedPageInOtherTabDoesNotCloseSessionTab() async throws {
         let tab = try await startSession()
         let otherTab = Client.Tab(profile: MockProfile(), windowUUID: tabManager.windowUUID)
@@ -89,41 +97,6 @@ final class InvisibleTabSessionTests: XCTestCase {
         XCTAssertTrue(tabManager.tabs.contains(tab), "Another tab's page should not close the session's tab")
     }
 
-    // MARK: - Landed Pages
-
-    func testHasLandedOnWwwPageOtherThanStart() {
-        XCTAssertTrue(hasLanded(on: "https://www.ecosia.org/", from: urlProvider.signUpURL))
-        XCTAssertTrue(hasLanded(on: "https://www.ecosia.org/accounts/profile", from: urlProvider.logoutURL))
-    }
-
-    func testHasLandedOnErrorPage() {
-        XCTAssertTrue(hasLanded(on: "https://www.ecosia.org/accounts/error", from: urlProvider.signUpURL))
-    }
-
-    func testHasLandedOnErrorPageThatIsAlsoTheStartPage() {
-        let errorURL = URL(string: "https://www.ecosia.org/accounts/error")!
-        XCTAssertTrue(InvisibleTabSession.hasLanded(on: errorURL, from: errorURL, urlProvider: urlProvider))
-    }
-
-    func testHasNotLandedOnSignIn() {
-        XCTAssertFalse(hasLanded(on: "https://www.ecosia.org/accounts/sign-in", from: urlProvider.signUpURL))
-        XCTAssertFalse(hasLanded(on: "https://www.ecosia.org/accounts/sign-in?returnTo=x", from: urlProvider.logoutURL))
-    }
-
-    func testHasNotLandedOnStartPage() {
-        XCTAssertFalse(hasLanded(on: urlProvider.signUpURL.absoluteString, from: urlProvider.signUpURL))
-        XCTAssertFalse(hasLanded(on: "https://www.ecosia.org/accounts/sign-out?x=1", from: urlProvider.logoutURL))
-    }
-
-    func testHasNotLandedOnAuth0Host() {
-        XCTAssertFalse(hasLanded(on: "https://login.ecosia.org/authorize", from: urlProvider.signUpURL))
-        XCTAssertFalse(hasLanded(on: "https://login.ecosia.org/v2/logout", from: urlProvider.logoutURL))
-    }
-
-    func testHasNotLandedOnOtherHost() {
-        XCTAssertFalse(hasLanded(on: "https://example.com/", from: urlProvider.signUpURL))
-    }
-
     // MARK: - Helpers
 
     /// The session classifies URLs with the current environment's provider, so its events must use the same one
@@ -131,9 +104,9 @@ final class InvisibleTabSessionTests: XCTestCase {
     private var landedURL: URL { sessionURLProvider.root }
     private var auth0URL: URL { URL(string: "https://\(sessionURLProvider.auth0Domain)/authorize")! }
 
-    /// Starts a session on the sign-up URL and returns its tab once monitoring is set up
-    private func startSession() async throws -> Client.Tab {
-        let session = try InvisibleTabSession(url: sessionURLProvider.signUpURL,
+    /// Starts a session and returns its tab once monitoring is set up
+    private func startSession(url: URL? = nil) async throws -> Client.Tab {
+        let session = try InvisibleTabSession(url: url ?? sessionURLProvider.signUpURL,
                                               browserViewController: browserViewController,
                                               timeout: 10.0,
                                               landingSettleDelay: settleDelay)
@@ -157,14 +130,6 @@ final class InvisibleTabSessionTests: XCTestCase {
             }
             try await Task.sleep(nanoseconds: 10_000_000)
         }
-    }
-
-    private func hasLanded(on urlString: String, from startURL: URL) -> Bool {
-        guard let url = URL(string: urlString) else {
-            XCTFail("Invalid URL: \(urlString)")
-            return false
-        }
-        return InvisibleTabSession.hasLanded(on: url, from: startURL, urlProvider: urlProvider)
     }
 }
 // swiftlint:enable implicitly_unwrapped_optional

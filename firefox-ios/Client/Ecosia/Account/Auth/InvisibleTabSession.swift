@@ -134,7 +134,11 @@ final class InvisibleTabSession: TabEventHandler {
         pendingLandingClose?.cancel()
         pendingLandingClose = nil
 
-        guard !isCompleted, Self.hasLanded(on: url, from: self.url, urlProvider: urlProvider) else { return }
+        // Auth0 hops happen on another host, and sign-in can still hand off to Auth0 client-side
+        let isSignIn = EcosiaURLInterceptor(urlProvider: urlProvider).interceptedType(for: url) == .signIn
+        let hasLanded = url.host == urlProvider.root.host
+            && (url.isEcosiaErrorPage(urlProvider) || (url.path.lowercased() != self.url.path.lowercased() && !isSignIn))
+        guard !isCompleted, hasLanded else { return }
 
         let tabUUID = tab.tabUUID
         let landingSettleDelay = landingSettleDelay
@@ -144,15 +148,6 @@ final class InvisibleTabSession: TabEventHandler {
             EcosiaLogger.invisibleTabs.info("Invisible tab landed on: \(url.redactedForLogging)")
             InvisibleTabAutoCloseManager.shared.closeTrackedTab(tabUUID)
         }
-    }
-
-    /// Done once resting on an error page, or a www page other than the start page; Auth0 hops happen on another host.
-    /// Sign-in is excluded because it can hand off to Auth0 client-side, so a pause there isn't final.
-    static func hasLanded(on currentURL: URL, from startURL: URL, urlProvider: URLProvider) -> Bool {
-        guard currentURL.host == urlProvider.root.host else { return false }
-        let path = currentURL.path.lowercased()
-        if urlProvider.errorPaths.contains(where: { $0.lowercased() == path }) { return true }
-        return path != startURL.path.lowercased() && !path.hasPrefix(urlProvider.signInURL.path.lowercased())
     }
 
     private func handleTabClosed() {
@@ -182,10 +177,9 @@ final class InvisibleTabSession: TabEventHandler {
         guard let finalURL = lastKnownURL, finalURL.isEcosia(urlProvider) else { return true }
 
         let path = finalURL.path.lowercased()
-        let errorPaths = urlProvider.errorPaths.map { $0.lowercased() }
         let signInPath = urlProvider.signInURL.relativePath.lowercased()
 
-        return !(errorPaths.contains(path) || path.hasPrefix(signInPath))
+        return !(finalURL.isEcosiaErrorPage(urlProvider) || path.hasPrefix(signInPath))
     }
 
     private var urlProvider: URLProvider {
