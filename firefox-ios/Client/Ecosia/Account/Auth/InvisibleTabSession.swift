@@ -16,6 +16,7 @@ final class InvisibleTabSession: TabEventHandler {
     private let tab: Tab
     private let url: URL
     private let timeout: TimeInterval
+    private let landingSettleDelay: TimeInterval
     private weak var browserViewController: BrowserViewController?
 
     // State
@@ -28,9 +29,6 @@ final class InvisibleTabSession: TabEventHandler {
     private var urlObservation: NSKeyValueObservation?
     private var pendingLandingClose: Task<Void, Never>?
 
-    /// Grace period after a page finishes, so a JS or form-post redirect can start the next load before we close
-    private static let landingSettleDelay: TimeInterval = 0.5
-
     // MARK: - Initialization
 
     /// Creates an invisible tab session
@@ -38,12 +36,16 @@ final class InvisibleTabSession: TabEventHandler {
     ///   - url: URL to load in the tab
     ///   - browserViewController: Browser view controller for tab operations
     ///   - timeout: Fallback timeout for completion
+    ///   - landingSettleDelay: Grace period after a page finishes, so a JS or form-post redirect
+    ///     can start the next load before we close
     init(url: URL,
          browserViewController: BrowserViewController,
-         timeout: TimeInterval = 10.0) throws {
+         timeout: TimeInterval = 10.0,
+         landingSettleDelay: TimeInterval = 0.5) throws {
         self.url = url
         self.browserViewController = browserViewController
         self.timeout = timeout
+        self.landingSettleDelay = landingSettleDelay
 
         // Create the tab immediately
         self.tab = try Self.createInvisibleTab(url: url, browserViewController: browserViewController)
@@ -135,8 +137,9 @@ final class InvisibleTabSession: TabEventHandler {
         guard !isCompleted, Self.hasLanded(on: url, from: self.url, urlProvider: urlProvider) else { return }
 
         let tabUUID = tab.tabUUID
+        let landingSettleDelay = landingSettleDelay
         pendingLandingClose = Task { @MainActor [weak self] in
-            try? await Task.sleep(nanoseconds: UInt64(Self.landingSettleDelay * 1_000_000_000))
+            try? await Task.sleep(nanoseconds: UInt64(landingSettleDelay * 1_000_000_000))
             guard let self, !Task.isCancelled, !self.tab.isLoading else { return }
             EcosiaLogger.invisibleTabs.info("Invisible tab landed on: \(url.redactedForLogging)")
             InvisibleTabAutoCloseManager.shared.closeTrackedTab(tabUUID)
