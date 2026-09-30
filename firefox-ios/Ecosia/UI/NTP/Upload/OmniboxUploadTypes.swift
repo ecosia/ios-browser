@@ -136,18 +136,18 @@ public extension OmniboxChatMode {
         }
     }
 
-    /// Extra query items appended to the AI Chat URL so the backend opens the
+    /// Extra query items appended to the AI Chat URL so it opens the
     /// conversation in this mode. `standard` carries none (plain `/ai-chat`);
-    /// the others map to the agreed backend flags:
-    /// Think longer → `t=1`, Generate images → `mode=generate_image`,
-    /// Display sources → `m=2`, Learning → `m=1`.
+    /// the others set AI Chat's `mode` parameter, matching the web omnibox:
+    /// Think longer → `mode=think_longer`, Display sources → `mode=web_search`,
+    /// Learning → `mode=guided_learning`.
     var aiChatQueryItems: [URLQueryItem] {
         switch self {
         case .standard: return []
-        case .thinkLonger: return [URLQueryItem(name: "t", value: "1")]
+        case .thinkLonger: return [URLQueryItem(name: "mode", value: "think_longer")]
         case .generateImage: return [URLQueryItem(name: "mode", value: "generate_image")]
-        case .displaySources: return [URLQueryItem(name: "m", value: "2")]
-        case .learning: return [URLQueryItem(name: "m", value: "1")]
+        case .displaySources: return [URLQueryItem(name: "mode", value: "web_search")]
+        case .learning: return [URLQueryItem(name: "mode", value: "guided_learning")]
         }
     }
 

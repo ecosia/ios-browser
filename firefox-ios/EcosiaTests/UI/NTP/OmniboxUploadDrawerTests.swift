@@ -74,16 +74,16 @@ final class OmniboxUploadDrawerTests: XCTestCase {
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-learning"))
     }
 
-    func testChatModeAIChatQueryItemsMapToBackendFlags() {
+    func testChatModeAIChatQueryItemsMapToModeParameter() {
         XCTAssertTrue(OmniboxChatMode.standard.aiChatQueryItems.isEmpty)
         XCTAssertEqual(OmniboxChatMode.thinkLonger.aiChatQueryItems,
-                       [URLQueryItem(name: "t", value: "1")])
+                       [URLQueryItem(name: "mode", value: "think_longer")])
         XCTAssertEqual(OmniboxChatMode.generateImage.aiChatQueryItems,
                        [URLQueryItem(name: "mode", value: "generate_image")])
         XCTAssertEqual(OmniboxChatMode.displaySources.aiChatQueryItems,
-                       [URLQueryItem(name: "m", value: "2")])
+                       [URLQueryItem(name: "mode", value: "web_search")])
         XCTAssertEqual(OmniboxChatMode.learning.aiChatQueryItems,
-                       [URLQueryItem(name: "m", value: "1")])
+                       [URLQueryItem(name: "mode", value: "guided_learning")])
     }
 
     func testAIChatURLCarriesChatModeQueryItems() {
@@ -94,14 +94,25 @@ final class OmniboxUploadDrawerTests: XCTestCase {
                                           additionalQueryItems: OmniboxChatMode.standard.aiChatQueryItems)
         let standardItems = URLComponents(url: standardURL, resolvingAgainstBaseURL: false)?.queryItems ?? []
         XCTAssertTrue(standardURL.path.hasSuffix("/ai-chat"))
-        XCTAssertFalse(standardItems.contains { $0.name == "t" || $0.name == "m" })
+        XCTAssertFalse(standardItems.contains { ["mode", "t", "m"].contains($0.name) })
 
-        let learningURL = provider.aiChat(origin: .omnibox,
-                                          query: "hello",
-                                          additionalQueryItems: OmniboxChatMode.learning.aiChatQueryItems)
-        let learningItems = URLComponents(url: learningURL, resolvingAgainstBaseURL: false)?.queryItems ?? []
-        XCTAssertTrue(learningItems.contains(URLQueryItem(name: "m", value: "1")))
-        XCTAssertTrue(learningItems.contains(URLQueryItem(name: "q", value: "hello")))
+        let expectedModes: [OmniboxChatMode: String] = [
+            .thinkLonger: "think_longer",
+            .displaySources: "web_search",
+            .learning: "guided_learning"
+        ]
+        let origin = URLQueryItem(name: "origin", value: URLProvider.AIChatOrigin.omnibox.rawValue)
+        for (mode, value) in expectedModes {
+            let url = provider.aiChat(origin: .omnibox,
+                                      query: "hello",
+                                      additionalQueryItems: mode.aiChatQueryItems)
+            let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+            XCTAssertTrue(url.path.hasSuffix("/ai-chat"), "\(mode)")
+            XCTAssertTrue(items.contains(URLQueryItem(name: "mode", value: value)), "\(mode)")
+            XCTAssertTrue(items.contains(URLQueryItem(name: "q", value: "hello")), "\(mode)")
+            XCTAssertTrue(items.contains(origin), "\(mode)")
+            XCTAssertFalse(items.contains { $0.name == "t" || $0.name == "m" }, "\(mode)")
+        }
     }
 
     func testAIChatURLCarriesChatModeQueryItemsAndFiles() throws {
@@ -125,7 +136,8 @@ final class OmniboxUploadDrawerTests: XCTestCase {
         )
 
         XCTAssertEqual(items["q"], "summarize this")
-        XCTAssertEqual(items["m"], "1")
+        XCTAssertEqual(items["mode"], "guided_learning")
+        XCTAssertEqual(items["origin"], URLProvider.AIChatOrigin.omnibox.rawValue)
         XCTAssertNotNil(items["files"])
     }
 }

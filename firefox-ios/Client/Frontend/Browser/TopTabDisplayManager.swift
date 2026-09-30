@@ -616,7 +616,10 @@ extension TopTabDisplayManager: TabManagerDelegate {
             return
         }
 
+        /* Ecosia: invisible auth tabs never belong in the tab strip
         guard tab.isPrivate == self.isPrivate else { return }
+         */
+        guard tab.isPrivate == self.isPrivate, !tab.isInvisible else { return }
 
         updateWith(animationType: .addTab) { [unowned self] in
             let indexToPlaceTab = getIndexToPlaceTab(placeNextToParentTab: placeNextToParentTab)
