@@ -142,12 +142,15 @@ final class InvisibleTabSession: TabEventHandler {
         guard pageURL.host == urlProvider.root.host else { return }
 
         // An error page ends the flow, even when the session started on it
-        let isErrorPage = pageURL.isEcosiaErrorPage(urlProvider)
-        // The start page is still handing off to Auth0
-        let hasLeftStartPage = pageURL.path.lowercased() != startURL.path.lowercased()
-        // Sign-in can still hand off to Auth0 client-side
-        let isSignIn = EcosiaURLInterceptor(urlProvider: urlProvider).interceptedType(for: pageURL) == .signIn
-        guard isErrorPage || (hasLeftStartPage && !isSignIn) else { return }
+        if !pageURL.isEcosiaErrorPage(urlProvider) {
+            // The start page is still handing off to Auth0
+            guard pageURL.path.lowercased() != startURL.path.lowercased() else { return }
+
+            // Sign-in can still hand off to Auth0 client-side
+            guard EcosiaURLInterceptor(urlProvider: urlProvider).interceptedType(for: pageURL) != .signIn else {
+                return
+            }
+        }
 
         let tabUUID = tab.tabUUID
         let landingSettleDelay = landingSettleDelay
