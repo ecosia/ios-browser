@@ -207,6 +207,24 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         XCTAssertTrue(searchEcosiaURL.isEcosiaSearchQuery(urlProvider))
     }
 
+    // MARK: - `isEcosiaErrorPage`
+
+    func testIsEcosiaErrorPageOnErrorPage() {
+        XCTAssertTrue(URL(string: "https://www.ecosia.org/accounts/error")!.isEcosiaErrorPage(urlProvider))
+        XCTAssertTrue(URL(string: "https://www.ecosia.org/accounts/error?code=x")!.isEcosiaErrorPage(urlProvider))
+        XCTAssertTrue(URL(string: "https://www.ecosia.org/Accounts/Error")!.isEcosiaErrorPage(urlProvider))
+    }
+
+    func testIsNotEcosiaErrorPageOnOtherPaths() {
+        XCTAssertFalse(URL(string: "https://www.ecosia.org/accounts/error/details")!.isEcosiaErrorPage(urlProvider))
+        XCTAssertFalse(URL(string: "https://www.ecosia.org/accounts/sign-in")!.isEcosiaErrorPage(urlProvider))
+        XCTAssertFalse(URL(string: "https://www.ecosia.org/")!.isEcosiaErrorPage(urlProvider))
+    }
+
+    func testIsNotEcosiaErrorPageOnNonEcosiaURL() {
+        XCTAssertFalse(URL(string: "https://www.non-ecosia.com/accounts/error")!.isEcosiaErrorPage(urlProvider))
+    }
+
     // MARK: - `isEcosiaSearchVertical` & `getEcosiaSearchVerticalPath`
 
     func testAssertNotEcosiaSearchVerticalOnNonEcosiaURL() {
