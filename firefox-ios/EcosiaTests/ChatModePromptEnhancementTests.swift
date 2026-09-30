@@ -97,21 +97,20 @@ final class ChatModePromptEnhancementTests: XCTestCase {
         XCTAssertEqual(try queryParameter(for: .duckduckgo, mode: nil), query)
     }
 
-    /// Ecosia uses backend mode flags, so its prompt must stay clean.
+    /// Ecosia uses the `mode` query parameter, so its prompt must stay clean.
     func testEcosiaUsesQueryItemsRatherThanPromptEnhancement() throws {
         let items = try queryItems(for: .ecosia, mode: .thinkLonger)
 
         XCTAssertEqual(items["q"], query)
-        XCTAssertEqual(items["t"], "1")
+        XCTAssertEqual(items["mode"], "think_longer")
     }
 
     func testEcosiaAndThirdPartiesNeverBothCarryModeFlags() throws {
         let ecosiaItems = try queryItems(for: .ecosia, mode: .displaySources)
-        XCTAssertEqual(ecosiaItems["m"], "2")
+        XCTAssertEqual(ecosiaItems["mode"], "web_search")
 
         let perplexityItems = try queryItems(for: .perplexity, mode: .displaySources)
-        XCTAssertNil(perplexityItems["m"])
-        XCTAssertNil(perplexityItems["t"])
+        XCTAssertNil(perplexityItems["mode"])
     }
 
     // MARK: - Helpers
