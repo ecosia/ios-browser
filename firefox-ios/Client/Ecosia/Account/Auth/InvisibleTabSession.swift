@@ -14,7 +14,7 @@ final class InvisibleTabSession: TabEventHandler {
     // MARK: - Properties
 
     private let tab: Tab
-    private let url: URL
+    private let startURL: URL
     private let timeout: TimeInterval
     private let landingSettleDelay: TimeInterval
     private weak var browserViewController: BrowserViewController?
@@ -42,7 +42,7 @@ final class InvisibleTabSession: TabEventHandler {
          browserViewController: BrowserViewController,
          timeout: TimeInterval = 10.0,
          landingSettleDelay: TimeInterval = 0.5) throws {
-        self.url = url
+        self.startURL = url
         self.browserViewController = browserViewController
         self.timeout = timeout
         self.landingSettleDelay = landingSettleDelay
@@ -130,22 +130,32 @@ final class InvisibleTabSession: TabEventHandler {
         }
     }
 
-    private func scheduleCloseIfLanded(on url: URL) {
+    private func scheduleCloseIfLanded(on pageURL: URL) {
+        // A newer page supersedes any close still waiting on an earlier one
         pendingLandingClose?.cancel()
         pendingLandingClose = nil
 
-        // Auth0 hops happen on another host, and sign-in can still hand off to Auth0 client-side
-        let isSignIn = EcosiaURLInterceptor(urlProvider: urlProvider).interceptedType(for: url) == .signIn
-        let hasLanded = url.host == urlProvider.root.host
-            && (url.isEcosiaErrorPage(urlProvider) || (url.path.lowercased() != self.url.path.lowercased() && !isSignIn))
-        guard !isCompleted, hasLanded else { return }
+        // The tab has already closed, by this or the fallback timeout
+        guard !isCompleted else { return }
+
+        // Auth0 hops happen on login.<domain>, not the web host
+        guard pageURL.host == urlProvider.root.host else { return }
+
+        // An error page ends the flow, even when the session started on it
+        let isErrorPage = pageURL.isEcosiaErrorPage(urlProvider)
+        // The start page is still handing off to Auth0
+        let hasLeftStartPage = pageURL.path.lowercased() != startURL.path.lowercased()
+        // Sign-in can still hand off to Auth0 client-side
+        let isSignIn = EcosiaURLInterceptor(urlProvider: urlProvider).interceptedType(for: pageURL) == .signIn
+        guard isErrorPage || (hasLeftStartPage && !isSignIn) else { return }
 
         let tabUUID = tab.tabUUID
         let landingSettleDelay = landingSettleDelay
         pendingLandingClose = Task { @MainActor [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(landingSettleDelay * 1_000_000_000))
+            // Loading again means a redirect started after this page finished
             guard let self, !Task.isCancelled, !self.tab.isLoading else { return }
-            EcosiaLogger.invisibleTabs.info("Invisible tab landed on: \(url.redactedForLogging)")
+            EcosiaLogger.invisibleTabs.info("Invisible tab landed on: \(pageURL.redactedForLogging)")
             InvisibleTabAutoCloseManager.shared.closeTrackedTab(tabUUID)
         }
     }
