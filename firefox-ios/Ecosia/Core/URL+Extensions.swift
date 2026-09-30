@@ -124,6 +124,13 @@ extension URL {
         return components.path == "/search"
     }
 
+    /// Check whether the URL is one of the accounts error pages that auth flows land on when they fail
+    public func isEcosiaErrorPage(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
+        guard isEcosia(urlProvider) else { return false }
+        let path = path.lowercased()
+        return urlProvider.errorPaths.contains { $0.lowercased() == path }
+    }
+
     public func isEcosiaSearchVertical(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
         getEcosiaSearchVerticalPath(urlProvider) != nil
     }
