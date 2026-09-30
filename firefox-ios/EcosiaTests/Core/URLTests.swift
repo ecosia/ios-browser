@@ -190,6 +190,86 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         XCTAssertNil(imagesSerp.ecosiaSearchURLPreservingVertical(from: imagesPage, urlProvider: urlProvider))
     }
 
+    // MARK: - `isEcosia`
+
+    func testIsEcosia_returnsTrueForProviderDomainAndSubdomains() {
+        let cases: [(URLProvider, [String])] = [
+            (.production, [
+                "https://ecosia.org",
+                "http://ecosia.org",
+                "https://www.ecosia.org",
+                "https://login.ecosia.org",
+                "https://api.ecosia.org",
+                "https://WWW.ECOSIA.ORG",
+            ]),
+            (.staging, [
+                "https://ecosia-staging.xyz",
+                "http://ecosia-staging.xyz",
+                "https://www.ecosia-staging.xyz",
+                "https://login.ecosia-staging.xyz",
+                "https://api.ecosia-staging.xyz",
+                "https://WWW.ECOSIA-STAGING.XYZ",
+            ]),
+        ]
+
+        for (provider, urlStrings) in cases {
+            for urlString in urlStrings {
+                XCTAssertTrue(
+                    URL(string: urlString)!.isEcosia(provider),
+                    "\(urlString) should match \(provider.domain)"
+                )
+            }
+        }
+    }
+
+    func testIsEcosia_returnsFalseForLookalikeAndUnrelatedHosts() {
+        let cases: [(URLProvider, [String])] = [
+            (.production, [
+                "https://notecosia.org",
+                "https://ecosia.org.example.com",
+                "https://example.com",
+            ]),
+            (.staging, [
+                "https://notecosia-staging.xyz",
+                "https://ecosia-staging.xyz.example.com",
+                "https://example.com",
+            ]),
+        ]
+
+        for (provider, urlStrings) in cases {
+            for urlString in urlStrings {
+                XCTAssertFalse(
+                    URL(string: urlString)!.isEcosia(provider),
+                    "\(urlString) should not match \(provider.domain)"
+                )
+            }
+        }
+    }
+
+    func testIsEcosia_returnsFalseForNonHTTPSchemes() {
+        let cases: [(URLProvider, [String])] = [
+            (.production, [
+                "gmsg://ecosia.org",
+                "ftp://www.ecosia.org",
+                "ecosia://login.ecosia.org",
+            ]),
+            (.staging, [
+                "gmsg://ecosia-staging.xyz",
+                "ftp://www.ecosia-staging.xyz",
+                "ecosia://login.ecosia-staging.xyz",
+            ]),
+        ]
+
+        for (provider, urlStrings) in cases {
+            for urlString in urlStrings {
+                XCTAssertFalse(
+                    URL(string: urlString)!.isEcosia(provider),
+                    "\(urlString) should not match \(provider.domain)"
+                )
+            }
+        }
+    }
+
     // MARK: - `isEcosiaSearchQuery`
 
     func testAssertIsNotEcosiaSearchURLOnNonEcosiaURL() {
