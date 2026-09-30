@@ -163,8 +163,9 @@ public extension OmniboxChatMode {
         }
     }
 
-    /// Omnibox placeholder while this mode is active, or `nil` to keep the default.
-    var placeholder: String? {
+    /// Omnibox placeholder shown while the Generate images mode is active.
+    /// Returns `nil` for every other mode so the default placeholder is kept.
+    var generateImagePlaceholder: String? {
         .generateImage == self ? .localized(.chatModeGenerateImagePlaceholder) : nil
     }
 

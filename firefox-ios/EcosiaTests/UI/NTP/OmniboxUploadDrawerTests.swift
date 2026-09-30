@@ -419,9 +419,9 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
 
     func testOnlyGenerateImageModeOverridesThePlaceholder() {
         for mode in OmniboxChatMode.allCases where mode != .generateImage {
-            XCTAssertNil(mode.placeholder, "\(mode) should keep the default placeholder")
+            XCTAssertNil(mode.generateImagePlaceholder, "\(mode) should keep the default placeholder")
         }
-        XCTAssertEqual(OmniboxChatMode.generateImage.placeholder,
+        XCTAssertEqual(OmniboxChatMode.generateImage.generateImagePlaceholder,
                        String.localized(.chatModeGenerateImagePlaceholder))
     }
 
