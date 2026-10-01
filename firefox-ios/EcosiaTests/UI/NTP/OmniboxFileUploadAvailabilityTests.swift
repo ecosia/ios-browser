@@ -8,85 +8,57 @@ import XCTest
 final class OmniboxFileUploadAvailabilityTests: XCTestCase {
 
     func testEcosiaSourcesRequireAuthenticationAndNoOptOut() {
-        XCTAssertTrue(
-            OmniboxFileUploadAvailability.areSourcesEnabled(
-                isEcosiaProvider: true,
-                isAuthenticated: true,
-                hasOptedOutOfChatThreads: false
-            )
+        let uploadInputs = OmniboxFileUploadAvailability.UploadInputs(
+            hasOptedOutOfChatThreads: false,
+            usesEcosiaAIBackend: true
         )
-        XCTAssertFalse(
-            OmniboxFileUploadAvailability.areSourcesEnabled(
-                isEcosiaProvider: true,
-                isAuthenticated: true,
-                hasOptedOutOfChatThreads: true
-            )
+        XCTAssertTrue(uploadInputs.areInAppSourcesEnabled(isAuthenticated: true))
+        XCTAssertFalse(uploadInputs.areInAppSourcesEnabled(isAuthenticated: false))
+
+        let optedOut = OmniboxFileUploadAvailability.UploadInputs(
+            hasOptedOutOfChatThreads: true,
+            usesEcosiaAIBackend: true
         )
-        XCTAssertFalse(
-            OmniboxFileUploadAvailability.areSourcesEnabled(
-                isEcosiaProvider: true,
-                isAuthenticated: false,
-                hasOptedOutOfChatThreads: false
-            )
-        )
+        XCTAssertFalse(optedOut.areInAppSourcesEnabled(isAuthenticated: true))
     }
 
     func testUnauthenticatedDoesNotTreatMissingClaimAsOptOut() {
-        XCTAssertFalse(
-            OmniboxFileUploadAvailability.areSourcesEnabled(
-                isEcosiaProvider: true,
-                isAuthenticated: false,
-                hasOptedOutOfChatThreads: false
-            )
+        let uploadInputs = OmniboxFileUploadAvailability.UploadInputs(
+            hasOptedOutOfChatThreads: false,
+            usesEcosiaAIBackend: true
         )
+        XCTAssertFalse(uploadInputs.areInAppSourcesEnabled(isAuthenticated: false))
     }
 
     func testThirdPartySourcesStayEnabledWhenOptedOut() {
-        XCTAssertTrue(
-            OmniboxFileUploadAvailability.areSourcesEnabled(
-                isEcosiaProvider: false,
-                isAuthenticated: true,
-                hasOptedOutOfChatThreads: true
-            )
+        let uploadInputs = OmniboxFileUploadAvailability.UploadInputs(
+            hasOptedOutOfChatThreads: true,
+            usesEcosiaAIBackend: false
         )
+        XCTAssertTrue(uploadInputs.areInAppSourcesEnabled(isAuthenticated: true))
     }
 
-    func testEcosiaUploadBlockedAndDimmedWhenChatHistoryOptedOut() {
-        XCTAssertTrue(
-            OmniboxFileUploadAvailability.blocksEcosiaUploadDueToChatHistoryOptOut(
-                hasOptedOutOfChatThreads: true,
-                usesEcosiaAIBackend: true
-            )
+    func testEcosiaUploadBlockedWhenChatHistoryOptedOut() {
+        let uploadInputs = OmniboxFileUploadAvailability.UploadInputs(
+            hasOptedOutOfChatThreads: true,
+            usesEcosiaAIBackend: true
         )
-        XCTAssertTrue(
-            OmniboxFileUploadAvailability.shouldDimOmniboxUploadControlForChatHistoryOptOut(
-                hasOptedOutOfChatThreads: true,
-                usesEcosiaAIBackend: true
-            )
-        )
-        XCTAssertTrue(
-            OmniboxFileUploadAvailability.shouldPresentChatHistoryOptOutErrorOnUploadTap(
-                hasOptedOutOfChatThreads: true,
-                usesEcosiaAIBackend: true
-            )
-        )
+        XCTAssertTrue(uploadInputs.blocksEcosiaUploadDueToChatHistoryOptOut)
     }
 
     func testThirdPartyUploadNotBlockedByChatHistoryOptOut() {
-        XCTAssertFalse(
-            OmniboxFileUploadAvailability.shouldPresentChatHistoryOptOutErrorOnUploadTap(
-                hasOptedOutOfChatThreads: true,
-                usesEcosiaAIBackend: false
-            )
+        let uploadInputs = OmniboxFileUploadAvailability.UploadInputs(
+            hasOptedOutOfChatThreads: true,
+            usesEcosiaAIBackend: false
         )
+        XCTAssertFalse(uploadInputs.blocksEcosiaUploadDueToChatHistoryOptOut)
     }
 
     func testEcosiaUploadAllowedWhenClaimAbsentOrFalse() {
-        XCTAssertFalse(
-            OmniboxFileUploadAvailability.shouldPresentChatHistoryOptOutErrorOnUploadTap(
-                hasOptedOutOfChatThreads: false,
-                usesEcosiaAIBackend: true
-            )
+        let uploadInputs = OmniboxFileUploadAvailability.UploadInputs(
+            hasOptedOutOfChatThreads: false,
+            usesEcosiaAIBackend: true
         )
+        XCTAssertFalse(uploadInputs.blocksEcosiaUploadDueToChatHistoryOptOut)
     }
 }

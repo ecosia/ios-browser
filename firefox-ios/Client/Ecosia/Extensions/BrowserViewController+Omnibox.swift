@@ -212,29 +212,32 @@ extension BrowserViewController: NTPSearchBarDelegate {
         guard SearchProviderSelection.showsOmniboxAIFeatures else { return }
 
         Task { @MainActor in
-            await refreshChatThreadsOptOutStateForUploadIfNeeded()
-            guard !presentChatHistoryOptOutErrorIfNeededForUpload() else { return }
-            continueNtpSearchBarUploadAfterOptOutCheck()
+            await refreshChatThreadsOptOutBeforeUpload()
+            guard !presentChatHistoryOptOutUploadErrorIfBlocked() else { return }
+            presentOmniboxUploadForCurrentProvider()
         }
     }
 
-    private func refreshChatThreadsOptOutStateForUploadIfNeeded() async {
+    private var omniboxFileUploadInputs: OmniboxFileUploadAvailability.UploadInputs {
+        OmniboxFileUploadAvailability.UploadInputs(
+            hasOptedOutOfChatThreads: ecosiaAuth?.hasOptedOutOfChatThreads == true,
+            usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
+        )
+    }
+
+    private func refreshChatThreadsOptOutBeforeUpload() async {
         guard ecosiaAuth?.isLoggedIn == true else { return }
         try? await ecosiaAuth?.renewCredentialsIfNeeded()
-        ntpOmniboxAnchorView?.refreshUploadControl()
         if let homepage = contentContainer.contentController as? HomepageViewController {
-            homepage.ecosiaAdapter?.omniboxSheetState.hasOptedOutOfChatThreads =
-                EcosiaAuthenticationService.shared.hasOptedOutOfChatThreads
+            homepage.syncOmniboxChatThreadsOptOutFromAuth()
+        } else {
+            ntpOmniboxAnchorView?.refreshUploadControl()
         }
     }
 
     @discardableResult
-    private func presentChatHistoryOptOutErrorIfNeededForUpload() -> Bool {
-        let hasOptedOut = ecosiaAuth?.hasOptedOutOfChatThreads == true
-        guard OmniboxFileUploadAvailability.shouldPresentChatHistoryOptOutErrorOnUploadTap(
-            hasOptedOutOfChatThreads: hasOptedOut,
-            usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
-        ) else { return false }
+    private func presentChatHistoryOptOutUploadErrorIfBlocked() -> Bool {
+        guard omniboxFileUploadInputs.blocksEcosiaUploadDueToChatHistoryOptOut else { return false }
 
         EcosiaLogger.auth.info("chat-threads-opt-out presenting upload blocked error optedOut=true")
         if #available(iOS 16.0, *) {
@@ -243,7 +246,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
         return true
     }
 
-    private func continueNtpSearchBarUploadAfterOptOutCheck() {
+    private func presentOmniboxUploadForCurrentProvider() {
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
 
         switch SearchProviderSelection.aiBehavior {
@@ -625,11 +628,11 @@ extension BrowserViewController {
         guard let homepage = contentContainer.contentController as? HomepageViewController,
               let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
 
-        if presentChatHistoryOptOutErrorIfNeededForUpload() {
+        if presentChatHistoryOptOutUploadErrorIfBlocked() {
             return
         }
 
-        let hasOptedOut = ecosiaAuth?.hasOptedOutOfChatThreads == true
+        let hasOptedOut = omniboxFileUploadInputs.hasOptedOutOfChatThreads
         registerOmniboxLogoutObserverIfNeeded()
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
@@ -645,12 +648,10 @@ extension BrowserViewController {
                 self.presentProviderUploadRedirect(for: provider)
                 return
             }
-            guard OmniboxFileUploadAvailability.areSourcesEnabled(
-                isEcosiaProvider: true,
-                isAuthenticated: self.ecosiaAuth?.isLoggedIn == true,
-                hasOptedOutOfChatThreads: self.ecosiaAuth?.hasOptedOutOfChatThreads == true
+            guard self.omniboxFileUploadInputs.areInAppSourcesEnabled(
+                isAuthenticated: self.ecosiaAuth?.isLoggedIn == true
             ) else {
-                self.presentChatHistoryOptOutErrorIfNeededForUpload()
+                self.presentChatHistoryOptOutUploadErrorIfBlocked()
                 return
             }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,

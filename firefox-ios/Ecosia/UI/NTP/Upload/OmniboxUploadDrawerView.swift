@@ -129,9 +129,12 @@ struct OmniboxUploadDrawerView: View {
 
     private var availableModes: [OmniboxChatMode] { OmniboxChatMode.modes(for: provider) }
 
+    /// In-app Camera/Photos/Files only apply when the drawer is for Ecosia (same as NTP `usesEcosiaAIBackend`).
+    private var usesEcosiaAIBackend: Bool { provider == .ecosia }
+
     private var isUploadEnabled: Bool {
         OmniboxFileUploadAvailability.areSourcesEnabled(
-            isEcosiaProvider: isEcosiaProvider,
+            usesEcosiaAIBackend: usesEcosiaAIBackend,
             isAuthenticated: isAuthenticated,
             hasOptedOutOfChatThreads: hasOptedOutOfChatThreads
         )
