@@ -5,6 +5,7 @@
 import Foundation
 
 enum AppIcon: String, CaseIterable {
+    /* Ecosia: use our own app icons (https://ecosia.atlassian.net/browse/MOB-3994)
     // MARK: Default
     /// The default system app icon.
     case regular
@@ -93,9 +94,22 @@ enum AppIcon: String, CaseIterable {
 
     /// A version of the app icon with a fox resting on a stylized globe.
     case retro2017
+     */
+
+    case ecosiaLight
+    case ecosiaDark
+    case ecosiaForest
+    case ecosiaMushroom
+    case ecosiaLeaf
+    case ecosiaWood
+    case ecosiaSea
+    case ecosiaMountain
 
     /// The name of the asset to display in the app selection.
     var displayName: String {
+        return EcosiaAppIcon.displayName(icon: self)
+
+        /* Ecosia: use our own app icons (https://ecosia.atlassian.net/browse/MOB-3994)
         switch self {
         case .regular:
             return .Settings.AppIconSelection.AppIconNames.Regular
@@ -155,6 +169,7 @@ enum AppIcon: String, CaseIterable {
         case .retro2017:
             return .Settings.AppIconSelection.AppIconNames.Retro2017
         }
+        */
     }
 
     var telemetryName: String {
@@ -163,6 +178,9 @@ enum AppIcon: String, CaseIterable {
 
     /// The name of the image set asset type. `UIImage`s can only be rendered from image sets, not app icon sets.
     var imageSetAssetName: String {
+        return EcosiaAppIcon.imageSetAssetName(icon: self)
+
+        /* Ecosia: use our own app icons (https://ecosia.atlassian.net/browse/MOB-3994)
         switch self {
         case .regular:
             return "appIconAlternate_default"
@@ -220,13 +238,16 @@ enum AppIcon: String, CaseIterable {
         case .retro2004:
             return "appIconAlternate_fun_retro2004"
         case .retro2017:
-            return "appIconAlternate_fun_retro2017"
+            return "appIconAlternate_fun_retro2017"x
         }
+        */
     }
 
     /// The name of the App Icon asset type. `UIImage`s can only be rendered from image sets, not app icon sets.
     var appIconAssetName: String? {
-        switch self {
+        return EcosiaAppIcon.appIconAssetName(icon: self)
+
+        /* Ecosia: use our own app icons (https://ecosia.atlassian.net/browse/MOB-3994)
         case .regular:
             return nil // Setting the alternative app icon to nil will restore the default app icon asset
         case .darkPurple:
@@ -285,16 +306,21 @@ enum AppIcon: String, CaseIterable {
         case .retro2017:
             return "AppIcon_Alt_Fun_Retro2017"
         }
+        */
     }
 
     /// Determines whether the icon belongs to the fun icon set behind a feature flag.
     var isFunIcon: Bool {
+        return false
+
+        /* Ecosia: use our own app icons (https://ecosia.atlassian.net/browse/MOB-3994)
         switch self {
         case .cool, .cuddling, .flaming:
             return true
         default:
             return false
         }
+        */
     }
 
     /// Initialize an `AppIcon` from the current `UIApplication.shared.alternateIconName` setting. If the icon cannot be
@@ -309,7 +335,11 @@ enum AppIcon: String, CaseIterable {
 
             return alternateAppIcon
         } else {
+            return EcosiaAppIcon.defaultAppIcon()
+
+            /* Ecosia: use our own app icons (https://ecosia.atlassian.net/browse/MOB-3994)
             return .regular
+            */
         }
     }
 }
