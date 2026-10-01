@@ -240,8 +240,10 @@ extension URL {
     }
 
     public func isEcosia(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
-        let hasURLProviderDomainSuffix = host?.hasSuffix(urlProvider.domain) == true
-        return isBrowser() && hasURLProviderDomainSuffix
+        guard isBrowser(), let host else { return false }
+        let domain = urlProvider.domain.lowercased()
+        let normalizedHost = host.lowercased()
+        return normalizedHost == domain || normalizedHost.hasSuffix(".\(domain)")
     }
 
     private var components: URLComponents? {
