@@ -210,6 +210,43 @@ extension BrowserViewController: NTPSearchBarDelegate {
 
     func ntpSearchBarDidTapUpload() {
         guard SearchProviderSelection.showsOmniboxAIFeatures else { return }
+
+        Task { @MainActor in
+            await refreshChatThreadsOptOutBeforeUpload()
+            guard !presentChatHistoryOptOutUploadErrorIfBlocked() else { return }
+            presentOmniboxUploadForCurrentProvider()
+        }
+    }
+
+    private var omniboxFileUploadInputs: OmniboxFileUploadAvailability.UploadInputs {
+        OmniboxFileUploadAvailability.UploadInputs(
+            hasOptedOutOfChatThreads: ecosiaAuth?.hasOptedOutOfChatThreads == true,
+            usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
+        )
+    }
+
+    private func refreshChatThreadsOptOutBeforeUpload() async {
+        guard ecosiaAuth?.isLoggedIn == true else { return }
+        try? await ecosiaAuth?.renewCredentialsIfNeeded()
+        if let homepage = contentContainer.contentController as? HomepageViewController {
+            homepage.syncOmniboxChatThreadsOptOutFromAuth()
+        } else {
+            ntpOmniboxAnchorView?.refreshUploadControl()
+        }
+    }
+
+    @discardableResult
+    private func presentChatHistoryOptOutUploadErrorIfBlocked() -> Bool {
+        guard omniboxFileUploadInputs.blocksEcosiaUploadDueToChatHistoryOptOut else { return false }
+
+        EcosiaLogger.auth.info("chat-threads-opt-out presenting upload blocked error optedOut=true")
+        if #available(iOS 16.0, *) {
+            showEcosiaErrorToast(message: String.localized(.uploadChatHistoryTurnedOff))
+        }
+        return true
+    }
+
+    private func presentOmniboxUploadForCurrentProvider() {
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
 
         switch SearchProviderSelection.aiBehavior {
@@ -591,18 +628,30 @@ extension BrowserViewController {
         guard let homepage = contentContainer.contentController as? HomepageViewController,
               let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
 
+        if presentChatHistoryOptOutUploadErrorIfBlocked() {
+            return
+        }
+
+        let hasOptedOut = omniboxFileUploadInputs.hasOptedOutOfChatThreads
         registerOmniboxLogoutObserverIfNeeded()
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
         let provider = SearchProviderSelection.selectedProvider
         sheetState.presentUploadDrawer(provider: provider,
                                        isAuthenticated: ecosiaAuth?.isLoggedIn == true,
+                                       hasOptedOutOfChatThreads: hasOptedOut,
                                        onSelectUpload: { [weak self] option in
             guard let self else { return }
             // Third-party providers cannot receive an upload from the app, so the
             // picker is replaced by an explainer pointing at their own site.
             guard provider == .ecosia else {
                 self.presentProviderUploadRedirect(for: provider)
+                return
+            }
+            guard self.omniboxFileUploadInputs.areInAppSourcesEnabled(
+                isAuthenticated: self.ecosiaAuth?.isLoggedIn == true
+            ) else {
+                self.presentChatHistoryOptOutUploadErrorIfBlocked()
                 return
             }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,
@@ -695,7 +744,7 @@ extension BrowserViewController {
         }
         clearSelectedChatModeIfUnsupported()
 
-        ntpOmniboxAnchorView?.updateUploadButtonVisibility()
+        ntpOmniboxAnchorView?.refreshUploadControl()
     }
 
     /// Chat modes carry across providers, so a selection is only dropped when the new

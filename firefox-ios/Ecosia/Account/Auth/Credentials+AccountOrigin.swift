@@ -14,6 +14,31 @@ public enum AccountOrigin: Equatable, Sendable {
     case existingAccount
 }
 
+private enum ChatThreadsOptOutClaimState {
+    case undecodable(claim: String)
+    case missing(claim: String)
+    case nonBoolean(claim: String)
+    case boolean(claim: String, value: Bool)
+
+    var isOptedOut: Bool {
+        if case .boolean(_, true) = self { return true }
+        return false
+    }
+
+    var logDetails: String {
+        switch self {
+        case .undecodable(let claim):
+            return "decode=failed claim=\(claim) optedOut=false"
+        case .missing(let claim):
+            return "decode=ok claim=\(claim) present=false optedOut=false"
+        case .nonBoolean(let claim):
+            return "decode=ok claim=\(claim) present=true valueType=non-boolean optedOut=false"
+        case .boolean(let claim, let value):
+            return "decode=ok claim=\(claim) present=true value=\(value) optedOut=\(value)"
+        }
+    }
+}
+
 extension Credentials {
 
     /// The namespace prefix used to scope custom claims in Auth0 ID tokens.
@@ -25,6 +50,8 @@ extension Credentials {
     /// The custom claim key for the account creation timestamp.
     /// Set via an Auth0 Post-Login Action: ``api.idToken.setCustomClaim(`${CUSTOM_CLAIM_NAMESPACE}/created_at`, event.user.created_at);``
     private static let createdAtClaim = "\(customClaimNamespace)/created_at"
+
+    private static let chatThreadsOptOutClaim = "\(customClaimNamespace)/chat_threads_opt_out"
 
     /// A UTC calendar used for same-day comparisons.
     private static let utcCalendar: Calendar = {
@@ -48,6 +75,35 @@ extension Credentials {
 
         let sameDay = Self.utcCalendar.isDate(createdAt, inSameDayAs: Date())
         return sameDay ? .newAccount : .existingAccount
+    }
+
+    /// Whether the user has opted out of chat history / chat threads.
+    ///
+    /// Reads ``chatThreadsOptOutClaim`` from the ID token, matching Auth0.swift's JWTDecode
+    /// guidance for custom claims. A missing, non-boolean, or undecodable claim is treated
+    /// as `false` so upload stays available for users who have not opted out.
+    var hasOptedOutOfChatThreads: Bool {
+        chatThreadsOptOutClaimState().isOptedOut
+    }
+
+    /// Console-safe claim parse details. Never includes the ID token.
+    func chatThreadsOptOutClaimLogDetails() -> String {
+        chatThreadsOptOutClaimState().logDetails
+    }
+
+    private func chatThreadsOptOutClaimState() -> ChatThreadsOptOutClaimState {
+        let claim = Self.chatThreadsOptOutClaim
+        guard let jwt = try? decode(jwt: idToken) else {
+            return .undecodable(claim: claim)
+        }
+        let parsed = jwt[claim]
+        if parsed.rawValue == nil {
+            return .missing(claim: claim)
+        }
+        if let value = parsed.boolean {
+            return .boolean(claim: claim, value: value)
+        }
+        return .nonBoolean(claim: claim)
     }
 
     /// ISO 8601 formatter configured to handle fractional seconds (e.g. `2026-03-04T10:44:47.942Z`).
