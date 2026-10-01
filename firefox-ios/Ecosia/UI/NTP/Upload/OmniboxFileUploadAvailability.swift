@@ -4,18 +4,44 @@
 
 import Foundation
 
-/// Gates the NTP omnibox file-upload control and the Camera/Photos/Files tiles
-/// from the chat-threads opt-out claim on the Auth0 ID token.
+/// Whether the NTP omnibox upload control and in-app Camera/Photos/Files tiles are
+/// available for the selected provider and the chat-threads opt-out claim on the Auth0 ID token.
 public enum OmniboxFileUploadAvailability {
 
+    /// Chat-threads opt-out and provider selection, read at omnibox, drawer, and picker entry points.
+    public struct UploadInputs: Equatable, Sendable {
+        public let hasOptedOutOfChatThreads: Bool
+        public let usesEcosiaAIBackend: Bool
+
+        public init(hasOptedOutOfChatThreads: Bool, usesEcosiaAIBackend: Bool) {
+            self.hasOptedOutOfChatThreads = hasOptedOutOfChatThreads
+            self.usesEcosiaAIBackend = usesEcosiaAIBackend
+        }
+
+        public var blocksEcosiaUploadDueToChatHistoryOptOut: Bool {
+            OmniboxFileUploadAvailability.blocksEcosiaUploadDueToChatHistoryOptOut(
+                hasOptedOutOfChatThreads: hasOptedOutOfChatThreads,
+                usesEcosiaAIBackend: usesEcosiaAIBackend
+            )
+        }
+
+        public func areInAppSourcesEnabled(isAuthenticated: Bool) -> Bool {
+            OmniboxFileUploadAvailability.areSourcesEnabled(
+                usesEcosiaAIBackend: usesEcosiaAIBackend,
+                isAuthenticated: isAuthenticated,
+                hasOptedOutOfChatThreads: hasOptedOutOfChatThreads
+            )
+        }
+    }
+
     /// Whether Ecosia's in-app upload sources (Camera/Photos/Files) can be used.
-    /// Other providers keep their redirect flow; they are not gated by this claim.
+    /// Third-party providers keep their redirect flow; they are not affected by this claim.
     public static func areSourcesEnabled(
-        isEcosiaProvider: Bool,
+        usesEcosiaAIBackend: Bool,
         isAuthenticated: Bool,
         hasOptedOutOfChatThreads: Bool
     ) -> Bool {
-        guard isEcosiaProvider else { return true }
+        guard usesEcosiaAIBackend else { return true }
         return isAuthenticated && !hasOptedOutOfChatThreads
     }
 
@@ -25,27 +51,5 @@ public enum OmniboxFileUploadAvailability {
         usesEcosiaAIBackend: Bool
     ) -> Bool {
         usesEcosiaAIBackend && hasOptedOutOfChatThreads
-    }
-
-    /// Dims the NTP + / paperclip while keeping it tappable so we can show the opt-out error.
-    public static func shouldDimOmniboxUploadControlForChatHistoryOptOut(
-        hasOptedOutOfChatThreads: Bool,
-        usesEcosiaAIBackend: Bool
-    ) -> Bool {
-        blocksEcosiaUploadDueToChatHistoryOptOut(
-            hasOptedOutOfChatThreads: hasOptedOutOfChatThreads,
-            usesEcosiaAIBackend: usesEcosiaAIBackend
-        )
-    }
-
-    /// Whether tapping the control should show the chat-history opt-out error instead of upload UI.
-    public static func shouldPresentChatHistoryOptOutErrorOnUploadTap(
-        hasOptedOutOfChatThreads: Bool,
-        usesEcosiaAIBackend: Bool
-    ) -> Bool {
-        blocksEcosiaUploadDueToChatHistoryOptOut(
-            hasOptedOutOfChatThreads: hasOptedOutOfChatThreads,
-            usesEcosiaAIBackend: usesEcosiaAIBackend
-        )
     }
 }

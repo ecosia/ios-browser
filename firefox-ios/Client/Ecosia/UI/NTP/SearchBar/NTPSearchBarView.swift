@@ -470,11 +470,11 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
 
     private func applyUploadButtonEnabledState() {
         uploadButton.isEnabled = true
-        uploadButton.showsUploadRestrictedAppearance =
-            OmniboxFileUploadAvailability.shouldDimOmniboxUploadControlForChatHistoryOptOut(
-                hasOptedOutOfChatThreads: hasOptedOutOfChatThreads,
-                usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
-            )
+        let uploadInputs = OmniboxFileUploadAvailability.UploadInputs(
+            hasOptedOutOfChatThreads: hasOptedOutOfChatThreads,
+            usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
+        )
+        uploadButton.showsUploadRestrictedAppearance = uploadInputs.blocksEcosiaUploadDueToChatHistoryOptOut
     }
 
     private var shouldShowOmniboxUploadButton: Bool {
