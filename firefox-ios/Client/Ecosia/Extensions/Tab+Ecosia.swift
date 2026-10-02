@@ -13,7 +13,7 @@ extension Tab {
     /// picks up the changes without extra navigation cycles.
     ///
     /// Mutations applied, in order:
-    /// 1. **Cloudflare auth headers** – required for non-production environments.
+    /// 1. **Cloudflare auth headers** – required for non-production environments, Ecosia hosts only.
     /// 2. **Language-region header** – enriches SERP requests for market selection.
     /// 3. **App header** – identifies the app and version to Ecosia backends, Ecosia hosts only.
     /// 4. **Snowplow user id parameter** – appended to Ecosia URLs so the web SERP can
@@ -22,7 +22,9 @@ extension Tab {
     ///    private tabs or when the user has opted out of analytics.
     func ecosiaUpdatedRequest(_ request: URLRequest) -> URLRequest {
         var updated = request
-        updated = updated.withCloudFlareAuthParameters()
+        if updated.url?.isEcosia() == true {
+            updated = updated.withCloudFlareAuthParameters()
+        }
         if updated.url?.isEcosiaSearchQuery() == true {
             updated.addLanguageRegionHeader()
         }
