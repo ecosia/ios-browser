@@ -45,28 +45,77 @@ private struct PresignResponse: Decodable {
 public final class FileUploadService: Sendable {
 
     public enum Error: Swift.Error, LocalizedError, Equatable {
-        case network(statusCode: Int, body: String?)
-        case eaistRefreshFailed(statusCode: Int)
+        case requestFailed(FailedRequest)
         case invalidPresignResponse(body: String?)
-        case uploadFailed(statusCode: Int)
         case authenticationRequired
         case timedOut
 
         public var errorDescription: String? {
             switch self {
-            case .network(let statusCode, _):
-                return "Network error (status \(statusCode))"
-            case .eaistRefreshFailed(let statusCode):
-                return "EAIST refresh failed (status \(statusCode))"
+            case .requestFailed(let failure):
+                return failure.description
             case .invalidPresignResponse:
                 return "Invalid presign response"
-            case .uploadFailed(let statusCode):
-                return "PUT upload failed (status \(statusCode))"
             case .authenticationRequired:
                 return "Authentication required"
             case .timedOut:
                 return "Upload timed out"
             }
+        }
+    }
+
+    /// A request in the upload chain that didn't return a 2xx status.
+    public struct FailedRequest: Equatable, Sendable, CustomStringConvertible {
+        public enum Step: String, Sendable {
+            case refresh
+            case presign
+            case put
+        }
+
+        public enum Responder: String, Sendable {
+            case cloudflare
+            case backend
+        }
+
+        public let step: Step
+        public let statusCode: Int
+        public let responder: Responder
+        /// Cloudflare's request ID, which looks the request up in Security Events.
+        public let rayID: String?
+        public let body: String?
+
+        private static let maxBodyLength = 200
+
+        init(step: Step, data: Data, response: HTTPURLResponse?) {
+            self.step = step
+            statusCode = response?.statusCode ?? -1
+            responder = Self.responder(data: data, response: response)
+            rayID = response?.value(forHTTPHeaderField: "cf-ray")
+            body = data.isEmpty ? nil : String(decoding: data.prefix(Self.maxBodyLength), as: UTF8.self)
+        }
+
+        public var description: String {
+            "\(step.rawValue) failed status=\(statusCode) responder=\(responder.rawValue) " +
+                "cf-ray=\(rayID ?? "none") body=\(body ?? "nil")"
+        }
+
+        private static func responder(data: Data, response: HTTPURLResponse?) -> Responder {
+            // Cloudflare marks challenge responses with `cf-mitigated`.
+            if response?.value(forHTTPHeaderField: "cf-mitigated") != nil {
+                return .cloudflare
+            }
+            // Our firewall's custom blocks answer with exactly `{"message": …}`; the AI Worker never does.
+            if isFirewallBlockBody(data) {
+                return .cloudflare
+            }
+            return .backend
+        }
+
+        private static func isFirewallBlockBody(_ data: Data) -> Bool {
+            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                return false
+            }
+            return json.count == 1 && json["message"] is String
         }
     }
 
@@ -101,7 +150,7 @@ public final class FileUploadService: Sendable {
             log(.info, "Upload succeeded fileId=\(fileId)")
             return fileId
         } catch {
-            log(.error, "Upload failed: \(String(describing: type(of: error)))")
+            log(.error, "Upload failed: \(error.localizedDescription)")
             throw error
         }
     }
@@ -175,11 +224,11 @@ public final class FileUploadService: Sendable {
         let request = AIChatRefreshRequest()
         log(.info, "Refreshing EAIST cookie url=\(request.resolvedBaseURL.absoluteString)\(request.path)")
 
-        let (_, response) = try await client.perform(request)
-        let statusCode = response?.statusCode ?? -1
+        let (data, response) = try await client.perform(request)
         guard let http = response, (200..<300).contains(http.statusCode) else {
-            log(.error, "EAIST refresh failed status=\(statusCode)")
-            throw Error.eaistRefreshFailed(statusCode: statusCode)
+            let failure = FailedRequest(step: .refresh, data: data, response: response)
+            log(.error, failure.description)
+            throw Error.requestFailed(failure)
         }
         log(.info, "EAIST refresh succeeded status=\(http.statusCode)")
     }
@@ -212,22 +261,13 @@ public final class FileUploadService: Sendable {
         log(.info, "Requesting presigned URL (EASC attached=\(authSessionCookie != nil))")
         let request = FilePresignRequest(accessToken: accessToken, authSessionCookie: authSessionCookie)
         let (data, response) = try await client.perform(request)
-        let statusCode = response?.statusCode ?? -1
-        let body = String(data: data, encoding: .utf8)
-
-        switch statusCode {
-        case 200:
-            break
-        case 401, 403:
-            log(.error, "Presign unauthorized status=\(statusCode) body=\(body ?? "nil") — " +
-                "AI Worker expects EASC cookie; Bearer fallback may not be deployed yet. " +
-                "Try signing out/in to refresh scopes and establish a web session.")
-            throw Error.authenticationRequired
-        default:
-            log(.error, "Presign failed status=\(statusCode) body=\(body ?? "nil")")
-            throw Error.network(statusCode: statusCode, body: body)
+        guard response?.statusCode == 200 else {
+            let failure = FailedRequest(step: .presign, data: data, response: response)
+            log(.error, failure.description)
+            throw Error.requestFailed(failure)
         }
 
+        let body = String(data: data, encoding: .utf8)
         guard let presign = try? JSONDecoder().decode(PresignResponse.self, from: data) else {
             log(.error, "Failed to decode presign response body=\(body ?? "nil")")
             throw Error.invalidPresignResponse(body: body)
@@ -242,11 +282,12 @@ public final class FileUploadService: Sendable {
         request.httpMethod = "PUT"
         request.setValue(file.mimeType, forHTTPHeaderField: "Content-Type")
 
-        let (_, response) = try await URLSession.shared.upload(for: request, from: file.data)
-        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-            log(.error, "PUT failed status=\(statusCode)")
-            throw Error.uploadFailed(statusCode: statusCode)
+        let (data, response) = try await URLSession.shared.upload(for: request, from: file.data)
+        let httpResponse = response as? HTTPURLResponse
+        guard let http = httpResponse, (200..<300).contains(http.statusCode) else {
+            let failure = FailedRequest(step: .put, data: data, response: httpResponse)
+            log(.error, failure.description)
+            throw Error.requestFailed(failure)
         }
         log(.info, "PUT succeeded status=\(http.statusCode)")
     }
