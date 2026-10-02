@@ -351,7 +351,9 @@ final class UserTests: XCTestCase, @unchecked Sendable {
         while count < 1 && Date() < deadline {
             RunLoop.main.run(until: Date().addingTimeInterval(0.05))
         }
-        XCTAssertEqual(count, 1, "Expected searchSettingsChanged when toggling aiFreeSearching")
+        // At least one rather than exactly one: posts carry no sender, so a stray post queued by
+        // another test's async `User.shared` mutation can arrive in the same run-loop pass
+        XCTAssertGreaterThanOrEqual(count, 1, "Expected searchSettingsChanged when toggling aiFreeSearching")
     }
 
     /// `User.shared` posts `searchSettingsChanged` via `DispatchQueue.main.async`, so mutations
