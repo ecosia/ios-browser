@@ -14,6 +14,22 @@ name: Merge Unit Tests
 on:
   pull_request:
     branches: [main, 'patch/**', 'develop']
+    paths-ignore:
+      - '**/*.md'
+      - '.cursor/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/actions/perform_snapshot_tests/**'
+      - '.github/workflows/snapshot_tests.yml'
+      - 'firefox-ios/Ecosia/Ecosia.docc/**'
+      - 'firefox-ios/EcosiaTests/SnapshotTests/**'
+      - 'check_snapshot_updates.sh'
+      - 'generate_snapshot_coverage_docs.sh'
+      - 'perform_snapshot_tests.sh'
+  # Caches saved by pull requests are only visible to that pull request; running on main saves a
+  # compilation cache that every pull request can restore.
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   execute_merge_tests:
@@ -33,6 +49,11 @@ jobs:
         uses: ./.github/actions/prepare_environment
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
+
+      - name: Xcode compilation cache
+        uses: ./.github/actions/xcode_compilation_cache
+        with:
+          cache-name: unit-tests
 
       - name: Perform Unit Tests and Publish Test reports
         id: perform-tests
