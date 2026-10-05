@@ -7,46 +7,6 @@ import XCTest
 
 final class FileUploadFailedRequestTests: XCTestCase {
 
-    func testFirewallBlockBody_isAttributedToCloudflare() throws {
-        let failure = FileUploadService.FailedRequest(
-            step: .refresh,
-            data: Data(#"{"message":"Forbidden"}"#.utf8),
-            response: try makeResponse(statusCode: 403)
-        )
-
-        XCTAssertEqual(failure.responder, .cloudflare)
-    }
-
-    func testChallengeHeader_isAttributedToCloudflare() throws {
-        let failure = FileUploadService.FailedRequest(
-            step: .presign,
-            data: Data("<html>Just a moment...</html>".utf8),
-            response: try makeResponse(statusCode: 403, headers: ["cf-mitigated": "challenge"])
-        )
-
-        XCTAssertEqual(failure.responder, .cloudflare)
-    }
-
-    func testWorkerPlainTextRejection_isAttributedToBackend() throws {
-        let failure = FileUploadService.FailedRequest(
-            step: .presign,
-            data: Data("Forbidden".utf8),
-            response: try makeResponse(statusCode: 403)
-        )
-
-        XCTAssertEqual(failure.responder, .backend)
-    }
-
-    func testWorkerJSONError_isAttributedToBackend() throws {
-        let failure = FileUploadService.FailedRequest(
-            step: .presign,
-            data: Data(#"{"error":{"code":"storage_error","message":"Failed to generate upload URL"}}"#.utf8),
-            response: try makeResponse(statusCode: 500)
-        )
-
-        XCTAssertEqual(failure.responder, .backend)
-    }
-
     func testFailure_capturesStatusRayIDAndBody() throws {
         let failure = FileUploadService.FailedRequest(
             step: .refresh,
@@ -54,13 +14,21 @@ final class FileUploadFailedRequestTests: XCTestCase {
             response: try makeResponse(statusCode: 403, headers: ["cf-ray": "a44466c57d1e1a62-HAM"])
         )
 
+        XCTAssertEqual(failure.step, .refresh)
         XCTAssertEqual(failure.statusCode, 403)
         XCTAssertEqual(failure.rayID, "a44466c57d1e1a62-HAM")
+        XCTAssertNil(failure.cloudflareMitigation)
         XCTAssertEqual(failure.body, #"{"message":"Forbidden"}"#)
-        XCTAssertEqual(
-            failure.description,
-            #"refresh failed status=403 responder=cloudflare cf-ray=a44466c57d1e1a62-HAM body={"message":"Forbidden"}"#
+    }
+
+    func testChallengeHeader_isCaptured() throws {
+        let failure = FileUploadService.FailedRequest(
+            step: .presign,
+            data: Data("<html>Confirm you're not a robot</html>".utf8),
+            response: try makeResponse(statusCode: 403, headers: ["cf-mitigated": "challenge"])
         )
+
+        XCTAssertEqual(failure.cloudflareMitigation, "challenge")
     }
 
     func testLongBody_isTruncated() throws {
@@ -78,20 +46,20 @@ final class FileUploadFailedRequestTests: XCTestCase {
 
         XCTAssertEqual(failure.statusCode, -1)
         XCTAssertNil(failure.rayID)
+        XCTAssertNil(failure.cloudflareMitigation)
         XCTAssertNil(failure.body)
-        XCTAssertEqual(failure.responder, .backend)
     }
 
     func testRequestFailedError_describesTheFailure() throws {
         let failure = FileUploadService.FailedRequest(
             step: .presign,
             data: Data("Forbidden".utf8),
-            response: try makeResponse(statusCode: 403)
+            response: try makeResponse(statusCode: 403, headers: ["cf-ray": "a45b07659cec62ca-HAM"])
         )
 
         XCTAssertEqual(
             FileUploadService.Error.requestFailed(failure).localizedDescription,
-            "presign failed status=403 responder=backend cf-ray=none body=Forbidden"
+            "presign failed status=403 cf-ray=a45b07659cec62ca-HAM cf-mitigated=none body=Forbidden"
         )
     }
 

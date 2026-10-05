@@ -64,61 +64,6 @@ public final class FileUploadService: Sendable {
         }
     }
 
-    /// A request in the upload chain that didn't return a 2xx status.
-    public struct FailedRequest: Equatable, Sendable, CustomStringConvertible {
-        public enum Step: String, Sendable {
-            case refresh
-            case presign
-            case put
-        }
-
-        public enum Responder: String, Sendable {
-            case cloudflare
-            case backend
-        }
-
-        public let step: Step
-        public let statusCode: Int
-        public let responder: Responder
-        /// Cloudflare's request ID, which looks the request up in Security Events.
-        public let rayID: String?
-        public let body: String?
-
-        private static let maxBodyLength = 200
-
-        init(step: Step, data: Data, response: HTTPURLResponse?) {
-            self.step = step
-            statusCode = response?.statusCode ?? -1
-            responder = Self.responder(data: data, response: response)
-            rayID = response?.value(forHTTPHeaderField: "cf-ray")
-            body = data.isEmpty ? nil : String(decoding: data.prefix(Self.maxBodyLength), as: UTF8.self)
-        }
-
-        public var description: String {
-            "\(step.rawValue) failed status=\(statusCode) responder=\(responder.rawValue) " +
-                "cf-ray=\(rayID ?? "none") body=\(body ?? "nil")"
-        }
-
-        private static func responder(data: Data, response: HTTPURLResponse?) -> Responder {
-            // Cloudflare marks challenge responses with `cf-mitigated`.
-            if response?.value(forHTTPHeaderField: "cf-mitigated") != nil {
-                return .cloudflare
-            }
-            // Our firewall's custom blocks answer with exactly `{"message": …}`; the AI Worker never does.
-            if isFirewallBlockBody(data) {
-                return .cloudflare
-            }
-            return .backend
-        }
-
-        private static func isFirewallBlockBody(_ data: Data) -> Bool {
-            guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-                return false
-            }
-            return json.count == 1 && json["message"] is String
-        }
-    }
-
     private let client: HTTPClient
     private let authenticationService: EcosiaAuthenticationService
     private let timeout: TimeInterval
