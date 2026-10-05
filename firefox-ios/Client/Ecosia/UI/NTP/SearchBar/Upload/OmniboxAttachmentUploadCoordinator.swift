@@ -26,7 +26,7 @@ final class OmniboxAttachmentUploadCoordinator {
     private var tasks: [UUID: Task<Void, Never>] = [:]
     private var previewImages: [UUID: UIImage] = [:]
 
-    init(uploadService: FileUploadService = FileUploadService()) {
+    init(uploadService: FileUploadService = FileUploadService(environment: .current)) {
         self.uploadService = uploadService
     }
 

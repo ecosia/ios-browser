@@ -73,7 +73,7 @@ public final class FileUploadService: Sendable {
         client: HTTPClient = URLSessionHTTPClient(),
         authenticationService: EcosiaAuthenticationService = .shared,
         timeout: TimeInterval = 20,
-        environment: Environment = .current
+        environment: Environment
     ) {
         self.client = client
         self.authenticationService = authenticationService
