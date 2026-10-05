@@ -6,8 +6,8 @@ import Foundation
 
 extension FileUploadService {
 
-    /// A request in the upload chain that didn't return a 2xx status.
-    public struct FailedRequest: Equatable, Sendable, CustomStringConvertible {
+    /// A response that the upload step couldn't use, such as a 403 or a redirect URLSession didn't follow.
+    public struct UnexpectedResponse: Equatable, Sendable, CustomStringConvertible {
         public enum Step: String, Sendable {
             case refresh
             case presign
@@ -33,7 +33,7 @@ extension FileUploadService {
         }
 
         public var description: String {
-            "\(step.rawValue) failed status=\(statusCode) cf-ray=\(rayID ?? "none") " +
+            "\(step.rawValue) unexpected response status=\(statusCode) cf-ray=\(rayID ?? "none") " +
                 "cf-mitigated=\(cloudflareMitigation ?? "none") body=\(body ?? "nil")"
         }
     }

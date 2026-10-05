@@ -45,15 +45,15 @@ private struct PresignResponse: Decodable {
 public final class FileUploadService: Sendable {
 
     public enum Error: Swift.Error, LocalizedError, Equatable {
-        case requestFailed(FailedRequest)
+        case unexpectedResponse(UnexpectedResponse)
         case invalidPresignResponse(body: String?)
         case authenticationRequired
         case timedOut
 
         public var errorDescription: String? {
             switch self {
-            case .requestFailed(let failure):
-                return failure.description
+            case .unexpectedResponse(let unexpected):
+                return unexpected.description
             case .invalidPresignResponse:
                 return "Invalid presign response"
             case .authenticationRequired:
@@ -171,9 +171,9 @@ public final class FileUploadService: Sendable {
 
         let (data, response) = try await client.perform(request)
         guard let http = response, (200..<300).contains(http.statusCode) else {
-            let failure = FailedRequest(step: .refresh, data: data, response: response)
-            log(.error, failure.description)
-            throw Error.requestFailed(failure)
+            let unexpected = UnexpectedResponse(step: .refresh, data: data, response: response)
+            log(.error, unexpected.description)
+            throw Error.unexpectedResponse(unexpected)
         }
         log(.info, "EAIST refresh succeeded status=\(http.statusCode)")
     }
@@ -207,9 +207,9 @@ public final class FileUploadService: Sendable {
         let request = FilePresignRequest(accessToken: accessToken, authSessionCookie: authSessionCookie)
         let (data, response) = try await client.perform(request)
         guard response?.statusCode == 200 else {
-            let failure = FailedRequest(step: .presign, data: data, response: response)
-            log(.error, failure.description)
-            throw Error.requestFailed(failure)
+            let unexpected = UnexpectedResponse(step: .presign, data: data, response: response)
+            log(.error, unexpected.description)
+            throw Error.unexpectedResponse(unexpected)
         }
 
         let body = String(data: data, encoding: .utf8)
@@ -230,9 +230,9 @@ public final class FileUploadService: Sendable {
         let (data, response) = try await URLSession.shared.upload(for: request, from: file.data)
         let httpResponse = response as? HTTPURLResponse
         guard let http = httpResponse, (200..<300).contains(http.statusCode) else {
-            let failure = FailedRequest(step: .put, data: data, response: httpResponse)
-            log(.error, failure.description)
-            throw Error.requestFailed(failure)
+            let unexpected = UnexpectedResponse(step: .put, data: data, response: httpResponse)
+            log(.error, unexpected.description)
+            throw Error.unexpectedResponse(unexpected)
         }
         log(.info, "PUT succeeded status=\(http.statusCode)")
     }
