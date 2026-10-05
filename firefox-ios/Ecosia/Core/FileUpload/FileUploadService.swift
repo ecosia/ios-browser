@@ -67,15 +67,18 @@ public final class FileUploadService: Sendable {
     private let client: HTTPClient
     private let authenticationService: EcosiaAuthenticationService
     private let timeout: TimeInterval
+    private let environment: Environment
 
     public init(
         client: HTTPClient = URLSessionHTTPClient(),
         authenticationService: EcosiaAuthenticationService = .shared,
-        timeout: TimeInterval = 20
+        timeout: TimeInterval = 20,
+        environment: Environment = .current
     ) {
         self.client = client
         self.authenticationService = authenticationService
         self.timeout = timeout
+        self.environment = environment
     }
 
     /// Upload a single file. Returns the `file_id` on success.
@@ -160,8 +163,8 @@ public final class FileUploadService: Sendable {
     /// Staging API POSTs can be blocked by Cloudflare Access unless `CF_Authorization`
     /// is present in `HTTPCookieStorage`, even when service-token headers are set.
     private func ensureCloudflareAccessCookieForStagingAPI() async {
-        guard Environment.current == .staging else { return }
-        await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView()
+        guard environment == .staging else { return }
+        await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView(environment: environment)
     }
 
     private func refreshEAIST() async throws {
