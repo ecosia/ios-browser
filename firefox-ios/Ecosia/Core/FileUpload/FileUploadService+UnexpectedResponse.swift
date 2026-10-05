@@ -20,21 +20,20 @@ extension FileUploadService {
         public let rayID: String?
         /// Set by Cloudflare when it challenged the request instead of forwarding it, e.g. `challenge`.
         public let cloudflareMitigation: String?
-        public let body: String?
+        /// Recorded instead of the body, which can echo signed upload URLs or internal error text.
+        public let contentType: String?
 
-        private static let maxBodyLength = 200
-
-        init(step: Step, data: Data, response: HTTPURLResponse?) {
+        init(step: Step, response: HTTPURLResponse?) {
             self.step = step
             statusCode = response?.statusCode ?? -1
             rayID = response?.value(forHTTPHeaderField: "cf-ray")
             cloudflareMitigation = response?.value(forHTTPHeaderField: "cf-mitigated")
-            body = data.isEmpty ? nil : String(decoding: data.prefix(Self.maxBodyLength), as: UTF8.self)
+            contentType = response?.value(forHTTPHeaderField: "Content-Type")
         }
 
         public var description: String {
             "\(step.rawValue) unexpected response status=\(statusCode) cf-ray=\(rayID ?? "none") " +
-                "cf-mitigated=\(cloudflareMitigation ?? "none") body=\(body ?? "nil")"
+                "cf-mitigated=\(cloudflareMitigation ?? "none") content-type=\(contentType ?? "none")"
         }
     }
 }

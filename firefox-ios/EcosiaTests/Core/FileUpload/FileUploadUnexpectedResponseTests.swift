@@ -7,59 +7,53 @@ import XCTest
 
 final class FileUploadUnexpectedResponseTests: XCTestCase {
 
-    func testUnexpectedResponse_capturesStatusRayIDAndBody() throws {
+    func testUnexpectedResponse_capturesStatusRayIDAndContentType() throws {
         let unexpectedResponse = FileUploadService.UnexpectedResponse(
             step: .refresh,
-            data: Data(#"{"message":"Forbidden"}"#.utf8),
-            response: try makeResponse(statusCode: 403, headers: ["cf-ray": "a44466c57d1e1a62-HAM"])
+            response: try makeResponse(
+                statusCode: 403,
+                headers: ["cf-ray": "a44466c57d1e1a62-HAM", "Content-Type": "application/json"]
+            )
         )
 
         XCTAssertEqual(unexpectedResponse.step, .refresh)
         XCTAssertEqual(unexpectedResponse.statusCode, 403)
         XCTAssertEqual(unexpectedResponse.rayID, "a44466c57d1e1a62-HAM")
         XCTAssertNil(unexpectedResponse.cloudflareMitigation)
-        XCTAssertEqual(unexpectedResponse.body, #"{"message":"Forbidden"}"#)
+        XCTAssertEqual(unexpectedResponse.contentType, "application/json")
     }
 
     func testChallengeHeader_isCaptured() throws {
         let unexpectedResponse = FileUploadService.UnexpectedResponse(
             step: .presign,
-            data: Data("<html>Confirm you're not a robot</html>".utf8),
             response: try makeResponse(statusCode: 403, headers: ["cf-mitigated": "challenge"])
         )
 
         XCTAssertEqual(unexpectedResponse.cloudflareMitigation, "challenge")
     }
 
-    func testLongBody_isTruncated() throws {
-        let unexpectedResponse = FileUploadService.UnexpectedResponse(
-            step: .put,
-            data: Data(String(repeating: "x", count: 1_000).utf8),
-            response: try makeResponse(statusCode: 500)
-        )
-
-        XCTAssertEqual(unexpectedResponse.body?.count, 200)
-    }
-
     func testMissingResponse_reportsUnknownStatus() {
-        let unexpectedResponse = FileUploadService.UnexpectedResponse(step: .put, data: Data(), response: nil)
+        let unexpectedResponse = FileUploadService.UnexpectedResponse(step: .put, response: nil)
 
         XCTAssertEqual(unexpectedResponse.statusCode, -1)
         XCTAssertNil(unexpectedResponse.rayID)
         XCTAssertNil(unexpectedResponse.cloudflareMitigation)
-        XCTAssertNil(unexpectedResponse.body)
+        XCTAssertNil(unexpectedResponse.contentType)
     }
 
     func testUnexpectedResponseError_describesTheResponse() throws {
         let unexpectedResponse = FileUploadService.UnexpectedResponse(
             step: .presign,
-            data: Data("Forbidden".utf8),
-            response: try makeResponse(statusCode: 403, headers: ["cf-ray": "a45b07659cec62ca-HAM"])
+            response: try makeResponse(
+                statusCode: 403,
+                headers: ["cf-ray": "a45b07659cec62ca-HAM", "Content-Type": "text/plain;charset=UTF-8"]
+            )
         )
 
         XCTAssertEqual(
             FileUploadService.Error.unexpectedResponse(unexpectedResponse).localizedDescription,
-            "presign unexpected response status=403 cf-ray=a45b07659cec62ca-HAM cf-mitigated=none body=Forbidden"
+            "presign unexpected response status=403 cf-ray=a45b07659cec62ca-HAM cf-mitigated=none " +
+                "content-type=text/plain;charset=UTF-8"
         )
     }
 

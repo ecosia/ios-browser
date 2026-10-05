@@ -46,7 +46,7 @@ public final class FileUploadService: Sendable {
 
     public enum Error: Swift.Error, LocalizedError, Equatable {
         case unexpectedResponse(UnexpectedResponse)
-        case invalidPresignResponse(body: String?)
+        case invalidPresignResponse
         case authenticationRequired
         case timedOut
 
@@ -169,9 +169,9 @@ public final class FileUploadService: Sendable {
         let request = AIChatRefreshRequest()
         log(.info, "Refreshing EAIST cookie url=\(request.resolvedBaseURL.absoluteString)\(request.path)")
 
-        let (data, response) = try await client.perform(request)
+        let (_, response) = try await client.perform(request)
         guard let http = response, (200..<300).contains(http.statusCode) else {
-            let unexpected = UnexpectedResponse(step: .refresh, data: data, response: response)
+            let unexpected = UnexpectedResponse(step: .refresh, response: response)
             log(.error, unexpected.description)
             throw Error.unexpectedResponse(unexpected)
         }
@@ -207,15 +207,15 @@ public final class FileUploadService: Sendable {
         let request = FilePresignRequest(accessToken: accessToken, authSessionCookie: authSessionCookie)
         let (data, response) = try await client.perform(request)
         guard response?.statusCode == 200 else {
-            let unexpected = UnexpectedResponse(step: .presign, data: data, response: response)
+            let unexpected = UnexpectedResponse(step: .presign, response: response)
             log(.error, unexpected.description)
             throw Error.unexpectedResponse(unexpected)
         }
 
-        let body = String(data: data, encoding: .utf8)
         guard let presign = try? JSONDecoder().decode(PresignResponse.self, from: data) else {
-            log(.error, "Failed to decode presign response body=\(body ?? "nil")")
-            throw Error.invalidPresignResponse(body: body)
+            // The body holds the signed upload URL, so only its size is logged.
+            log(.error, "Failed to decode presign response (\(data.count) bytes)")
+            throw Error.invalidPresignResponse
         }
         log(.info, "Got presigned URL fileId=\(presign.fileId) host=\(presign.uploadURL.host ?? "?")")
         return presign
@@ -227,10 +227,10 @@ public final class FileUploadService: Sendable {
         request.httpMethod = "PUT"
         request.setValue(file.mimeType, forHTTPHeaderField: "Content-Type")
 
-        let (data, response) = try await URLSession.shared.upload(for: request, from: file.data)
+        let (_, response) = try await URLSession.shared.upload(for: request, from: file.data)
         let httpResponse = response as? HTTPURLResponse
         guard let http = httpResponse, (200..<300).contains(http.statusCode) else {
-            let unexpected = UnexpectedResponse(step: .put, data: data, response: httpResponse)
+            let unexpected = UnexpectedResponse(step: .put, response: httpResponse)
             log(.error, unexpected.description)
             throw Error.unexpectedResponse(unexpected)
         }
