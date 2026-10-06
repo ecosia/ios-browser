@@ -45,23 +45,17 @@ private struct PresignResponse: Decodable {
 public final class FileUploadService: Sendable {
 
     public enum Error: Swift.Error, LocalizedError, Equatable {
-        case network(statusCode: Int, body: String?)
-        case eaistRefreshFailed(statusCode: Int)
-        case invalidPresignResponse(body: String?)
-        case uploadFailed(statusCode: Int)
+        case unexpectedResponse(UnexpectedResponse)
+        case invalidPresignResponse
         case authenticationRequired
         case timedOut
 
         public var errorDescription: String? {
             switch self {
-            case .network(let statusCode, _):
-                return "Network error (status \(statusCode))"
-            case .eaistRefreshFailed(let statusCode):
-                return "EAIST refresh failed (status \(statusCode))"
+            case .unexpectedResponse(let unexpected):
+                return unexpected.description
             case .invalidPresignResponse:
                 return "Invalid presign response"
-            case .uploadFailed(let statusCode):
-                return "PUT upload failed (status \(statusCode))"
             case .authenticationRequired:
                 return "Authentication required"
             case .timedOut:
@@ -73,15 +67,18 @@ public final class FileUploadService: Sendable {
     private let client: HTTPClient
     private let authenticationService: EcosiaAuthenticationService
     private let timeout: TimeInterval
+    private let environment: Environment
 
     public init(
         client: HTTPClient = URLSessionHTTPClient(),
         authenticationService: EcosiaAuthenticationService = .shared,
-        timeout: TimeInterval = 20
+        timeout: TimeInterval = 20,
+        environment: Environment
     ) {
         self.client = client
         self.authenticationService = authenticationService
         self.timeout = timeout
+        self.environment = environment
     }
 
     /// Upload a single file. Returns the `file_id` on success.
@@ -101,7 +98,7 @@ public final class FileUploadService: Sendable {
             log(.info, "Upload succeeded fileId=\(fileId)")
             return fileId
         } catch {
-            log(.error, "Upload failed: \(String(describing: type(of: error)))")
+            log(.error, "Upload failed: \(error.localizedDescription)")
             throw error
         }
     }
@@ -166,8 +163,8 @@ public final class FileUploadService: Sendable {
     /// Staging API POSTs can be blocked by Cloudflare Access unless `CF_Authorization`
     /// is present in `HTTPCookieStorage`, even when service-token headers are set.
     private func ensureCloudflareAccessCookieForStagingAPI() async {
-        guard Environment.current == .staging else { return }
-        await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView()
+        guard environment == .staging else { return }
+        await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView(environment: environment)
     }
 
     private func refreshEAIST() async throws {
@@ -176,10 +173,10 @@ public final class FileUploadService: Sendable {
         log(.info, "Refreshing EAIST cookie url=\(request.resolvedBaseURL.absoluteString)\(request.path)")
 
         let (_, response) = try await client.perform(request)
-        let statusCode = response?.statusCode ?? -1
         guard let http = response, (200..<300).contains(http.statusCode) else {
-            log(.error, "EAIST refresh failed status=\(statusCode)")
-            throw Error.eaistRefreshFailed(statusCode: statusCode)
+            let unexpected = UnexpectedResponse(step: .refresh, response: response)
+            log(.error, unexpected.description)
+            throw Error.unexpectedResponse(unexpected)
         }
         log(.info, "EAIST refresh succeeded status=\(http.statusCode)")
     }
@@ -212,25 +209,16 @@ public final class FileUploadService: Sendable {
         log(.info, "Requesting presigned URL (EASC attached=\(authSessionCookie != nil))")
         let request = FilePresignRequest(accessToken: accessToken, authSessionCookie: authSessionCookie)
         let (data, response) = try await client.perform(request)
-        let statusCode = response?.statusCode ?? -1
-        let body = String(data: data, encoding: .utf8)
-
-        switch statusCode {
-        case 200:
-            break
-        case 401, 403:
-            log(.error, "Presign unauthorized status=\(statusCode) body=\(body ?? "nil") — " +
-                "AI Worker expects EASC cookie; Bearer fallback may not be deployed yet. " +
-                "Try signing out/in to refresh scopes and establish a web session.")
-            throw Error.authenticationRequired
-        default:
-            log(.error, "Presign failed status=\(statusCode) body=\(body ?? "nil")")
-            throw Error.network(statusCode: statusCode, body: body)
+        guard response?.statusCode == 200 else {
+            let unexpected = UnexpectedResponse(step: .presign, response: response)
+            log(.error, unexpected.description)
+            throw Error.unexpectedResponse(unexpected)
         }
 
         guard let presign = try? JSONDecoder().decode(PresignResponse.self, from: data) else {
-            log(.error, "Failed to decode presign response body=\(body ?? "nil")")
-            throw Error.invalidPresignResponse(body: body)
+            // The body holds the signed upload URL, so only its size is logged.
+            log(.error, "Failed to decode presign response (\(data.count) bytes)")
+            throw Error.invalidPresignResponse
         }
         log(.info, "Got presigned URL fileId=\(presign.fileId) host=\(presign.uploadURL.host ?? "?")")
         return presign
@@ -243,10 +231,11 @@ public final class FileUploadService: Sendable {
         request.setValue(file.mimeType, forHTTPHeaderField: "Content-Type")
 
         let (_, response) = try await URLSession.shared.upload(for: request, from: file.data)
-        let statusCode = (response as? HTTPURLResponse)?.statusCode ?? -1
-        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
-            log(.error, "PUT failed status=\(statusCode)")
-            throw Error.uploadFailed(statusCode: statusCode)
+        let httpResponse = response as? HTTPURLResponse
+        guard let http = httpResponse, (200..<300).contains(http.statusCode) else {
+            let unexpected = UnexpectedResponse(step: .put, response: httpResponse)
+            log(.error, unexpected.description)
+            throw Error.unexpectedResponse(unexpected)
         }
         log(.info, "PUT succeeded status=\(http.statusCode)")
     }
