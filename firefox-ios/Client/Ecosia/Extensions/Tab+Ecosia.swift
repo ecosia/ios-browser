@@ -4,6 +4,7 @@
 
 import Ecosia
 import Foundation
+import Shared
 
 extension Tab {
 
@@ -34,5 +35,15 @@ extension Tab {
         updated.addEcosiaAppHeader()
         updated.url = updated.url.map { $0.ecosified(isIncognitoEnabled: isPrivate) }
         return updated
+    }
+
+    /// Structured NTP page view when this tab loads the homepage, matching web
+    /// `trackPageView()` on document load rather than on becoming visible.
+    /// Call from `loadRequest` only. Do not call from `Tab.reload()`: Firefox
+    /// reloads homepage tabs on every select (FXIOS-10612). Restored tabs load
+    /// through `restore(_:)`, not `loadRequest`, so they are not counted.
+    func ecosiaTrackNTPPageViewIfNeeded(url: URL?) {
+        guard let url, InternalURL(url)?.isAboutHomeURL == true else { return }
+        Analytics.shared.ntpViewed()
     }
 }
