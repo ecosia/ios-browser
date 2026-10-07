@@ -212,7 +212,9 @@ extension BrowserViewController: NTPSearchBarDelegate {
         guard SearchProviderSelection.showsOmniboxAIFeatures else { return }
 
         Task { @MainActor in
-            await refreshChatThreadsOptOutBeforeUpload()
+            if ecosiaAuth?.isLoggedIn == true {
+                try? await ecosiaAuth?.renewCredentialsIfNeeded()
+            }
             guard !presentChatHistoryOptOutUploadErrorIfBlocked() else { return }
             presentOmniboxUploadForCurrentProvider()
         }
@@ -223,16 +225,6 @@ extension BrowserViewController: NTPSearchBarDelegate {
             hasOptedOutOfChatThreads: ecosiaAuth?.hasOptedOutOfChatThreads == true,
             usesEcosiaAIBackend: SearchProviderSelection.usesEcosiaAIBackend
         )
-    }
-
-    private func refreshChatThreadsOptOutBeforeUpload() async {
-        guard ecosiaAuth?.isLoggedIn == true else { return }
-        try? await ecosiaAuth?.renewCredentialsIfNeeded()
-        if let homepage = contentContainer.contentController as? HomepageViewController {
-            homepage.syncOmniboxChatThreadsOptOutFromAuth()
-        } else {
-            ntpOmniboxAnchorView?.refreshUploadControl()
-        }
     }
 
     @discardableResult

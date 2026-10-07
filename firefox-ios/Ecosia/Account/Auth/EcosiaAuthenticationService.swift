@@ -273,9 +273,6 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             }
         } catch {
             EcosiaLogger.auth.error("Failed to retrieve credentials: \(error)")
-            EcosiaLogger.auth.info(
-                "chat-threads-opt-out no stored credentials environment=\(Environment.current) isLoggedIn=false optedOut=false"
-            )
             // Even if retrieval fails, dispatch state loaded as false
             await dispatchAuthStateChange(isLoggedIn: false, fromCredentialRetrieval: true)
         }
