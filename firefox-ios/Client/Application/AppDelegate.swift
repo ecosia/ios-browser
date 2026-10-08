@@ -348,7 +348,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
     /// Ecosia: Records the app-launch activity event. Called inside the post-FeatureManagement Task in
     /// `application(_:didFinishLaunchingWithOptions:)` so feature flags are in the analytics context.
     func ecosiaTrackLaunchActivity() {
-        Analytics.shared.activity(.launch)
+        Analytics.shared.activity(.launch, isDefaultBrowser: ecosiaCheckDefaultBrowserStatusIfDue())
+    }
+
+    /// Ecosia: Replaces Firefox's per-launch check so Apple's few yearly answers are spent on our schedule.
+    func ecosiaCheckDefaultBrowserStatusIfDue() -> Bool? {
+        guard let isDefault = DefaultBrowserStatusChecker.shared.checkIfDue() else { return nil }
+        DefaultBrowserUtility().isDefaultBrowser = isDefault
+        return isDefault
     }
 
     /// Ecosia: Records the one-time install event (fired once per app install).
@@ -365,7 +372,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
             await FeatureManagement.fetchConfiguration()
             // A refresh can change the search provider flag or its router payload.
             searchEnginesManager.reconfigureEngineProviderIfNeeded()
-            Analytics.shared.activity(.resume)
+            Analytics.shared.activity(.resume, isDefaultBrowser: ecosiaCheckDefaultBrowserStatusIfDue())
             // Ecosia: Also re-check here — Sentry setup is a no-op once already enabled, so this just
             // catches the case where it wasn't enabled yet at launch (e.g. flag flipped ON since).
             appLaunchUtil?.setUpCrashReportingIfEnabled()

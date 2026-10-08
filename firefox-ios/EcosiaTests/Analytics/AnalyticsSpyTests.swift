@@ -35,9 +35,9 @@ final class AnalyticsSpy: Analytics, @unchecked Sendable {
     }
 
     var activityActionCalled: Analytics.Action.Activity?
-    override func activity(_ action: Analytics.Action.Activity) {
+    override func activity(_ action: Analytics.Action.Activity, isDefaultBrowser: Bool? = nil) {
         activityActionCalled = action
-        super.activity(action)
+        super.activity(action, isDefaultBrowser: isDefaultBrowser)
     }
 
     var bookmarksImportExportPropertyCalled: Analytics.Property.Bookmarks?
@@ -1212,6 +1212,46 @@ final class AnalyticsContextTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(event?.category, Analytics.Category.ntp.rawValue)
         XCTAssertEqual(event?.action, Analytics.Action.view.rawValue)
         XCTAssertNil(event?.label)
+    }
+
+    // MARK: - Default browser status
+
+    func testActivityWhenDefaultBrowserTracksDefaultBrowserSetProperty() {
+        // Arrange
+        let sut = makeAnalyticsContextSUT()
+
+        // Act
+        sut.activity(.launch, isDefaultBrowser: true)
+
+        // Assert
+        let event = sut.trackedEvents.first as? Structured
+        XCTAssertEqual(event?.action, Analytics.Action.Activity.launch.rawValue)
+        XCTAssertEqual(event?.property, Analytics.Property.defaultBrowserSet.rawValue)
+    }
+
+    func testActivityWhenNotDefaultBrowserHasNoProperty() {
+        // Arrange
+        let sut = makeAnalyticsContextSUT()
+
+        // Act
+        sut.activity(.launch, isDefaultBrowser: false)
+
+        // Assert
+        let event = sut.trackedEvents.first as? Structured
+        XCTAssertNil(event?.property)
+    }
+
+    func testActivityWithoutDefaultBrowserStatusHasNoProperty() {
+        // Arrange
+        let sut = makeAnalyticsContextSUT()
+
+        // Act
+        sut.activity(.resume)
+
+        // Assert
+        let event = sut.trackedEvents.first as? Structured
+        XCTAssertEqual(event?.action, Analytics.Action.Activity.resume.rawValue)
+        XCTAssertNil(event?.property)
     }
 
     // MARK: - Helpers
