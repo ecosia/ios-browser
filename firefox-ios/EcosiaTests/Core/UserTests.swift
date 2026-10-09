@@ -46,23 +46,20 @@ final class UserTests: XCTestCase, @unchecked Sendable {
     }
 
     func testNotSavingOnLoad() {
-        let expect = expectation(description: "")
-        nonisolated(unsafe) var user = User()
-        user.firstTime = false
-        User.shared = user
-        User.queue.async {
-            user = User()
-            try! FileManager.default.removeItem(at: FileManager.user)
-            XCTAssertFalse(user.firstTime)
-            User.queue.async {
-                XCTAssertNotNil(user)
-                DispatchQueue.main.async {
-                    XCTAssertFalse(FileManager.default.fileExists(atPath: FileManager.user.path))
-                    expect.fulfill()
-                }
-            }
+        nonisolated(unsafe) var seeded = User.shared
+        seeded.firstTime = false
+        User.queue.sync {
+            try? JSONEncoder().encode(seeded).write(to: FileManager.user, options: .atomic)
         }
-        waitForExpectations(timeout: 1)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: FileManager.user.path))
+
+        User.queue.sync {
+            let loaded = User()
+            XCTAssertFalse(loaded.firstTime)
+            try? FileManager.default.removeItem(at: FileManager.user)
+        }
+        User.queue.sync {}
+        XCTAssertFalse(FileManager.default.fileExists(atPath: FileManager.user.path))
     }
 
     func testAnalyticsId() {
@@ -78,8 +75,13 @@ final class UserTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 1)
     }
 
+    // `User.shared` saves only when the value actually changes, and `setUp` removes the
+    // stored file. Since `User.shared` is process-global, an earlier test may already hold
+    // the target value, so each of these seeds a contrasting one first to force the write.
+
     func testTreeCount() {
         let expect = expectation(description: "")
+        User.shared.searchCount = 0
         User.shared.searchCount = 123
         User.queue.async {
             let user = User()
@@ -91,6 +93,7 @@ final class UserTests: XCTestCase, @unchecked Sendable {
 
     func testAdultFilter() {
         let expect = expectation(description: "")
+        User.shared.adultFilter = .moderate
         User.shared.adultFilter = .off
         User.queue.async {
             let user = User()
@@ -102,6 +105,7 @@ final class UserTests: XCTestCase, @unchecked Sendable {
 
     func testMarketCode() {
         let expect = expectation(description: "")
+        User.shared.marketCode = .en_ww
         User.shared.marketCode = .ar_sa
         User.queue.async {
             let user = User()
@@ -113,6 +117,7 @@ final class UserTests: XCTestCase, @unchecked Sendable {
 
     func testAutoComplete() {
         let expect = expectation(description: "")
+        User.shared.autoComplete = true
         User.shared.autoComplete = false
         User.queue.async {
             let user = User()
@@ -245,24 +250,16 @@ final class UserTests: XCTestCase, @unchecked Sendable {
     }
 
     func testShowsReferralSpotlight() {
-        let expect = expectation(description: "")
         XCTAssertFalse(User.shared.showsReferralSpotlight)
 
         // set install to 4 days ago
         User.shared.install = Calendar.current.date(byAdding: .day, value: -4, to: .init())!
+        User.queue.sync {}
+        XCTAssertTrue(User().showsReferralSpotlight)
 
-        User.queue.async {
-            let user = User()
-            XCTAssertTrue(user.showsReferralSpotlight)
-
-            User.shared.hideReferralSpotlight()
-            User.queue.async {
-                let user = User()
-                XCTAssertFalse(user.showsReferralSpotlight)
-                expect.fulfill()
-            }
-        }
-        waitForExpectations(timeout: 1)
+        User.shared.hideReferralSpotlight()
+        User.queue.sync {}
+        XCTAssertFalse(User().showsReferralSpotlight)
     }
 
     func testShowsInactiveTabsTooltip() {
@@ -319,24 +316,84 @@ final class UserTests: XCTestCase, @unchecked Sendable {
     }
 
     func testSearchSettingChangeNotifiaction() {
-        let expect = expectation(description: "")
+        drainPendingSearchSettingsPosts()
+
+        let notified = expectation(forNotification: .searchSettingsChanged, object: nil, notificationCenter: .default)
+        notified.expectedFulfillmentCount = 4
+
+        // Pick values that always differ from the current state so each assignment
+        // posts a notification even when earlier tests in this suite mutated `User.shared`.
+        let baseline = User.shared
+        User.shared.aiOverviews = !baseline.aiOverviews
+        User.shared.marketCode = baseline.marketCode == .en_ww ? .ar_sa : .en_ww
+        User.shared.autoComplete = !baseline.autoComplete
+        User.shared.adultFilter = baseline.adultFilter == .off ? .moderate : .off
+
+        wait(for: [notified], timeout: 3)
+    }
+
+    func testSearchSettingChangeNotificationForAIFreeSearching() {
+        drainPendingSearchSettingsPosts()
+
         var count = 0
-
-        NotificationCenter.default.addObserver(forName: .searchSettingsChanged, object: nil, queue: .main) { _ in
-
+        let observer = NotificationCenter.default.addObserver(
+            forName: .searchSettingsChanged,
+            object: nil,
+            queue: .main
+        ) { _ in
             count += 1
-
-            if count == 4 {
-                expect.fulfill()
-            }
         }
+        defer { NotificationCenter.default.removeObserver(observer) }
 
-        User.shared.aiOverviews = !User.shared.aiOverviews
-        User.shared.marketCode = .en_ww
-        User.shared.autoComplete = !User.shared.autoComplete
-        User.shared.adultFilter = .off
+        User.shared.aiFreeSearching = User.shared.aiFreeSearching == true ? false : true
 
-        wait(for: [expect], timeout: 1)
+        let deadline = Date().addingTimeInterval(3)
+        while count < 1 && Date() < deadline {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        }
+        // At least one rather than exactly one: posts carry no sender, so a stray post queued by
+        // another test's async `User.shared` mutation can arrive in the same run-loop pass
+        XCTAssertGreaterThanOrEqual(count, 1, "Expected searchSettingsChanged when toggling aiFreeSearching")
+    }
+
+    /// `User.shared` posts `searchSettingsChanged` via `DispatchQueue.main.async`, so mutations
+    /// from earlier, unrelated test classes can still have a post queued on the main queue by the
+    /// time this test starts - spin until a full quiet window passes with no further post, rather
+    /// than a fixed duration, so this holds regardless of how many are queued or how slow the
+    /// environment is (a fixed short spin was observed to still flake in CI under load).
+    private func drainPendingSearchSettingsPosts() {
+        var lastPostAt = Date()
+        let observer = NotificationCenter.default.addObserver(
+            forName: .searchSettingsChanged,
+            object: nil,
+            queue: .main
+        ) { _ in
+            lastPostAt = Date()
+        }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        let quietWindow: TimeInterval = 0.2
+        let overallDeadline = Date().addingTimeInterval(5)
+        while Date().timeIntervalSince(lastPostAt) < quietWindow && Date() < overallDeadline {
+            RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+        }
+    }
+
+    func testSelectedProviderNormalizesStoredIdentifier() {
+        let previous = User.shared.selectedSearchEngineID
+        defer { User.shared.selectedSearchEngineID = previous }
+
+        User.shared.selectedSearchEngineID = "duckduckgo"
+        XCTAssertEqual(User.shared.selectedProvider, .duckduckgo)
+        XCTAssertFalse(User.shared.isEcosiaSearchProvider)
+
+        // An identifier an older build could have persisted, for example a provider we
+        // never offered or one since removed. Must not be a name in the catalog.
+        User.shared.selectedSearchEngineID = "yahoo"
+        XCTAssertEqual(User.shared.selectedProvider, .ecosia)
+        XCTAssertTrue(User.shared.isEcosiaSearchProvider,
+                      "A provider we no longer offer must be treated as Ecosia, so the market "
+                      + "and safe-search cookies are still written")
     }
 
     func testAnalyticsUserState() {

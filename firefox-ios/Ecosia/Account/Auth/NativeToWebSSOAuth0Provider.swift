@@ -5,12 +5,13 @@
 import Auth0
 import WebKit
 
+// Ecosia: @unchecked Sendable because the struct stores protocol existentials
+// (Auth0SettingsProviderProtocol, CredentialsManagerProtocol) that are not Sendable.
 /// Native to Web SSO implementation of `Auth0ProviderProtocol` using Auth0's SDK and performing Native to Web SSO via REST API to perform the session token exchange.
-public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
+public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sendable {
 
     public let settings: Auth0SettingsProviderProtocol
     public let credentialsManager: CredentialsManagerProtocol
-    public typealias SessionToken = String
     private let environment: Environment
 
     enum NativeToWebSSOError: Error, Equatable {
@@ -28,14 +29,19 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
     }
 
     public var webAuth: WebAuth {
+        configuredWebAuth(screenHint: .login)
+    }
+
+    public func startAuth(screenHint: AuthScreenHint) async throws -> Credentials {
+        return try await configuredWebAuth(screenHint: screenHint).start()
+    }
+
+    private func configuredWebAuth(screenHint: AuthScreenHint) -> WebAuth {
         makeHttpsWebAuth()
             .useEphemeralSession()
             .audience(environment.urlProvider.authApiAudience.absoluteString)
-            .scope("openid profile email offline_access read:impact write:impact")
-    }
-
-    public func startAuth() async throws -> Credentials {
-        return try await webAuth.start()
+            .scope(EcosiaAuthScopes.oauthScope)
+            .parameters(["screen_hint": screenHint.rawValue])
     }
 
     /// Custom clearSession implementation that bypasses Auth0's default logout alert
@@ -47,11 +53,25 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol {
         EcosiaLogger.auth.info("\(Cookie.authSession.name) cookie cleared successfully")
     }
 
-    /// Clears EASC (Ecosia Auth Session Cookie) cookies from the default web data store
+    /// Clears  all`EASC` (Ecosia Auth Session Cookie) cookies and any cookie scoped to the Auth0 tenant
+    /// domain (e.g. `login.ecosia.org`) from the WKWebView's cookie store.
+    ///
+    /// The native login uses `.useEphemeralSession()` so it never leaves an Auth0 SSO session cookie behind, but the
+    /// invisible tab used for session transfer runs on shared, persistent store so we must explictly clear the SSO cookie that is
+    /// set by Auth0's custom domain - otherwise we risk silently re-using the previous user's still-valid Auth0 session.
+    /// We don't know that cookie's name because it varies by tenant/SDK, so it's matched by domain instead.
     private func clearWebSessionCookies() async {
         let cookieStore = await WKWebsiteDataStore.default().httpCookieStore
-        guard let sessionCookie = await cookieStore.allCookies().first(where: { $0.name == Cookie.authSession.name }) else { return }
-        await cookieStore.deleteCookie(sessionCookie)
+        let auth0Domain = settings.domain
+        let cookiesToClear = await cookieStore.allCookies().filter {
+            $0.name == Cookie.authSession.name ||
+            $0.domain == auth0Domain ||
+            $0.domain == ".\(auth0Domain)" ||
+            $0.domain.hasSuffix(".\(auth0Domain)")
+        }
+        for cookie in cookiesToClear {
+            await cookieStore.deleteCookie(cookie)
+        }
     }
 }
 

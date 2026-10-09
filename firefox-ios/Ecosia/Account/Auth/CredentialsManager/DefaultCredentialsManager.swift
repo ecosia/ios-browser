@@ -4,7 +4,9 @@
 
 import Auth0
 
-struct DefaultCredentialsManager: CredentialsManagerProtocol {
+// Ecosia: @unchecked Sendable because Auth0.CredentialsManager is not Sendable but
+// DefaultCredentialsManager is used as a value type and only accessed from the @MainActor.
+struct DefaultCredentialsManager: CredentialsManagerProtocol, @unchecked Sendable {
 
     private let credentialManager: CredentialsManager
 

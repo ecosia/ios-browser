@@ -6,6 +6,7 @@ import Foundation
 
 extension Bundle {
     static var ecosiaTests: Bundle {
-        Bundle(identifier: "com.ecosia.framework.EcosiaTests")!
+        // Ecosia: Bundle identifier matches bundleId in Tuist/ProjectDescriptionHelpers/Targets+Tests.swift
+        Bundle(identifier: "com.ecosia.tests.Ecosia")!
     }
 }

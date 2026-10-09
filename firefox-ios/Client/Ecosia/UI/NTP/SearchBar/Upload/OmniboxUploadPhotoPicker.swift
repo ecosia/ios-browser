@@ -3,44 +3,22 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Photos
 import PhotosUI
+import UniformTypeIdentifiers
 import Ecosia
-import Shared
+
+enum OmniboxUploadPhotoPickerUX {
+    static let maxSelectionCount = 5
+}
 
 extension OmniboxUploadPickerCoordinator {
     func presentPhotoPicker(from viewController: UIViewController) {
-        requestPhotoLibraryAccessIfNeeded(from: viewController) { [weak self] in
-            self?.showSystemPhotoPicker(from: viewController)
-        }
-    }
-
-    private func requestPhotoLibraryAccessIfNeeded(from viewController: UIViewController,
-                                                   onGranted: @escaping @MainActor () -> Void) {
-        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
-        switch status {
-        case .authorized, .limited:
-            onGranted()
-        case .notDetermined:
-            PHPhotoLibrary.requestAuthorization(for: .readWrite) { newStatus in
-                Task { @MainActor in
-                    if OmniboxUploadPhotoLibraryAuthorization.isAccessGranted(for: newStatus) {
-                        onGranted()
-                    } else {
-                        self.presentPhotoLibraryAccessDeniedAlert(on: viewController)
-                    }
-                }
-            }
-        case .denied, .restricted:
-            presentPhotoLibraryAccessDeniedAlert(on: viewController)
-        @unknown default:
-            break
-        }
-    }
-
-    private func showSystemPhotoPicker(from viewController: UIViewController) {
-        var configuration = PHPickerConfiguration(photoLibrary: .shared())
-        configuration.selectionLimit = OmniboxUploadPhotoPickerUX.maxSelectionCount
+        let remainingSlots = delegate?.omniboxUploadRemainingAttachmentSlots
+            ?? OmniboxUploadPhotoPickerUX.maxSelectionCount
+        // PHPicker treats `selectionLimit = 0` as unlimited, so never present with no slots left.
+        guard remainingSlots > 0 else { return }
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = min(OmniboxUploadPhotoPickerUX.maxSelectionCount, remainingSlots)
         configuration.filter = .images
 
         let picker = PHPickerViewController(configuration: configuration)
@@ -48,33 +26,119 @@ extension OmniboxUploadPickerCoordinator {
         configurePopover(for: picker, from: viewController)
         viewController.present(picker, animated: true)
     }
-
-    private func presentPhotoLibraryAccessDeniedAlert(on viewController: UIViewController) {
-        let alert = UIAlertController(
-            title: String.localized(.uploadPhotoLibraryAccessTitle),
-            message: String.localized(.uploadPhotoLibraryAccessMessage),
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: String.localized(.cancel), style: .cancel))
-        alert.addAction(UIAlertAction(title: .OpenSettingsString, style: .default) { _ in
-            DefaultApplicationHelper().openSettings()
-        })
-        viewController.present(alert, animated: true)
-    }
 }
 
 extension OmniboxUploadPickerCoordinator: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
+        guard !results.isEmpty else { return }
 
-        let items = results.map { result in
-            OmniboxUploadItem(
-                source: .photos,
-                fileName: result.itemProvider.suggestedName ?? "photo",
-                contentTypeIdentifier: result.itemProvider.registeredTypeIdentifiers.first
+        let remainingSlots = delegate?.omniboxUploadRemainingAttachmentSlots
+            ?? OmniboxUploadPhotoPickerUX.maxSelectionCount
+        let acceptedResults = Array(results.prefix(remainingSlots))
+        let validationErrors = OmniboxUploadFileSelectionValidator.validateSelectionCount(
+            selectedCount: results.count,
+            existingAttachmentCount: delegate?.omniboxUploadExistingAttachmentCount ?? 0
+        )
+
+        // Load bytes while the picker callback is still active — the item provider can expire later.
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+
+            var pendingItems: [OmniboxUploadPendingItem] = []
+            for result in acceptedResults {
+                let fileName = result.itemProvider.suggestedName
+                    ?? OmniboxUploadPayloadLoader.uniqueJPEGFileName(prefix: "photo")
+                let typeIdentifier = result.itemProvider.registeredTypeIdentifiers.first ?? UTType.jpeg.identifier
+                let payload = try? await Task.detached(priority: .userInitiated) {
+                    try await Self.loadPhoto(
+                        from: result.itemProvider,
+                        fileName: fileName,
+                        typeIdentifier: typeIdentifier
+                    )
+                }.value
+                guard let payload else { continue }
+
+                let captured = payload
+                pendingItems.append(
+                    OmniboxUploadPendingItem(fileName: captured.fileName, layout: captured.layout) {
+                        captured
+                    }
+                )
+            }
+
+            delegate?.omniboxUploadDidFinishPicking(
+                items: pendingItems,
+                validationErrors: validationErrors
             )
         }
-        guard !items.isEmpty else { return }
-        delegate?.omniboxUploadDidSelect(items: items)
+    }
+
+    private static func loadPhoto(from itemProvider: NSItemProvider,
+                                  fileName: String,
+                                  typeIdentifier: String) async throws -> OmniboxUploadLocalPayload {
+        if let payload = try? await loadRawPhoto(
+            from: itemProvider,
+            fileName: fileName,
+            typeIdentifier: typeIdentifier
+        ) {
+            return payload
+        }
+
+        let image = try await loadUIImage(from: itemProvider)
+        guard let data = image.jpegData(compressionQuality: 0.92) else {
+            throw OmniboxUploadPayloadError.unreadable
+        }
+        let jpegFileName = OmniboxUploadPayloadLoader.normalizedJPEGFileName(from: fileName)
+        return try OmniboxUploadPayloadLoader.loadImage(
+            data: data,
+            fileName: jpegFileName,
+            mimeType: UTType.jpeg.preferredMIMEType ?? "image/jpeg"
+        )
+    }
+
+    private static func loadRawPhoto(from itemProvider: NSItemProvider,
+                                     fileName: String,
+                                     typeIdentifier: String) async throws -> OmniboxUploadLocalPayload {
+        let data = try await loadData(from: itemProvider, typeIdentifier: typeIdentifier)
+        let mimeType = UTType(typeIdentifier)?.preferredMIMEType ?? "image/jpeg"
+        return try OmniboxUploadPayloadLoader.loadImage(
+            data: data,
+            fileName: fileName,
+            mimeType: mimeType
+        )
+    }
+
+    private static func loadData(from itemProvider: NSItemProvider,
+                                 typeIdentifier: String) async throws -> Data {
+        try await withCheckedThrowingContinuation { continuation in
+            itemProvider.loadDataRepresentation(forTypeIdentifier: typeIdentifier) { data, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let data else {
+                    continuation.resume(throwing: OmniboxUploadPayloadError.unreadable)
+                    return
+                }
+                continuation.resume(returning: data)
+            }
+        }
+    }
+
+    private static func loadUIImage(from itemProvider: NSItemProvider) async throws -> UIImage {
+        try await withCheckedThrowingContinuation { continuation in
+            itemProvider.loadObject(ofClass: UIImage.self) { object, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let image = object as? UIImage else {
+                    continuation.resume(throwing: OmniboxUploadPayloadError.unreadable)
+                    return
+                }
+                continuation.resume(returning: image)
+            }
+        }
     }
 }

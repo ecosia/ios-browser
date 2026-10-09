@@ -58,7 +58,8 @@ class CreditCardValidatorTests: XCTestCase {
     }
 
     func testCardTypeForMIR() {
-        let result = creditCardValidator.cardTypeFor("2060123412341234")
+        // Ecosia: MIR BINs are 2200–2204 (validator pattern ^220[0-4]…); the previous 2060… prefix is not MIR.
+        let result = creditCardValidator.cardTypeFor("2200123412341234")
 
         XCTAssertEqual(result, .mir)
     }
@@ -119,7 +120,7 @@ class CreditCardValidatorTests: XCTestCase {
     }
 
     func testCardNumberIsValidForMir() {
-        let result = creditCardValidator.isCardNumberValidFor(card: "2060123412341234")
+        let result = creditCardValidator.isCardNumberValidFor(card: "2200123412341234")
         XCTAssert(result)
     }
 
@@ -127,7 +128,14 @@ class CreditCardValidatorTests: XCTestCase {
         var result = creditCardValidator.isExpirationValidFor(date: "1230")
         XCTAssert(result)
 
+        /* Ecosia: a hardcoded expiry stops being valid once its month passes, so use one a year ahead
         result = creditCardValidator.isExpirationValidFor(date: "0926")
+         */
+        let nextYear = Calendar(identifier: .gregorian).date(byAdding: .year, value: 1, to: Date()) ?? Date()
+        let expiryFormatter = DateFormatter()
+        expiryFormatter.locale = Locale(identifier: "en_US_POSIX")
+        expiryFormatter.dateFormat = "MMyy"
+        result = creditCardValidator.isExpirationValidFor(date: expiryFormatter.string(from: nextYear))
         XCTAssert(result)
     }
 

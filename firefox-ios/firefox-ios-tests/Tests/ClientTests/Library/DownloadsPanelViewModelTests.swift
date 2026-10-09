@@ -11,6 +11,14 @@ import Shared
 class DownloadsPanelViewModelTests: XCTestCase {
     private var fileFetcher: MockDownloadFileFetcher!
 
+    // Ecosia: Deterministic timestamps that sit clearly inside each DateGroupedTableData bucket regardless of
+    // the current time of day. Boundaries are [24h, 7d, 28d] → buckets [0: ≤24h, 1: 24h–7d (LastSevenDays),
+    // 2: 7d–28d (LastFourWeeks), 3: >28d]. The shared noon-based helpers are boundary-flaky against the
+    // top-of-hour-truncated boundaries (e.g. a noon "yesterday" can land in bucket 0 before noon). (MOB-4384)
+    private let withinLastSevenDays = Date().addingTimeInterval(-2 * 24 * 60 * 60)   // bucket 1
+    private let withinLastFourWeeks = Date().addingTimeInterval(-14 * 24 * 60 * 60)  // bucket 2
+    private let olderThanFourWeeks = Date().addingTimeInterval(-35 * 24 * 60 * 60)   // bucket 3
+
     override func setUp() {
         super.setUp()
         fileFetcher = MockDownloadFileFetcher()
@@ -45,8 +53,8 @@ class DownloadsPanelViewModelTests: XCTestCase {
     }
 
     func testIsFirstSection_ForYesterday() {
-        let todayResults: [Date: Int] = [Date.yesterday: 2,
-                                         Date().lastMonth: 2]
+        let todayResults: [Date: Int] = [withinLastSevenDays: 2,
+                                         olderThanFourWeeks: 2]
         let viewModel = createSubject(resultsPerSection: todayResults)
         viewModel.reloadData()
 
@@ -109,8 +117,8 @@ class DownloadsPanelViewModelTests: XCTestCase {
 
     func testGetDownloadFile_ForTodaySecondFile() {
         let todayResults: [Date: Int] = [Date().noon: 4,
-                                         Date.yesterday: 2,
-                                         Date().lastWeek: 2]
+                                         withinLastSevenDays: 2,
+                                         withinLastFourWeeks: 2]
         let viewModel = createSubject(resultsPerSection: todayResults)
         viewModel.reloadData()
 
@@ -132,7 +140,7 @@ class DownloadsPanelViewModelTests: XCTestCase {
     }
 
     func testGetNumberOfItems_ForYesterday() {
-        let todayResults: [Date: Int] = [Date.yesterday: 2]
+        let todayResults: [Date: Int] = [withinLastSevenDays: 2]
         let viewModel = createSubject(resultsPerSection: todayResults)
         viewModel.reloadData()
 
@@ -140,7 +148,9 @@ class DownloadsPanelViewModelTests: XCTestCase {
     }
 
     func testGetNumberOfItems_ForLastWeek() {
-        let todayResults: [Date: Int] = [getDate(dayOffset: -6): 5]
+        // Ecosia: section 2 (LastFourWeeks) holds items 7–28 days old; -6 days falls in section 1, so use a date
+        // clearly inside the 7–28 day bucket. // was getDate(dayOffset: -6)
+        let todayResults: [Date: Int] = [withinLastFourWeeks: 5]
         let viewModel = createSubject(resultsPerSection: todayResults)
         viewModel.reloadData()
 
@@ -148,7 +158,9 @@ class DownloadsPanelViewModelTests: XCTestCase {
     }
 
     func testGetNumberOfItems_ForLastMonth() {
-        let todayResults: [Date: Int] = [getDate(dayOffset: -25): 4]
+        // Ecosia: section 3 holds items older than 4 weeks (>28 days); -25 days falls in section 2, so use a date
+        // clearly older than 28 days. // was getDate(dayOffset: -25)
+        let todayResults: [Date: Int] = [olderThanFourWeeks: 4]
         let viewModel = createSubject(resultsPerSection: todayResults)
         viewModel.reloadData()
 

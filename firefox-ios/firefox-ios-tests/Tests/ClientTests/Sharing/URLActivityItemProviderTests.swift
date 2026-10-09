@@ -129,8 +129,13 @@ final class URLActivityItemProviderTests: XCTestCase {
     func testOveridesWhatsAppShareItem_forTreatmentA() {
         setupNimbusSentFromFirefoxTesting(isEnabled: true, isTreatmentA: true)
 
+        // Ecosia: The share text is rebranded via AppName.shortName ("Ecosia"), not "Firefox".
+        /* Ecosia:
         let expectedShareContentA =
             "https://mozilla.org\n\nSent from Firefox 🦊 Try the mobile browser: https://mzl.la/4fOWPpd"
+         */
+        let expectedShareContentA =
+            "https://mozilla.org\n\nSent from Ecosia 🦊 Try the mobile browser: https://mzl.la/4fOWPpd"
         let whatsAppActivityIdentifier = "net.whatsapp.WhatsApp.ShareExtension"
 
         let urlActivityItemProvider = URLActivityItemProvider(url: testWebURL, allowSentFromFirefoxTreatment: true)
@@ -145,7 +150,11 @@ final class URLActivityItemProviderTests: XCTestCase {
     func testOveridesWhatsAppShareItem_forTreatmentB() {
         setupNimbusSentFromFirefoxTesting(isEnabled: true, isTreatmentA: false)
 
+        // Ecosia: The share text is rebranded via AppName.shortName ("Ecosia"), not "Firefox".
+        /* Ecosia:
         let expectedShareContentB = "https://mozilla.org\n\nSent from Firefox 🦊 https://mzl.la/3YSUOl8"
+         */
+        let expectedShareContentB = "https://mozilla.org\n\nSent from Ecosia 🦊 https://mzl.la/3YSUOl8"
         let whatsAppActivityIdentifier = "net.whatsapp.WhatsApp.ShareExtension"
 
         let urlActivityItemProvider = URLActivityItemProvider(url: testWebURL, allowSentFromFirefoxTreatment: true)

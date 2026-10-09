@@ -8,6 +8,27 @@ import Shared
 import Common
 import Ecosia
 
+// MARK: - Sentry Debug Settings
+
+/// Sends a message through `EcosiaLogger.general.sentry(...)` without crashing — this logs locally like
+/// `.error` AND forwards to Sentry via `DefaultLogger`/`CrashManager` in one call. Useful to confirm the
+/// DSN/network path works without the crash+relaunch round trip.
+final class EcosiaLoggerForceErrorSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Send Non-Crashing Error to Sentry", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        EcosiaLogger.general.sentry("Ecosia debug: non-crashing test event")
+
+        let alert = AlertController(title: "Sent ✅",
+                                    message: "Check the Sentry dashboard in a minute.",
+                                    preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        navigationController?.topViewController?.present(alert, animated: true)
+    }
+}
+
 final class PushBackInstallation: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Push back installation by 3 days (needs restart).", attributes: [:])
@@ -97,7 +118,7 @@ final class CreateReferralCode: HiddenSetting {
             let alertTitle = "Code created"
             let alert = AlertController(title: alertTitle, message: User.shared.referrals.code, preferredStyle: .alert)
             navigationController?.topViewController?.present(alert, animated: true) {
-                // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+                // Task + sleep instead of DispatchQueue for strict concurrency
                 Task { @MainActor in
                     try? await Task.sleep(nanoseconds: 1_500_000_000)
                     alert.dismiss(animated: true)
@@ -109,7 +130,7 @@ final class CreateReferralCode: HiddenSetting {
 
             let alert = AlertController(title: "Code erased!", message: "Reopen app to create new one", preferredStyle: .alert)
             navigationController?.topViewController?.present(alert, animated: true) {
-                // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+                // Task + sleep instead of DispatchQueue for strict concurrency
                 Task { @MainActor in
                     try? await Task.sleep(nanoseconds: 1_500_000_000)
                     alert.dismiss(animated: true)
@@ -131,7 +152,7 @@ final class AddReferral: HiddenSetting {
         let alertTitle = "Referral count increased by one."
         let alert = AlertController(title: alertTitle, message: "Open NTP to see spotlight", preferredStyle: .alert)
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            // Task + sleep instead of DispatchQueue for strict concurrency
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 1_500_000_000)
                 alert.dismiss(animated: true)
@@ -152,7 +173,7 @@ final class AddClaim: HiddenSetting {
         let alertTitle = "User got referred."
         let alert = AlertController(title: alertTitle, message: "Open NTP to see claim", preferredStyle: .alert)
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            // Task + sleep instead of DispatchQueue for strict concurrency
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 1_500_000_000)
                 alert.dismiss(animated: true)
@@ -257,6 +278,12 @@ class UnleashVariantResetSetting: HiddenSetting {
                 debugPrint(error)
             }
             await MainActor.run {
+                // A reset re-fetches the model, which can flip the search provider flag or
+                // change its router payload. Without this the app keeps the engine list it
+                // built at launch until the next foreground.
+                let searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
+                searchEnginesManager.reconfigureEngineProviderIfNeeded()
+
                 self.settings.tableView.reloadData()
                 let alert = AlertController(title: "Unleash reset ✅",
                                             message: "The local Unleash cache has been wiped out",
@@ -288,6 +315,31 @@ final class UnleashNativeSRPVAnalyticsSetting: UnleashVariantResetSetting {
     }
 }
 
+final class UnleashCustomSearchProviderSetting: UnleashVariantResetSetting {
+    override var accessibilityIdentifier: String? {
+        EcosiaAccessibilityIdentifiers.Debug.customSearchProviderUnleash
+    }
+
+    override var titleName: String? {
+        "Custom Search Provider"
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.customSearchProvider)
+    }
+
+    /// Shows the configuration the app actually resolved, so QA can tell a payload that
+    /// landed from one that fell back. With the flag off this reads as the Ecosia-only
+    /// configuration, which is what applies.
+    override var status: NSAttributedString? {
+        let config = CustomSearchProviderFeatureFlag.config
+        let state = Unleash.isEnabled(.customSearchProvider) ? "enabled" : "disabled"
+        let providers = config.providers.map(\.rawValue).joined(separator: ", ")
+        let description = "\(state) · ai: \(config.aiMode.rawValue) · \(providers) (Click to reset)"
+        return NSAttributedString(string: description, attributes: [:])
+    }
+}
+
 final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "AI Chat MVP"
@@ -299,6 +351,16 @@ final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
 
     override var unleashEnabled: Bool? {
         Unleash.isEnabled(.aiChatMVP)
+    }
+}
+
+final class UnleashAIFreeSearchingSetting: UnleashVariantResetSetting {
+    override var titleName: String? {
+        "AI-free searching"
+    }
+
+    override var unleashEnabled: Bool? {
+        Unleash.isEnabled(.aiFreeSearching)
     }
 }
 
@@ -355,7 +417,7 @@ final class AnalyticsStagingUrlSetting: HiddenSetting {
 final class SimulateAuthErrorSetting: HiddenSetting {
     /// UserDefaults key for storing auth error simulation state
     /// Note: Persists across app restarts - toggle again to disable
-    /// Ecosia: nonisolated so async/non–main-actor code can read it without crossing isolation
+    /// nonisolated so async/non–main-actor code can read it without crossing isolation
     nonisolated public static let debugKey = "DebugSimulateAuthError"
 
     override var title: NSAttributedString? {
@@ -375,11 +437,13 @@ final class SimulateAuthErrorSetting: HiddenSetting {
 
         let alert = AlertController(
             title: !currentValue ? "Auth Error Enabled ✅" : "Auth Error Disabled ✅",
-            message: !currentValue ? "Next login/logout will fail with an error." : "Auth errors disabled.",
+            message: !currentValue
+                ? "Next login/logout will fail and show an error toast until you toggle this off."
+                : "Auth errors disabled.",
             preferredStyle: .alert
         )
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            // Task + sleep instead of DispatchQueue for strict concurrency
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 1_500_000_000)
                 alert.dismiss(animated: true)
@@ -388,7 +452,60 @@ final class SimulateAuthErrorSetting: HiddenSetting {
     }
 
     /// Check if auth error simulation is enabled
-    public static var isEnabled: Bool {
+    nonisolated public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+/// Forces the invisible tab used for SSO session transfer/cleanup to load /accounts/error directly
+/// instead of the normal sign-up/logout URL - mirroring Android's own QA-only shortcut
+/// (ForcedTransferError.OPEN_ERROR_PAGE), rather than trying to trigger a genuine server-side
+/// redirect there (fastify-passport appears to 401 directly on an OAuth callback error param,
+/// short-circuiting before any redirect). /accounts/error itself has no auth precondition, so this
+/// still exercises the real web page and isSessionTransferSuccessful()'s URL classification
+/// end-to-end, rather than faking the outcome natively.
+final class SimulateSessionTransferFailureSetting: HiddenSetting {
+    nonisolated public static let debugKey = "DebugSimulateSessionTransferFailure"
+
+    nonisolated public static var forcedErrorPageURL: URL {
+        let urlProvider = EcosiaEnvironment.current.urlProvider
+        var errorPath = urlProvider.errorPaths.first ?? "/accounts/error"
+        if errorPath.hasPrefix("/") { errorPath.removeFirst() }
+        return urlProvider.root.appendingPathComponent(errorPath)
+    }
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Simulate Session Transfer Failure", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled ? "ON (session transfer will hit a real /accounts/error)" : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let currentValue = Self.isEnabled
+        UserDefaults.standard.set(!currentValue, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? "Session Transfer Failure Enabled ✅" : "Session Transfer Failure Disabled ✅",
+            message: !currentValue
+                ? "Next login/logout will complete natively but the invisible tab will hit a real " +
+                  "/accounts/error - check Sentry for the event, until you toggle this off."
+                : "Session transfer failures disabled.",
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+
+    nonisolated public static var isEnabled: Bool {
         UserDefaults.standard.bool(forKey: debugKey)
     }
 }
@@ -396,7 +513,7 @@ final class SimulateAuthErrorSetting: HiddenSetting {
 final class SimulateImpactAPIErrorSetting: HiddenSetting {
     /// UserDefaults key for storing impact API error simulation state
     /// Note: Persists across app restarts - toggle again to disable
-    /// Ecosia: nonisolated so async/non–main-actor code can read it without crossing isolation
+    /// nonisolated so async/non–main-actor code can read it without crossing isolation
     nonisolated public static let debugKey = "DebugSimulateImpactAPIError"
 
     override var title: NSAttributedString? {
@@ -416,11 +533,12 @@ final class SimulateImpactAPIErrorSetting: HiddenSetting {
 
         let alert = AlertController(
             title: !currentValue ? "Impact API Error Enabled ✅" : "Impact API Error Disabled ✅",
-            message: !currentValue ? "Next impact API call will fail." : "Impact API errors disabled.",
+            message: !currentValue
+                ? "Next impact API call will fail and show the seed counter error toast."
+                : "Impact API errors disabled.",
             preferredStyle: .alert
         )
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 1_500_000_000)
                 alert.dismiss(animated: true)
@@ -429,8 +547,155 @@ final class SimulateImpactAPIErrorSetting: HiddenSetting {
     }
 
     /// Check if impact API error simulation is enabled
-    public static var isEnabled: Bool {
+    nonisolated public static var isEnabled: Bool {
         UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+// MARK: - File Upload Debug Settings
+
+final class SimulateFileUploadAPIErrorSetting: HiddenSetting {
+    /// UserDefaults key for storing file upload API error simulation state
+    /// Note: Persists across app restarts - toggle again to disable
+    nonisolated public static let debugKey = "DebugSimulateFileUploadAPIError"
+
+    override var title: NSAttributedString? {
+        NSAttributedString(string: "Debug: Toggle - Simulate File Upload API Error", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled ? "ON (Simulating API failure)" : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        toggleSimulation(
+            navigationController: navigationController,
+            enabledTitle: "File Upload API Error Enabled ✅",
+            enabledMessage: "Attachment uploads will fail with an error toast until you toggle this off.",
+            disabledTitle: "File Upload API Error Disabled ✅",
+            disabledMessage: "Upload API errors disabled."
+        )
+    }
+
+    nonisolated public static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+final class SimulateUploadValidationErrorSetting: HiddenSetting {
+    private let simulatedError: OmniboxUploadValidationError
+
+    init(simulatedError: OmniboxUploadValidationError, settings: SettingsTableViewController) {
+        self.simulatedError = simulatedError
+        super.init(settings: settings)
+    }
+
+    nonisolated static func debugKey(for error: OmniboxUploadValidationError) -> String {
+        switch error {
+        case .tooManyFiles:
+            return "DebugSimulateUploadTooManyFiles"
+        case .fileTooLarge:
+            return "DebugSimulateUploadFileTooLarge"
+        case .unsupportedFileType:
+            return "DebugSimulateUploadUnsupportedFileType"
+        case .uploadFailed:
+            return SimulateFileUploadAPIErrorSetting.debugKey
+        }
+    }
+
+    override var title: NSAttributedString? {
+        NSAttributedString(
+            string: "Debug: Toggle - Simulate \(simulatedError.debugLabel) Error",
+            attributes: [:]
+        )
+    }
+
+    override var status: NSAttributedString? {
+        let status = Self.isEnabled(for: simulatedError)
+            ? "ON (Simulating \(simulatedError.debugLabel.lowercased()) error)"
+            : "OFF"
+        return NSAttributedString(string: "\(status) (Click to toggle)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        toggleSimulation(
+            navigationController: navigationController,
+            enabledTitle: "\(simulatedError.debugLabel) Error Enabled ✅",
+            enabledMessage: "Attachment selection will show the \(simulatedError.debugLabel.lowercased()) error toast until you toggle this off.",
+            disabledTitle: "\(simulatedError.debugLabel) Error Disabled ✅",
+            disabledMessage: "\(simulatedError.debugLabel) upload errors disabled."
+        )
+    }
+
+    nonisolated static func isEnabled(for error: OmniboxUploadValidationError) -> Bool {
+        UserDefaults.standard.bool(forKey: debugKey(for: error))
+    }
+
+    private func toggleSimulation(
+        navigationController: UINavigationController?,
+        enabledTitle: String,
+        enabledMessage: String,
+        disabledTitle: String,
+        disabledMessage: String
+    ) {
+        let key = Self.debugKey(for: simulatedError)
+        let currentValue = UserDefaults.standard.bool(forKey: key)
+        UserDefaults.standard.set(!currentValue, forKey: key)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? enabledTitle : disabledTitle,
+            message: !currentValue ? enabledMessage : disabledMessage,
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
+private extension SimulateFileUploadAPIErrorSetting {
+    func toggleSimulation(
+        navigationController: UINavigationController?,
+        enabledTitle: String,
+        enabledMessage: String,
+        disabledTitle: String,
+        disabledMessage: String
+    ) {
+        let currentValue = Self.isEnabled
+        UserDefaults.standard.set(!currentValue, forKey: Self.debugKey)
+        settings.tableView.reloadData()
+
+        let alert = AlertController(
+            title: !currentValue ? enabledTitle : disabledTitle,
+            message: !currentValue ? enabledMessage : disabledMessage,
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
+private extension OmniboxUploadValidationError {
+    var debugLabel: String {
+        switch self {
+        case .tooManyFiles:
+            return "Too Many Files"
+        case .fileTooLarge:
+            return "File Too Large"
+        case .unsupportedFileType:
+            return "Unsupported File Type"
+        case .uploadFailed:
+            return "Upload API"
+        }
     }
 }
 
@@ -483,7 +748,7 @@ final class DebugAddSeedsLoggedOut: HiddenSetting {
         )
 
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            // Task + sleep instead of DispatchQueue for strict concurrency
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 2_000_000_000)
                 alert.dismiss(animated: true)
@@ -526,7 +791,7 @@ final class DebugAddSeedsLoggedIn: HiddenSetting {
         )
 
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            // Task + sleep instead of DispatchQueue for strict concurrency
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 2_000_000_000)
                 alert.dismiss(animated: true)
@@ -567,7 +832,7 @@ final class DebugForceLevelUp: HiddenSetting {
         )
 
         navigationController?.topViewController?.present(alert, animated: true) {
-            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            // Task + sleep instead of DispatchQueue for strict concurrency
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 2_000_000_000)
                 alert.dismiss(animated: true)
@@ -644,7 +909,7 @@ final class DebugAddCustomSeeds: HiddenSetting {
         )
 
         navigationController?.topViewController?.present(confirmAlert, animated: true) {
-            // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+            // Task + sleep instead of DispatchQueue for strict concurrency
             Task { @MainActor in
                 try? await Task.sleep(nanoseconds: 2_000_000_000)
                 confirmAlert.dismiss(animated: true)
@@ -702,7 +967,7 @@ final class RefreshStatisticsSetting: HiddenSetting {
                     preferredStyle: .alert
                 )
                 navigationController?.topViewController?.present(successAlert, animated: true) {
-                    // Ecosia: Task + sleep instead of DispatchQueue for strict concurrency
+                    // Task + sleep instead of DispatchQueue for strict concurrency
                     Task { @MainActor in
                         try? await Task.sleep(nanoseconds: 2_000_000_000)
                         successAlert.dismiss(animated: true)

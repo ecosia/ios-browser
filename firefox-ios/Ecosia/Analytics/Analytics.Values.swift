@@ -20,6 +20,11 @@ extension Analytics {
         menuStatus = "menu_status",
         migration,
         navigation,
+        // Surface the AI-tools drawer was used on. The tracking plan also allows
+        // `ai_search` and `index`; iOS only ever shows the drawer on the new-tab
+        // page, so those two are intentionally absent. Distinct from `ntp`, which
+        // the plan reserves for the older new-tab-page events.
+        newTab = "new_tab",
         ntp,
         pushNotificationConsent = "push_notification_consent",
         settings
@@ -32,6 +37,10 @@ extension Analytics {
         clear,
         close,
         market,
+        modeSelection = "mode_selection",
+        fileUploadInitiated = "file_upload_initiated",
+        fileUploadCompleted = "file_upload_completed",
+        fileUploadFailed = "file_upload_failed",
         profile,
         signIn = "sign_in",
         signUp = "sign_up",
@@ -130,6 +139,7 @@ extension Analytics {
             aiOverviews = "ai_overviews",
             analytics,
             clear,
+            searchProvider = "search_provider",
             toolbar
         }
 
@@ -236,6 +246,7 @@ extension Analytics {
     public enum Property: String {
         case
         account,
+        aiToolsMenu = "ai_tools_menu",
         cancel,
         enable,
         disable,
@@ -245,6 +256,29 @@ extension Analytics {
         menu,
         nativeSettings = "native_settings",
         signOut = "sign_out"
+
+        /// `action` field of the `mode_selection` payload: whether the user picked
+        /// a chat mode or cleared the active one.
+        public enum ChatModeAction: String {
+            case
+            select,
+            deselect
+        }
+
+        /// `source` field of the `file_upload_initiated` payload. Native iOS
+        /// only has picker selection — there is no drag-and-drop path.
+        public enum FileUploadSource: String {
+            case buttonClick = "button_click"
+        }
+
+        /// `error_type` field of the `file_upload_failed` payload.
+        public enum FileUploadErrorType: String {
+            case
+            unsupportedFormat = "unsupported_format",
+            tooLarge = "too_large",
+            parseFailed = "parse_failed",
+            timeout
+        }
 
         public enum APNConsent: String {
             case

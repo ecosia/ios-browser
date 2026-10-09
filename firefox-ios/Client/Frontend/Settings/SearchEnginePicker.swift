@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import Ecosia
 
 class SearchEnginePicker: ThemedTableViewController {
     weak var delegate: SearchEnginePickerDelegate?
@@ -30,6 +31,8 @@ class SearchEnginePicker: ThemedTableViewController {
         let cell = dequeueCellFor(indexPath: indexPath)
         cell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
         cell.textLabel?.text = engine.shortName
+        // Ecosia: Per-engine identifiers for custom search provider acceptance tests.
+        cell.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.SearchEnginePicker.engine(engine.engineID)
         let size = CGSize(width: OpenSearchEngine.UX.preferredIconSize,
                           height: OpenSearchEngine.UX.preferredIconSize)
         cell.imageView?.image = engine.image.createScaled(size)

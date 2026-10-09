@@ -91,7 +91,7 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
         let expectedCookies = Cookie.makeSearchSettingsObserverCookies(isPrivate: false)
         XCTAssertFalse(expectedCookies.isEmpty)
 
-        let defaultStore = provider.configuration(isPrivate: false)
+        let defaultStore: CookieStoreProtocol = provider.configuration(isPrivate: false)
             .webViewConfiguration.websiteDataStore.httpCookieStore
         // Simulate what the sink does: inject search-settings cookies into the store.
         for cookie in expectedCookies {
@@ -107,7 +107,7 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func cookieNames(in store: WKHTTPCookieStore) async -> Set<String> {
+    private func cookieNames(in store: CookieStoreProtocol) async -> Set<String> {
         Set((await store.allCookies()).map { $0.name })
     }
 }

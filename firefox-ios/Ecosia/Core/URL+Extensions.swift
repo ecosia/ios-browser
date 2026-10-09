@@ -10,6 +10,18 @@ extension URL {
         isEcosia() && path.contains("ai-chat")
     }
 
+    /// Host + path only, with query and fragment stripped. Use this instead of `absoluteString`
+    /// when logging a URL (e.g. to Sentry) - OAuth redirect URLs can carry authorization codes,
+    /// state tokens, or other user-identifying data in their query string.
+    public var redactedForLogging: String {
+        guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
+            return absoluteString
+        }
+        components.query = nil
+        components.fragment = nil
+        return components.string ?? absoluteString
+    }
+
     public enum EcosiaQueryItemName: String {
         case
         autoRedirect = "ar",
@@ -112,6 +124,13 @@ extension URL {
         return components.path == "/search"
     }
 
+    /// Check whether the URL is one of the accounts error pages that auth flows land on when they fail
+    public func isEcosiaErrorPage(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
+        guard isEcosia(urlProvider) else { return false }
+        let path = path.lowercased()
+        return urlProvider.errorPaths.contains { $0.lowercased() == path }
+    }
+
     public func isEcosiaSearchVertical(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
         getEcosiaSearchVerticalPath(urlProvider) != nil
     }
@@ -170,8 +189,19 @@ extension URL {
         // Already carries the correct value — no mutation needed regardless of parameter position.
         if ecosiaUserId == userId { return self }
 
-        guard var components = components else { return self }
-        components.queryItems?.removeAll(where: { $0.name == EcosiaQueryItemName.userId.rawValue })
+        guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else { return self }
+
+        let userIdKey = EcosiaQueryItemName.userId.rawValue
+        // Prefer percent-encoded query items so values such as `%3F` in `q` are not
+        // round-tripped through `queryItems` (which decodes `?` and breaks AI chat `files`).
+        if var percentEncodedItems = components.percentEncodedQueryItems {
+            percentEncodedItems.removeAll(where: { $0.name == userIdKey })
+            components.percentEncodedQueryItems = percentEncodedItems.isEmpty ? nil : percentEncodedItems
+            guard let urlWithoutUserId = components.url else { return self }
+            return urlWithoutUserId.appendingPercentEncodedQueryItems([Self.item(name: .userId, value: userId)])
+        }
+
+        components.queryItems?.removeAll(where: { $0.name == userIdKey })
         guard let urlWithoutUserId = components.url else { return self }
         return urlWithoutUserId.appendingQueryItems([Self.item(name: .userId, value: userId)])
     }
@@ -210,8 +240,10 @@ extension URL {
     }
 
     public func isEcosia(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
-        let hasURLProviderDomainSuffix = host?.hasSuffix(urlProvider.domain) == true
-        return isBrowser() && hasURLProviderDomainSuffix
+        guard isBrowser(), let host else { return false }
+        let domain = urlProvider.domain.lowercased()
+        let normalizedHost = host.lowercased()
+        return normalizedHost == domain || normalizedHost.hasSuffix(".\(domain)")
     }
 
     private var components: URLComponents? {
@@ -242,5 +274,37 @@ extension URL {
             components.queryItems?.append(contentsOf: queryItems)
             return components.url ?? self
         }
+    }
+
+    /// Appends query items with RFC 3986 percent-encoding for names and values.
+    ///
+    /// `URLQueryItem` / `URLComponents` leave `?` and `&` unencoded in values. The AI chat
+    /// web router splits the location on `?`, so prompts like `What is this?` would drop
+    /// trailing params such as `files`.
+    public func appendingPercentEncodedQueryItems(_ queryItems: [URLQueryItem]) -> URL {
+        guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
+            return self
+        }
+
+        let encodedItems = queryItems.map {
+            URLQueryItem(
+                name: Self.percentEncodedQueryComponent($0.name),
+                value: $0.value.map(Self.percentEncodedQueryComponent)
+            )
+        }
+
+        if components.percentEncodedQueryItems == nil {
+            components.percentEncodedQueryItems = encodedItems
+        } else {
+            components.percentEncodedQueryItems?.append(contentsOf: encodedItems)
+        }
+
+        return components.url ?? self
+    }
+
+    static func percentEncodedQueryComponent(_ value: String) -> String {
+        var allowed = CharacterSet()
+        allowed.insert(charactersIn: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~")
+        return value.addingPercentEncoding(withAllowedCharacters: allowed) ?? value
     }
 }

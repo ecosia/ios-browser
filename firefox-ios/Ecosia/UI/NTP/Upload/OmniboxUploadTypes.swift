@@ -4,6 +4,8 @@
 
 import Foundation
 
+/// Upload sources shown in the top row of the omnibox "AI tools" drawer.
+/// Case order mirrors the design's left-to-right layout (Photos, Camera, Files).
 public enum OmniboxUploadOption: CaseIterable, Hashable {
     case photos
     case camera
@@ -62,5 +64,114 @@ public extension OmniboxUploadOption {
         case .camera: return "OmniboxUploadCameraOption"
         case .files: return "OmniboxUploadFilesOption"
         }
+    }
+}
+
+/// Chat modes listed below the upload row in the omnibox "AI tools" drawer.
+/// Selecting any mode currently opens the standard Ecosia AI Chat; the case is
+/// carried through the selection plumbing so a per-mode parameter can be added later.
+public enum OmniboxChatMode: CaseIterable, Hashable {
+    case standard
+    case thinkLonger
+    case generateImage
+    case displaySources
+    case learning
+}
+
+public extension OmniboxChatMode {
+    var iconName: String {
+        switch self {
+        case .standard: return "chatmodes-standard-ai-chat"
+        case .thinkLonger: return "chatmodes-think-longer"
+        case .generateImage: return "chatmodes-generate-images"
+        case .displaySources: return "chatmodes-display-sources"
+        case .learning: return "chatmodes-learning"
+        }
+    }
+
+    var title: String {
+        switch self {
+        case .standard: return String.localized(.chatModeStandard)
+        case .thinkLonger: return String.localized(.chatModeThinkLonger)
+        case .generateImage: return String.localized(.chatModeGenerateImage)
+        case .displaySources: return String.localized(.chatModeDisplaySources)
+        case .learning: return String.localized(.chatModeLearning)
+        }
+    }
+
+    var subtitle: String {
+        switch self {
+        case .standard: return String.localized(.chatModeStandardSubtitle)
+        case .thinkLonger: return String.localized(.chatModeThinkLongerSubtitle)
+        case .generateImage: return String.localized(.chatModeGenerateImageSubtitle)
+        case .displaySources: return String.localized(.chatModeDisplaySourcesSubtitle)
+        case .learning: return String.localized(.chatModeLearningSubtitle)
+        }
+    }
+
+    /// `mode` field of the `mode_selection` analytics payload. Deliberately its
+    /// own value rather than a reuse of `iconName` or the accessibility id, so
+    /// renaming an asset or a test hook can't silently re-shape reported data.
+    var analyticsIdentifier: String {
+        switch self {
+        case .standard: return "standard"
+        case .thinkLonger: return "think_longer"
+        case .generateImage: return "generate_image"
+        case .displaySources: return "display_sources"
+        case .learning: return "learning"
+        }
+    }
+
+    var accessibilityLabel: String { title }
+
+    var accessibilityHint: String { String.localized(.aiChatAccessibilityHint) }
+
+    var accessibilityIdentifier: String {
+        switch self {
+        case .standard: return "OmniboxChatModeStandardOption"
+        case .thinkLonger: return "OmniboxChatModeThinkLongerOption"
+        case .generateImage: return "OmniboxChatModeGenerateImageOption"
+        case .displaySources: return "OmniboxChatModeDisplaySourcesOption"
+        case .learning: return "OmniboxChatModeLearningOption"
+        }
+    }
+
+    /// Extra query items appended to the AI Chat URL so it opens the
+    /// conversation in this mode. `standard` carries none (plain `/ai-chat`);
+    /// the others set AI Chat's `mode` parameter, matching the web omnibox:
+    /// Think longer → `mode=think_longer`, Display sources → `mode=web_search`,
+    /// Learning → `mode=guided_learning`.
+    var aiChatQueryItems: [URLQueryItem] {
+        switch self {
+        case .standard: return []
+        case .thinkLonger: return [URLQueryItem(name: "mode", value: "think_longer")]
+        case .generateImage: return [URLQueryItem(name: "mode", value: "generate_image")]
+        case .displaySources: return [URLQueryItem(name: "mode", value: "web_search")]
+        case .learning: return [URLQueryItem(name: "mode", value: "guided_learning")]
+        }
+    }
+
+    /// Instruction appended to the prompt for providers that accept no mode
+    /// parameter. Used instead of `aiChatQueryItems`, never alongside it.
+    var promptSuffix: String? {
+        switch self {
+        case .standard: return nil
+        case .thinkLonger: return .localized(.chatModeThinkLongerPrompt)
+        case .generateImage: return .localized(.chatModeGenerateImagePrompt)
+        case .displaySources: return .localized(.chatModeDisplaySourcesPrompt)
+        case .learning: return .localized(.chatModeLearningPrompt)
+        }
+    }
+
+    /// Omnibox placeholder shown while the Generate images mode is active.
+    /// Returns `nil` for every other mode so the default placeholder is kept.
+    var generateImagePlaceholder: String? {
+        .generateImage == self ? .localized(.chatModeGenerateImagePlaceholder) : nil
+    }
+
+    /// Modes offered for `provider`. Conversational providers have no separate
+    /// standard mode, since that is what their results page already is.
+    static func modes(for provider: SearchProvider) -> [OmniboxChatMode] {
+        provider.isAINative ? allCases.filter { $0 != .standard } : allCases
     }
 }

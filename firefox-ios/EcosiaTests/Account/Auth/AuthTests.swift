@@ -19,8 +19,6 @@ final class AuthTests: XCTestCase {
         mockProvider = MockAuth0Provider()
         auth = EcosiaAuthenticationService(auth0Provider: mockProvider)
         auth.skipUserInfoFetch = true
-        mockProvider.reset()
-        mockProvider.hasStoredCredentials = false
     }
 
     override func tearDown() {
@@ -83,11 +81,36 @@ final class AuthTests: XCTestCase {
 
         // Assert
         XCTAssertEqual(mockProvider.startAuthCallCount, 1)
+        XCTAssertEqual(mockProvider.lastAuthScreenHint, .login)
         XCTAssertEqual(mockProvider.storeCredentialsCallCount, 1)
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, expectedCredentials.idToken)
         XCTAssertEqual(auth.accessToken, expectedCredentials.accessToken)
         XCTAssertEqual(auth.refreshToken, expectedCredentials.refreshToken)
+    }
+
+    func testSignUp_usesSignUpScreenHint() async {
+        // Arrange
+        mockProvider.mockCredentials = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: "test-id-token",
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+
+        // Act
+        do {
+            _ = try await auth.signUp()
+        } catch {
+            XCTFail("Sign up should succeed, but failed with: \(error)")
+            return
+        }
+
+        // Assert
+        XCTAssertEqual(mockProvider.startAuthCallCount, 1)
+        XCTAssertEqual(mockProvider.lastAuthScreenHint, .signUp)
     }
 
     func testLogin_withAuthFailure_doesNotUpdateState() async {
@@ -304,6 +327,74 @@ final class AuthTests: XCTestCase {
         XCTAssertNotNil(auth.refreshToken)
     }
 
+    func testLogout_withStaleEASCCookieInSharedStorage_removesIt() async {
+        // Arrange: simulate a previous file upload having copied the EASC session
+        // cookie into the native cookie jar (see FileUploadAuthCookieSync)
+        await setupLoggedInState()
+        let storage = HTTPCookieStorage.shared
+        let originalEASC = (storage.cookies ?? []).filter { $0.name == Cookie.authSession.rawValue }
+        originalEASC.forEach(storage.deleteCookie)
+        defer { originalEASC.forEach(storage.setCookie) }
+
+        let staleEASC = makeCookie(name: Cookie.authSession.rawValue, value: "previous-user-session", domain: ".ecosia.org")
+        storage.setCookie(staleEASC)
+        defer { storage.deleteCookie(staleEASC) }
+
+        // Act
+        do {
+            try await auth.logout()
+        } catch {
+            XCTFail("Logout should succeed, but failed with: \(error)")
+        }
+
+        // Assert: the stale cookie must not survive logout, or it could get attached
+        // to native requests made under whichever user logs in next
+        let remainingNames = (storage.cookies ?? []).map(\.name)
+        XCTAssertFalse(remainingNames.contains(Cookie.authSession.rawValue))
+    }
+
+    func testLogout_withClearCredentialsFailure_doesNotRemoveEASCCookie() async {
+        // Arrange: logout is only considered successful once credentials are cleared,
+        // so the EASC cookie in shared storage should be left alone if that fails
+        await setupLoggedInState()
+        mockProvider.clearCredentialsResult = false
+        let storage = HTTPCookieStorage.shared
+        let easc = makeCookie(name: Cookie.authSession.rawValue, value: "still-active-session", domain: ".ecosia.org")
+        storage.setCookie(easc)
+        defer { storage.deleteCookie(easc) }
+
+        // Act
+        do {
+            try await auth.logout()
+            XCTFail("Expected logout to throw but it didn't")
+        } catch {
+            // Expected to fail
+        }
+
+        // Assert
+        let remainingNames = (storage.cookies ?? []).map(\.name)
+        XCTAssertTrue(remainingNames.contains(Cookie.authSession.rawValue))
+    }
+
+    func testLogout_clearsLoggedInImpactCache() async {
+        // An explicit logout always means a logged-in account's cached snapshot is now stale -
+        // cleared here, in the service, rather than relying on a UI observer to react to the
+        // notification (which requires at least one registered browser window to even arrive).
+        await setupLoggedInState()
+        LoggedInImpactCache.save(ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.5))
+        defer { LoggedInImpactCache.clear() }
+
+        // Act
+        do {
+            try await auth.logout()
+        } catch {
+            XCTFail("Logout should succeed, but failed with: \(error)")
+        }
+
+        // Assert
+        XCTAssertNil(LoggedInImpactCache.load())
+    }
+
     // MARK: - Retrieve Stored Credentials Tests
 
     func testRetrieveStoredCredentials_withValidCredentials_updatesState() async {
@@ -318,6 +409,8 @@ final class AuthTests: XCTestCase {
         )
         mockProvider.mockCredentials = expectedCredentials
         mockProvider.hasStoredCredentials = true  // Simulate stored credentials
+
+        await waitForInitCredentialRetrieval()
 
         // Act
         await auth.retrieveStoredCredentials()
@@ -335,6 +428,8 @@ final class AuthTests: XCTestCase {
         // Arrange
         mockProvider.shouldFailRetrieveCredentials = true
 
+        await waitForInitCredentialRetrieval()
+
         // Act
         await auth.retrieveStoredCredentials()
 
@@ -345,6 +440,47 @@ final class AuthTests: XCTestCase {
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
         XCTAssertNil(auth.refreshToken)
+    }
+
+    func testRetrieveStoredCredentials_withFailureAfterPreviousLogin_clearsLoggedInImpactCacheAndWasLoggedIn() async {
+        // Arrange: flush the init-time automatic retrieval first, then simulate the previous
+        // session having ended logged in (persisted across launches) before the explicit retry -
+        // this represents credentials that turned out to be invalid (e.g. an expired token)
+        // rather than an explicit logout.
+        mockProvider.shouldFailRetrieveCredentials = true
+        await waitForInitCredentialRetrieval()
+
+        EcosiaAuthenticationService.wasLoggedIn = true
+        LoggedInImpactCache.save(ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.5))
+        defer {
+            LoggedInImpactCache.clear()
+            EcosiaAuthenticationService.wasLoggedIn = false
+        }
+
+        // Act
+        await auth.retrieveStoredCredentials()
+
+        // Assert
+        XCTAssertNil(LoggedInImpactCache.load())
+        XCTAssertFalse(EcosiaAuthenticationService.wasLoggedIn)
+    }
+
+    func testRetrieveStoredCredentials_withFailureWhileWasLoggedInIsFalse_doesNotClearLoggedInImpactCache() async {
+        // An ordinary continuing guest resolves to logged-out on every cold launch too - this
+        // must not disturb a cache it never populated in the first place.
+        mockProvider.shouldFailRetrieveCredentials = true
+        await waitForInitCredentialRetrieval()
+
+        EcosiaAuthenticationService.wasLoggedIn = false
+        let snapshot = ImpactSnapshot(seedCount: 7, currentLevelNumber: 2, currentProgress: 0.3)
+        LoggedInImpactCache.save(snapshot)
+        defer { LoggedInImpactCache.clear() }
+
+        // Act
+        await auth.retrieveStoredCredentials()
+
+        // Assert
+        XCTAssertEqual(LoggedInImpactCache.load(), snapshot)
     }
 
     // MARK: - Renew Credentials Tests
@@ -594,6 +730,16 @@ final class AuthTests: XCTestCase {
         mockProvider.storeCredentialsCallCount = 0
     }
 
+    private func makeCookie(name: String, value: String, domain: String) -> HTTPCookie {
+        HTTPCookie(properties: [
+            .name: name,
+            .value: value,
+            .domain: domain,
+            .path: "/",
+            .expires: Date(timeIntervalSinceNow: 60 * 60),
+        ])!
+    }
+
     /// Creates a minimal valid JWT string with the given payload claims.
     ///
     /// The token has the structure `header.payload.signature` where header and payload
@@ -612,6 +758,24 @@ final class AuthTests: XCTestCase {
         }
 
         return "\(base64URLEncode(header)).\(base64URLEncode(payload)).mock-signature"
+    }
+
+    private func waitForInitCredentialRetrieval(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async {
+        let deadline = Date().addingTimeInterval(1)
+        while mockProvider.retrieveCredentialsCallCount < 1 && Date() < deadline {
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+
+        XCTAssertEqual(
+            mockProvider.retrieveCredentialsCallCount,
+            1,
+            "Expected init-time credential retrieval before explicit test call",
+            file: file,
+            line: line
+        )
     }
 }
 // swiftlint:enable implicitly_unwrapped_optional

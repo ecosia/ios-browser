@@ -27,15 +27,42 @@ extension OmniboxUploadPickerCoordinator: UIDocumentPickerDelegate {
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         controller.dismiss(animated: true)
 
-        let allowedURLs = OmniboxUploadFileSelectionValidator.allowedURLs(from: urls)
-        let items = allowedURLs.map { url in
-            OmniboxUploadItem(
-                source: .files,
-                fileName: url.lastPathComponent,
-                contentTypeIdentifier: UTType(filenameExtension: url.pathExtension)?.identifier
-            )
+        let validationResult = OmniboxUploadFileSelectionValidator.validate(
+            urls: urls,
+            existingAttachmentCount: delegate?.omniboxUploadExistingAttachmentCount ?? 0
+        )
+
+        trackFilePickerValidationFailures(for: urls, acceptedURLs: validationResult.acceptedURLs)
+
+        let pendingItems = validationResult.acceptedURLs.map { url in
+            let ext = url.pathExtension.lowercased()
+            let layout: OmniboxAttachment.Layout = OmniboxUploadFileSelectionValidator.imageExtensions.contains(ext)
+                ? .image
+                : .file
+            return OmniboxUploadPendingItem(fileName: url.lastPathComponent, layout: layout) {
+                try await OmniboxUploadPayloadLoader.loadFile(from: url)
+            }
         }
-        guard !items.isEmpty else { return }
-        delegate?.omniboxUploadDidSelect(items: items)
+
+        delegate?.omniboxUploadDidFinishPicking(
+            items: pendingItems,
+            validationErrors: validationResult.validationErrors
+        )
+    }
+
+    /// Fires `file_upload_failed` per rejected URL for the two mapped picker
+    /// errors (`unsupported_format`, `too_large`). Excess-count rejections are
+    /// intentionally omitted — `tooManyFiles` is not in the tracking-plan
+    /// `error_type` enum.
+    private func trackFilePickerValidationFailures(for urls: [URL], acceptedURLs: [URL]) {
+        let acceptedPaths = Set(acceptedURLs.map(\.path))
+        for url in urls where !acceptedPaths.contains(url.path) {
+            let fileType = Analytics.fileUploadFileType(fromFileName: url.lastPathComponent)
+            if !OmniboxUploadFileSelectionValidator.isAllowed(url) {
+                Analytics.shared.fileUploadFailed(errorType: .unsupportedFormat, fileType: fileType)
+            } else if OmniboxUploadFileSelectionValidator.isOversized(url) {
+                Analytics.shared.fileUploadFailed(errorType: .tooLarge, fileType: fileType)
+            }
+        }
     }
 }

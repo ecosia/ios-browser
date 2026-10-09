@@ -19,6 +19,9 @@ import Dip
 public protocol ServiceProvider {
     func resolve<T>() -> T
     func resolve<T>(_ type: T.Type) -> T
+    /// Ecosia: Returns nil instead of crashing when the service is not registered.
+    /// Use this for optional dependencies that may be unavailable during test setUp.
+    func resolveOptional<T>() -> T?
     func register<T>(service: T)
     func bootstrap()
     func reset()

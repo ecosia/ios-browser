@@ -50,7 +50,7 @@ final class UnleashTests: XCTestCase {
         let context = ["foo": "bar"]
         var request = UnleashTests.stagingUnleashRequest
         request.queryParameters = context
-        let url = request.baseURL
+        let url = request.resolvedBaseURL
 
         XCTAssertTrue(url.absoluteString.hasPrefix(base.absoluteString))
         XCTAssertEqual(URLComponents(string: try request.makeURLRequest().url!.absoluteString)?.queryItems?.count, 1)
@@ -101,6 +101,59 @@ final class UnleashTests: XCTestCase {
         _ = try? await Unleash.reset(env: .production, appVersion: "1.0.0")
         XCTAssertTrue(Unleash.isLoaded)
         XCTAssertNotEqual(Unleash.model.id, firstId, "Id should change after reset")
+    }
+
+    func testLoadCachedModelIfNeededHydratesFromDisk() throws {
+        var model = Unleash.Model()
+        model.updated = Date()
+        model.toggles.insert(
+            Unleash.Toggle(
+                name: Unleash.Toggle.Name.customSearchProvider.rawValue,
+                enabled: true,
+                variant: .init(name: "enabled", enabled: true, payload: nil)
+            )
+        )
+        try JSONEncoder().encode(model).write(to: FileManager.unleash, options: .atomic)
+
+        Unleash.clearInstanceModel()
+        XCTAssertFalse(Unleash.isEnabled(.customSearchProvider))
+
+        Unleash.loadCachedModelIfNeeded()
+
+        XCTAssertTrue(Unleash.isLoaded)
+        XCTAssertTrue(Unleash.isEnabled(.customSearchProvider))
+    }
+
+    func testLoadCachedModelIfNeededDoesNotOverwriteHydratedModel() throws {
+        var diskModel = Unleash.Model()
+        diskModel.updated = Date()
+        diskModel.toggles.insert(
+            Unleash.Toggle(
+                name: Unleash.Toggle.Name.customSearchProvider.rawValue,
+                enabled: true,
+                variant: .init(name: "enabled", enabled: true, payload: nil)
+            )
+        )
+        try JSONEncoder().encode(diskModel).write(to: FileManager.unleash, options: .atomic)
+
+        var memoryModel = Unleash.Model()
+        memoryModel.updated = Date()
+        memoryModel.toggles.insert(
+            Unleash.Toggle(
+                name: Unleash.Toggle.Name.configTest.rawValue,
+                enabled: true,
+                variant: .init(name: "control", enabled: true, payload: nil)
+            )
+        )
+        let memoryID = memoryModel.id
+        Unleash.model = memoryModel
+
+        Unleash.loadCachedModelIfNeeded()
+
+        XCTAssertTrue(Unleash.isLoaded)
+        XCTAssertEqual(Unleash.model.id, memoryID)
+        XCTAssertTrue(Unleash.isEnabled(.configTest))
+        XCTAssertFalse(Unleash.isEnabled(.customSearchProvider))
     }
 
     func testQueryParametersWithMockedUser() {
@@ -211,8 +264,8 @@ extension UnleashTests {
             .get
         }
 
-        var baseURL: URL {
-            URL(string: "https://ecosia.org")!
+        var baseURL: BaseURL {
+            .custom(URL(string: "https://ecosia.org")!)
         }
 
         var path: String {
@@ -230,7 +283,7 @@ extension UnleashTests {
         var body: Data?
 
         func makeURLRequest() throws -> URLRequest {
-            UnleashTests.mockMakeURLRequest(for: baseURL,
+            UnleashTests.mockMakeURLRequest(for: resolvedBaseURL,
                                             path: path,
                                             queryParameters: queryParameters,
                                             etag: etag,
@@ -250,8 +303,8 @@ extension UnleashTests {
             .get
         }
 
-        var baseURL: URL {
-            URL(string: "https://ecosia.org")!
+        var baseURL: BaseURL {
+            .custom(URL(string: "https://ecosia.org")!)
         }
 
         var path: String {
@@ -269,7 +322,7 @@ extension UnleashTests {
         var body: Data?
 
         func makeURLRequest() throws -> URLRequest {
-            UnleashTests.mockMakeURLRequest(for: baseURL,
+            UnleashTests.mockMakeURLRequest(for: resolvedBaseURL,
                                             path: path,
                                             queryParameters: queryParameters,
                                             etag: etag,

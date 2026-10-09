@@ -5,6 +5,8 @@
 import UIKit
 import Shared
 import Ecosia
+import Common
+import WebKit
 
 // MARK: NTPSearchBarDelegate
 // Ecosia: Routes the embedded NTP omnibox into the existing browser navigation
@@ -18,46 +20,143 @@ extension BrowserViewController: NTPSearchBarDelegate {
         // pipeline records the omnibox submit the same way the URL bar would.
         searchSessionState = .engaged
         hideOmniboxSuggestions()
+        let chatFiles = ntpOmniboxAnchorView?.readyChatFiles() ?? []
         // Clear the omnibox so the user returns to a fresh pill next time the
         // homepage is shown — the submitted query lives on the SERP, not in
         // the input.
         if let bar = ntpOmniboxAnchorView {
             bar.text = ""
+            omniboxAttachmentCoordinator.clearAttachments()
             _ = bar.resignFirstResponder()
         }
-        submitOmniboxSearch(query: searchTerm)
+        // When a chat mode is active, every message bypasses backend
+        // autorouting and goes straight to AI Chat in that mode. The mode
+        // stays selected across submissions until the user deselects it.
+        // AI-free searching suppresses this path so leftover mode state
+        // cannot still open AI Chat.
+        if SearchProviderSelection.usesEcosiaAIBackend,
+           let mode = omniboxSheetState?.selectedChatMode {
+            if chatFiles.isEmpty {
+                submitOmniboxChatMode(mode, query: searchTerm, chatFiles: chatFiles)
+                showEmbeddedWebview()
+            } else {
+                guard let tab = tabManager.selectedTab else { return }
+                let cookieStore = tab.webView?.configuration.websiteDataStore.httpCookieStore
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView(
+                        cookieStore: cookieStore ?? WKWebsiteDataStore.default().httpCookieStore
+                    )
+                    submitOmniboxChatMode(mode, query: searchTerm, chatFiles: chatFiles, tab: tab)
+                    showEmbeddedWebview(for: tab)
+                }
+            }
+            return
+        } else if case .providerAI(let provider) = SearchProviderSelection.aiBehavior,
+                  let mode = omniboxSheetState?.selectedChatMode {
+            submitProviderChatMode(mode, query: searchTerm, provider: provider)
+            showEmbeddedWebview()
+            return
+        } else if SearchProviderSelection.usesEcosiaAIBackend, !chatFiles.isEmpty {
+            guard let tab = tabManager.selectedTab else { return }
+            let cookieStore = tab.webView?.configuration.websiteDataStore.httpCookieStore
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                await CloudflareAccessCookieBootstrap.syncAuthorizationCookieToWebView(
+                    cookieStore: cookieStore ?? WKWebsiteDataStore.default().httpCookieStore
+                )
+                submitOmniboxSearch(query: searchTerm, chatFiles: chatFiles, tab: tab)
+                showEmbeddedWebview(for: tab)
+            }
+            return
+        } else {
+            submitOmniboxSearch(query: searchTerm, chatFiles: chatFiles)
+        }
         // Force the swap to the webview. Without URL bar overlay mode, the
         // standard `addressToolbar(_:didLeaveOverlayModeForReason:)` chain
         // — which is what normally calls `showEmbeddedWebview()` — never fires.
         showEmbeddedWebview()
     }
 
-    /// Builds the search URL for an omnibox submission (direct typed submit
-    /// or autocomplete row tap) and loads it. Pasted URLs navigate directly;
-    /// everything else goes through Ecosia's `urlProvider` via
-    /// `URL.ecosiaSearchWithQuery` with `autoRedirect: true`, which appends
-    /// the `ar=1` parameter so the backend can decide whether the query
-    /// lands on AI search or the standard SERP — the client never makes that
-    /// call itself.
-    private func submitOmniboxSearch(query: String) {
-        guard let tab = tabManager.selectedTab else { return }
+    /// Loads AI Chat seeded with the typed message and tagged with the active
+    /// chat mode's `mode` parameter (see `OmniboxChatMode.aiChatQueryItems`).
+    private func submitOmniboxChatMode(_ mode: OmniboxChatMode,
+                                       query: String,
+                                       chatFiles: [AIChatFileQuery] = [],
+                                       tab: Tab? = nil) {
+        guard let tab = tab ?? tabManager.selectedTab else { return }
+        let url = Environment.current.urlProvider.aiChat(origin: .omnibox,
+                                                         query: query,
+                                                         files: chatFiles,
+                                                         additionalQueryItems: mode.aiChatQueryItems)
+        if !chatFiles.isEmpty {
+            EcosiaLogger.network.info(
+                "[Omnibox] Routing to AI chat in \(mode) mode (files=\(chatFiles.count), host=\(url.host ?? "unknown"))"
+            )
+        }
+        finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
+    }
 
-        if let url = URIFixup.getURL(query) {
-            finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
-            return
+    /// Loads the provider's AI with the typed message, carrying the active chat mode as
+    /// an instruction appended to the prompt. These providers have no upload pipeline,
+    /// so attachments never reach this path.
+    private func submitProviderChatMode(_ mode: OmniboxChatMode,
+                                        query: String,
+                                        provider: SearchProvider) {
+        guard let tab = tabManager.selectedTab,
+              let url = SearchProviderAIRouting.aiDestinationURL(for: provider,
+                                                                 query: query,
+                                                                 origin: .omnibox,
+                                                                 mode: mode)
+        else { return }
+        finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
+    }
+
+    /// Builds the navigation URL for an omnibox submission.
+    /// Pasted URLs navigate directly only when there are no attachments.
+    /// Queries with attachments always open AI chat with the uploaded `files` metadata.
+    /// Otherwise the query goes through Ecosia search with `ar=1` so the backend can decide
+    /// between AI search and the standard SERP.
+    private func submitOmniboxSearch(query: String, chatFiles: [AIChatFileQuery] = [], tab: Tab? = nil) {
+        guard let tab = tab ?? tabManager.selectedTab else { return }
+        let destinationURL = OmniboxSubmitRouting.destinationURL(
+            query: query,
+            chatFiles: chatFiles,
+            defaultEngine: searchEnginesManager.defaultEngine
+        )
+
+        if !chatFiles.isEmpty {
+            EcosiaLogger.network.info(
+                "[Omnibox] Routing to AI chat (files=\(chatFiles.count), host=\(destinationURL.host ?? "unknown"))"
+            )
         }
 
-        let searchURL = URL.ecosiaSearchWithQuery(query, autoRedirect: true)
-        finishEditingAndSubmit(searchURL, visitType: .typed, forTab: tab)
+        finishEditingAndSubmit(destinationURL, visitType: .typed, forTab: tab)
     }
 
     func ntpSearchBarTextDidChange(_ searchTerm: String) {
         guard let anchor = ntpOmniboxAnchorView else { return }
+        if anchor.hasAttachments {
+            hideOmniboxSuggestions()
+            return
+        }
         if searchTerm.isEmpty {
             hideOmniboxSuggestions()
             return
         }
         showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
+    }
+
+    func ntpSearchBarAttachmentsDidChange() {
+        guard let anchor = ntpOmniboxAnchorView else { return }
+        if anchor.hasAttachments {
+            hideOmniboxSuggestions()
+        } else {
+            let searchTerm = anchor.normalizedSearchQuery(for: anchor.text)
+            if !searchTerm.isEmpty {
+                showOmniboxSuggestions(searchTerm: searchTerm, anchorView: anchor)
+            }
+        }
     }
 
     func ntpSearchBarNeedsSearchReset() {
@@ -110,26 +209,139 @@ extension BrowserViewController: NTPSearchBarDelegate {
     }
 
     func ntpSearchBarDidTapUpload() {
-        guard FileUploadFeatureFlag.isEnabled else { return }
+        guard SearchProviderSelection.showsOmniboxAIFeatures else { return }
         _ = ntpOmniboxAnchorView?.resignFirstResponder()
-        if ecosiaAuth?.isLoggedIn == false {
-            if #available(iOS 16.0, *), !AccountsDisabled.isActive {
-                presentAccountImpactFromNTPHeader()
+
+        switch SearchProviderSelection.aiBehavior {
+        case .hidden:
+            return
+        case .ecosiaFullStack:
+            presentEcosiaOmniboxUploadDrawer()
+        case .providerAI:
+            presentOmniboxUploadDrawer()
+        case .redirect(let provider):
+            openProviderAIEntryPoint(for: provider)
+        }
+    }
+
+    /// The entry point is a plain redirect: no drawer, no modes, no upload. Carries the
+    /// typed text through when there is any.
+    private func openProviderAIEntryPoint(for provider: SearchProvider) {
+        guard let tab = tabManager.selectedTab,
+              let url = SearchProviderAIRouting.aiEntryPointURL(for: provider,
+                                                                query: ntpOmniboxAnchorView?.text)
+        else { return }
+        ntpOmniboxAnchorView?.text = ""
+        finishEditingAndSubmit(url, visitType: .typed, forTab: tab)
+        showEmbeddedWebview()
+    }
+
+    private func presentProviderUploadRedirect(for provider: SearchProvider) {
+        guard let sheetState = omniboxSheetState else { return }
+        sheetState.presentProviderUploadRedirect(provider: provider) { [weak self] destination in
+            guard let self, let tab = self.tabManager.selectedTab else { return }
+            self.finishEditingAndSubmit(destination, visitType: .typed, forTab: tab)
+            self.showEmbeddedWebview()
+        }
+    }
+
+    private func presentEcosiaOmniboxUploadDrawer() {
+        // With Chat Modes on, the drawer handles the signed-out state itself
+        // (Standard AI Chat selectable, other modes disabled, sign-in CTA), so
+        // always open it. Without Chat Modes the drawer is upload-only, which
+        // still requires an account, so keep the existing signed-out gate.
+        if ChatModesFeatureFlag.isEnabled {
+            presentOmniboxUploadDrawer()
+            return
+        }
+
+        let isLoggedIn = ecosiaAuth?.isLoggedIn == true
+        let hasUploadScopes = EcosiaAuthenticationService.shared.hasConversationScopes
+        if !isLoggedIn || !hasUploadScopes {
+            if #available(iOS 16.0, *) {
+                guard ecosiaAuth != nil else { return }
+                presentOmniboxSignInSheetForUpload()
             } else {
-                ecosiaAuth?.login()
+                guard let auth = ecosiaAuth,
+                      let sheetState = omniboxSheetState else { return }
+                sheetState.armUploadDrawerAfterAuthentication { [weak self] in
+                    self?.presentOmniboxUploadDrawer()
+                }
+                configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).login()
             }
             return
         }
         presentOmniboxUploadDrawer()
     }
 
-    fileprivate func presentAccountImpactFromNTPHeader() {
-        guard let homepage = contentContainer.contentController as? HomepageViewController else { return }
-        homepage.ecosiaAdapter?.headerViewModel?.presentAccountImpact()
+    fileprivate func configureOmniboxUploadAuthCallbacks(
+        auth: EcosiaAuth,
+        sheetState: NTPOmniboxSheetState?
+    ) -> EcosiaAuth {
+        auth
+            .onAuthFlowCompleted { [weak sheetState] success in
+                sheetState?.handleAuthenticationCompleted(success: success)
+            }
+            .onError { [weak sheetState] _ in
+                sheetState?.handleAuthenticationCompleted(success: false)
+            }
+    }
+
+    fileprivate func presentOmniboxSignInSheetForUpload() {
+        guard let homepage = contentContainer.contentController as? HomepageViewController,
+              let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
+
+        homepage.presentOmniboxUploadSheetIfNeeded()
+        sheetState.presentSignInSheetForUpload(
+            onSignIn: { [weak self, weak sheetState] in
+                guard let self, let auth = self.ecosiaAuth else {
+                    sheetState?.cancelPendingUploadAfterSignIn()
+                    return
+                }
+                self.configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).login()
+            },
+            onSignUp: { [weak self, weak sheetState] in
+                guard let self, let auth = self.ecosiaAuth else {
+                    sheetState?.cancelPendingUploadAfterSignIn()
+                    return
+                }
+                self.configureOmniboxUploadAuthCallbacks(auth: auth, sheetState: sheetState).signUp()
+            },
+            onUploadDrawerRequested: { [weak self] in
+                self?.presentOmniboxUploadDrawer()
+            }
+        )
     }
 
     fileprivate var ntpOmniboxAnchorView: NTPSearchBarView? {
-        (contentContainer.contentController as? HomepageViewController)?.ntpSearchBar
+        let bar = ecosiaEmbeddedHomepage?.ntpSearchBar
+        bar?.onRemoveAttachment = { [weak self] id in
+            self?.omniboxAttachmentCoordinator.removeAttachment(id: id)
+        }
+        return bar
+    }
+
+    fileprivate var omniboxAttachmentCoordinator: OmniboxAttachmentUploadCoordinator {
+        if let coordinator = objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.attachmentCoordinator)
+            as? OmniboxAttachmentUploadCoordinator {
+            coordinator.searchBar = ntpOmniboxAnchorView
+            return coordinator
+        }
+        let coordinator = OmniboxAttachmentUploadCoordinator()
+        coordinator.delegate = self
+        coordinator.searchBar = ntpOmniboxAnchorView
+        objc_setAssociatedObject(self,
+                                 &OmniboxUploadAssociatedKeys.attachmentCoordinator,
+                                 coordinator,
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return coordinator
+    }
+
+    /// Shared source of truth for the omnibox "AI tools" drawer, including the
+    /// active chat-mode selection. Lives on the homepage adapter, so it is only
+    /// available while the NTP is the current content.
+    fileprivate var omniboxSheetState: NTPOmniboxSheetState? {
+        ecosiaEmbeddedHomepage?.ecosiaAdapter?.omniboxSheetState
     }
 }
 
@@ -303,13 +515,32 @@ extension BrowserViewController {
 
     @objc fileprivate func handleOmniboxFastTap(_ gesture: UITapGestureRecognizer) {
         guard let tableView = gesture.view as? UITableView,
-              let indexPath = tableView.indexPathForRow(at: gesture.location(in: tableView)),
               let searchController else { return }
+        let location = gesture.location(in: tableView)
+        // The recogniser is attached to the table, so it also fires for touches
+        // that land on a cell's own controls — notably the "append" arrow, whose
+        // whole purpose is to fill the omnibox *without* searching. Selecting the
+        // row here would submit the query instead, and disabling interaction below
+        // would swallow the button's `touchUpInside` on the way out. Bail so the
+        // touch reaches the control untouched.
+        guard !Self.isInsideControl(tableView.hitTest(location, with: nil), upTo: tableView) else { return }
+        guard let indexPath = tableView.indexPathForRow(at: location) else { return }
         // Disable further interaction so the table's own delayed selection
         // gesture doesn't re-fire `didSelectRowAt` after we've handed off to
         // the submit pipeline. Re-enabled on the next omnibox attach.
         tableView.isUserInteractionEnabled = false
         searchController.tableView(tableView, didSelectRowAt: indexPath)
+    }
+
+    /// Whether `view` is a `UIControl` or nested inside one, searching no further
+    /// up than `limit` so the table itself is never considered.
+    private static func isInsideControl(_ view: UIView?, upTo limit: UIView) -> Bool {
+        var current = view
+        while let candidate = current, candidate !== limit {
+            if candidate is UIControl { return true }
+            current = candidate.superview
+        }
+        return false
     }
 
     fileprivate static func nearestViewController(of view: UIView) -> UIViewController? {
@@ -327,6 +558,15 @@ extension BrowserViewController {
 private struct OmniboxUploadAssociatedKeys {
     /// Used only as opaque key for objc_getAssociatedObject; no shared mutable state.
     nonisolated(unsafe) static var pickerCoordinator: UInt8 = 0
+    nonisolated(unsafe) static var attachmentCoordinator: UInt8 = 0
+    nonisolated(unsafe) static var authLogoutObserver: UInt8 = 0
+    nonisolated(unsafe) static var uploadErrorBatch: UInt8 = 0
+}
+
+@MainActor
+private final class OmniboxUploadErrorBatch {
+    var errors = Set<OmniboxUploadValidationError>()
+    var presentationTask: Task<Void, Never>?
 }
 
 @MainActor
@@ -334,6 +574,7 @@ extension BrowserViewController {
     fileprivate var omniboxUploadPickerCoordinator: OmniboxUploadPickerCoordinator {
         if let coordinator = objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.pickerCoordinator)
             as? OmniboxUploadPickerCoordinator {
+            coordinator.delegate = self
             return coordinator
         }
         let coordinator = OmniboxUploadPickerCoordinator()
@@ -350,21 +591,199 @@ extension BrowserViewController {
         guard let homepage = contentContainer.contentController as? HomepageViewController,
               let sheetState = homepage.ecosiaAdapter?.omniboxSheetState else { return }
 
+        registerOmniboxLogoutObserverIfNeeded()
         let sourceView = ntpOmniboxAnchorView ?? view
         homepage.presentOmniboxUploadSheetIfNeeded()
-        sheetState.presentUploadDrawer { [weak self] option in
+        let provider = SearchProviderSelection.selectedProvider
+        sheetState.presentUploadDrawer(provider: provider,
+                                       isAuthenticated: ecosiaAuth?.isLoggedIn == true,
+                                       onSelectUpload: { [weak self] option in
             guard let self else { return }
+            // Third-party providers cannot receive an upload from the app, so the
+            // picker is replaced by an explainer pointing at their own site.
+            guard provider == .ecosia else {
+                self.presentProviderUploadRedirect(for: provider)
+                return
+            }
             self.omniboxUploadPickerCoordinator.presentPicker(for: option,
                                                               from: self,
                                                               sourceView: sourceView)
+        }, onChatModeSelectionChanged: { [weak self] mode in
+            // The sheet state has already toggled the active mode; reflect it on
+            // the omnibox chip right away so the glyph appears while the drawer
+            // is still sliding away rather than after it disappears.
+            self?.ntpOmniboxAnchorView?.setSelectedChatMode(mode)
+        }, onLogin: { [weak self] in
+            self?.handleOmniboxLoginRequested()
+        })
+    }
+
+    /// Starts the sign-in flow from the drawer's CTA and, on success, re-opens
+    /// the drawer so the user lands back on the omnibox with the advanced modes
+    /// now unlocked.
+    private func handleOmniboxLoginRequested() {
+        let auth = ecosiaAuth ?? EcosiaAuth(browserViewController: self)
+        auth.onAuthFlowCompleted { [weak self] success in
+            guard success else { return }
+            self?.presentOmniboxUploadDrawer()
+        }.login()
+    }
+
+    /// Clears the active chat mode when the user taps the chip's X.
+    func ntpSearchBarDidTapChatModeChipClose() {
+        // Read the mode before clearing it — it's the one being reported.
+        // Only a deliberate tap counts as a `deselect`; the logout reset below
+        // clears the same state but isn't the user clearing a mode.
+        if let mode = omniboxSheetState?.selectedChatMode {
+            Analytics.shared.aiToolsMenuChatModeSelection(mode: mode,
+                                                          action: .deselect,
+                                                          isLoggedIn: ecosiaAuth?.isLoggedIn == true)
         }
+        omniboxSheetState?.selectedChatMode = nil
+        ntpOmniboxAnchorView?.setSelectedChatMode(nil)
+    }
+
+    /// Registers a one-shot observer that clears pending omnibox selections on
+    /// logout. Advanced chat modes and uploads are only valid while signed in,
+    /// so logging out (without first submitting a search) must not leave a stale
+    /// chat-mode chip or media attachment behind. The block observer is retained
+    /// as an associated object and torn down automatically when the BVC dies.
+    fileprivate func registerOmniboxLogoutObserverIfNeeded() {
+        guard objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.authLogoutObserver) == nil else { return }
+        let observer = NotificationCenter.default.addObserver(
+            forName: .EcosiaAuthStateChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] notification in
+            // Parse on the delivering (main) queue so only Sendable state crosses
+            // the MainActor hop — `Notification` itself isn't Sendable. `windowUUID`
+            // is a `nonisolated let`, so it's safe to read here.
+            guard let expectedWindow = self?.windowUUID,
+                  notification.userInfo?["windowUUID"] as? WindowUUID == expectedWindow,
+                  notification.userInfo?["actionType"] as? EcosiaAuthActionType == .userLoggedOut
+            else { return }
+            Task { @MainActor in
+                self?.resetOmniboxSelectionsAfterLogout()
+            }
+        }
+        objc_setAssociatedObject(self,
+                                 &OmniboxUploadAssociatedKeys.authLogoutObserver,
+                                 observer,
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    }
+
+    /// Clears any active chat mode (and its omnibox chip) and cancels/clears any
+    /// media attachments. Idempotent — a no-op when nothing is selected.
+    private func resetOmniboxSelectionsAfterLogout() {
+        omniboxSheetState?.selectedChatMode = nil
+        ntpOmniboxAnchorView?.setSelectedChatMode(nil)
+        // Only touch the attachment coordinator if it was actually created (the
+        // user picked media); don't spin one up just to clear nothing.
+        if let coordinator = objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.attachmentCoordinator)
+            as? OmniboxAttachmentUploadCoordinator {
+            coordinator.clearAttachments()
+        }
+    }
+
+    func ecosiaHandleDefaultSearchEngineDidChange() {
+        guard CustomSearchProviderFeatureFlag.isEnabled else { return }
+
+        // Only Ecosia can receive an upload from the app, so pending attachments never
+        // survive a switch away from it.
+        if !SearchProviderSelection.usesEcosiaAIBackend {
+            omniboxAttachmentCoordinator.clearAttachments()
+        }
+        clearSelectedChatModeIfUnsupported()
+
+        ntpOmniboxAnchorView?.updateUploadButtonVisibility()
+    }
+
+    /// Chat modes carry across providers, so a selection is only dropped when the new
+    /// provider does not offer it. Conversational providers have no standard mode.
+    private func clearSelectedChatModeIfUnsupported() {
+        guard let mode = omniboxSheetState?.selectedChatMode,
+              !OmniboxChatMode.modes(for: SearchProviderSelection.selectedProvider).contains(mode)
+        else { return }
+
+        omniboxSheetState?.selectedChatMode = nil
+        ntpOmniboxAnchorView?.setSelectedChatMode(nil)
     }
 }
 
 @MainActor
-extension BrowserViewController: OmniboxUploadPickerDelegate {
-    func omniboxUploadDidSelect(items: [OmniboxUploadItem]) {
-        // TODO: Stub for follow-up upload wiring to AI chat.
-        _ = items
+extension BrowserViewController: OmniboxUploadPickerDelegate, OmniboxAttachmentUploadDelegate {
+    var omniboxUploadRemainingAttachmentSlots: Int {
+        let currentCount = ntpOmniboxAnchorView?.attachments.count ?? 0
+        return max(0, OmniboxUploadFileSelectionValidator.maxFileCount - currentCount)
+    }
+
+    func omniboxUploadDidFinishPicking(
+        items: [OmniboxUploadPendingItem],
+        validationErrors: Set<OmniboxUploadValidationError>
+    ) {
+        handleUploadSelection(items: items, validationErrors: validationErrors)
+    }
+
+    func omniboxAttachmentsDidChange() {
+        ntpOmniboxAnchorView?.refreshSubmitButtonState()
+        ntpSearchBarAttachmentsDidChange()
+    }
+
+    func omniboxUploadDidEncounterValidationErrors(_ errors: Set<OmniboxUploadValidationError>) {
+        handleUploadSelection(items: [], validationErrors: errors)
+    }
+
+    fileprivate func handleUploadSelection(
+        items: [OmniboxUploadPendingItem],
+        validationErrors: Set<OmniboxUploadValidationError>
+    ) {
+        let simulatedErrors = OmniboxUploadDebugSimulation.simulatedValidationErrors()
+        let allErrors = validationErrors.union(simulatedErrors)
+
+        if !allErrors.isEmpty {
+            enqueueOmniboxUploadValidationErrors(allErrors)
+        }
+
+        guard simulatedErrors.isEmpty else { return }
+        guard !items.isEmpty else { return }
+
+        _ = ntpOmniboxAnchorView?.becomeFirstResponder()
+        omniboxAttachmentCoordinator.processPendingItems(items)
+    }
+
+    fileprivate var omniboxUploadErrorBatch: OmniboxUploadErrorBatch {
+        if let batch = objc_getAssociatedObject(self, &OmniboxUploadAssociatedKeys.uploadErrorBatch)
+            as? OmniboxUploadErrorBatch {
+            return batch
+        }
+        let batch = OmniboxUploadErrorBatch()
+        objc_setAssociatedObject(self,
+                                 &OmniboxUploadAssociatedKeys.uploadErrorBatch,
+                                 batch,
+                                 .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        return batch
+    }
+
+    fileprivate func enqueueOmniboxUploadValidationErrors(_ errors: Set<OmniboxUploadValidationError>) {
+        let batch = omniboxUploadErrorBatch
+        batch.errors.formUnion(errors)
+        batch.presentationTask?.cancel()
+        batch.presentationTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 150_000_000)
+            if Task.isCancelled { return }
+
+            let accumulated = batch.errors
+            batch.errors.removeAll()
+            batch.presentationTask = nil
+            guard let self, !accumulated.isEmpty else { return }
+
+            self.presentOmniboxUploadValidationErrors(accumulated)
+        }
+    }
+
+    fileprivate func presentOmniboxUploadValidationErrors(_ errors: Set<OmniboxUploadValidationError>) {
+        guard #available(iOS 16.0, *) else { return }
+        let messages = OmniboxUploadValidationError.orderedMessages(for: errors)
+        showEcosiaErrorToasts(messages: messages)
     }
 }

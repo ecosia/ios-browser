@@ -58,7 +58,20 @@ if [ "$RUN_BOOTSTRAP" = true ]; then
     echo -e "${GREEN}✓ Bootstrap complete${NC}\n"
 else
     echo -e "${YELLOW}Skipping bootstrap (--skip-bootstrap)${NC}\n"
+
+    # Ecosia: CI installs Node dependencies and builds user scripts before invoking this script.
+    # Bootstrap is skipped there to avoid a duplicate npm install, but Nimbus still needs its
+    # generated helper scripts on a clean runner.
+    NIMBUS_FML_FILE=./firefox-ios/nimbus.fml.yaml
+    curl --proto '=https' --tlsv1.2 -sSf \
+        https://raw.githubusercontent.com/mozilla/application-services/main/components/nimbus/ios/scripts/bootstrap.sh \
+        | bash -s -- --directory ./firefox-ios/bin "$NIMBUS_FML_FILE"
 fi
+
+# Ecosia: the downloaded script stores FML binaries in versioned directories, so checking the
+# remote checksum on every build adds a network failure point without changing the selected binary.
+# Fresh downloads are retried and still verified against their checksum.
+python3 .github/scripts/disable_nimbus_checksum_refresh.py firefox-ios/bin/nimbus-fml.sh
 
 # Install SPM dependencies and generate project (run from firefox-ios so Tuist doesn't pass invalid --path to swift package)
 echo -e "${BLUE}Installing Swift package dependencies (force resolved versions)...${NC}"
@@ -125,6 +138,11 @@ if [ ! -f "$file_path" ]; then
     echo -e "${YELLOW}Creating Staging.xcconfig...${NC}"
     touch "$file_path"
     echo -e "${GREEN}✓ Staging.xcconfig created${NC}\n"
+    {
+        echo "AUTH0_CLIENT_ID=zNU6cgqji5cE9qPkkXIlqMJbIwTPShdU"
+        echo "CF_ACCESS_CLIENT_ID=$CF_ACCESS_CLIENT_ID"
+        echo "CF_ACCESS_CLIENT_SECRET=$CF_ACCESS_CLIENT_SECRET"
+    } >> $file_path
 else
     echo -e "${GREEN}✓ Staging.xcconfig already exists${NC}\n"
 fi
@@ -136,4 +154,3 @@ echo -e "Next steps:"
 echo -e "  1. Select the ${YELLOW}Ecosia${NC} or ${YELLOW}EcosiaBeta${NC} scheme"
 echo -e "  2. Build the project"
 echo -e "  3. Run on simulator/device"
-

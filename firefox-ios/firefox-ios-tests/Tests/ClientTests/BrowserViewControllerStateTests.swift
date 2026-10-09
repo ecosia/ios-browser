@@ -77,8 +77,17 @@ final class BrowserViewControllerStateTests: XCTestCase {
 
         XCTAssertNil(initialState.displayView)
 
-        let action = GeneralBrowserAction(windowUUID: .XCTestDefaultUUID,
-                                          actionType: GeneralBrowserActionType.showPasswordGenerator)
+        // Ecosia: the reducer copies the action's frameContext into the new state, so the action must carry one.
+        let action = GeneralBrowserAction(
+            frameContext: PasswordGeneratorFrameContext(
+                origin: nil,
+                host: "example.com",
+                scriptEvaluator: MockPasswordGeneratorScriptEvaluator(),
+                frameInfo: nil
+            ),
+            windowUUID: .XCTestDefaultUUID,
+            actionType: GeneralBrowserActionType.showPasswordGenerator
+        )
         let newState = reducer(initialState, action)
         let displayView = newState.displayView!
         let desiredDisplayView =

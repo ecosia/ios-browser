@@ -9,7 +9,6 @@ import XCTest
 class MockOverlayModeManager: DefaultOverlayModeManager {
     var leaveOverlayModeCallCount = 0
     var enterOverlayModeCallCount = 0
-    var overrideShouldEnterOverlayMode = false
 
     override func openSearch(with pasteContent: String) {
         enterOverlayModeCallCount += 1

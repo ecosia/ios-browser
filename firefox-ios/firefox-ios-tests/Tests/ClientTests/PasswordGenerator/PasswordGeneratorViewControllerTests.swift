@@ -26,7 +26,7 @@ final class PasswordGeneratorViewControllerTests: XCTestCase {
         let currentTab = Tab(profile: mockProfile, windowUUID: windowUUID)
         let URL = URL(string: "https://foo.com")!
         let webView = WKWebViewMock(URL)
-        let currentFrame = WKFrameInfoMock(webView: webView, frameURL: URL, isMainFrame: true)
+        let currentFrame = WKFrameInfoMock.new(webView: webView, frameURL: URL, isMainFrame: true)
         let frameContext = PasswordGeneratorFrameContext(
             origin: URL.absoluteString,
             host: URL.host ?? "",

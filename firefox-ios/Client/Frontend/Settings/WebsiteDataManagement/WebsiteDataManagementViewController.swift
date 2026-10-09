@@ -5,6 +5,8 @@
 import UIKit
 import Shared
 import Common
+// Ecosia: Analytics for "Clear Website Data" tracking.
+import Ecosia
 
 class WebsiteDataManagementViewController: UIViewController,
                                            UITableViewDataSource,
@@ -270,6 +272,8 @@ class WebsiteDataManagementViewController: UIViewController,
             viewModel.showMoreButtonPressed()
             tableView.reloadData()
         case .clearButton:
+            // Ecosia: Track "Clear Website Data" button click (restored; lost in the v147 upgrade — MOB-4384)
+            Analytics.shared.clearsDataFromSection(.websites)
             let generator = UIImpactFeedbackGenerator(style: .heavy)
             generator.impactOccurred()
             let alert = viewModel.createAlertToRemove()

@@ -11,13 +11,18 @@ import WebKit
 @MainActor
 final class TabEcosiaExtensionTests: XCTestCase {
 
-    private var windowUUID = WindowUUID()
+    // Ecosia: implicitly-unwrapped so tearDown can set it to nil; setUp assigns a fresh WindowUUID(). (MOB-4384)
+    // swiftlint:disable:next implicitly_unwrapped_optional
+    private var windowUUID: WindowUUID!
     private var savedAnalyticsId = UUID()
     private var savedSendAnonymousUsageData = true
     private var savedCookieConsentValue: String?
 
     override func setUp() {
         super.setUp()
+        // Ecosia: register the AppContainer services Tab needs. `loadRequest` → `createWebview`
+        // resolves `ThemeManager` from `AppContainer`, which fatal-errors if nothing is registered. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
         windowUUID = WindowUUID()
         savedAnalyticsId = User.shared.analyticsId
         savedSendAnonymousUsageData = User.shared.sendAnonymousUsageData
@@ -30,7 +35,9 @@ final class TabEcosiaExtensionTests: XCTestCase {
         User.shared.analyticsId = savedAnalyticsId
         User.shared.sendAnonymousUsageData = savedSendAnonymousUsageData
         User.shared.cookieConsentValue = savedCookieConsentValue
+        Analytics.shared = Analytics()
         windowUUID = nil
+        DependencyHelperMock().reset()
         super.tearDown()
     }
 
@@ -38,7 +45,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testSpAddedToEcosiaURL() {
         let tab = makeTab(isPrivate: false)
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!
+        let url = ecosiaURL("/search?q=cats&tt=iosapp")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         XCTAssertTrue(result.url?.hasEcosiaUserId == true)
@@ -58,7 +65,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testSpReplacedWhenAlreadyPresent() {
         let tab = makeTab(isPrivate: false)
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&_sp=existing-sp-value")!
+        let url = ecosiaURL("/search?q=cats&_sp=existing-sp-value")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         XCTAssertTrue(result.url?.hasEcosiaUserId == true)
@@ -67,7 +74,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testSpIsNullUUIDForPrivateTab() {
         let tab = makeTab(isPrivate: true)
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!
+        let url = ecosiaURL("/search?q=cats&tt=iosapp")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         XCTAssertEqual(
@@ -79,7 +86,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
     func testSpIsNullUUIDWhenAnalyticsOptedOut() {
         User.shared.sendAnonymousUsageData = false
         let tab = makeTab(isPrivate: false)
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!
+        let url = ecosiaURL("/search?q=cats&tt=iosapp")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         XCTAssertEqual(
@@ -92,7 +99,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testLanguageRegionHeaderAddedForSERPURL() {
         let tab = makeTab(isPrivate: false)
-        let url = URL(string: "https://www.ecosia.org/search?q=cats")!
+        let url = ecosiaURL("/search?q=cats")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         let expected = Locale.current.identifier.replacingOccurrences(of: "_", with: "-").lowercased()
@@ -101,10 +108,36 @@ final class TabEcosiaExtensionTests: XCTestCase {
 
     func testLanguageRegionHeaderNotAddedForNonSERPURL() {
         let tab = makeTab(isPrivate: false)
-        let url = URL(string: "https://www.ecosia.org/")!
+        let url = ecosiaURL("/")
         let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
 
         XCTAssertNil(result.value(forHTTPHeaderField: "x-ecosia-app-language-region"))
+    }
+
+    // MARK: - Ecosia app header
+
+    func testEcosiaAppHeaderAddedForEcosiaURL() {
+        let tab = makeTab(isPrivate: false)
+        let url = ecosiaURL("/")
+        let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
+
+        XCTAssertEqual(result.value(forHTTPHeaderField: "X-Ecosia-App"), "ios/\(AppInfo.ecosiaAppVersion)")
+    }
+
+    func testEcosiaAppHeaderAddedForEcosiaNonSERPURL() {
+        let tab = makeTab(isPrivate: false)
+        let url = ecosiaURL("/privacy")
+        let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
+
+        XCTAssertEqual(result.value(forHTTPHeaderField: "X-Ecosia-App"), "ios/\(AppInfo.ecosiaAppVersion)")
+    }
+
+    func testEcosiaAppHeaderNotAddedForNonEcosiaURL() {
+        let tab = makeTab(isPrivate: false)
+        let url = URL(string: "https://example.com/search?q=cats")!
+        let result = tab.ecosiaUpdatedRequest(URLRequest(url: url))
+
+        XCTAssertNil(result.value(forHTTPHeaderField: "X-Ecosia-App"))
     }
 
     // MARK: - loadRequest integration
@@ -117,10 +150,11 @@ final class TabEcosiaExtensionTests: XCTestCase {
         let spy = NavigationSpy(expectation: expect)
         tab.navigationDelegate = spy
 
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!
+        let url = ecosiaURL("/search?q=cats&tt=iosapp")
         tab.loadRequest(URLRequest(url: url))
 
-        waitForExpectations(timeout: 2)
+        // Ecosia: WKWebView decidePolicyFor can exceed 2s under CI load; use a tolerant timeout. (MOB-4384)
+        waitForExpectations(timeout: 10)
         XCTAssertTrue(spy.capturedURL?.hasEcosiaUserId == true,
                       "loadRequest must pass the ecosified URL (with _sp) to WKWebView")
     }
@@ -133,15 +167,104 @@ final class TabEcosiaExtensionTests: XCTestCase {
         let spy = NavigationSpy(expectation: expect)
         tab.navigationDelegate = spy
 
-        let url = URL(string: "https://www.ecosia.org/search?q=cats&tt=iosapp")!
+        let url = ecosiaURL("/search?q=cats&tt=iosapp")
         tab.loadRequest(URLRequest(url: url))
 
-        waitForExpectations(timeout: 2)
+        // Ecosia: WKWebView decidePolicyFor can exceed 2s under CI load; use a tolerant timeout. (MOB-4384)
+        waitForExpectations(timeout: 10)
         XCTAssertEqual(spy.capturedURL?.queryItem(named: "_sp"),
                        UUID(uuid: UUID_NULL).uuidString)
     }
 
+    // MARK: - NTP page view
+
+    func testNTPPageViewTracksAboutHomeURL() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+
+        tab.ecosiaTrackNTPPageViewIfNeeded(url: HomePanelType.topSites.internalUrl)
+
+        XCTAssertTrue(spy.ntpViewedCalled)
+    }
+
+    func testNTPPageViewDoesNotTrackSERP() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+
+        tab.ecosiaTrackNTPPageViewIfNeeded(url: ecosiaURL("/search?q=cats"))
+
+        XCTAssertFalse(spy.ntpViewedCalled)
+    }
+
+    func testNTPPageViewDoesNotTrackNilURL() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+
+        tab.ecosiaTrackNTPPageViewIfNeeded(url: nil)
+
+        XCTAssertFalse(spy.ntpViewedCalled)
+    }
+
+    func testLoadRequestTracksNTPPageViewForAboutHome() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+        tab.createWebview(configuration: WKWebViewConfiguration())
+
+        tab.loadRequest(URLRequest(url: HomePanelType.topSites.internalUrl))
+
+        XCTAssertTrue(spy.ntpViewedCalled)
+        tab.stop()
+    }
+
+    func testLoadRequestDoesNotTrackNTPPageViewWithoutWebView() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+
+        tab.loadRequest(URLRequest(url: HomePanelType.topSites.internalUrl))
+
+        XCTAssertFalse(spy.ntpViewedCalled)
+    }
+
+    func testLoadRequestDoesNotTrackNTPPageViewForSERP() {
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+        tab.createWebview(configuration: WKWebViewConfiguration())
+
+        tab.loadRequest(URLRequest(url: ecosiaURL("/search?q=cats&tt=iosapp")))
+
+        XCTAssertFalse(spy.ntpViewedCalled)
+        tab.stop()
+    }
+
+    func testReloadDoesNotTrackNTPPageView() {
+        // Firefox reloads homepage tabs on every select (FXIOS-10612), including
+        // opening the same NTP tab from the tab tray. Reload is not a page view.
+        let spy = AnalyticsSpy()
+        Analytics.shared = spy
+        let tab = makeTab(isPrivate: false)
+        tab.createWebview(configuration: WKWebViewConfiguration())
+        tab.url = HomePanelType.topSites.internalUrl
+
+        tab.reload()
+
+        XCTAssertFalse(spy.ntpViewedCalled)
+    }
+
     // MARK: - Helpers
+
+    // Ecosia: the Testing configuration runs against the staging environment (bundle id
+    // `com.ecosia.ecosiaapp.firefox`), so `isEcosia()` only recognises the staging domain.
+    // Build SERP URLs from the current environment's domain so these tests assert the real
+    // `_sp`/language-header mutations regardless of which configuration they run under. (MOB-4384)
+    private func ecosiaURL(_ pathAndQuery: String) -> URL {
+        URL(string: "https://www.\(EcosiaEnvironment.current.urlProvider.domain)\(pathAndQuery)")!
+    }
 
     private func makeTab(isPrivate: Bool) -> Client.Tab {
         Client.Tab(profile: MockProfile(), isPrivate: isPrivate, windowUUID: windowUUID)

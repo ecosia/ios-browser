@@ -111,7 +111,9 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
         profile.prefs.setBool(true, forKey: CFRPrefsKeys.toolbarUpdateKey.rawValue)
 
         let result = subject.canPresent(.jumpBackInSyncedTab)
-        XCTAssertTrue(result)
+        // Ecosia: synced-tab hints are disabled (ContextualHintEligibilityUtility returns false for
+        // .jumpBackInSyncedTab — not surfaced in Ecosia).
+        XCTAssertFalse(result)
     }
 
     func test_shouldNotPresentSyncedHint_iPhoneWithoutToolbarAndFeatureEnabled() {
@@ -127,7 +129,8 @@ class ContextualHintEligibilityUtilityTests: XCTestCase {
                                                    overlayState: overlayState,
                                                    isToolbarUpdateCFRFeatureEnabled: false)
         let result = subject.canPresent(.jumpBackInSyncedTab)
-        XCTAssertTrue(result)
+        // Ecosia: synced-tab hints are disabled (not surfaced in Ecosia).
+        XCTAssertFalse(result)
     }
 
     /* Ecosia: device parameter removed in v147, can't test iPad-specific behavior

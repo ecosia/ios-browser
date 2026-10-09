@@ -19,7 +19,9 @@ class SearchEnginesManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
+        // Ecosia: Sync to upstream v147.5 — bootstrap the DI container so default-arg resolves
+        // (Profile/WindowManager) during SearchEnginesManager flows succeed. Our copy predated this. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
         profile = MockProfile()
         mockSearchEngineProvider = MockSearchEngineProvider()
         searchEnginesManager = SearchEnginesManager(

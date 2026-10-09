@@ -20,6 +20,13 @@ final class OmniboxUploadPickerCoordinator: NSObject {
         presentingViewController = viewController
         popoverSourceView = sourceView
 
+        let remainingSlots = delegate?.omniboxUploadRemainingAttachmentSlots
+            ?? OmniboxUploadFileSelectionValidator.maxFileCount
+        guard remainingSlots > 0 else {
+            delegate?.omniboxUploadDidFinishPicking(items: [], validationErrors: [.tooManyFiles])
+            return
+        }
+
         switch option {
         case .photos:
             presentPhotoPicker(from: viewController)

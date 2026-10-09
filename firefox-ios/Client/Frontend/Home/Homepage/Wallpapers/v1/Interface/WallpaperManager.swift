@@ -66,9 +66,13 @@ final class WallpaperManager: WallpaperManagerInterface, @unchecked Sendable {
 
     /// Determines whether the wallpaper settings can be shown
     var canSettingsBeShown: Bool {
+        /* Ecosia: wallpapers feature is intentionally disabled and must never be exposed to users,
+           regardless of any locally cached thumbnail/metadata state
         guard hasEnoughThumbnailsToShow else { return false }
 
         return true
+         */
+        return false
     }
 
     /// Returns true if the metadata & thumbnails are available

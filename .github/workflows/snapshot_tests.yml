@@ -2,15 +2,44 @@ name: Snapshot Tests
 
 on:
   pull_request:
-    branches: [main, 'patch/**']
-    paths:
-      - 'firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig'
-  push:
-    branches: [tuist-implementation]
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
+  classify_snapshot_changes:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    name: Check Snapshot Test Relevance
+    outputs:
+      should_run: ${{ steps.classify.outputs.should_run }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Classify changed files
+        id: classify
+        shell: bash
+        run: |
+          should_run=$(./check_snapshot_updates.sh \
+            --should-run \
+            "${{ github.event.pull_request.base.sha }}" \
+            "${{ github.event.pull_request.head.sha }}")
+          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
+
   execute_snapshot_tests:
-    runs-on: macos-15
+    needs: classify_snapshot_changes
+    if: >-
+      always() &&
+      (
+        github.event_name != 'pull_request' ||
+        needs.classify_snapshot_changes.result != 'success' ||
+        needs.classify_snapshot_changes.outputs.should_run == 'true'
+      )
+    runs-on: macos-26
     name: Execute Snapshot Tests
 
     steps:
@@ -18,22 +47,49 @@ jobs:
         uses: actions/checkout@v5
         with:
           lfs: true
-          submodules: true    
+          # Keep GITHUB_TOKEN out of .git/config, where later steps could read it.
+          persist-credentials: false
+
+      # GITHUB_TOKEN can only read this repository, so the private SnapshotArtifacts submodule is
+      # fetched with a read-only deploy key registered on ecosia/ios-snapshot-tests-files.
+      - name: Checkout snapshot artifacts
+        env:
+          DEPLOY_KEY: ${{ secrets.SNAPSHOT_ARTIFACTS_DEPLOY_KEY }}
+          # Unauthenticated API calls share a per-IP rate limit with other jobs on the same runner.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ssh_dir="$RUNNER_TEMP/snapshot-artifacts-ssh"
+          mkdir -p "$ssh_dir"
+          trap 'rm -rf "$ssh_dir"' EXIT
+          printf '%s\n' "$DEPLOY_KEY" > "$ssh_dir/key"
+          chmod 600 "$ssh_dir/key"
+          gh api meta --jq '.ssh_keys[] | "github.com " + .' > "$ssh_dir/known_hosts"
+          if [ ! -s "$ssh_dir/known_hosts" ]; then
+            echo "Could not fetch GitHub's SSH host keys"
+            exit 1
+          fi
+          export GIT_SSH_COMMAND="ssh -i $ssh_dir/key -o IdentitiesOnly=yes -o UserKnownHostsFile=$ssh_dir/known_hosts -o StrictHostKeyChecking=yes"
+          git submodule update --init --depth=1 firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts
+          git -C firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts lfs pull
+          lfs_files=$(git -C firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts lfs ls-files)
+          if grep -q ' - ' <<< "$lfs_files"; then
+            echo "Some snapshot references are still Git LFS pointers"
+            exit 1
+          fi
 
       - uses: ./.github/actions/setup-safe-chain
 
-      - name: Check for MARKETING_VERSION change
-        id: check_marketing_version
-        run: sh ./check_marketing_version.sh
-
       - name: Prepare environment
-        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
         uses: ./.github/actions/prepare_environment
         with:
           core-token: ${{ secrets.IOS_CORE_TOKEN }}
 
+      - name: Xcode compilation cache
+        uses: ./.github/actions/xcode_compilation_cache
+        with:
+          cache-name: snapshot-tests
+
       - name: Perform Snapshot Tests and Publish Test reports
-        if : ( steps.check_marketing_version.outputs.skipnext  != 'true' )
         id: perform-snapshot-tests
         uses: ./.github/actions/perform_snapshot_tests
         with:

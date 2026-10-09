@@ -40,11 +40,18 @@ protocol NTPSearchBarDelegate: AnyObject {
     func ntpSearchBarNeedsSuggestionsLayoutUpdate()
     /// Called when the user taps the upload / attachment button.
     func ntpSearchBarDidTapUpload()
+    /// Called when attachments are added, removed, or finish uploading.
+    func ntpSearchBarAttachmentsDidChange()
+    /// Called when the user taps the close (X) button on the active chat-mode
+    /// chip, asking to deselect the mode.
+    func ntpSearchBarDidTapChatModeChipClose()
 }
 
 extension NTPSearchBarDelegate {
     func ntpSearchBarIsSuggestionsOverlayVisible() -> Bool { false }
     func ntpSearchBarNeedsSuggestionsLayoutUpdate() {}
+    func ntpSearchBarAttachmentsDidChange() {}
+    func ntpSearchBarDidTapChatModeChipClose() {}
 }
 
 /// Pill-shaped search input pinned to the bottom of the redesigned NTP. Replaces
@@ -75,12 +82,9 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         static let shadowOpacity: Float = 0.10
         static let shadowRadius: CGFloat = 12
         static let shadowOffset = CGSize(width: 0, height: 4)
-        /// Character count at which the remaining-character counter becomes
-        /// visible.
+        /// Remaining-character count at which the counter becomes visible.
+        /// Countdown starts once the user has 100 characters left.
         static let counterVisibleThreshold = 100
-        /// Character count at which the counter flips into a warning tint
-        /// (last 100 chars before the hard cap).
-        static let counterWarningThreshold = 960
         /// Hard cap on input length. Further input is rejected.
         static let maxLength = 1060
         /// Padding between the textView and the pill's top edge.
@@ -89,11 +93,50 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         /// bottom inset). The textView is pinned just above this row so its
         /// content can never bleed into the submit / counter area.
         static var bottomRowHeight: CGFloat { submitButtonSize + .ecosia.space._1s }
+        static var attachmentStripHeight: CGFloat { OmniboxAttachmentsStripView.UX.tileHeight + .ecosia.space._1s }
         static var minTextHeight: CGFloat { minHeight - textPadding - bottomRowHeight }
         static var maxTextHeight: CGFloat { maxHeight - textPadding - bottomRowHeight }
+
+        /// Active chat-mode chip shown next to the upload button. An outlined
+        /// pill holding the mode glyph plus an X to deselect.
+        static let chatModeChipHeight: CGFloat = 32
+        static let chatModeChipIconSize: CGFloat = 18
+        static let chatModeChipCloseGlyphSize: CGFloat = 9
+        static let chatModeChipLeadingInset: CGFloat = .ecosia.space._s
+        static let chatModeChipInnerSpacing: CGFloat = .ecosia.space._1s
+        static let chatModeChipTrailingInset: CGFloat = .ecosia.space._1s
+    }
+
+    private(set) var attachments: [OmniboxAttachment] = []
+    var hasAttachments: Bool { !attachments.isEmpty }
+    var hasReadyAttachments: Bool { attachments.contains(where: \.isReady) }
+    var allAttachmentsReady: Bool {
+        !attachments.isEmpty && attachments.allSatisfy(\.isReady)
+    }
+
+    var hasUploadingAttachments: Bool {
+        attachments.contains(where: \.isLoading)
+    }
+
+    /// Recomputes whether the submit button should be enabled.
+    func refreshSubmitButtonState() {
+        updateSubmitState(for: textView.text ?? "")
     }
 
     weak var delegate: NTPSearchBarDelegate?
+
+    private lazy var attachmentsStrip: OmniboxAttachmentsStripView = {
+        let strip = OmniboxAttachmentsStripView()
+        strip.translatesAutoresizingMaskIntoConstraints = false
+        strip.isHidden = true
+        strip.onRemoveAttachment = { [weak self] id in
+            self?.handleRemoveAttachment(id: id)
+        }
+        return strip
+    }()
+
+    private var previewImages: [UUID: UIImage] = [:]
+    var onRemoveAttachment: ((UUID) -> Void)?
 
     private lazy var textView: NTPLocationTextView = {
         let tv = NTPLocationTextView()
@@ -121,19 +164,19 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     private lazy var uploadButton: EcosiaOmniboxUploadButton = .build { _ in }
 
     private lazy var counterLabel: UILabel = .build { label in
-        label.font = .preferredFont(forTextStyle: .caption2)
-        label.adjustsFontForContentSizeCategory = true
+        label.font = .ecosia(size: .ecosia.font._l)
         label.isHidden = true
         label.accessibilityIdentifier = "NTPSearchBarCounterLabel"
     }
 
-    /// In-pill clear button at the top-right of the omnibox. Visible only
-    /// while the field has content — taps wipe the text without dropping
-    /// focus. The button itself is the 40×40 hit target with no rendered
-    /// content; `clearButtonCircle` and `clearButtonGlyph` are siblings
-    /// inside it that draw the visible disc and the X glyph respectively.
-    /// We don't use `setImage` because the resulting `imageView`'s z-order
-    /// relative to other subviews is unreliable across iOS versions/button
+    /// In-pill clear button at the top-right of the omnibox (or trailing
+    /// the textView once attachments are present). Visible only while the
+    /// field has content — taps wipe the text without dropping focus. The
+    /// button itself is the 40×40 hit target with no rendered content;
+    /// `clearButtonCircle` and `clearButtonGlyph` are siblings inside it
+    /// that draw the visible disc and the X glyph respectively. We don't
+    /// use `setImage` because the resulting `imageView`'s z-order relative
+    /// to other subviews is unreliable across iOS versions/button
     /// configuration modes — using an explicit `UIImageView` keeps the X
     /// guaranteed to sit on top of the disc.
     private lazy var clearButton: UIButton = .build { button in
@@ -161,6 +204,38 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         glyph.isUserInteractionEnabled = false
     }
 
+    /// Active chat-mode chip in the bottom-left row, next to the upload button.
+    /// An outlined pill wrapping the selected mode's glyph and a trailing X.
+    /// Tapping anywhere on the pill (glyph or X) deselects the mode. Hidden
+    /// whenever no mode is active.
+    private lazy var chatModeChip: UIControl = .build { chip in
+        chip.layer.cornerRadius = UX.chatModeChipHeight / 2
+        chip.layer.borderWidth = 1
+        chip.isHidden = true
+        chip.accessibilityIdentifier = "NTPSearchBarChatModeChip"
+        chip.isAccessibilityElement = true
+        chip.accessibilityTraits = .button
+        chip.accessibilityHint = String.localized(.chatModeChipRemoveAccessibilityLabel)
+    }
+
+    private lazy var chatModeChipIcon: UIImageView = .build { imageView in
+        imageView.contentMode = .scaleAspectFit
+        imageView.isUserInteractionEnabled = false
+    }
+
+    /// Decorative X on the trailing edge of the chip. Not independently tappable
+    /// — the whole `chatModeChip` control handles the deselect tap.
+    private lazy var chatModeChipCloseGlyph: UIImageView = .build { glyph in
+        let symbolConfig = UIImage.SymbolConfiguration(pointSize: UX.chatModeChipCloseGlyphSize, weight: .semibold)
+        glyph.image = UIImage(systemName: "xmark", withConfiguration: symbolConfig)?
+            .withRenderingMode(.alwaysTemplate)
+        glyph.contentMode = .center
+        glyph.isUserInteractionEnabled = false
+    }
+
+    /// The mode currently reflected by the chip, if any.
+    private(set) var selectedChatMode: OmniboxChatMode?
+
     /// Fires whenever the text content changes (including programmatic clears).
     /// Use from the host to drive layout that depends on pill height changes.
     var onContentChange: ((String) -> Void)?
@@ -173,6 +248,17 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     private var currentTheme: Theme?
     private lazy var textViewHeightConstraint: NSLayoutConstraint =
         textView.heightAnchor.constraint(equalToConstant: UX.minTextHeight)
+    private lazy var textViewTopConstraint: NSLayoutConstraint =
+        textView.topAnchor.constraint(equalTo: topAnchor, constant: UX.textPadding)
+    /// Resting position: top-right of the pill (no attachments).
+    private lazy var clearButtonTopToPillConstraint: NSLayoutConstraint =
+        clearButton.topAnchor.constraint(equalTo: topAnchor, constant: .ecosia.space._1s)
+    /// With attachments: trail the textView so the control isn't buried under the
+    /// strip. The `-_1s` keeps the same button-top-to-text-top offset as the resting
+    /// constraint (pill+_1s vs text+textPadding), so the disc stays centered on the
+    /// first text line instead of dropping ~8pt below it.
+    private lazy var clearButtonTopToTextConstraint: NSLayoutConstraint =
+        clearButton.topAnchor.constraint(equalTo: textView.topAnchor, constant: -.ecosia.space._1s)
 
     /// Current text content. Mirrors `textView.text` but lets callers drive
     /// programmatic changes (e.g. accepting a tapped suggestion).
@@ -188,6 +274,10 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             updateLayoutForContent()
             onContentChange?(clamped)
         }
+    }
+
+    func normalizedSearchQuery(for text: String) -> String {
+        textView.normalizedSearchQuery(for: text)
     }
 
     // MARK: Init
@@ -224,9 +314,11 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         layer.shadowOffset = UX.shadowOffset
         layer.shadowColor = UIColor.black.cgColor
 
+        addSubview(attachmentsStrip)
         addSubview(textView)
         addSubview(placeholderLabel)
         addSubview(uploadButton)
+        addSubview(chatModeChip)
         addSubview(submitButton)
         addSubview(counterLabel)
         addSubview(clearButton)
@@ -235,11 +327,15 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         // interaction disabled so taps fall through to the button.
         clearButton.addSubview(clearButtonCircle)
         clearButton.addSubview(clearButtonGlyph)
+        chatModeChip.addSubview(chatModeChipIcon)
+        chatModeChip.addSubview(chatModeChipCloseGlyph)
 
         textView.delegate = self
         uploadButton.addTarget(self, action: #selector(uploadTapped), for: .touchUpInside)
         submitButton.addTarget(self, action: #selector(submitTapped), for: .touchUpInside)
         clearButton.addTarget(self, action: #selector(clearTapped), for: .touchUpInside)
+        // The whole chip deselects — tapping the glyph or the X both remove the mode.
+        chatModeChip.addTarget(self, action: #selector(chatModeChipTapped), for: .touchUpInside)
 
         // Tapping anywhere on the pill (including padding around the textView)
         // focuses the field — without this, only the small intrinsic-size textView
@@ -257,14 +353,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         addGestureRecognizer(swipeDown)
 
         NSLayoutConstraint.activate([
-            // textView occupies the upper-left region of the pill. Its
-            // bottom is pinned to the submit button's top so wrapped text
-            // physically cannot enter the bottom-row area, and its trailing
-            // edge stops at the submit button's leading edge (with an 8pt
-            // gap) so neither typed text nor the placeholder collide with
-            // the right-hand button column.
+            attachmentsStrip.topAnchor.constraint(equalTo: topAnchor, constant: UX.textPadding),
+            attachmentsStrip.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.textPadding),
+            attachmentsStrip.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.textPadding),
+            attachmentsStrip.heightAnchor.constraint(equalToConstant: OmniboxAttachmentsStripView.UX.tileHeight),
+
             textView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.textPadding),
-            textView.topAnchor.constraint(equalTo: topAnchor, constant: UX.textPadding),
+            textViewTopConstraint,
             textView.trailingAnchor.constraint(equalTo: submitButton.leadingAnchor, constant: -UX.textTrailingGap),
             textView.bottomAnchor.constraint(equalTo: submitButton.topAnchor),
             textViewHeightConstraint,
@@ -286,19 +381,42 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             submitButton.widthAnchor.constraint(equalToConstant: UX.submitButtonSize),
             submitButton.heightAnchor.constraint(equalToConstant: UX.submitButtonSize),
 
+            // Chat-mode chip sits between the upload button and the counter in
+            // the bottom row, vertically centred on the upload button. Its
+            // width is intrinsic (glyph + X); it's simply hidden when no mode
+            // is active.
+            chatModeChip.leadingAnchor.constraint(equalTo: uploadButton.trailingAnchor,
+                                                  constant: .ecosia.space._1s),
+            chatModeChip.centerYAnchor.constraint(equalTo: uploadButton.centerYAnchor),
+            chatModeChip.heightAnchor.constraint(equalToConstant: UX.chatModeChipHeight),
+
+            chatModeChipIcon.leadingAnchor.constraint(equalTo: chatModeChip.leadingAnchor,
+                                                      constant: UX.chatModeChipLeadingInset),
+            chatModeChipIcon.centerYAnchor.constraint(equalTo: chatModeChip.centerYAnchor),
+            chatModeChipIcon.widthAnchor.constraint(equalToConstant: UX.chatModeChipIconSize),
+            chatModeChipIcon.heightAnchor.constraint(equalToConstant: UX.chatModeChipIconSize),
+
+            chatModeChipCloseGlyph.leadingAnchor.constraint(equalTo: chatModeChipIcon.trailingAnchor,
+                                                            constant: UX.chatModeChipInnerSpacing),
+            chatModeChipCloseGlyph.trailingAnchor.constraint(equalTo: chatModeChip.trailingAnchor,
+                                                             constant: -UX.chatModeChipTrailingInset),
+            chatModeChipCloseGlyph.centerYAnchor.constraint(equalTo: chatModeChip.centerYAnchor),
+
             // Character counter sits inline with the submit button on its
             // leading side — its trailing edge aligns flush with the submit
             // button's leading edge with a small gap.
             counterLabel.trailingAnchor.constraint(equalTo: submitButton.leadingAnchor, constant: -.ecosia.space._1s),
             counterLabel.centerYAnchor.constraint(equalTo: submitButton.centerYAnchor),
-            counterLabel.leadingAnchor.constraint(greaterThanOrEqualTo: uploadButton.trailingAnchor,
+            counterLabel.leadingAnchor.constraint(greaterThanOrEqualTo: chatModeChip.trailingAnchor,
                                                   constant: .ecosia.space._1s),
 
-            // Clear-text button sits in the top-right of the pill — its
-            // 40×40 hit target is symmetric to the submit button's 8pt
-            // inset from the pill's bottom-right corner, with the 16×16
-            // visible disc centred inside. Hidden until the user has content.
-            clearButton.topAnchor.constraint(equalTo: topAnchor, constant: .ecosia.space._1s),
+            // Clear-text button sits in the top-right of the pill by default —
+            // its 40×40 hit target shares the submit button's horizontal
+            // centre, with the 16×16 disc centred inside. When attachments
+            // are present, `refreshAttachmentsStrip` re-pins it to the
+            // textView's top so it stays on the trailing side of the input
+            // instead of overlapping the strip. Hidden until content exists.
+            clearButtonTopToPillConstraint,
             clearButton.centerXAnchor.constraint(equalTo: submitButton.centerXAnchor),
             clearButton.widthAnchor.constraint(equalToConstant: UX.clearButtonSize),
             clearButton.heightAnchor.constraint(equalToConstant: UX.clearButtonSize),
@@ -312,7 +430,24 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
             clearButtonGlyph.centerYAnchor.constraint(equalTo: clearButton.centerYAnchor)
         ])
 
-        uploadButton.isHidden = !FileUploadFeatureFlag.isEnabled
+        updateUploadButtonVisibility()
+    }
+
+    /// Shows the + / upload control for the active provider, unless AI-free
+    /// searching is hiding Ecosia AI surfaces. Clears an in-progress chat-mode
+    /// chip when the control is hidden so leftover AI UI cannot linger.
+    func updateUploadButtonVisibility() {
+        let showUpload = shouldShowOmniboxUploadButton
+        uploadButton.isHidden = !showUpload
+        // The chip can outlive its drawer when the provider or the remote configuration
+        // changes mid-session, so clear it whenever a mode is no longer selectable.
+        if !showUpload || !SearchProviderSelection.allowsChatModes {
+            setSelectedChatMode(nil)
+        }
+    }
+
+    private var shouldShowOmniboxUploadButton: Bool {
+        SearchProviderSelection.showsOmniboxAIFeatures
     }
 
     @objc private func focusTextView() {
@@ -323,7 +458,11 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         var view: UIView? = touch.view
         while let current = view {
-            if current === uploadButton || current === submitButton || current === clearButton {
+            if current === uploadButton || current === submitButton || current === clearButton
+                || current === chatModeChip {
+                return false
+            }
+            if current === attachmentsStrip || current.isDescendant(of: attachmentsStrip) {
                 return false
             }
             if current === self { break }
@@ -343,12 +482,121 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         delegate?.ntpSearchBarDidTapUpload()
     }
 
+    @objc private func chatModeChipTapped() {
+        delegate?.ntpSearchBarDidTapChatModeChipClose()
+    }
+
+    /// Reflects the active chat mode in the bottom-row chip. Passing `nil`
+    /// hides the chip. The chip's glyph is the mode's icon; the whole pill is
+    /// dismissible via its X. Called by the host whenever the shared selection
+    /// changes (mode picked in the drawer, or deselected).
+    func setSelectedChatMode(_ mode: OmniboxChatMode?) {
+        selectedChatMode = mode
+        placeholderLabel.text = mode?.generateImagePlaceholder ?? String.localized(.askSearchBrowse)
+        if let mode {
+            chatModeChipIcon.image = UIImage.ecosia(named: mode.iconName)?
+                .withRenderingMode(.alwaysTemplate)
+            chatModeChip.accessibilityLabel = mode.title
+            chatModeChip.isHidden = false
+        } else {
+            chatModeChipIcon.image = nil
+            chatModeChip.isHidden = true
+        }
+        setNeedsLayout()
+    }
+
     @objc private func submitTapped() {
         textView.commitPendingSuggestionIfValid()
-        let text = (textView.text ?? "").trimmingCharacters(in: .whitespaces)
-        guard !text.isEmpty else { return }
+        let text = (textView.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard canSubmit(text: text) else { return }
         textView.resignFirstResponder()
         delegate?.ntpSearchBarDidSubmit(text)
+    }
+
+    func readyChatFiles() -> [AIChatFileQuery] {
+        attachments.compactMap(\.chatFileQuery)
+    }
+
+    func addAttachment(_ attachment: OmniboxAttachment) {
+        attachments.append(attachment)
+        refreshAttachmentsStrip()
+    }
+
+    func removeAttachment(id: UUID) {
+        attachments.removeAll { $0.id == id }
+        previewImages.removeValue(forKey: id)
+        refreshAttachmentsStrip()
+    }
+
+    func updateAttachment(id: UUID,
+                          fileName: String,
+                          layout: OmniboxAttachment.Layout,
+                          state: OmniboxAttachment.State,
+                          previewImages: [UUID: UIImage]) {
+        guard let index = attachments.firstIndex(where: { $0.id == id }) else { return }
+        self.previewImages = previewImages
+        attachments[index] = OmniboxAttachment(id: id, fileName: fileName, layout: layout, state: state)
+        refreshAttachmentsStrip()
+    }
+
+    func setAttachments(_ attachments: [OmniboxAttachment], previewImages: [UUID: UIImage]) {
+        self.attachments = attachments
+        self.previewImages = previewImages
+        refreshAttachmentsStrip()
+    }
+
+    private func handleRemoveAttachment(id: UUID) {
+        onRemoveAttachment?(id)
+    }
+
+    private func refreshAttachmentsStrip() {
+        attachmentsStrip.setAttachments(attachments, previewImages: previewImages)
+        let hasStrip = !attachments.isEmpty
+        attachmentsStrip.isHidden = !hasStrip
+        textViewTopConstraint.constant = hasStrip
+            ? UX.textPadding + UX.attachmentStripHeight
+            : UX.textPadding
+        updateClearButtonPosition(hasAttachments: hasStrip)
+        updateSubmitState(for: textView.text ?? "")
+        updateLayoutForContent()
+        delegate?.ntpSearchBarAttachmentsDidChange()
+        delegate?.ntpSearchBarNeedsSuggestionsLayoutUpdate()
+    }
+
+    /// Keeps the clear control on the trailing side of the textView when the
+    /// attachment strip occupies the pill's top-right corner.
+    private func updateClearButtonPosition(hasAttachments: Bool) {
+        if hasAttachments {
+            clearButtonTopToTextConstraint.isActive = true
+            clearButtonTopToPillConstraint.isActive = false
+        } else {
+            clearButtonTopToPillConstraint.isActive = true
+            clearButtonTopToTextConstraint.isActive = false
+        }
+    }
+
+    private func canSubmit(text: String) -> Bool {
+        let hasText = !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        guard hasText else { return false }
+        guard hasAttachments else { return true }
+        return allAttachmentsReady
+    }
+
+    private func updateSubmitState(for text: String) {
+        let enabled = canSubmit(text: text)
+        submitButton.isEnabled = enabled
+        if hasAttachments {
+            if hasUploadingAttachments {
+                submitButton.accessibilityHint = String.localized(.uploadSubmitWaitingForUpload)
+            } else if !allAttachmentsReady {
+                submitButton.accessibilityHint = String.localized(.uploadSubmitUploadFailed)
+            } else {
+                submitButton.accessibilityHint = nil
+            }
+        } else {
+            submitButton.accessibilityHint = nil
+        }
+        applySubmitButtonColors()
     }
 
     @objc private func clearTapped() {
@@ -369,7 +617,8 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
     /// pushing further upward.
     private func updateLayoutForContent() {
         let contentHeight = textView.contentSize.height
-        let clamped = min(UX.maxTextHeight, max(UX.minTextHeight, contentHeight))
+        let maxTextHeight = UX.maxTextHeight - (hasAttachments ? UX.attachmentStripHeight : 0)
+        let clamped = min(maxTextHeight, max(UX.minTextHeight, contentHeight))
         if textViewHeightConstraint.constant != clamped {
             textViewHeightConstraint.constant = clamped
         }
@@ -378,45 +627,14 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         // once the content exceeds `maxTextHeight`.
     }
 
-    private func updateSubmitState(for text: String) {
-        let hasContent = !text.trimmingCharacters(in: .whitespaces).isEmpty
-        submitButton.isEnabled = hasContent
-        applySubmitButtonColors()
-    }
-
     private func updateCounter(for text: String) {
         let count = text.count
-        let visible = count >= UX.counterVisibleThreshold
+        let remaining = max(0, UX.maxLength - count)
+        let visible = remaining <= UX.counterVisibleThreshold
         counterLabel.isHidden = !visible
         guard visible else { return }
-        let remaining = max(0, UX.maxLength - count)
-        let isWarning = count >= UX.counterWarningThreshold
-        counterLabel.attributedText = composeCounterText(remaining: remaining, isWarning: isWarning)
+        counterLabel.text = String(format: String.localized(.charactersLeft), remaining)
         applyCounterColor()
-    }
-
-    /// Builds the counter label content. In the warning band (last 100 chars
-    /// before the cap) the text is prefixed with an SF-Symbol exclamation
-    /// triangle so the limit is unmissable.
-    private func composeCounterText(remaining: Int, isWarning: Bool) -> NSAttributedString {
-        let phrase = String(format: String.localized(.charactersLeft), remaining)
-        let attributes: [NSAttributedString.Key: Any] = [
-            .font: counterLabel.font ?? UIFont.preferredFont(forTextStyle: .caption2)
-        ]
-        let result = NSMutableAttributedString()
-        if isWarning {
-            let symbolConfig = UIImage.SymbolConfiguration(textStyle: .caption2)
-            if let icon = UIImage(systemName: "exclamationmark.triangle",
-                                  withConfiguration: symbolConfig)?
-                .withRenderingMode(.alwaysTemplate) {
-                let attachment = NSTextAttachment()
-                attachment.image = icon
-                result.append(NSAttributedString(attachment: attachment))
-                result.append(NSAttributedString(string: " ", attributes: attributes))
-            }
-        }
-        result.append(NSAttributedString(string: phrase, attributes: attributes))
-        return result
     }
 
     private func updateClearButtonVisibility(for text: String) {
@@ -427,15 +645,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
 
     private func applyCounterColor() {
         guard let colors = currentTheme?.colors else { return }
-        let count = (textView.text ?? "").count
-        // Once we cross into the last 100 chars of the budget, flip the
-        // counter into a warning tint so the cap is unmissable. The tint is
-        // applied to both the text and the warning-triangle attachment glyph.
-        let color = count >= UX.counterWarningThreshold
-            ? colors.ecosia.stateError
-            : colors.ecosia.textSecondary
-        counterLabel.textColor = color
-        counterLabel.tintColor = color
+        counterLabel.textColor = colors.ecosia.textSecondary
     }
 
     private func applySubmitButtonColors() {
@@ -479,6 +689,7 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         applySubmitButtonColors()
         applyCounterColor()
         uploadButton.applyTheme(theme: theme)
+        attachmentsStrip.applyTheme(theme: theme)
         // Clear button: dark filled pill with a light glyph, matching the
         // Figma design.
         // Only the inner 16×16 disc carries the dark fill; the surrounding
@@ -489,6 +700,13 @@ final class NTPSearchBarView: UIView, ThemeApplicable, Autocompletable, UIGestur
         clearButton.backgroundColor = .clear
         clearButtonCircle.backgroundColor = colors.ecosia.textPrimary
         clearButtonGlyph.tintColor = colors.ecosia.backgroundElevation2
+
+        // Chat-mode chip: outlined pill whose border, mode glyph, and X all
+        // share one muted tint so they read as a single element (per design).
+        chatModeChip.backgroundColor = .clear
+        chatModeChip.layer.borderColor = colors.ecosia.textSecondary.cgColor
+        chatModeChipIcon.tintColor = colors.ecosia.textSecondary
+        chatModeChipCloseGlyph.tintColor = colors.ecosia.textSecondary
     }
 
     /// Swaps the pill border between the resting `borderDecorative` token and

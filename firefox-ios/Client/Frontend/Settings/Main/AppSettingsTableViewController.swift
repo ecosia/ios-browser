@@ -18,7 +18,11 @@ protocol SettingsFlowDelegate: AnyObject,
                                PrivacySettingsDelegate,
                                AccountSettingsDelegate,
                                AboutSettingsDelegate,
+                               /* Ecosia: Fix "Mail App" button in settings (MOB-4892)
                                SupportSettingsDelegate {
+                               */
+                               SupportSettingsDelegate,
+                               BrowsingSettingsDelegate {
     @MainActor
     func showDevicePassCode()
 
@@ -362,6 +366,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
             settings.append(getEcosiaDebugSupportSection())
             settings.append(getEcosiaDebugUnleashSection())
             settings.append(getEcosiaDebugAccountsSection())
+            settings.append(getEcosiaDebugFileUploadSection())
         }
 
         return settings
@@ -455,7 +460,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         let generalSettings: [Setting] = [
-            OpenWithSetting(settings: self, settingsDelegate: nil),
+            OpenWithSetting(settings: self, settingsDelegate: parentCoordinator),
             ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
             SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
             BlockPopupSetting(prefs: profile.prefs),
@@ -596,10 +601,25 @@ class AppSettingsTableViewController: SettingsTableViewController,
         return [SettingSection(title: NSAttributedString(string: .AppSettingsSupport),
                                children: supportSettings)]
         */
-        let supportSettings: [Setting] = [
+        var supportSettings: [Setting] = [
             HelpCenterSetting(),
             EcosiaSendFeedbackSetting(settings: self)
         ]
+
+        if let profile, SentryReportingExperiment.isEnabled {
+            // Ecosia: Firefox's own send-crash-reports toggle and strings (neither string is
+            // Mozilla-branded), minus the "Learn More" link - BoolSetting instead of
+            // SendDataSetting, which is `final` and always renders one. Matches Firefox's own
+            // placement under Support. Gated on the Sentry rollout experiment.
+            supportSettings.append(BoolSetting(
+                prefs: profile.prefs,
+                theme: themeManager.getCurrentTheme(for: windowUUID),
+                prefKey: AppConstants.prefSendCrashReports,
+                defaultValue: true,
+                titleText: .SendCrashReportsSettingTitle,
+                statusText: .SendCrashReportsSettingMessageV2
+            ))
+        }
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsSupport),
                                children: supportSettings)]

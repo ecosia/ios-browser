@@ -105,11 +105,14 @@ tasks:
                 then: {$eval: 'head_branch[11:]'}
                 else: '${head_branch}'
         in:
+            # Ecosia: dropped the "github-release" trigger — releases are created by
+            # create_github_release.yml (a GitHub Actions workflow), and this repo doesn't
+            # run Mozilla's Taskcluster ship-it release promotion, so there's nothing for a
+            # decision task to do on a release publish event.
             $if: >
               tasks_for in ["action", "cron"]
               || (isPullRequest && pullRequestAction in ["opened", "reopened", "synchronize"])
               || (tasks_for == "github-push" && short_head_branch == "main")
-              || (tasks_for == "github-release" && releaseAction == "published")
             then:
                 taskId: 
                     $if: 'tasks_for != "action"'

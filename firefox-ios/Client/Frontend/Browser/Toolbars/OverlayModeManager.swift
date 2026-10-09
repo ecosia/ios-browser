@@ -50,6 +50,7 @@ protocol OverlayModeManager: OverlayStateProtocol {
 }
 
 class DefaultOverlayModeManager: OverlayModeManager {
+    var overrideShouldEnterOverlayMode: Bool?
     private var urlBarView: URLBarViewProtocol?
 
     @MainActor
@@ -94,6 +95,9 @@ class DefaultOverlayModeManager: OverlayModeManager {
     }
 
     private func shouldEnterOverlay(for url: URL?, newTabSettings: NewTabPage) -> Bool {
+        guard overrideShouldEnterOverlayMode == nil else {
+            return overrideShouldEnterOverlayMode!
+        }
         // The NewTabPage cases are weird topSites = homepage
         // and homepage = customURL
         switch newTabSettings {

@@ -28,8 +28,16 @@ extension BrowserViewController: DefaultBrowserDelegate {
 // MARK: - NTP omnibox session
 extension BrowserViewController {
 
+    /// Shows the embedded webview for a tab captured before async work (e.g. attachment submit).
+    func showEmbeddedWebview(for tab: Tab) {
+        if tabManager.selectedTab !== tab {
+            tabManager.selectTab(tab)
+        }
+        showEmbeddedWebview()
+    }
+
     /// The homepage VC while the webview is frontmost (swiping-tabs keeps it as a child).
-    fileprivate var ecosiaEmbeddedHomepage: HomepageViewController? {
+    var ecosiaEmbeddedHomepage: HomepageViewController? {
         if let homepage = contentContainer.contentController as? HomepageViewController {
             return homepage
         }
@@ -40,6 +48,7 @@ extension BrowserViewController {
     func ecosiaPrepareNTPOmniboxForDisplay() {
         guard let homepage = ecosiaEmbeddedHomepage,
               homepage.ntpSearchBar?.isFirstResponder == false else { return }
+        homepage.ntpSearchBar?.updateUploadButtonVisibility()
         homepage.resetNTPOmniboxSession()
     }
 
@@ -131,6 +140,28 @@ extension BrowserViewController {
         let isPrivate = tabManager.selectedTab?.isPrivate ?? false
         addressToolbarContainer.applyUIMode(isPrivate: isPrivate, theme: themeManager.getCurrentTheme(for: windowUUID))
     }
+
+    /// Pushes text appended from a suggestion's "append" arrow into the address bar.
+    ///
+    /// The Redux round-trip cannot do this. Ecosia's reducer deliberately preserves
+    /// `didStartTyping` on `didSetTextInLocationView` (upstream clears it) so a suggestion
+    /// highlight can't overwrite the field mid-keystroke — and
+    /// `LocationView.configureURLTextField` bails on that same flag before writing the text
+    /// field. By the time the append arrow is reachable the user has necessarily typed, so
+    /// the flag is always set and the appended query never lands, leaving the address bar
+    /// out of sync with the suggestions list (which `appendSearch` updates directly).
+    ///
+    /// Clearing the flag instead is not an option: with the keyboard drag-dismissed it is
+    /// the only thing stopping `LocationView` from resigning first responder (MOB-4580),
+    /// which would tear the overlay down. So write the field directly — the same guard that
+    /// blocks the state update also stops a later reconfigure from clobbering this.
+    func applyAppendedSearchTermToAddressBar(_ text: String) {
+        // The NTP omnibox owns the overlay in that mode and `setLocationView` already
+        // wrote the pill directly.
+        guard !(searchController?.parent is HomepageViewController) else { return }
+
+        addressToolbarContainer.setOverlayLocationText(text)
+    }
 }
 
 // MARK: Present intro
@@ -190,7 +221,7 @@ extension BrowserViewController {
 
         switch interceptedType {
         case .signUp, .signIn:
-            return handleSignInAndSignUpDetection(url, tab: tab)
+            return handleSignInAndSignUpDetection(url, tab: tab, interceptedType: interceptedType)
         case .signOut:
             return handleSignOutDetection(url)
         case .profile:
@@ -200,17 +231,27 @@ extension BrowserViewController {
         }
     }
 
-    private func handleSignInAndSignUpDetection(_ url: URL, tab: Tab) -> Bool {
+    /// The account is formatted with the first before the | as the provider, e.g. google-oauth2|username or apple|username, so we can extract it
+    private func extractProviderLabel(from sub: String?) -> String {
+        guard let sub, let prefix = sub.split(separator: "|").first else { return "unknown" }
+        return String(prefix)
+    }
+
+    private func handleSignInAndSignUpDetection(
+        _ url: URL,
+        tab: Tab,
+        interceptedType: EcosiaInterceptedURLType
+    ) -> Bool {
         guard let ecosiaAuth = ecosiaAuth else {
             EcosiaLogger.auth.notice("No EcosiaAuth instance available for authentication detection")
             return false
         }
 
         if !ecosiaAuth.isLoggedIn {
-            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Sign-up URL detected in navigation: \(url)")
+            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Auth URL detected in navigation: \(url)")
             EcosiaLogger.auth.info("🔐 [WEB-AUTH] Triggering native authentication flow")
 
-            ecosiaAuth
+            let configuredAuth = ecosiaAuth
                 .onNativeAuthCompleted {
                     EcosiaLogger.auth.info("🔐 [WEB-AUTH] Native authentication completed from navigation detection")
                 }
@@ -229,10 +270,18 @@ extension BrowserViewController {
                 .onError { error in
                     EcosiaLogger.auth.error("🔐 [WEB-AUTH] Authentication failed from navigation: \(error)")
                 }
-                .login()
+
+            switch interceptedType {
+            case .signUp:
+                configuredAuth.signUp()
+            case .signIn:
+                configuredAuth.login()
+            default:
+                configuredAuth.login()
+            }
         } else {
-            EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Inconsistent state detected: web thinks user is logged out but native doesn't")
-            EcosiaLogger.auth.notice("🔐 [WEB-AUTH] Failing entire process to avoid user getting locked")
+            EcosiaLogger.auth.sentry("🔐 [WEB-AUTH] Inconsistent state: web says logged out but native doesn't; " +
+                                     "forcing logout+re-login to avoid user getting locked (provider: \(extractProviderLabel(from: ecosiaAuth.userProfile?.sub)))")
 
             ecosiaAuth
                 .onAuthFlowCompleted { _ in
@@ -326,7 +375,7 @@ extension BrowserViewController {
         let profileView = EcosiaWebViewModal(
             url: Environment.current.urlProvider.profileURL,
             windowUUID: windowUUID,
-            userAgent: UserAgentBuilder.defaultMobileUserAgent().userAgent(),
+            userAgent: EcosiaInAppWebViewUserAgent.mobileUserAgent(),
             onLoadComplete: {
                 Analytics.shared.accountProfileViewed()
             },
@@ -336,7 +385,7 @@ extension BrowserViewController {
         )
 
         let hostingController = UIHostingController(rootView: profileView)
-        hostingController.modalPresentationStyle = .pageSheet
+        hostingController.modalPresentationStyle = .formSheet
 
         if let sheet = hostingController.sheetPresentationController {
             sheet.detents = [UISheetPresentationController.Detent.large()]

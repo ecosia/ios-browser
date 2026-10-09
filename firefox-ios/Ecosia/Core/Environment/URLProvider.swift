@@ -65,6 +65,12 @@ public enum URLProvider {
         "sdk.fra-02.braze.eu"
     }
 
+    /// Sentry DSN for the "ios-browser" project under the ecosiaorg org — same for every environment;
+    /// `CrashManager`'s own environment tag distinguishes staging/production, not a separate DSN.
+    public var sentryDSN: String {
+        "https://cc2ce4301c3eb148cdad9812d61e6e09@o28395.ingest.us.sentry.io/4511830051651585"
+    }
+
     public var statistics: URL {
         URL(string: "https://d2wfixp891z15b.cloudfront.net")!
     }
@@ -212,10 +218,17 @@ public enum URLProvider {
     }
 
     /// Builds the AI chat URL, optionally tagged with where the user came
-    /// from (`origin`) and seeded with a `query` to start the conversation.
-    /// Centralizing both parameters here keeps callers from having to know
+    /// from (`origin`), seeded with a `query` to start the conversation,
+    /// with optional `files` for attachment routing, and extended with
+    /// `additionalQueryItems` (e.g. an omnibox chat mode's `mode` parameter).
+    /// Centralizing the parameters here keeps callers from having to know
     /// the URL's query-item conventions.
-    public func aiChat(origin: AIChatOrigin? = nil, query: String? = nil) -> URL {
+    public func aiChat(
+        origin: AIChatOrigin? = nil,
+        query: String? = nil,
+        files: [AIChatFileQuery] = [],
+        additionalQueryItems: [URLQueryItem] = []
+    ) -> URL {
         let baseURL = root.appendingPathComponent("ai-chat")
         var items: [URLQueryItem] = []
         if let origin {
@@ -224,8 +237,12 @@ public enum URLProvider {
         if let query {
             items.append(URLQueryItem(name: "q", value: query))
         }
+        if !files.isEmpty, let filesJSON = AIChatFileQuery.urlQueryValue(files) {
+            items.append(URLQueryItem(name: "files", value: filesJSON))
+        }
+        items.append(contentsOf: additionalQueryItems)
         guard !items.isEmpty else { return baseURL }
-        return baseURL.appendingQueryItems(items)
+        return baseURL.appendingPercentEncodedQueryItems(items)
     }
 
     public var storeWriteReviewPage: URL {
@@ -290,5 +307,49 @@ public enum URLProvider {
     /// Returns the same value as `auth0Domain` since they must match for custom domain authentication
     public var auth0CookieDomain: String {
         auth0Domain
+    }
+}
+
+/// File metadata for the web AI chat `files` URL query parameter.
+/// Matches `nxt-ai-search` omnibox routing (`fileId`, `filename`, `mimeType`, `sizeBytes`).
+public struct AIChatFileQuery: Codable, Equatable, Sendable {
+    public let fileId: String
+    public let filename: String
+    public let mimeType: String
+    public let sizeBytes: Int
+
+    public init(fileId: String, filename: String, mimeType: String, sizeBytes: Int) {
+        self.fileId = fileId
+        self.filename = Self.filenameEnsuringExtension(filename, mimeType: mimeType)
+        self.mimeType = mimeType
+        self.sizeBytes = sizeBytes
+    }
+
+    /// The AI Worker validates the extension in `filename` (e.g. `IMG_0111` → rejected, `IMG_0111.jpg` → ok).
+    static func filenameEnsuringExtension(_ filename: String, mimeType: String) -> String {
+        if !URL(fileURLWithPath: filename).pathExtension.isEmpty {
+            return filename
+        }
+        guard let ext = preferredExtension(for: mimeType) else { return filename }
+        return "\(filename).\(ext)"
+    }
+
+    static func preferredExtension(for mimeType: String) -> String? {
+        switch mimeType.lowercased() {
+        case "image/jpeg": return "jpg"
+        case "image/png": return "png"
+        case "application/pdf": return "pdf"
+        case "text/plain": return "txt"
+        case "application/msword": return "doc"
+        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document": return "docx"
+        case "application/vnd.ms-powerpoint": return "ppt"
+        case "application/vnd.openxmlformats-officedocument.presentationml.presentation": return "pptx"
+        default: return nil
+        }
+    }
+
+    static func urlQueryValue(_ files: [AIChatFileQuery]) -> String? {
+        guard let data = try? JSONEncoder().encode(files) else { return nil }
+        return String(data: data, encoding: .utf8)
     }
 }

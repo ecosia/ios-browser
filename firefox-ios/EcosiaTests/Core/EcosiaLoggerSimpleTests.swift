@@ -40,6 +40,9 @@ final class EcosiaLoggerSimpleTests: XCTestCase {
         EcosiaLogger.general.debug("General debug")
         EcosiaLogger.general.error("General error")
 
+        EcosiaLogger.search.info("Search info")
+        EcosiaLogger.featureFlags.info("Feature flags info")
+
         XCTAssertTrue(true, "Category logging should work")
     }
 

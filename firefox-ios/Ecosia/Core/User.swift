@@ -32,6 +32,22 @@ public struct User: Codable, Equatable, @unchecked Sendable {
     public var adultFilter = AdultFilter.moderate
     public var autoComplete = true
     public var aiOverviews = true
+    /// Active default search engine identifier. Always `ecosia` unless custom search providers are enabled.
+    public var selectedSearchEngineID = "ecosia"
+
+    /// Normalized form of `selectedSearchEngineID`. An identifier we no longer offer, for
+    /// example one persisted by an older build, resolves to Ecosia.
+    public var selectedProvider: SearchProvider {
+        SearchProvider(rawValue: selectedSearchEngineID) ?? .ecosia
+    }
+
+    public var isEcosiaSearchProvider: Bool {
+        selectedProvider == .ecosia
+    }
+
+    /// AI-free searching preference. `nil` means never set (`ECNOAI` omitted);
+    /// `true` / `false` are explicit choices (`ECNOAI=true` / `ECNOAI=false`).
+    public var aiFreeSearching: Bool?
 
     // MARK: Privacy Settings
     public var sendAnonymousUsageData = true
@@ -89,6 +105,8 @@ public struct User: Codable, Equatable, @unchecked Sendable {
         autoComplete,
         firstTime,
         aiOverviews,
+        selectedSearchEngineID,
+        aiFreeSearching,
         sendAnonymousUsageData,
         topSitesRows,
         showClimateImpact,
@@ -116,6 +134,8 @@ public struct User: Codable, Equatable, @unchecked Sendable {
         autoComplete = (try? root.decode(Bool.self, forKey: .autoComplete)) ?? true
         firstTime = (try? root.decode(Bool.self, forKey: .firstTime)) ?? true
         aiOverviews = (try? root.decode(Bool.self, forKey: .aiOverviews)) ?? true
+        selectedSearchEngineID = (try? root.decode(String.self, forKey: .selectedSearchEngineID)) ?? "ecosia"
+        aiFreeSearching = try? root.decode(Bool.self, forKey: .aiFreeSearching)
         sendAnonymousUsageData = (try? root.decode(Bool.self, forKey: .sendAnonymousUsageData)) ?? true
         topSitesRows = (try? root.decode(Int.self, forKey: .topSitesRows)) ?? 4
         showTopSites = (try? root.decode(Bool.self, forKey: .showTopSites)) ?? true
@@ -141,6 +161,8 @@ public struct User: Codable, Equatable, @unchecked Sendable {
             firstTime = stored.firstTime
             analyticsId = stored.analyticsId
             aiOverviews = stored.aiOverviews
+            selectedSearchEngineID = stored.selectedSearchEngineID
+            aiFreeSearching = stored.aiFreeSearching
             sendAnonymousUsageData = stored.sendAnonymousUsageData
             migrated = stored.migrated
             state = stored.state
@@ -273,13 +295,15 @@ extension User {
         let adultFilter: AdultFilter
         let autoComplete: Bool
         let aiOverviews: Bool
+        let aiFreeSearching: Bool?
     }
 
     private var searchSetting: SearchSetting {
         .init(marketCode: marketCode,
               adultFilter: adultFilter,
               autoComplete: autoComplete,
-              aiOverviews: aiOverviews)
+              aiOverviews: aiOverviews,
+              aiFreeSearching: aiFreeSearching)
     }
 
     func hasNewSearchSetting(compared to: User) -> Bool {

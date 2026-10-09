@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+import Ecosia
 
 final class OpenSearchEngine: NSObject, NSSecureCoding, Sendable, TrendingSearchEngine {
     static let logger: Logger = DefaultLogger.shared
@@ -143,6 +144,12 @@ final class OpenSearchEngine: NSObject, NSSecureCoding, Sendable, TrendingSearch
         /* Ecosia: Use environment-aware URL builder instead of hardcoded template
         return getURLFromTemplate(searchTemplate, query: query)
         */
+        // Ecosia: With custom search providers on, non-Ecosia engines keep the upstream
+        // template behaviour; Ecosia itself always uses the environment-aware builder.
+        if CustomSearchProviderFeatureFlag.isEnabled,
+           engineID != SearchProviderSelection.ecosiaEngineID {
+            return getURLFromTemplate(searchTemplate, query: query)
+        }
         return URL.ecosiaSearchWithQuery(query)
     }
 

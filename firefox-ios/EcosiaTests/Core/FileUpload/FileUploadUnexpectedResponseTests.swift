@@ -1,0 +1,64 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import XCTest
+@testable import Ecosia
+
+final class FileUploadUnexpectedResponseTests: XCTestCase {
+
+    func testUnexpectedResponse_capturesStatusRayIDAndContentType() throws {
+        let unexpectedResponse = FileUploadService.UnexpectedResponse(
+            step: .refresh,
+            response: try makeResponse(
+                statusCode: 403,
+                headers: ["cf-ray": "a44466c57d1e1a62-HAM", "Content-Type": "application/json"]
+            )
+        )
+
+        XCTAssertEqual(unexpectedResponse.step, .refresh)
+        XCTAssertEqual(unexpectedResponse.statusCode, 403)
+        XCTAssertEqual(unexpectedResponse.rayID, "a44466c57d1e1a62-HAM")
+        XCTAssertNil(unexpectedResponse.cloudflareMitigation)
+        XCTAssertEqual(unexpectedResponse.contentType, "application/json")
+    }
+
+    func testChallengeHeader_isCaptured() throws {
+        let unexpectedResponse = FileUploadService.UnexpectedResponse(
+            step: .presign,
+            response: try makeResponse(statusCode: 403, headers: ["cf-mitigated": "challenge"])
+        )
+
+        XCTAssertEqual(unexpectedResponse.cloudflareMitigation, "challenge")
+    }
+
+    func testMissingResponse_reportsUnknownStatus() {
+        let unexpectedResponse = FileUploadService.UnexpectedResponse(step: .put, response: nil)
+
+        XCTAssertEqual(unexpectedResponse.statusCode, -1)
+        XCTAssertNil(unexpectedResponse.rayID)
+        XCTAssertNil(unexpectedResponse.cloudflareMitigation)
+        XCTAssertNil(unexpectedResponse.contentType)
+    }
+
+    func testUnexpectedResponseError_describesTheResponse() throws {
+        let unexpectedResponse = FileUploadService.UnexpectedResponse(
+            step: .presign,
+            response: try makeResponse(
+                statusCode: 403,
+                headers: ["cf-ray": "a45b07659cec62ca-HAM", "Content-Type": "text/plain;charset=UTF-8"]
+            )
+        )
+
+        XCTAssertEqual(
+            FileUploadService.Error.unexpectedResponse(unexpectedResponse).localizedDescription,
+            "presign unexpected response status=403 cf-ray=a45b07659cec62ca-HAM cf-mitigated=none " +
+                "content-type=text/plain;charset=UTF-8"
+        )
+    }
+
+    private func makeResponse(statusCode: Int, headers: [String: String] = [:]) throws -> HTTPURLResponse {
+        let url = try XCTUnwrap(URL(string: "https://api.ecosia.org/v2/conversations/files/upload"))
+        return try XCTUnwrap(HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: headers))
+    }
+}

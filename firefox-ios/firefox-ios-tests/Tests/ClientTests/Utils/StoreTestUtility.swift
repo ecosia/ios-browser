@@ -29,7 +29,14 @@ class StoreTestUtilityHelper {
     /// Reset the global store back to a default production-like state.
     @MainActor
     static func resetStore() {
-        store = Store(state: AppState(), reducer: AppState.reducer, middlewares: middlewares)
+        // Ecosia: Mirror the same guard used in AppState.swift — evaluating the global `middlewares`
+        // array in unit tests would initialise all middleware objects (including those that resolve
+        // Profile / SearchEnginesManager from AppContainer), which can crash when the container is
+        // in the brief empty window after AppContainer.shared.reset() in a test setUp.
+        // Use the same inline check as AppConstants.isRunningUnitTest to avoid importing Common here.
+        let isUnitTest = NSClassFromString("XCTestCase") != nil
+        let activeMiddlewares: [Middleware<AppState>] = isUnitTest ? [] : middlewares
+        store = Store(state: AppState(), reducer: AppState.reducer, middlewares: activeMiddlewares)
     }
 
     @MainActor
@@ -45,10 +52,13 @@ class StoreTestUtilityHelper {
     /// similar to production
     @MainActor
     func resetTestingStore() {
+        // Ecosia: See note in resetStore() above — avoid evaluating the global middlewares in unit tests.
+        let isUnitTest = NSClassFromString("XCTestCase") != nil
+        let activeMiddlewares: [Middleware<AppState>] = isUnitTest ? [] : middlewares
         store = Store(
             state: AppState(),
             reducer: AppState.reducer,
-            middlewares: middlewares
+            middlewares: activeMiddlewares
         )
     }
 }

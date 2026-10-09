@@ -3,6 +3,32 @@
 The SnapshotTesting library is a Swift package that allows you to capture screenshots of iOS views and compare them over time, ensuring your UI does not change unexpectedly. It is highly effective in preventing visual regressions during development.
 [Repo link](https://github.com/pointfreeco/swift-snapshot-testing?tab=readme-ov-file)
 
+## Snapshot coverage map
+
+When you change a component listed there, update its snapshot test and re-record references in the `SnapshotArtifacts` submodule in the same PR.
+
+See [SNAPSHOT_COVERAGE_MAP.md](SNAPSHOT_COVERAGE_MAP.md) — the table is generated from `firefox-ios/EcosiaTests/SnapshotTests/snapshot_coverage.json`; after adding coverage, update that file and run `./generate_snapshot_coverage_docs.sh` from the repo root rather than editing the table by hand.
+
+**Adding coverage for a new screen:** create a test under `EcosiaTests/SnapshotTests/`, register the class in `snapshot_configuration.json`, add an entry to `snapshot_coverage.json`, run `./generate_snapshot_coverage_docs.sh`, run `sh tuist-setup.sh`, and record references.
+
+**CI guard:** pull requests that change sources listed in `snapshot_coverage.json` must also change something under `EcosiaTests/SnapshotTests/` (tests, config, or the `SnapshotArtifacts` submodule pointer). See `check_snapshot_updates.sh`.
+
+**No visual impact?** Add the **`skip-snapshot-check`** label **before opening the PR** so CI does not fail on the snapshot update check. You can add the label after opening the PR and re-run the workflow, but doing it upfront avoids a red check.
+
+### Recording new references
+
+```bash
+SNAPSHOT_TESTING_RECORD=all ./perform_snapshot_tests.sh \
+  EcosiaTests/SnapshotTests/snapshot_configuration.json \
+  EcosiaTests/SnapshotTests/environment.json \
+  EcosiaTests/Results \
+  EcosiaSnapshotTests
+```
+
+Commit both the parent repo and the `SnapshotArtifacts` submodule.
+
+`environment.json` is a minimal checked-in fixture for local Xcode runs. `perform_snapshot_tests.sh` builds the test bundle once, then writes each test-class batch's configuration from `snapshot_configuration.json` to `/tmp/ecosia_snapshot_environment.json` so the bundle does not need rebuilding between batches (device list in config still includes SE / Pro Max / iPad for other suites). `SnapshotTestHelper` reads that file when present and falls back to the bundled `environment.json` otherwise, so delete it if a stale batch configuration affects a local Xcode run.
+
 ## SnapshotTestHelper
 
 SnapshotTestHelper is a utility class designed to facilitate snapshot testing across different UI themes, device configurations, and locales for both UIView and UIViewController. It abstracts complex snapshot configurations and provides a simplified API for performing localized snapshot tests.
@@ -19,7 +45,7 @@ SnapshotTestHelper is a utility class designed to facilitate snapshot testing ac
   - `precision`: The accuracy of the snapshot comparison.
   - `file`, `testName`, `line`: Standard XCTest parameters for identifying the test source.
 
-The device name, orientation, and locales of the current test run are retrieved from the `environment.json` file.
+The device name, orientation, and locales of the current test run are retrieved from `/tmp/ecosia_snapshot_environment.json` when `perform_snapshot_tests.sh` has written it, otherwise from the bundled `environment.json` file.
 
 #### assertSnapshot
 
@@ -157,8 +183,8 @@ SnapshotTestHelper will take care of retrieving all the details and configure th
           "locales": ["all"]
         },
         {
-          "name": "NTPComponentTests",
-          "devices": ["iPhone 15 Pro"],
+          "name": "HomepageComponentTests",
+          "devices": ["iPhone 16 Pro"],
           "locales": ["all"]
         }
       ]
@@ -223,8 +249,8 @@ SnapshotTestHelper will take care of retrieving all the details and configure th
             ]
         },
         {
-          "name": "NTPComponentTests",
-          "devices": ["iPhone 15 Pro"],
+          "name": "HomepageComponentTests",
+          "devices": ["iPhone 16 Pro"],
           "locales": ["all"]
         }
       ]

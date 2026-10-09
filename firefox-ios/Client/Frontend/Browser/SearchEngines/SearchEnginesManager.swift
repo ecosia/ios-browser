@@ -2,8 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Foundation
 import Common
+import Ecosia
+import Foundation
 import Shared
 import Storage
 
@@ -23,10 +24,16 @@ protocol SearchEngineDelegate: AnyObject {
 }
 
 struct SearchEngineProviderFactory {
-    /* Ecosia: Use custom provider that ensures Ecosia is always the default
+    /* Ecosia: Use custom provider that ensures Ecosia is always the default. Computed rather
+       than stored, since the choice depends on a flag that can change after launch.
     static let defaultSearchEngineProvider: SearchEngineProvider = ASSearchEngineProvider()
     */
-    static let defaultSearchEngineProvider: SearchEngineProvider = EcosiaSearchEngineProvider()
+    static var defaultSearchEngineProvider: SearchEngineProvider {
+        if CustomSearchProviderFeatureFlag.isEnabled {
+            return CuratedSearchEngineProvider()
+        }
+        return EcosiaSearchEngineProvider()
+    }
 }
 
 /// Manages a set of `OpenSearchEngine`s.
@@ -65,6 +72,8 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
 
     private let customSearchEnginesFileName = "customEngines.plist"
     private var engineProvider: SearchEngineProvider
+    // Ecosia: Router configuration the current engine list was built from.
+    private var appliedRouterConfig: SearchRouterConfig?
 
     weak var delegate: SearchEngineDelegate?
     private var logger: Logger = DefaultLogger.shared
@@ -78,10 +87,41 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
         self.orderedEngines = []
         initPrefBasedSuggestions()
 
+        /* Ecosia: Use the Ecosia logger.
         logger.log("[SEC] Search engine provider: \(String(describing: type(of: engineProvider)))",
                    level: .info,
                    category: .remoteSettings)
+        */
+        EcosiaLogger.search.info("Search engine provider: \(String(describing: type(of: engineProvider)))")
 
+        // Ecosia: Extracted below so a later reconfiguration can rebuild the list too.
+        reloadOrderedEngines()
+    }
+
+    // Ecosia: Re-evaluate the provider and the engine list after an Unleash refresh. Called on
+    // launch and on foreground, since a refresh can change either the flag or the router payload.
+    func reconfigureEngineProviderIfNeeded() {
+        let shouldUseCuratedProvider = CustomSearchProviderFeatureFlag.isEnabled
+        let providerChanged = shouldUseCuratedProvider != (engineProvider is CuratedSearchEngineProvider)
+        // The payload can change the offered providers while the flag stays on, which needs a
+        // rebuild but not a new provider instance.
+        let configChanged = appliedRouterConfig != CustomSearchProviderFeatureFlag.config
+        guard providerChanged || configChanged else { return }
+
+        if providerChanged {
+            engineProvider = SearchEngineProviderFactory.defaultSearchEngineProvider
+            EcosiaLogger.search.info(
+                "Search engine provider reconfigured: \(String(describing: type(of: engineProvider)))"
+            )
+        }
+        reloadOrderedEngines()
+    }
+
+    // Ecosia: Was inline in `init`; extracted so a reconfiguration can rebuild the list.
+    private func reloadOrderedEngines() {
+        // Recorded before the fetch so `reconfigureEngineProviderIfNeeded` compares against what
+        // this list was actually built from.
+        appliedRouterConfig = CustomSearchProviderFeatureFlag.config
         getOrderedEngines { preferences, orderedEngines in
             self.orderedEngines = orderedEngines
 
@@ -90,6 +130,8 @@ class SearchEnginesManager: SearchEnginesManagerProvider {
             // explicitly for disabled engines, the engine ordering will be updated
             // by the setter for the orderedEngines property.
             self.disabledEngines = preferences.disabledEngines ?? []
+            // Ecosia: Mirror the resolved default into the provider selection.
+            SearchProviderSelection.syncSelectedEngineID(self.defaultEngine?.engineID)
 
             self.delegate?.searchEnginesDidUpdate()
         }

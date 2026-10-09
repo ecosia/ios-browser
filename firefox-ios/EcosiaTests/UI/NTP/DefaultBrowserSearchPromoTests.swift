@@ -10,6 +10,7 @@ import Ecosia
 ///
 /// The eligibility logic is isolated in `BrowserViewController.isEligibleForEcosiaDefaultBrowserSearchPromo`,
 /// which makes it straightforward to unit-test without spinning up a real `BrowserViewController`.
+@MainActor
 final class DefaultBrowserSearchPromoTests: XCTestCase {
 
     override func setUp() {

@@ -274,4 +274,46 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
             row.info = info
         }
     }
+
+    /// Configures the cell with fixed display strings for snapshot tests.
+    func configureForSnapshot(
+        rows: [NTPImpactSnapshotRow],
+        title: String,
+        theme: Theme
+    ) {
+        delegate = nil
+
+        tileEqualHeightConstraint?.isActive = false
+        tileEqualHeightConstraint = nil
+        tilesStack.removeAllArrangedViews()
+
+        var impactRowViews: [NTPImpactRowView] = []
+        for row in rows {
+            let impactRow = NTPImpactRowView(info: row.info)
+            tilesStack.addArrangedSubview(impactRow)
+            impactRowViews.append(impactRow)
+        }
+
+        if let first = impactRowViews.first, let last = impactRowViews.last, first !== last {
+            let constraint = first.heightAnchor.constraint(equalTo: last.heightAnchor)
+            constraint.priority = .defaultHigh
+            constraint.isActive = true
+            tileEqualHeightConstraint = constraint
+        }
+
+        tilesContainer.isHidden = rows.isEmpty
+
+        updateTitle(title)
+        updateContainerAxisForCurrentTraits()
+        applyTheme(theme: theme)
+
+        for (impactRow, row) in zip(impactRowViews, rows) {
+            impactRow.applySnapshotDisplay(
+                title: row.title,
+                subtitle: row.subtitle,
+                buttonTitle: row.buttonTitle,
+                image: row.info.image
+            )
+        }
+    }
 }

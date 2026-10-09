@@ -6,7 +6,7 @@ import Foundation
 import ObjectiveC.runtime
 import Ecosia
 
-var overriddenLocaleIdentifier: String = ""
+nonisolated(unsafe) var overriddenLocaleIdentifier: String = ""
 
 final class LocalizationOverrideTestingBundle: Bundle {
 

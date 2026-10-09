@@ -125,10 +125,19 @@ final class SettingsCoordinator: BaseCoordinator,
             return viewController
 
         case .homePage:
+            /* Ecosia: Route the Home page settings to the Ecosia NTP customization screen instead of
+               Firefox's HomePageSettingViewController. This customization was applied during the v147
+               upgrade (commit 9cbdccc4b1) but later regressed; restore it per
+               ecosia-customizations-sample.json. (MOB-4384)
             let viewController = HomePageSettingViewController(prefs: profile.prefs,
                                                                settingsDelegate: self,
                                                                tabManager: tabManager)
             viewController.profile = profile
+            return viewController
+             */
+            let viewController = NTPCustomizationSettingsViewController(windowUUID: windowUUID)
+            viewController.profile = profile
+            viewController.settingsDelegate = self
             return viewController
 
         case .mailto:
@@ -378,10 +387,18 @@ final class SettingsCoordinator: BaseCoordinator,
     }
 
     func pressedHome() {
+        /* Ecosia: Route the Home page settings to the Ecosia NTP customization screen instead of
+           Firefox's HomePageSettingViewController (regressed during the v147 upgrade; restore per
+           ecosia-customizations-sample.json). (MOB-4384)
         let viewController = HomePageSettingViewController(prefs: profile.prefs,
                                                            settingsDelegate: self,
                                                            tabManager: tabManager)
         viewController.profile = profile
+        router.push(viewController)
+         */
+        let viewController = NTPCustomizationSettingsViewController(windowUUID: windowUUID)
+        viewController.profile = profile
+        viewController.settingsDelegate = self
         router.push(viewController)
     }
 

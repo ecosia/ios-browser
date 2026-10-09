@@ -455,7 +455,7 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
          tabCreatedTime: Date = Date(),
          fileManager: FileManagerProtocol = FileManager.default,
          logger: Logger = DefaultLogger.shared,
-         documentLogger: DocumentLogger = AppContainer.shared.resolve(),
+         documentLogger: DocumentLogger = (AppContainer.shared.resolveOptional() as DocumentLogger?) ?? DocumentLogger(logger: DefaultLogger.shared),
          dispatchQueue: DispatchQueueInterface = DispatchQueue.global(qos: .background)) {
         self.nightMode = false
         self.windowUUID = windowUUID
@@ -571,6 +571,15 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
 
     func restore(_ webView: WKWebView, interactionState: Data? = nil) {
         if let url = url {
+            // Ecosia: `customUserAgent` mutations only take effect starting the *next* navigation (WKWebView caveat),
+            // so a freshly created webview's first load must have it set proactively here rather than relying on decidePolicyFor,
+            // which would apply one navigation too late
+            if Tab.ChangeUserAgent.contains(url: url, isPrivate: isPrivate) {
+                webView.customUserAgent = UserAgent.oppositeUserAgent(domain: url.baseDomain ?? "")
+            } else {
+                webView.customUserAgent = UserAgent.getUserAgent(domain: url.baseDomain ?? "")
+            }
+
             if let internalURL = InternalURL(url),
                internalURL.isAboutHomeURL {
                 webView.load(PrivilegedRequest(url: url) as URLRequest)
@@ -653,6 +662,8 @@ class Tab: NSObject, ThemeApplicable, FeatureFlaggable, ShareTab {
     func loadRequest(_ request: URLRequest) -> WKNavigation? {
         cancelTemporaryDocumentDownload(forceReload: false)
         if let webView = webView {
+            // Ecosia: NTP page-view equivalent — fire on homepage load, not appear
+            ecosiaTrackNTPPageViewIfNeeded(url: request.url)
             // Convert about:reader?url=http://example.com URLs to local ReaderMode URLs
             if let url = request.url,
                let syncedReaderModeURL = url.decodeReaderModeURL,

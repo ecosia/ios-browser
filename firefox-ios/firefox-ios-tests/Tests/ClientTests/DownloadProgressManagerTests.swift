@@ -51,7 +51,8 @@ class DownloadProgressManagerTests: XCTestCase {
         downloadProgressManager.addDownload(download2)
 
         XCTAssertEqual(mockDelegate.didCallUpdateCombinedTotalBytesExpectedCount, 1)
-        XCTAssertEqual(mockDelegate.totalBytesExpectedParameter, 40)
+        // Ecosia: MockDownload defaults totalBytesExpected to 1024, so two downloads combine to 2048.
+        XCTAssertEqual(mockDelegate.totalBytesExpectedParameter, 2048)
     }
 
     @available(iOS 17, *)

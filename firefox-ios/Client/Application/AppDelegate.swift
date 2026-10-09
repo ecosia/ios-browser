@@ -76,7 +76,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         // Configure app information for BrowserKit, needed for logger
         BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
                                                nightlyAppVersion: AppConstants.nightlyAppVersion,
+                                               /* Ecosia: added environmentName and dsn args below
                                                sharedContainerIdentifier: AppInfo.sharedContainerIdentifier)
+                                                */
+                                               sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
+                                               // Ecosia: Tag Sentry events with Ecosia's own staging/production environment.
+                                               environmentName: EcosiaEnvironment.current.sentryTag,
+                                               // Ecosia: Only supply a DSN for beta/release builds, so local Debug/Testing
+                                               // builds never report to Sentry at all — same intent the CHANNEL xcconfig
+                                               // entries already express for those configs.
+                                               dsn: [.beta, .release].contains(AppConstants.buildChannel)
+                                                   ? EcosiaEnvironment.current.urlProvider.sentryDSN : nil)
         // Ecosia: Register URLProvider domains that need Ecosia's desktop UA.
         UserAgent.configureEcosiaDesktopUserAgentDomains([
             URLProvider.production.domain,
@@ -107,6 +117,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         // Among other things, it toggles on and off Nimbus, Unified ads, Adjust.
         // i.e. this must be run before initializing those systems.
         LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
+
+        // Ecosia: Hydrate Unleash from disk before DI bootstrap so flags are readable when
+        // SearchEnginesManager picks its engine provider (network refresh still runs later).
+        Unleash.loadCachedModelIfNeeded()
 
         // Then setup dependency container as it's needed for everything else
         DependencyHelper().bootstrapDependencies()
@@ -216,14 +230,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
          make any tangible difference in the process as we check if
          any cached version of the Model is in place.
          */
+        /* Ecosia: Pinned to the main actor so the engine reconfiguration below can touch
+           `searchEnginesManager`.
         Task {
+        */
+        Task { @MainActor in
             await FeatureManagement.fetchConfiguration()
+            // Ecosia: Swap search engine provider if Unleash refresh changed the custom provider flag.
+            searchEnginesManager.reconfigureEngineProviderIfNeeded()
             // Signal that feature management initialization is complete on main thread
             AppEventQueue.signal(event: .featureManagementInitialized)
             // Ecosia: Braze Service Initialization after feature flags are fetched for conditional initialization
             BrazeService.shared.initialize()
+            // Ecosia: Sentry setup is gated by Unleash, so it only runs once this fetch resolves.
+            appLaunchUtil?.setUpCrashReportingIfEnabled()
             // Ecosia: Lifecycle tracking. Needs to happen after Unleash start so that the flags are correctly added to the analytics context.
-            Analytics.shared.activity(.launch)
+            ecosiaTrackLaunchActivity()
         }
 
         metricKitWrapper.beginObservingMXPayloads()
@@ -244,7 +266,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         addObservers()
 
         // Ecosia: Send the install event. It happens only once per App install.
-        Analytics.shared.install()
+        ecosiaTrackInstall()
 
         /// Prewarm translation resources off the main thread
         /// This will fetch the translator WASM and model attachments for the device language.
@@ -298,26 +320,60 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
             profile?.pollCommands(forcePoll: false)
         }
 
-        // Ecosia: Refresh flags on foreground. The launch call in didFinishLaunchingWithOptions
-        // loads from disk to unblock startup; this one picks up stale flags when returning from background.
-        // No-op if the cache is fresh.
-        Task {
-            await FeatureManagement.fetchConfiguration()
-            Analytics.shared.activity(.resume)
-        }
+        // Ecosia: Foreground analytics + MMP, extracted into a testable unit so unit tests can verify
+        // it without driving the rest of applicationDidBecomeActive. (MOB-4384)
+        ecosiaTrackBecomeActiveLifecycle()
 
-        // Ecosia: Track MMP notifications
-        MMP.sendSession()
-        searchesCounter.subscribe(self) { searchCount in
-            MMP.handleSearchEvent(searchCount)
-        }
-
+        /* Ecosia: disabled firefox wallpapers
         updateWallpaperMetadata()
+         */
         loadBackgroundTabs()
         ingestFirefoxSuggestions(in: application)
         logger.log("applicationDidBecomeActive end",
                    level: .info,
                    category: .lifecycle)
+    }
+
+    // MARK: - Ecosia lifecycle analytics (extracted for unit testing)
+    //
+    // Ecosia: These wrap the analytics / MMP work fired on launch and foreground. They are extracted
+    // into named methods so EcosiaTests (AppDelegateMMPIntegrationTests, AnalyticsSpyTests) can verify
+    // the tracking DIRECTLY, instead of driving the whole application(_:didFinishLaunchingWithOptions:)
+    // / applicationDidBecomeActive(_:). Driving the full lifecycle in the shared app-hosted test
+    // process registers BGTasks (re-registration assertion crash), starts a web server, loads
+    // background tabs and writes PageStore/User files on shared queues — which intermittently
+    // crash/contaminate other tests. Production calls these from the real lifecycle methods, so
+    // behaviour is unchanged. (MOB-4384)
+
+    /// Ecosia: Records the app-launch activity event. Called inside the post-FeatureManagement Task in
+    /// `application(_:didFinishLaunchingWithOptions:)` so feature flags are in the analytics context.
+    func ecosiaTrackLaunchActivity() {
+        Analytics.shared.activity(.launch)
+    }
+
+    /// Ecosia: Records the one-time install event (fired once per app install).
+    func ecosiaTrackInstall() {
+        Analytics.shared.install()
+    }
+
+    /// Ecosia: Foreground (becomeActive) analytics + MMP — refreshes feature flags then records the
+    /// resume activity, sends the MMP session, and subscribes to search-count milestones.
+    func ecosiaTrackBecomeActiveLifecycle() {
+        // Refresh flags on foreground (no-op if the cache is fresh), then record resume so the flags
+        // are in the analytics context.
+        Task { @MainActor in
+            await FeatureManagement.fetchConfiguration()
+            // A refresh can change the search provider flag or its router payload.
+            searchEnginesManager.reconfigureEngineProviderIfNeeded()
+            Analytics.shared.activity(.resume)
+            // Ecosia: Also re-check here — Sentry setup is a no-op once already enabled, so this just
+            // catches the case where it wasn't enabled yet at launch (e.g. flag flipped ON since).
+            appLaunchUtil?.setUpCrashReportingIfEnabled()
+        }
+        MMP.sendSession()
+        searchesCounter.subscribe(self) { searchCount in
+            MMP.handleSearchEvent(searchCount)
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

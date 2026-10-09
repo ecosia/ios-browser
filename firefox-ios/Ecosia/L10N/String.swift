@@ -23,6 +23,7 @@ extension String {
         case aiChatAccessibilityHint = "Opens AI Chat"
         case aiOverviewsTitle = "Overviews"
         case aiOverviewsDescription = "Show AI-generated overviews at the top of search results"
+        case aiFreeSearchingTitle = "AI-free searching"
         case allRegions = "All regions"
         case askSearchBrowse = "Ask, search, browse..."
         case autocomplete = "Autocomplete"
@@ -304,10 +305,52 @@ extension String {
         case uploadFilesAccessibilityHint = "Opens the file browser"
         case uploadDrawerAccessibilityLabel = "Attach files"
         case uploadDismissAccessibilityHint = "Dismisses the attachment menu"
-        case uploadPhotoLibraryAccessTitle = "Allow access to your photos"
-        case uploadPhotoLibraryAccessMessage = "Ecosia needs photo library access so you can attach images from your camera roll."
         case uploadCameraAccessTitle = "Allow access to your camera"
         case uploadCameraAccessMessage = "Ecosia needs camera access so you can take a photo to attach."
         case uploadCameraUnavailableMessage = "A camera is not available on this device."
+        case aiToolsTitle = "AI tools"
+        case aiToolsRedirectNotice = "These features will redirect to AI Chat"
+        case aiToolsDoneAccessibilityHint = "Dismisses the AI tools menu"
+        case chatModeStandard = "Standard AI Chat"
+        case chatModeThinkLonger = "Think longer"
+        case chatModeGenerateImage = "Generate images"
+        case chatModeDisplaySources = "Display sources"
+        case chatModeLearning = "Learning"
+        case chatModeStandardSubtitle = "Answers everyday tasks and queries"
+        case chatModeThinkLongerSubtitle = "Solves complex problems"
+        case chatModeGenerateImageSubtitle = "Creates visuals from your ideas"
+        case chatModeGenerateImagePlaceholder = "Describe your image..."
+        case chatModeDisplaySourcesSubtitle = "Shows sources for every answer"
+        case chatModeLearningSubtitle = "Breaks down topics step by step"
+        // Appended to the user's prompt for providers that take no mode parameter.
+        // The leading space separates the instruction from the prompt and must be kept.
+        case chatModeThinkLongerPrompt = " Think deeply about it before answering."
+        case chatModeGenerateImagePrompt = " Generate an image of this."
+        case chatModeDisplaySourcesPrompt = " Search the web for this and cite your sources."
+        case chatModeLearningPrompt = " Explain this like a tutor, step by step, and suggest what to learn next."
+
+        // Omnibox file upload (attachment strip)
+        case uploadAttachmentFailed = "Upload failed"
+        case uploadAttachmentUploadingAccessibilityLabel = "Uploading attachment"
+        case uploadAttachmentImageAccessibilityLabel = "Attached image"
+        case uploadSubmitWaitingForUpload = "Waiting for the attachment to finish uploading"
+        case uploadSubmitUploadFailed = "Remove the failed attachment or try uploading again"
+        case chatModeChipRemoveAccessibilityLabel = "Remove chat mode"
+        case chatModesSignInDisclaimer = "Sign in to use advanced AI features."
+
+        // Omnibox file upload (validation errors)
+        case uploadErrorTooManyFiles = "You can upload up to 5 files per chat."
+        case uploadErrorFileTooLarge = "The file is too large, the maximum file size is 5MB."
+        case uploadErrorUnsupportedFileType = "The file type is not supported. Please upload a JPG, JPEG, PNG, PDF, DOC or text file."
+        case uploadErrorGeneric = "Something went wrong with uploading your file. Please try again."
+
+        // Omnibox file upload (logged-out gate)
+        case signInToUploadFiles = "Sign in to upload files"
+        case signInToUploadFilesMessage = "To use this feature you need to be signed in to an Ecosia account."
+        case uploadFilesTitle = "Upload files"
+        case uploadFilesProviderMessage = "You need to go directly to %@ to upload files."
+        case goToProvider = "Go to %@"
+        case back = "Back"
+        case createAccount = "Create account"
     }
 }

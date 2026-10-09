@@ -225,6 +225,14 @@ open class Analytics {
     }
 
     // MARK: NTP
+    /// Structured-event stand-in for a Snowplow page view of the new-tab page.
+    /// iOS has no `page_view`, and screen-view autotracking is off because
+    /// Firefox's view-controller graph would flood the pipeline.
+    public func ntpViewed() {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: Action.view.rawValue))
+    }
+
     public func ntpCustomisation(_ action: Action.NTPCustomization, label: Label.NTP) {
         track(Structured(category: Category.ntp.rawValue,
                          action: action.rawValue)
@@ -326,6 +334,13 @@ open class Analytics {
             .property(position))
     }
 
+    public func searchProviderChanged(to engineID: String) {
+        track(Structured(category: Category.settings.rawValue,
+                         action: Action.change.rawValue)
+            .label(Label.Settings.searchProvider.rawValue)
+            .property(engineID))
+    }
+
     public func toggleAIChatOverviewsSetting(enabled: Bool) {
         track(Structured(category: Category.settings.rawValue,
                          action: Action.change.rawValue)
@@ -392,6 +407,142 @@ open class Analytics {
             .label(Analytics.Label.AIChat.cta.rawValue)
             .property(text))
 	}
+
+    // MARK: AI Tools Menu
+
+    /// Sign-in CTA tapped inside the omnibox "AI tools" drawer. The drawer
+    /// currently lives only on the new-tab page, so the category is `new_tab`.
+    public func aiToolsMenuSignInClicked() {
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.signIn.rawValue)
+            .property(Property.aiToolsMenu.rawValue))
+    }
+
+    /// A chat mode was picked, or the active one cleared, in the omnibox "AI
+    /// tools" drawer.
+    ///
+    /// The tracking plan carries `mode`, `action` and `logged_in` as a single
+    /// JSON object in `se_property` — a structured event has only one string
+    /// property and one numeric value, so the three fields cannot travel as
+    /// separate columns.
+    ///
+    /// Also fires for signed-out users, who can only reach `standard` (the other
+    /// modes are disabled until they sign in); those arrive with `logged_in: false`.
+    public func aiToolsMenuChatModeSelection(mode: OmniboxChatMode,
+                                             action: Property.ChatModeAction,
+                                             isLoggedIn: Bool) {
+        let payload: [String: Any] = [
+            "mode": mode.analyticsIdentifier,
+            "action": action.rawValue,
+            "logged_in": isLoggedIn
+        ]
+        guard let json = Self.jsonProperty(payload) else { return }
+
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.modeSelection.rawValue)
+            .property(json))
+    }
+
+    // MARK: File Upload
+
+    /// User selected a file for omnibox upload (picker confirmation).
+    ///
+    /// `file_type` and `source` travel as JSON in `se_property` — a structured
+    /// event has only one string property.
+    public func fileUploadInitiated(fileType: String,
+                                    source: Property.FileUploadSource = .buttonClick) {
+        let payload: [String: Any] = [
+            "file_type": fileType,
+            "source": source.rawValue
+        ]
+        guard let json = Self.jsonProperty(payload) else { return }
+
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.click.rawValue)
+            .label(Label.fileUploadInitiated.rawValue)
+            .property(json))
+    }
+
+    /// File finished loading and uploading and is attached to the omnibox.
+    public func fileUploadCompleted(fileType: String, fileSizeKb: Int) {
+        let payload: [String: Any] = [
+            "file_type": fileType,
+            "file_size_kb": fileSizeKb
+        ]
+        guard let json = Self.jsonProperty(payload) else { return }
+
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.success.rawValue)
+            .label(Label.fileUploadCompleted.rawValue)
+            .property(json))
+    }
+
+    /// Upload failed for a mapped error (`unsupported_format`, `too_large`,
+    /// `parse_failed`, or `timeout`).
+    public func fileUploadFailed(errorType: Property.FileUploadErrorType, fileType: String) {
+        let payload: [String: Any] = [
+            "error_type": errorType.rawValue,
+            "file_type": fileType
+        ]
+        guard let json = Self.jsonProperty(payload) else { return }
+
+        track(Structured(category: Category.newTab.rawValue,
+                         action: Action.error.rawValue)
+            .label(Label.fileUploadFailed.rawValue)
+            .property(json))
+    }
+
+    /// Prefer the lowercased path extension; fall back to a MIME-derived type
+    /// (PHPicker `suggestedName` often has no extension). `"unknown"` only when
+    /// neither source yields a usable type.
+    public static func fileUploadFileType(fromFileName fileName: String,
+                                          mimeType: String? = nil) -> String {
+        let ext = (fileName as NSString).pathExtension.lowercased()
+        if !ext.isEmpty {
+            return ext == "jpeg" ? "jpg" : ext
+        }
+        return fileUploadFileType(fromMimeType: mimeType) ?? "unknown"
+    }
+
+    /// Maps a MIME type to the `file_type` vocabulary (`jpg`, `png`, `pdf`, …).
+    public static func fileUploadFileType(fromMimeType mimeType: String?) -> String? {
+        guard let mimeType, !mimeType.isEmpty else { return nil }
+        switch mimeType.lowercased() {
+        case "image/jpeg":
+            return "jpg"
+        case "image/png":
+            return "png"
+        case "application/pdf":
+            return "pdf"
+        case "text/plain":
+            return "txt"
+        case "application/msword":
+            return "doc"
+        default:
+            guard let subtype = mimeType.split(separator: "/").last, !subtype.isEmpty else {
+                return nil
+            }
+            let value = String(subtype).lowercased()
+            return value == "jpeg" ? "jpg" : value
+        }
+    }
+
+    /// Rounded kibibyte size for `file_size_kb`.
+    public static func fileUploadSizeKb(byteCount: Int) -> Int {
+        (byteCount + 512) / 1024
+    }
+
+    /// Encodes a multi-field tracking-plan payload for `se_property`.
+    /// `sortedKeys` keeps the emitted string deterministic for tests.
+    private static func jsonProperty(_ payload: [String: Any]) -> String? {
+        guard let data = try? JSONSerialization.data(withJSONObject: payload,
+                                                     options: [.sortedKeys]) else {
+            return nil
+        }
+        return String(data: data, encoding: .utf8)
+    }
 
     // MARK: Account Authentication
 

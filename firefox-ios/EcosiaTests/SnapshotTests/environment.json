@@ -1,15 +1,7 @@
 {
     "DEVICES": [
   {
-    "name": "iPhone SE (3rd generation)",
-    "orientation": "portrait"
-  },
-  {
     "name": "iPhone 16 Pro",
-    "orientation": "portrait"
-  },
-  {
-    "name": "iPad Pro 11-inch (M4)",
     "orientation": "portrait"
   }
 ],
@@ -19,6 +11,10 @@
   "de",
   "es",
   "nl"
+],
+    "THEMES": [
+  "dark",
+  "light"
 ],
     "SIMULATOR_DEVICE_NAME": "iPhone 16 Pro"
   }

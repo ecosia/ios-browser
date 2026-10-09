@@ -12,6 +12,7 @@ public struct EcosiaAccountImpactView: View {
     @ObservedObject private var viewModel: EcosiaAccountImpactViewModel
     @ObservedObject private var authStateProvider = EcosiaAuthUIStateProvider.shared
     private let windowUUID: WindowUUID
+    private let webViewUserAgent: String?
 
     @State private var theme = EcosiaAccountImpactViewTheme()
     @State private var showSeedsCounterInfoWebView = false
@@ -30,10 +31,12 @@ public struct EcosiaAccountImpactView: View {
 
     public init(
         viewModel: EcosiaAccountImpactViewModel,
-        windowUUID: WindowUUID
+        windowUUID: WindowUUID,
+        webViewUserAgent: String? = nil
     ) {
         self.viewModel = viewModel
         self.windowUUID = windowUUID
+        self.webViewUserAgent = webViewUserAgent
     }
 
     public var body: some View {
@@ -74,16 +77,6 @@ public struct EcosiaAccountImpactView: View {
             .padding(.horizontal, .ecosia.space._m)
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
-
-            // Show error view if register visit failed
-            if authStateProvider.hasRegisterVisitError {
-                EcosiaErrorView(
-                    title: String.localized(.couldNotLoadSeedCounter),
-                    subtitle: String.localized(.couldNotLoadSeedCounterMessage),
-                    windowUUID: windowUUID
-                )
-                .padding(.horizontal, .ecosia.space._m)
-            }
 
             // Conditional content based on login state
             ZStack(alignment: .top) {
@@ -133,13 +126,15 @@ public struct EcosiaAccountImpactView: View {
         .sheet(isPresented: $showSeedsCounterInfoWebView) {
             EcosiaWebViewModal(
                 url: EcosiaEnvironment.current.urlProvider.seedCounterInfo,
-                windowUUID: windowUUID
+                windowUUID: windowUUID,
+                userAgent: webViewUserAgent
             )
         }
         .sheet(isPresented: $showProfileWebView) {
             EcosiaWebViewModal(
                 url: EcosiaEnvironment.current.urlProvider.profileURL,
                 windowUUID: windowUUID,
+                userAgent: webViewUserAgent,
                 onLoadComplete: {
                     Analytics.shared.accountProfileViewed()
                 },

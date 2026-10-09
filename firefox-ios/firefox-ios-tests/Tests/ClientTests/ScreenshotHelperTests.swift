@@ -58,7 +58,7 @@ final class ScreenshotHelperTests: XCTestCase, StoreTestUtility, @unchecked Send
         let homeURL = URL(string: "https://example.com")
         let mockTabWebView = MockTabWebView(tab: tab)
 
-        // mockVC.mockContentContainer.shouldHaveNativeErrorPage = true // removed in v147
+        mockVC.mockContentContainer.shouldHaveNativeErrorPage = true
         mockTabWebView.loadedURL = homeURL
         tab.webView = mockTabWebView
         tab.url = homeURL

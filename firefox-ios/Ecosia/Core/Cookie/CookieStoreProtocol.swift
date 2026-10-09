@@ -9,4 +9,16 @@ public protocol CookieStoreProtocol: Sendable {
     func setCookie(_ cookie: HTTPCookie) async
 }
 
-extension WKHTTPCookieStore: CookieStoreProtocol {}
+extension WKHTTPCookieStore: CookieStoreProtocol {
+    public func allCookies() async -> [HTTPCookie] {
+        await withCheckedContinuation { continuation in
+            getAllCookies { continuation.resume(returning: $0) }
+        }
+    }
+
+    public func setCookie(_ cookie: HTTPCookie) async {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            setCookie(cookie) { continuation.resume() }
+        }
+    }
+}

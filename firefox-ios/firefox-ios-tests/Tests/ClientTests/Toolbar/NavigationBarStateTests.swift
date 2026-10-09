@@ -63,9 +63,16 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         XCTAssertEqual(newState.actions[0].isEnabled, false)
         XCTAssertEqual(newState.actions[1].actionType, .forward)
         XCTAssertEqual(newState.actions[1].isEnabled, false)
+        // Ecosia: Navigation toolbar uses the version2 order [back, forward, middle, tabs, menu] and shows the
+        // history button as the middle action on the NTP (url == nil). See NavigationBarState `/* Ecosia: */`.
+        /* Ecosia:
         XCTAssertEqual(newState.actions[2].actionType, .search)
         XCTAssertEqual(newState.actions[3].actionType, .menu)
         XCTAssertEqual(newState.actions[4].actionType, .tabs)
+         */
+        XCTAssertEqual(newState.actions[2].actionType, .history)
+        XCTAssertEqual(newState.actions[3].actionType, .tabs)
+        XCTAssertEqual(newState.actions[4].actionType, .menu)
     }
 
     func test_urlDidChangeAction_returnsExpectedState() {
@@ -82,8 +89,9 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         XCTAssertEqual(newState.actions[1].actionType, .forward)
         XCTAssertEqual(newState.actions[1].isEnabled, false)
         XCTAssertEqual(newState.actions[2].actionType, .newTab)
-        XCTAssertEqual(newState.actions[3].actionType, .menu)
-        XCTAssertEqual(newState.actions[4].actionType, .tabs)
+        // Ecosia: version2 order — tabs precede menu. // [3] was .menu, [4] was .tabs
+        XCTAssertEqual(newState.actions[3].actionType, .tabs)
+        XCTAssertEqual(newState.actions[4].actionType, .menu)
     }
 
     func test_numberOfTabsChangedAction_returnsExpectedState() {
@@ -104,10 +112,18 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         XCTAssertEqual(newState.actions.count, 5)
         XCTAssertEqual(newState.actions[0].actionType, .back)
         XCTAssertEqual(newState.actions[1].actionType, .forward)
+        // Ecosia: version2 order [back, forward, history(NTP), tabs, menu]; the tabs action (now [3]) carries
+        // numberOfTabs.
+        /* Ecosia:
         XCTAssertEqual(newState.actions[2].actionType, .search)
         XCTAssertEqual(newState.actions[3].actionType, .menu)
         XCTAssertEqual(newState.actions[4].actionType, .tabs)
         XCTAssertEqual(newState.actions[4].numberOfTabs, 2)
+         */
+        XCTAssertEqual(newState.actions[2].actionType, .history)
+        XCTAssertEqual(newState.actions[3].actionType, .tabs)
+        XCTAssertEqual(newState.actions[4].actionType, .menu)
+        XCTAssertEqual(newState.actions[3].numberOfTabs, 2)
     }
 
     func test_backForwardButtonStateChangedAction_returnsExpectedState() {
@@ -147,9 +163,15 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
 
         XCTAssertEqual(newState.windowUUID, windowUUID)
 
+        // Ecosia: version2 order — menu is the last action ([4]), tabs is [3].
+        /* Ecosia:
         XCTAssertEqual(newState.actions[3].actionType, .menu)
         XCTAssertNotNil(newState.actions[3].badgeImageName)
         XCTAssertNotNil(newState.actions[3].maskImageName)
+         */
+        XCTAssertEqual(newState.actions[4].actionType, .menu)
+        XCTAssertNotNil(newState.actions[4].badgeImageName)
+        XCTAssertNotNil(newState.actions[4].maskImageName)
     }
 
     func test_borderPositionChangedAction_returnsExpectedState() {
@@ -203,7 +225,9 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         )
 
         XCTAssertEqual(newState.windowUUID, windowUUID)
-        XCTAssertEqual(newState.actions[2].actionType, .search)
+        // Ecosia: On the NTP (homepage) the middle action is the history button, not search.
+        // XCTAssertEqual(newState.actions[2].actionType, .search)
+        XCTAssertEqual(newState.actions[2].actionType, .history)
     }
 
     func test_navigationMiddleButtonDidChangeAction_onWebsite_hasHomeButton() {

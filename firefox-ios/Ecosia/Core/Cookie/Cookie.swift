@@ -16,6 +16,8 @@ public enum Cookie: String, CaseIterable {
     case unleash = "ECUNL"
     // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#ECAIO
     case aiOverviews = "ECAIO"
+    // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#ECNOAI
+    case aiFreeSearching = "ECNOAI"
     // https://ecosia.atlassian.net/wiki/spaces/DEV/pages/4128796/Cookies#EASC
     case authSession = "EASC"
 
@@ -73,6 +75,8 @@ public enum Cookie: String, CaseIterable {
             return UnleashCookieHandler()
         case .aiOverviews:
             return AIOverviewsCookieHandler()
+        case .aiFreeSearching:
+            return AIFreeSearchingCookieHandler()
         case .authSession:
             return AuthSessionCookieHandler()
         }
@@ -136,7 +140,7 @@ public enum Cookie: String, CaseIterable {
                 if let cookie = makeMain(withMode: mainMode) {
                     cookies.append(cookie)
                 }
-            case .aiOverviews:
+            case .aiOverviews, .aiFreeSearching:
                 if let cookie = cookieType.handler.makeCookie() {
                     cookies.append(cookie)
                 }

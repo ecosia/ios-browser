@@ -38,6 +38,9 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// This token is used to access protected resources.
     public private(set) var accessToken: String?
 
+    /// OAuth scopes granted with the current access token (from Auth0 token response).
+    private(set) var grantedScope: String?
+
     /// The current refresh token for the authenticated user.
     /// This token is used to obtain new access tokens when they expire.
     private(set) var refreshToken: String?
@@ -48,6 +51,24 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// Indicates whether the user is currently logged in.
     /// This property is automatically updated when login/logout operations complete successfully.
     public private(set) var isLoggedIn: Bool = false
+
+    /// Whether `isLoggedIn` reflects a confirmed state rather than the initial default.
+    /// `isLoggedIn` starts `false` before the stored-credentials check on launch completes, so a
+    /// reader that can't tell the two apart may mistake "not yet checked" for "confirmed logged out".
+    public private(set) var hasResolvedAuthState: Bool = false
+
+    private static let wasLoggedInKey = "EcosiaAuthenticationService.wasLoggedIn"
+
+    /// Whether the user was logged in as of the last confirmed transition (login, logout, or a
+    /// successful credential renewal/retrieval) - persisted across launches, unlike `isLoggedIn`,
+    /// which always restarts at `false` until this launch's own credential check resolves. Lets a
+    /// reader tell "this session's stored credentials just turned out to be invalid" (e.g. an
+    /// expired token) apart from "this device was never logged in to begin with", since both
+    /// resolve to the same `isLoggedIn == false` on cold launch.
+    public static var wasLoggedIn: Bool {
+        get { UserDefaults.standard.bool(forKey: wasLoggedInKey) }
+        set { UserDefaults.standard.set(newValue, forKey: wasLoggedInKey) }
+    }
 
     /// The current user's profile information from Auth0.
     /// This includes name, email, profile picture URL, etc.
@@ -85,10 +106,23 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     ///           `AuthError.credentialStorageFailed` if credential storage returns false.
     @discardableResult
     public func login() async throws -> AccountOrigin {
+        try await authenticate(screenHint: .login)
+    }
+
+    /// Creates a new account asynchronously and stores credentials if successful.
+    /// - Returns: An `AccountOrigin` indicating whether the user created a new account or signed in to an existing one.
+    /// - Throws: Same errors as `login()`.
+    @discardableResult
+    public func signUp() async throws -> AccountOrigin {
+        try await authenticate(screenHint: .signUp)
+    }
+
+    @discardableResult
+    private func authenticate(screenHint: AuthScreenHint) async throws -> AccountOrigin {
         // First, attempt authentication
         let credentials: Credentials
         do {
-            credentials = try await auth0Provider.startAuth()
+            credentials = try await auth0Provider.startAuth(screenHint: screenHint)
             EcosiaLogger.auth.info("Authentication successful")
         } catch {
             EcosiaLogger.auth.error("Authentication failed: \(error)")
@@ -103,6 +137,11 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             throw AuthError.authenticationFailed(error)
         }
 
+        return try await persistAuthenticatedCredentials(credentials)
+    }
+
+    @discardableResult
+    private func persistAuthenticatedCredentials(_ credentials: Credentials) async throws -> AccountOrigin {
         // Determine account origin from ID token claims
         let accountOrigin = credentials.accountOrigin
         EcosiaLogger.auth.info("Account origin: \(accountOrigin == .newAccount ? "new account" : "existing account")")
@@ -126,6 +165,11 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         }
 
         return accountOrigin
+    }
+
+    /// Whether the current session includes conversation API scopes.
+    public var hasConversationScopes: Bool {
+        EcosiaAuthScopes.hasConversationScopes(in: accessToken ?? "", grantedScope: grantedScope)
     }
 
     /// Logs out the user with option to skip web logout (for web-initiated logout)
@@ -159,6 +203,14 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
 
         if credentialsCleared {
             setupTokensWithCredentials(nil)
+
+            // Stale SSO credentials would otherwise let getSessionTokenCookie() hand out
+            // the previous user's session transfer token before the next login refreshes it.
+            ssoCredentials = nil
+            // A stale EASC cookie left in the native cookie jar (copied there for file
+            // uploads) would get attached to native requests for whichever user logs in next.
+            AuthSessionCookieHandler.clearFromSharedStorage()
+
             // Clear user profile on logout
             try await ImageCacheLoader.clearCache(for: userProfile?.pictureURL)
             userProfile = nil
@@ -204,8 +256,13 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             }
             EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
-            // Dispatch state loaded with current authentication status
             await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
+
+            do {
+                try await renewCredentialsIfNeeded()
+            } catch {
+                EcosiaLogger.auth.error("Failed to refresh stored credentials after retrieval: \(error)")
+            }
         } catch {
             EcosiaLogger.auth.error("Failed to retrieve credentials: \(error)")
             // Even if retrieval fails, dispatch state loaded as false
@@ -216,18 +273,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /**
      Renews credentials if they are renewable and close to expiration.
      
-     This method checks if the current credentials can be renewed (i.e., a valid refresh token exists)
-     and attempts to obtain new credentials using the refresh token. This is useful for maintaining
-     long-lived sessions without requiring user re-authentication.
-     
      - Note: This method will update the credential properties with the new tokens upon successful renewal.
-     
-     ## When to Use
-     
-     Call this method when:
-     - You detect that access tokens are expired or about to expire
-     - You want to proactively refresh tokens to maintain session continuity
-     - You encounter authentication errors that might be resolved by token renewal
      */
     public func renewCredentialsIfNeeded() async throws {
         guard auth0Provider.canRenewCredentials() else {
@@ -247,18 +293,20 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
 
     /// Helper method to setup tokens and login flag
     private func setupTokensWithCredentials(_ credentials: Credentials?,
-                                            settingLoggedInStateTo isLoggedIn: Bool = false,
+                                            settingLoggedInStateTo newIsLoggedIn: Bool = false,
                                             accountOrigin: AccountOrigin? = nil) {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
+        self.grantedScope = credentials?.scope
         self.refreshToken = credentials?.refreshToken
-        let wasLoggedIn = self.isLoggedIn
-        self.isLoggedIn = isLoggedIn
+        let previousIsLoggedIn = self.isLoggedIn
+        self.isLoggedIn = newIsLoggedIn
+        Self.wasLoggedIn = newIsLoggedIn
 
         // Only dispatch the auth state change when the login state actually transitions,
         // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
         // on every token refresh when the user is already logged in.
-        guard wasLoggedIn != isLoggedIn else { return }
+        guard previousIsLoggedIn != newIsLoggedIn else { return }
         Task {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false, accountOrigin: accountOrigin)
         }
@@ -360,7 +408,7 @@ extension EcosiaAuthenticationService {
             do {
                 return try await authProvider.getSSOCredentials()
             } catch {
-                EcosiaLogger.auth.error("Failed to retrieve SSO credentials: \(error)")
+                EcosiaLogger.auth.sentry("Failed to retrieve SSO credentials: \(error)")
             }
         }
         return nil
@@ -414,6 +462,8 @@ extension EcosiaAuthenticationService {
      -   fromCredentialRetrieval: Whether this is from credential retrieval (for state loaded)
      */
     private func dispatchAuthStateChange(isLoggedIn: Bool, fromCredentialRetrieval: Bool, accountOrigin: AccountOrigin? = nil) async {
+        hasResolvedAuthState = true
+
         // Determine the correct action type
         let actionType: EcosiaAuthActionType
         if fromCredentialRetrieval {
@@ -424,7 +474,32 @@ extension EcosiaAuthenticationService {
             actionType = .userLoggedOut
         }
 
+        if !isLoggedIn {
+            clearLoggedInImpactCacheIfNeeded(actionType: actionType)
+        }
+
         // Dispatch to the new state management system
         EcosiaBrowserWindowAuthManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType, accountOrigin: accountOrigin)
+    }
+
+    /// Clears the shared logged-in impact cache directly, here, rather than relying on a UI
+    /// observer to react to the notification dispatched above: `EcosiaBrowserWindowAuthManager`
+    /// only notifies registered browser windows, and can have none registered yet when this
+    /// resolves (e.g. very early in launch) - in which case no observer would ever hear about it
+    /// and the cache would stay stale on disk for the next launch to read.
+    private func clearLoggedInImpactCacheIfNeeded(actionType: EcosiaAuthActionType) {
+        switch actionType {
+        case .userLoggedOut:
+            // An explicit logout always means a logged-in account's snapshot is now stale.
+            LoggedInImpactCache.clear()
+        case .authStateLoaded where Self.wasLoggedIn:
+            // Credential resolution confirmed logged-out, but the previous session was logged
+            // in (e.g. an expired token) rather than an explicit logout. An ordinary continuing
+            // guest, whose wasLoggedIn is already false, is unaffected.
+            LoggedInImpactCache.clear()
+            Self.wasLoggedIn = false
+        default:
+            break
+        }
     }
 }

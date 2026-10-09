@@ -10,16 +10,16 @@ import Shared
 final class EcosiaStartAtHomeMiddleware {
     private let windowManager: WindowManager
     private let logger: Logger
-    private let prefs: Prefs
     private let dateProvider: DateProvider
 
-    init(profile: Profile = AppContainer.shared.resolve(),
-         windowManager: WindowManager = AppContainer.shared.resolve(),
+    // Ecosia: profile and prefs are not used in our overridden startAtHomeProvider (which always
+    // returns shouldStartAtHome: false). Removing them avoids crashes when AppContainer is reset
+    // during unit-test setUp before this middleware is constructed (e.g. from StoreTestUtility).
+    init(windowManager: WindowManager = (AppContainer.shared.resolveOptional() as WindowManager?) ?? WindowManagerImplementation(),
          logger: Logger = DefaultLogger.shared,
          dateProvider: DateProvider = SystemDateProvider()) {
         self.windowManager = windowManager
         self.logger = logger
-        self.prefs = profile.prefs
         self.dateProvider = dateProvider
     }
 

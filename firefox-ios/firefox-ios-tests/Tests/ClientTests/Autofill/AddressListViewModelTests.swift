@@ -103,8 +103,8 @@ final class AddressListViewModelTests: XCTestCase, @unchecked Sendable {
         let addressesExpectation = XCTestExpectation(description: "Fetch addresses")
         let showSectionExpectation = XCTestExpectation(description: "Show section")
 
-        viewModel.fetchAddresses()
-
+        // Ecosia: subscribe BEFORE fetching — fetchAddresses publishes synchronously, so subscribing afterwards
+        // (with dropFirst) would drop the only emission and the expectations would never be fulfilled.
         viewModel
             .$addresses
         // Drop first to ignore the initial value
@@ -123,6 +123,8 @@ final class AddressListViewModelTests: XCTestCase, @unchecked Sendable {
                 showSectionExpectation.fulfill()
             }
             .store(in: &cancellables)
+
+        viewModel.fetchAddresses()
 
         wait(for: [addressesExpectation, showSectionExpectation], timeout: 1)
     }

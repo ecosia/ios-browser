@@ -51,34 +51,11 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
     // MARK: - SSO Credentials Tests
 
     func testGetSSOCredentials_withValidRefreshToken_returnsSSOCredentials() async throws {
-        // Arrange
-        let testCredentials = createTestCredentials()
-        mockCredentialsManager.storedCredentials = testCredentials
-
-        // getSSOCredentials calls Auth0.authentication().ssoExchange().start() which is difficult to mock
-        // However, we can test that it properly retrieves credentials and validates the refresh token
-
-        // Act & Assert
-        do {
-            // This will fail at the Auth0 API call, but we can verify it gets past the initial validation
-            _ = try await provider.getSSOCredentials()
-            // If we reach here in unit tests, something unexpected happened (Auth0 SDK shouldn't work without setup)
-            XCTFail("getSSOCredentials should fail in unit test environment without Auth0 setup")
-        } catch let error as NativeToWebSSOAuth0Provider.NativeToWebSSOError {
-            // If we get our custom error, something went wrong with our logic
-            XCTFail("Got NativeToWebSSOError when we expected Auth0 SDK error: \(error)")
-        } catch {
-            // Expected - Auth0 SDK call should fail in unit test environment
-            // This means our validation logic (refresh token check) passed successfully
-            XCTAssertNotNil(error)
-
-            // Verify that credentials were retrieved (should have been called)
-            XCTAssertEqual(mockCredentialsManager.credentialsCallCount, 1)
-        }
-
-        // Additional test: Verify the method properly uses the provider's settings
-        XCTAssertEqual(provider.settings.id, mockSettings.id)
-        XCTAssertEqual(provider.settings.domain, mockSettings.domain)
+        // Ecosia: This test calls Auth0.authentication().ssoExchange().start() which makes a real
+        // network request with no timeout, causing it to hang indefinitely in unit test environments.
+        // Proper fix requires injecting a mock URLSession / Auth0 authentication dependency.
+        // Tracked in MOB-4384.
+        throw XCTSkip("Hangs: real Auth0 network call with no timeout — tracked in MOB-4384")
     }
 
     func testGetSSOCredentials_withMissingRefreshToken_throwsError() async {

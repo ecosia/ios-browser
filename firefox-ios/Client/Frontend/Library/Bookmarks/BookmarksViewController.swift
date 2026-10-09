@@ -283,7 +283,7 @@ final class BookmarksViewController: SiteTableViewController,
     }
 
     private func deleteBookmarkNodeAtIndexPath(_ indexPath: IndexPath) {
-        guard let bookmarkNode = viewModel.bookmarkNodes[safe: indexPath.row]else {
+        guard let bookmarkNode = viewModel.bookmarkNodes[safe: indexPath.row] else {
             return
         }
 

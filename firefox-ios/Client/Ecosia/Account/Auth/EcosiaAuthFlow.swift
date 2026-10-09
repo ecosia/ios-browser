@@ -13,12 +13,12 @@ public enum EcosiaAuthFlowResult {
 
 /// Orchestrates complete authentication flows with invisible tab sessions
 /// Provides core functionality for authentication operations
-/// Ecosia: @MainActor so callbacks and session/tab ops stay on main thread; avoids sending non-Sendable closures.
 @MainActor
 final class EcosiaAuthFlow {
 
     public enum FlowType {
         case login
+        case signUp
         case logout
     }
 
@@ -72,6 +72,21 @@ final class EcosiaAuthFlow {
         )
     }
 
+    public func startSignUp(
+        delayedCompletion: TimeInterval = 0.0,
+        onNativeAuthCompleted: (() -> Void)? = nil,
+        onFlowCompleted: ((Bool) -> Void)? = nil,
+        onError: ((AuthError) -> Void)? = nil
+    ) async -> EcosiaAuthFlowResult {
+        return await performAuthentication(
+            type: .signUp,
+            delayedCompletion: delayedCompletion,
+            onNativeAuthCompleted: onNativeAuthCompleted,
+            onFlowCompleted: onFlowCompleted,
+            onError: onError
+        )
+    }
+
     /// Starts the logout authentication flow
     /// - Parameters:
     ///   - delayedCompletion: Delay before calling onNativeAuthCompleted
@@ -109,7 +124,7 @@ final class EcosiaAuthFlow {
             switch type {
             case .login:
                 // Step 1: Native Auth0 authentication
-                try await performNativeAuthentication()
+                try await performNativeAuthentication(screenHint: .login)
 
                 // Step 2: Handle native auth completion callback
                 await handleNativeAuthCompleted(
@@ -118,6 +133,16 @@ final class EcosiaAuthFlow {
                 )
 
                 // Step 3: Session transfer and invisible tab flow
+                try await performSessionTransfer(onFlowCompleted: onFlowCompleted)
+
+            case .signUp:
+                try await performNativeAuthentication(screenHint: .signUp)
+
+                await handleNativeAuthCompleted(
+                    delayedCompletion: delayedCompletion,
+                    onNativeAuthCompleted: onNativeAuthCompleted
+                )
+
                 try await performSessionTransfer(onFlowCompleted: onFlowCompleted)
 
             case .logout:
@@ -142,15 +167,20 @@ final class EcosiaAuthFlow {
         }
     }
 
-    private func performNativeAuthentication() async throws {
+    private func performNativeAuthentication(screenHint: AuthScreenHint) async throws {
         // Debug: Simulate auth error if enabled
         if UserDefaults.standard.bool(forKey: SimulateAuthErrorSetting.debugKey) {
             EcosiaLogger.auth.info("🐛 [DEBUG] Simulating login error")
             throw AuthError.authenticationFailed(NSError(domain: "EcosiaDebug", code: -1, userInfo: [NSLocalizedDescriptionKey: "Debug: Simulated authentication error"]))
         }
 
-        EcosiaLogger.auth.info("Performing native Auth0 authentication")
-        try await authService.login()
+        EcosiaLogger.auth.info("Performing native Auth0 authentication (\(screenHint.rawValue))")
+        switch screenHint {
+        case .login:
+            try await authService.login()
+        case .signUp:
+            try await authService.signUp()
+        }
         EcosiaLogger.auth.info("Native Auth0 authentication completed")
     }
 
@@ -183,11 +213,15 @@ final class EcosiaAuthFlow {
             throw AuthError.authFlowConfigurationError("BrowserViewController not available")
         }
 
-        // Get session transfer URL
-        let signUpURL = EcosiaEnvironment.current.urlProvider.signUpURL
+        // Get session transfer URL.
+        // Debug hook: loads /accounts/error directly instead of the real sign-up URL.
+        let signUpURL = SimulateSessionTransferFailureSetting.isEnabled
+            ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
+            : EcosiaEnvironment.current.urlProvider.signUpURL
 
         EcosiaLogger.session.info("Retrieving session transfer token for SSO")
         await authService.getSessionTransferToken()
+        await InvisibleTabSession.installSessionCookie(from: authService)
 
         // Create invisible tab session (must be on main thread for UI operations)
         EcosiaLogger.invisibleTabs.info("Creating invisible tab session for login")
@@ -195,7 +229,6 @@ final class EcosiaAuthFlow {
             try InvisibleTabSession(
                 url: signUpURL,
                 browserViewController: browserViewController,
-                authService: authService,
                 timeout: 10.0
             )
         }
@@ -203,19 +236,32 @@ final class EcosiaAuthFlow {
         // Retain session until completion
         activeSession = session
 
-        // Set up session cookies (main-actor isolated)
-        await MainActor.run { session.setupSessionCookies() }
-
         // Wait for session completion (startMonitoring is main-actor isolated)
         await withCheckedContinuation { continuation in
             Task { @MainActor in
                 session.startMonitoring { [weak self] success in
-                    self?.activeSession = nil // Release session
-                    EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
-                    onFlowCompleted?(success)
-                    continuation.resume()
+                    Task { @MainActor in
+                        self?.activeSession = nil // Release session
+                        EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
+                        if !success {
+                            await self?.logOutNativelyAfterFailedSessionTransfer()
+                        }
+                        onFlowCompleted?(success)
+                        continuation.resume()
+                    }
                 }
             }
+        }
+    }
+
+    /// A failed session transfer means the web session was never actually authenticated,
+    /// so clear native credentials too instead of leaving native "logged in" with no working web session.
+    /// `triggerWebLogout: false` since the web side already failed to authenticate; nothing there to log out of.
+    private func logOutNativelyAfterFailedSessionTransfer() async {
+        do {
+            try await authService.logout(triggerWebLogout: false)
+        } catch {
+            EcosiaLogger.auth.error("Native-only logout after failed session transfer also failed: \(error)")
         }
     }
 
@@ -226,7 +272,10 @@ final class EcosiaAuthFlow {
         }
 
         // Get logout URL
-        let logoutURL = EcosiaEnvironment.current.urlProvider.logoutURL
+        // Debug hook: loads /accounts/error directly instead of the real sign-up URL.
+        let logoutURL = SimulateSessionTransferFailureSetting.isEnabled
+            ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
+            : EcosiaEnvironment.current.urlProvider.logoutURL
 
         // Create invisible tab session for logout (must be on main thread for UI operations)
         EcosiaLogger.invisibleTabs.info("Creating invisible tab session for logout")
@@ -234,7 +283,6 @@ final class EcosiaAuthFlow {
             try InvisibleTabSession(
                 url: logoutURL,
                 browserViewController: browserViewController,
-                authService: authService,
                 timeout: 10.0
             )
         }

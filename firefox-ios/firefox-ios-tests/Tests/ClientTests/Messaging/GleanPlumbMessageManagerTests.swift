@@ -17,7 +17,12 @@ class GleanPlumbMessageManagerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-
+        // Ecosia: Sync to upstream v147.5 — bootstrap the DI container so message-action handling
+        // (which resolves Profile/GleanUsageReportingMetricsService via default args) doesn't crash. (MOB-4384)
+        DependencyHelperMock().bootstrapDependencies()
+        // Ecosia: GleanPlumbMessageManager records via TelemetryWrapper.recordEvent, which v147 gates off during
+        // tests (PR #29799) unless this override is set. main-133 had no such gate. (MOB-4384)
+        TelemetryWrapper.hasTelemetryOverride = true
         Glean.shared.resetGlean(clearStores: true)
         messagingStore = MockGleanPlumbMessageStore(messageId: messageId)
         applicationHelper = MockApplicationHelper()
@@ -31,7 +36,8 @@ class GleanPlumbMessageManagerTests: XCTestCase {
 
     override func tearDown() {
         super.tearDown()
-
+        // Ecosia: reset so the telemetry override doesn't leak into other test classes. (MOB-4384)
+        TelemetryWrapper.hasTelemetryOverride = false
         messagingStore = nil
         subject = nil
     }
@@ -41,11 +47,20 @@ class GleanPlumbMessageManagerTests: XCTestCase {
     }
 
     func testManagerGetMessage() {
+        // Ecosia: Synced the hardcoded message to upstream v147.5's full shape (surface/style/action/title/text/
+        // button-label). The stale copy omitted these fields, so the message failed validation and getNextMessage
+        // returned nil. (MOB-4384)
         let hardcodedNimbusFeatures =
             HardcodedNimbusFeatures(with: [
                 "messaging": [
                     "messages": [
                         "default-browser": [
+                            "title": "Default Browser/DefaultBrowserCard.Title",
+                            "text": "Default Browser/DefaultBrowserCard.Description",
+                            "button-label": "Default Browser/DefaultBrowserCard.Button.v2",
+                            "surface": "new-tab-card",
+                            "style": "FALLBACK",
+                            "action": "MAKE_DEFAULT_BROWSER_WITH_TUTORIAL",
                             "trigger-if-all": ["ALWAYS"],
                             "except-if-any": []
                         ]

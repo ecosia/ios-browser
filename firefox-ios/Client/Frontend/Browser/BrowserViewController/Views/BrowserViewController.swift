@@ -142,10 +142,10 @@ class BrowserViewController: UIViewController,
         view.accessibilityIdentifier = AccessibilityIdentifiers.Browser.statusBarOverlay
     }
 
-    // Ecosia: Bridges eligibility (checked in decidePolicyFor, where WKNavigationAction
-    // and its navigationType are available) to the actual tracking call in didCommit.
-    // Set when eligible, cleared on commit or on the next navigation.
-    var pendingInappSearchUrl: URL?
+    // Ecosia: Bridges eligibility (checked in decidePolicyFor) to the tracking call in didCommit,
+    // gated on a successful navigation response. Cleared on commit or on the next navigation,
+    // but retained past a commit that ran before the response so the late arrival stays detectable.
+    var pendingInappSearch: PendingInappSearch?
 
     /* Ecosia: TabTrayFlagManager removed in Firefox upgrade; tab tray refactor is always enabled
     lazy var isTabTrayRefactorEnabled: Bool = TabTrayFlagManager.isRefactorEnabled
@@ -564,7 +564,9 @@ class BrowserViewController: UIViewController,
         appStartupTelemetry: AppStartupTelemetry = DefaultAppStartupTelemetry(),
         logger: Logger = DefaultLogger.shared,
         summarizerNimbusUtils: SummarizerNimbusUtils = DefaultSummarizerNimbusUtils(),
-        documentLogger: DocumentLogger = AppContainer.shared.resolve(),
+        // Ecosia: Use resolveOptional() so that BrowserViewController can be created safely when
+        // AppContainer is temporarily empty (brief window after reset() in unit-test setUp).
+        documentLogger: DocumentLogger = (AppContainer.shared.resolveOptional() as DocumentLogger?) ?? DocumentLogger(logger: DefaultLogger.shared),
         appAuthenticator: AppAuthenticationProtocol = AppAuthenticator(),
         searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve(),
         userInitiatedQueue: DispatchQueueInterface = DispatchQueue.global(qos: .userInitiated),
@@ -3414,7 +3416,10 @@ class BrowserViewController: UIViewController,
         finishEditingAndSubmit(searchURL, visitType: VisitType.typed, forTab: tab)
         dispatchSubmitSearchTermAction(with: searchURL, searchTerm: text)
         */
-        let targetURL = URL.ecosiaSearchWithQuery(text, preservingVerticalFrom: tab.url)
+        let targetURL = SearchProviderRouting.searchURL(forQuery: text,
+                                                        engine: engine,
+                                                        preservingVerticalFrom: tab.url)
+            ?? URL.ecosiaSearchWithQuery(text, preservingVerticalFrom: tab.url)
         finishEditingAndSubmit(targetURL, visitType: VisitType.typed, forTab: tab)
         dispatchSubmitSearchTermAction(with: targetURL, searchTerm: text)
     }
@@ -4727,13 +4732,14 @@ extension BrowserViewController: SearchViewControllerDelegate {
         // loading the URL directly, but still tear the omnibox down and force
         // the webview swap that the URL-bar overlay chain would normally do.
         // The dedicated AI Chat row IS associated with a search term but its
-        // URL is already the AI chat endpoint — sending it through
-        // `ntpSearchBarDidSubmit` would rebuild a plain Ecosia search URL and
-        // drop the AI chat destination, so we treat that case like the URL
-        // fallback below.
+        // URL is already the AI chat / Gemini AI Mode endpoint — sending it
+        // through `ntpSearchBarDidSubmit` would rebuild a plain search URL and
+        // drop the AI destination, so we treat that case like the URL fallback
+        // below.
         let isOmniboxOverlay = self.searchController?.parent is HomepageViewController
         if isOmniboxOverlay {
-            if let searchTerm, !searchTerm.isEmpty, !url.isEcosiaAIChat {
+            let isPrebuiltAIDestination = SearchProviderAIRouting.isAIDestination(url)
+            if let searchTerm, !searchTerm.isEmpty, !isPrebuiltAIDestination {
                 ntpSearchBarDidSubmit(searchTerm)
                 return
             }
@@ -4777,6 +4783,9 @@ extension BrowserViewController: SearchViewControllerDelegate {
     }
 
     func updateForDefaultSearchEngineDidChange() {
+        // Ecosia: Keep omnibox gating and analytics in sync with the selected provider.
+        SearchProviderSelection.syncSelectedEngineID(searchEnginesManager.defaultEngine?.engineID)
+        ecosiaHandleDefaultSearchEngineDidChange()
         // Update search icon when the search engine changes
         let action = ToolbarAction(windowUUID: windowUUID, actionType: ToolbarActionType.searchEngineDidChange)
         store.dispatch(action)
@@ -4824,6 +4833,9 @@ extension BrowserViewController: SearchViewControllerDelegate {
     func searchViewController(_ searchViewController: SearchViewController, didAppend text: String) {
         searchViewController.searchTelemetry?.interactionType = .pasted
         setLocationView(text: text, search: false)
+        // Ecosia: `setLocationView` cannot update the address bar while `didStartTyping` is
+        // set, which it always is by the time the append arrow is reachable.
+        applyAppendedSearchTermToAddressBar(text)
     }
 
     func searchViewControllerWillHide(_ searchViewController: SearchViewController) {

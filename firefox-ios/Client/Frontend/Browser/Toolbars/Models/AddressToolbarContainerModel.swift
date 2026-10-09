@@ -318,8 +318,11 @@ final class AddressToolbarContainerModel: Equatable {
            queryForSearchURL fails for staging (ecosia-staging.xyz) whose shortDisplayString
            doesn't match. Fall back to the URL-provider-aware Ecosia framework method so
            all environments and search verticals (images, videos, news) show the query.
+           Only Ecosia URLs are turned into a query: a third-party provider's `q` can carry
+           a chat mode's prompt instruction, which must not surface in the address bar.
         return searchEnginesManager.queryForSearchURL(searchURL)
         */
+        guard searchURL?.isEcosia() == true else { return nil }
         if let term = searchEnginesManager.queryForSearchURL(searchURL) { return term }
         return searchURL?.isEcosiaSearchVertical() == true ? searchURL?.getEcosiaSearchQuery() : nil
     }

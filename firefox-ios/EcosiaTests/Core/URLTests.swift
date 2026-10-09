@@ -190,6 +190,86 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         XCTAssertNil(imagesSerp.ecosiaSearchURLPreservingVertical(from: imagesPage, urlProvider: urlProvider))
     }
 
+    // MARK: - `isEcosia`
+
+    func testIsEcosia_returnsTrueForProviderDomainAndSubdomains() {
+        let cases: [(URLProvider, [String])] = [
+            (.production, [
+                "https://ecosia.org",
+                "http://ecosia.org",
+                "https://www.ecosia.org",
+                "https://login.ecosia.org",
+                "https://api.ecosia.org",
+                "https://WWW.ECOSIA.ORG",
+            ]),
+            (.staging, [
+                "https://ecosia-staging.xyz",
+                "http://ecosia-staging.xyz",
+                "https://www.ecosia-staging.xyz",
+                "https://login.ecosia-staging.xyz",
+                "https://api.ecosia-staging.xyz",
+                "https://WWW.ECOSIA-STAGING.XYZ",
+            ]),
+        ]
+
+        for (provider, urlStrings) in cases {
+            for urlString in urlStrings {
+                XCTAssertTrue(
+                    URL(string: urlString)!.isEcosia(provider),
+                    "\(urlString) should match \(provider.domain)"
+                )
+            }
+        }
+    }
+
+    func testIsEcosia_returnsFalseForLookalikeAndUnrelatedHosts() {
+        let cases: [(URLProvider, [String])] = [
+            (.production, [
+                "https://notecosia.org",
+                "https://ecosia.org.example.com",
+                "https://example.com",
+            ]),
+            (.staging, [
+                "https://notecosia-staging.xyz",
+                "https://ecosia-staging.xyz.example.com",
+                "https://example.com",
+            ]),
+        ]
+
+        for (provider, urlStrings) in cases {
+            for urlString in urlStrings {
+                XCTAssertFalse(
+                    URL(string: urlString)!.isEcosia(provider),
+                    "\(urlString) should not match \(provider.domain)"
+                )
+            }
+        }
+    }
+
+    func testIsEcosia_returnsFalseForNonHTTPSchemes() {
+        let cases: [(URLProvider, [String])] = [
+            (.production, [
+                "gmsg://ecosia.org",
+                "ftp://www.ecosia.org",
+                "ecosia://login.ecosia.org",
+            ]),
+            (.staging, [
+                "gmsg://ecosia-staging.xyz",
+                "ftp://www.ecosia-staging.xyz",
+                "ecosia://login.ecosia-staging.xyz",
+            ]),
+        ]
+
+        for (provider, urlStrings) in cases {
+            for urlString in urlStrings {
+                XCTAssertFalse(
+                    URL(string: urlString)!.isEcosia(provider),
+                    "\(urlString) should not match \(provider.domain)"
+                )
+            }
+        }
+    }
+
     // MARK: - `isEcosiaSearchQuery`
 
     func testAssertIsNotEcosiaSearchURLOnNonEcosiaURL() {
@@ -205,6 +285,24 @@ final class URLTests: XCTestCase, @unchecked Sendable {
     func testAssertIsEcosiaSearchURLOnEcosiaSearchQueryURL() {
         let searchEcosiaURL = URL(string: "https://www.ecosia.org/search")!
         XCTAssertTrue(searchEcosiaURL.isEcosiaSearchQuery(urlProvider))
+    }
+
+    // MARK: - `isEcosiaErrorPage`
+
+    func testIsEcosiaErrorPageOnErrorPage() {
+        XCTAssertTrue(URL(string: "https://www.ecosia.org/accounts/error")!.isEcosiaErrorPage(urlProvider))
+        XCTAssertTrue(URL(string: "https://www.ecosia.org/accounts/error?code=x")!.isEcosiaErrorPage(urlProvider))
+        XCTAssertTrue(URL(string: "https://www.ecosia.org/Accounts/Error")!.isEcosiaErrorPage(urlProvider))
+    }
+
+    func testIsNotEcosiaErrorPageOnOtherPaths() {
+        XCTAssertFalse(URL(string: "https://www.ecosia.org/accounts/error/details")!.isEcosiaErrorPage(urlProvider))
+        XCTAssertFalse(URL(string: "https://www.ecosia.org/accounts/sign-in")!.isEcosiaErrorPage(urlProvider))
+        XCTAssertFalse(URL(string: "https://www.ecosia.org/")!.isEcosiaErrorPage(urlProvider))
+    }
+
+    func testIsNotEcosiaErrorPageOnNonEcosiaURL() {
+        XCTAssertFalse(URL(string: "https://www.non-ecosia.com/accounts/error")!.isEcosiaErrorPage(urlProvider))
     }
 
     // MARK: - `isEcosiaSearchVertical` & `getEcosiaSearchVerticalPath`
@@ -331,6 +429,43 @@ final class URLTests: XCTestCase, @unchecked Sendable {
         User.shared.sendAnonymousUsageData = false
         let ecosified = URL(string: "https://ecosia.org")!.ecosified(isIncognitoEnabled: false, urlProvider: self.urlProvider)
         XCTAssertEqual(ecosified, URL(string: "https://ecosia.org?_sp=\(UUID(uuid: UUID_NULL).uuidString)"))
+    }
+
+    func testPercentEncodedQueryComponentEncodesNonASCIICharacters() {
+        XCTAssertEqual(URL.percentEncodedQueryComponent("café"), "caf%C3%A9")
+        XCTAssertEqual(URL.percentEncodedQueryComponent("new images?"), "new%20images%3F")
+    }
+
+    func testEcosifiedPreservesPercentEncodedAIChatQueryAndFiles() {
+        User.shared.sendAnonymousUsageData = true
+        User.shared.cookieConsentValue = "a"
+        let analyticsId = User.shared.analyticsId.uuidString
+
+        let chatURL = urlProvider.aiChat(
+            origin: .omnibox,
+            query: "new images?",
+            files: [
+                AIChatFileQuery(
+                    fileId: "4c4961e2-b2a7-4eed-b0f8-506178d72e11",
+                    filename: "IMG_0111",
+                    mimeType: "image/jpeg",
+                    sizeBytes: 5212725
+                ),
+            ]
+        )
+
+        let ecosified = chatURL.ecosified(isIncognitoEnabled: false, urlProvider: urlProvider)
+        let absolute = ecosified.absoluteString
+
+        XCTAssertTrue(absolute.contains("images%3F"), "Encoded question mark must survive ecosified()")
+        XCTAssertFalse(absolute.contains("images?&files"), "Bare ? must not appear before files")
+        XCTAssertTrue(absolute.contains("files="))
+        XCTAssertTrue(absolute.contains("_sp=\(analyticsId)"))
+
+        let components = URLComponents(url: ecosified, resolvingAgainstBaseURL: false)
+        let items = Dictionary(uniqueKeysWithValues: (components?.queryItems ?? []).map { ($0.name, $0.value) })
+        XCTAssertEqual(items["q"], "new images?")
+        XCTAssertNotNil(items["files"])
     }
 
     // MARK: - `hasEcosiaUserId`

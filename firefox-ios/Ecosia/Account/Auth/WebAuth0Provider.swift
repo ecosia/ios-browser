@@ -10,4 +10,10 @@ public struct WebAuth0Provider: Auth0ProviderProtocol {
     public var webAuth: WebAuth { makeHttpsWebAuth() }
 
     public init() {}
+
+    public func startAuth(screenHint: AuthScreenHint) async throws -> Credentials {
+        return try await makeHttpsWebAuth()
+            .parameters(["screen_hint": screenHint.rawValue])
+            .start()
+    }
 }

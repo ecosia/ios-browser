@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Common
 import XCTest
 @testable import Ecosia
 
@@ -26,6 +27,50 @@ final class URLRequestTests: XCTestCase {
 
         let expected = Locale.current.identifier.replacingOccurrences(of: "_", with: "-").lowercased()
         XCTAssertEqual(request.value(forHTTPHeaderField: "x-ecosia-app-language-region"), expected)
+    }
+
+    // MARK: - Ecosia app header
+
+    func testAddEcosiaAppHeader() {
+        // Given
+        var request = URLRequest(url: ecosiaURL)
+
+        // When
+        request.addEcosiaAppHeader()
+
+        // Then
+        XCTAssertEqual(request.value(forHTTPHeaderField: "X-Ecosia-App"), "ios/\(AppInfo.ecosiaAppVersion)")
+    }
+
+    func testAddEcosiaAppHeaderUsesPlatformSlashMarketingVersion() throws {
+        // Given
+        var request = URLRequest(url: ecosiaURL)
+
+        // When
+        request.addEcosiaAppHeader()
+
+        // Then
+        let value = try XCTUnwrap(request.value(forHTTPHeaderField: "X-Ecosia-App"))
+        let components = value.split(separator: "/", omittingEmptySubsequences: false).map(String.init)
+        XCTAssertEqual(components.count, 2)
+        XCTAssertEqual(components.first, "ios")
+        XCTAssertFalse(try XCTUnwrap(components.last).isEmpty)
+    }
+
+    func testAddEcosiaAppHeaderIsIdempotent() {
+        // Given
+        var request = URLRequest(url: ecosiaURL)
+
+        // When
+        request.addEcosiaAppHeader()
+        request.addEcosiaAppHeader()
+
+        // Then
+        XCTAssertEqual(request.value(forHTTPHeaderField: "X-Ecosia-App"), "ios/\(AppInfo.ecosiaAppVersion)")
+    }
+
+    func testEcosiaAppHeaderFieldName() {
+        XCTAssertEqual(URLRequest.ecosiaAppHeaderField, "X-Ecosia-App")
     }
 
     // MARK: - Cloudflare auth headers

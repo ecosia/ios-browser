@@ -14,16 +14,28 @@ public struct EnvironmentFetcher {
     ///   - key: The key for which to retrieve the associated string value.
     /// - Returns: The string value associated with the key, or nil if not found.
     public static func valueFromMainBundleOrProcessInfo(forKey key: String) -> String? {
-        // Attempt to retrieve the value from the Main Bundle Info Dictionary
-        // If not found, try to retrieve it from the Process Info environment
-        guard let value = Bundle.main.object(forInfoDictionaryKey: key) as? String
-                ?? ProcessInfo.processInfo.environment[key],
-              !value.isEmpty else {
-            // Return nil if the value is not found in either location
-            return nil
-        }
+        resolveValue(
+            bundleValue: Bundle.main.object(forInfoDictionaryKey: key) as? String,
+            processInfoValue: ProcessInfo.processInfo.environment[key]
+        )
+    }
 
-        // Return the retrieved value
-        return value
+    /// Resolves a configuration value, preferring a non-empty Main Bundle value and
+    /// falling back to a non-empty Process Info value.
+    ///
+    /// An empty Main Bundle value is treated as absent: when an xcconfig variable is
+    /// left unset the build substitutes an *empty string* (not a missing key) into
+    /// Info.plist. The previous `?? ProcessInfo...` only fell through on `nil`, so an
+    /// empty bundle value short-circuited the fallback and the function returned nil —
+    /// fatal for callers like DefaultAuth0SettingsProvider.id. Treating empty as absent
+    /// preserves the documented "Main Bundle OR Process Info" contract. Tracked in MOB-4384.
+    static func resolveValue(bundleValue: String?, processInfoValue: String?) -> String? {
+        if let bundleValue, !bundleValue.isEmpty {
+            return bundleValue
+        }
+        if let processInfoValue, !processInfoValue.isEmpty {
+            return processInfoValue
+        }
+        return nil
     }
 }

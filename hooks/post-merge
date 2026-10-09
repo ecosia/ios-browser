@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Ecosia: Git LFS post-merge hook, added because `git lfs install` won't
+# create hooks in this directory on its own (it's managed by setup_hooks.sh,
+# not by git-lfs). LFS is only relevant if the SnapshotArtifacts submodule
+# (the only thing tracked with filter=lfs) is actually checked out — both it
+# and git-lfs itself are optional, so this stays a no-op for anyone who
+# skipped either.
+if [ -f "firefox-ios/EcosiaTests/SnapshotTests/SnapshotArtifacts/.git" ]; then
+    if command -v git-lfs >/dev/null 2>&1; then
+        git lfs post-merge "$@"
+    else
+        echo "git-lfs not installed, skipping LFS post-merge hook"
+    fi
+fi

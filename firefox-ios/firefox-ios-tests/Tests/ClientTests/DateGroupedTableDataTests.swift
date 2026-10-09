@@ -13,6 +13,11 @@ final class DateGroupedTableDataTests: XCTestCase {
     let lastMonth = Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()
     let older = Calendar.current.date(byAdding: .month, value: -2, to: Date()) ?? Date()
     let customTimeStamps = [Date().lastHour.timeIntervalSince1970, Date().lastMonth.timeIntervalSince1970]
+    // Ecosia: A timestamp unambiguously inside the "this week" bucket (older than the 24h boundary, newer than
+    // 7 days) regardless of the current time of day. The shared `yesterday` helper is noon-based, while
+    // DateGroupedTableData's boundaries are truncated to the top of the hour, so a noon-based "yesterday" lands
+    // in the previous bucket when the test runs before noon — making the section assertions flaky. (MOB-4384)
+    let withinThisWeek = Date().addingTimeInterval(-2 * 24 * 60 * 60)
 
     func testIncludeLastHourAddNow() {
         var subject = DateGroupedTableData<String>(includeLastHour: true)
@@ -37,7 +42,7 @@ final class DateGroupedTableDataTests: XCTestCase {
 
     func testAddYesterday() {
         var subject = DateGroupedTableData<String>()
-        subject.add("Yesterday", timestamp: yesterday.timeIntervalSince1970)
+        subject.add("Yesterday", timestamp: withinThisWeek.timeIntervalSince1970)
 
         XCTAssertEqual(subject.itemsForSection(1), ["Yesterday"])
     }
@@ -46,13 +51,15 @@ final class DateGroupedTableDataTests: XCTestCase {
         var subject = DateGroupedTableData<String>()
         subject.add("Older", timestamp: older.timeIntervalSince1970)
 
-        XCTAssertEqual(subject.itemsForSection(4), ["Older"])
+        // Ecosia: With includeLastHour: false there are 4 sections (0...3): [last 24h, this week, this month,
+        // older]. The "older" (>28 days) bucket is the last one, index 3 — not 4. // was itemsForSection(4)
+        XCTAssertEqual(subject.itemsForSection(3), ["Older"])
     }
 
     func testIncludeLastHourRemove() {
         var subject = DateGroupedTableData<String>(includeLastHour: true)
-        subject.add("Yesterday1", timestamp: yesterday.timeIntervalSince1970)
-        subject.add("Yesterday2", timestamp: yesterday.timeIntervalSince1970)
+        subject.add("Yesterday1", timestamp: withinThisWeek.timeIntervalSince1970)
+        subject.add("Yesterday2", timestamp: withinThisWeek.timeIntervalSince1970)
 
         subject.remove("Yesterday1")
 
@@ -89,16 +96,16 @@ final class DateGroupedTableDataTests: XCTestCase {
 
     func testNumberOfItemsForSection() {
         var subject = DateGroupedTableData<String>(includeLastHour: true)
-        subject.add("Yesterday1", timestamp: yesterday.timeIntervalSince1970)
-        subject.add("Yesterday2", timestamp: yesterday.timeIntervalSince1970)
+        subject.add("Yesterday1", timestamp: withinThisWeek.timeIntervalSince1970)
+        subject.add("Yesterday2", timestamp: withinThisWeek.timeIntervalSince1970)
 
         XCTAssertEqual(subject.numberOfItemsForSection(2), 2)
     }
 
     func testItemsForSection() {
         var subject = DateGroupedTableData<String>(includeLastHour: true)
-        subject.add("Yesterday1", timestamp: yesterday.timeIntervalSince1970)
-        subject.add("Yesterday2", timestamp: yesterday.timeIntervalSince1970)
+        subject.add("Yesterday1", timestamp: withinThisWeek.timeIntervalSince1970)
+        subject.add("Yesterday2", timestamp: withinThisWeek.timeIntervalSince1970)
 
         XCTAssertEqual(subject.itemsForSection(2), ["Yesterday1", "Yesterday2"])
     }

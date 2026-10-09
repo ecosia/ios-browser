@@ -206,6 +206,20 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
 
     // MARK: - ThemeApplicable
 
+    /// Applies literal display values for snapshot tests; bypasses `ClimateImpactInfo` formatting.
+    func applySnapshotDisplay(
+        title: String,
+        subtitle: String,
+        buttonTitle: String?,
+        image: UIImage?
+    ) {
+        imageView.image = image
+        titleLabel.text = title
+        subtitleLabel.text = subtitle
+        actionButton.isHidden = buttonTitle == nil
+        actionButton.setTitle(buttonTitle, for: .normal)
+    }
+
     func applyTheme(theme: Theme) {
         let ecosia = (theme.colors as? EcosiaThemeColourPalette)?.ecosia
         backgroundColor = .clear

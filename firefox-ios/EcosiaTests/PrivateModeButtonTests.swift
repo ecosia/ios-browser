@@ -37,8 +37,10 @@ final class PrivateModeButtonTests: XCTestCase {
     func testApplyUIMode_Private_DarkMode() {
         button.applyUIMode(isPrivate: true, theme: darkTheme)
 
-        XCTAssertEqual(button.tintColor, darkTheme.colors.layer1)
-        XCTAssertEqual(button.imageView?.tintColor, darkTheme.colors.layer1)
+        // Ecosia: selected/private state uses buttonContentPrimary (White), not Firefox's iconOnColor.
+        // See PrivateModeButton.applyUIMode comment for the intentional icon/background inversion.
+        XCTAssertEqual(button.tintColor, darkTheme.colors.ecosia.buttonContentPrimary)
+        XCTAssertEqual(button.imageView?.tintColor, darkTheme.colors.ecosia.buttonContentPrimary)
         XCTAssertEqual(button.accessibilityValue, .TabsTray.TabTrayToggleAccessibilityValueOn)
     }
 
@@ -54,8 +56,10 @@ final class PrivateModeButtonTests: XCTestCase {
         button.isSelected = true
         button.applyTheme(theme: lightTheme)
 
-        XCTAssertEqual(button.tintColor, lightTheme.colors.iconOnColor)
-        XCTAssertEqual(button.imageView?.tintColor, lightTheme.colors.iconOnColor)
+        // Ecosia: selected state uses buttonContentPrimary (White), not Firefox's iconOnColor.
+        // See PrivateModeButton.applyTheme comment for the intentional icon/background inversion.
+        XCTAssertEqual(button.tintColor, lightTheme.colors.ecosia.buttonContentPrimary)
+        XCTAssertEqual(button.imageView?.tintColor, lightTheme.colors.ecosia.buttonContentPrimary)
     }
 
     func testApplyTheme_NotSelected_LightMode() {
@@ -70,8 +74,10 @@ final class PrivateModeButtonTests: XCTestCase {
         button.isSelected = true
         button.applyTheme(theme: darkTheme)
 
-        XCTAssertEqual(button.tintColor, darkTheme.colors.iconOnColor)
-        XCTAssertEqual(button.imageView?.tintColor, darkTheme.colors.iconOnColor)
+        // Ecosia: selected state uses buttonContentPrimary (White), not Firefox's iconOnColor.
+        // See PrivateModeButton.applyTheme comment for the intentional icon/background inversion.
+        XCTAssertEqual(button.tintColor, darkTheme.colors.ecosia.buttonContentPrimary)
+        XCTAssertEqual(button.imageView?.tintColor, darkTheme.colors.ecosia.buttonContentPrimary)
     }
 
     func testApplyTheme_NotSelected_DarkMode() {

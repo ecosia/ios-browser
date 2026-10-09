@@ -16,12 +16,44 @@ struct NTPOmniboxSheetPresenter: View {
         Color.clear
             .frame(width: 0, height: 0)
             .allowsHitTesting(false)
+            .sheet(isPresented: $sheetState.showSignInSheet, onDismiss: {
+                sheetState.handleSignInSheetDismissed()
+            }) {
+                OmniboxUploadSignInSheet(
+                    windowUUID: windowUUID,
+                    onSignIn: {
+                        sheetState.handleSignInSheetSignInTapped()
+                    },
+                    onCreateAccount: {
+                        sheetState.handleSignInSheetCreateAccountTapped()
+                    },
+                    onDismiss: {
+                        sheetState.showSignInSheet = false
+                    }
+                )
+            }
             .sheet(isPresented: $sheetState.showUploadDrawer, onDismiss: {
                 sheetState.handleUploadDrawerDismissed()
             }) {
-                OmniboxUploadDrawerSheet(windowUUID: windowUUID) { option in
-                    sheetState.handleUploadOptionSelected(option)
-                }
+                OmniboxUploadDrawerSheet(
+                    windowUUID: windowUUID,
+                    provider: sheetState.provider,
+                    selectedChatMode: sheetState.selectedChatMode,
+                    isAuthenticated: sheetState.isAuthenticated,
+                    onSelect: { option in sheetState.handleUploadOptionSelected(option) },
+                    onSelectChatMode: { mode in sheetState.handleChatModeSelected(mode) },
+                    onLogin: { sheetState.handleLoginRequested() }
+                )
+            }
+            .sheet(isPresented: $sheetState.showProviderUploadRedirect, onDismiss: {
+                sheetState.handleProviderUploadRedirectDismissed()
+            }) {
+                OmniboxProviderUploadRedirectSheet(
+                    windowUUID: windowUUID,
+                    provider: sheetState.provider,
+                    onGoToProvider: { sheetState.handleProviderUploadRedirectConfirmed() },
+                    onBack: { sheetState.showProviderUploadRedirect = false }
+                )
             }
     }
 }

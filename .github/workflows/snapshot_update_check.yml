@@ -1,0 +1,37 @@
+name: Snapshot Update Check
+
+on:
+  pull_request:
+    branches: [main, 'patch/**']
+
+jobs:
+  snapshot-update-check:
+    runs-on: ubuntu-latest
+    name: Verify snapshot updates for Ecosia UI changes
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Validate snapshot coverage registry
+        run: |
+          ./check_snapshot_updates.sh \
+            --should-run \
+            "${{ github.event.pull_request.base.sha }}" \
+            "${{ github.event.pull_request.head.sha }}" \
+            >/dev/null
+
+      - name: Check Ecosia UI changes include snapshot updates
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-snapshot-check') }}
+        run: ./check_snapshot_updates.sh "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}"
+
+      - name: Snapshot update check skipped
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'skip-snapshot-check') }}
+        run: echo "Skipped via skip-snapshot-check label."
+
+      - name: Check snapshot coverage documentation
+        run: |
+          ./generate_snapshot_coverage_docs.sh
+          git diff --exit-code -- firefox-ios/Ecosia/Ecosia.docc/SNAPSHOT_COVERAGE_MAP.md

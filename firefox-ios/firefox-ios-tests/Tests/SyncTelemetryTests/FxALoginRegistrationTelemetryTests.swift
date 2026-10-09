@@ -15,12 +15,24 @@ struct MockFxAUrls {
     static let mockSignInTockenUrl =  URL(string: "https://accounts.firefox.com/oauth/signin_token_code/")!
 }
 
+// Ecosia: No-op telemetry wrapper so FxAWebViewTelemetry can be constructed without resolving Glean from the DI
+// container. FxAWebViewTelemetry() defaults to TelemetryWrapper.shared, whose init resolves
+// GleanUsageReportingMetricsService from an EMPTY AppContainer (this target doesn't bootstrap DI) and crashes.
+// These tests only exercise getFlowFromUrl(...) (pure URL parsing), so a no-op wrapper is sufficient. (MOB-4384)
+private final class NoOpTelemetryWrapper: TelemetryWrapperProtocol {
+    func recordEvent(category: TelemetryWrapper.EventCategory,
+                     method: TelemetryWrapper.EventMethod,
+                     object: TelemetryWrapper.EventObject,
+                     value: TelemetryWrapper.EventValue?,
+                     extras: [String: Any]?) {}
+}
+
 class SyncTelemetryTests: XCTestCase {
     var fxaWebViewTelemetry: FxAWebViewTelemetry!
 
     override func setUp() {
         super.setUp()
-        fxaWebViewTelemetry = FxAWebViewTelemetry()
+        fxaWebViewTelemetry = FxAWebViewTelemetry(telemetryWrapper: NoOpTelemetryWrapper())
     }
 
     override func tearDown() {

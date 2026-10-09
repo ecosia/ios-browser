@@ -15,6 +15,7 @@ extension AppSettingsTableViewController {
 
     func getSearchSection() -> [SettingSection] {
         guard let profile else {
+            SearchProviderSelection.prepareSearchSettingsSection(defaultEngineID: nil)
             return [SettingSection(title: .init(string: .localized(.search)), children: [
                 EcosiaDefaultBrowserSettings(),
                 SearchAreaSetting(settings: self),
@@ -22,13 +23,30 @@ extension AppSettingsTableViewController {
             ])]
         }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        let settings: [Setting] = [
+        let searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
+        SearchProviderSelection.prepareSearchSettingsSection(
+            defaultEngineID: searchEnginesManager.defaultEngine?.engineID
+        )
+
+        var settings: [Setting] = [
             EcosiaDefaultBrowserSettings(),
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: profile.prefs, theme: theme),
+            AIFreeSearchingSearchSettings(prefs: profile.prefs, theme: theme, settings: self),
             AIOverviewsSearchSettings(prefs: profile.prefs, theme: theme)
         ]
+
+        if CustomSearchProviderFeatureFlag.isEnabled {
+            settings.insert(
+                SearchSetting(
+                    settingsDelegate: parentCoordinator,
+                    searchEnginesManager: searchEnginesManager,
+                    theme: theme
+                ),
+                at: 1
+            )
+        }
 
         return [SettingSection(title: .init(string: .localized(.search)),
                                children: settings)]
@@ -64,6 +82,7 @@ extension AppSettingsTableViewController {
         var hiddenDebugSettings: [Setting] = [
             ExportBrowserDataSetting(settings: self),
             ForceCrashSetting(settings: self),
+            EcosiaLoggerForceErrorSetting(settings: self),
             PushBackInstallation(settings: self),
             OpenFiftyTabsDebugOption(settings: self, settingsDelegate: self),
             ToggleDefaultBrowserPromo(settings: self),
@@ -93,7 +112,9 @@ extension AppSettingsTableViewController {
         let unleashSettings: [Setting] = [
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
+            UnleashCustomSearchProviderSetting(settings: self),
             UnleashAIChatMVPSetting(settings: self),
+            UnleashAIFreeSearchingSetting(settings: self),
             UnleashIdentifierSetting(settings: self)
         ]
 
@@ -108,10 +129,22 @@ extension AppSettingsTableViewController {
             DebugAddCustomSeeds(settings: self),
             DebugForceLevelUp(settings: self),
             SimulateAuthErrorSetting(settings: self),
+            SimulateSessionTransferFailureSetting(settings: self),
             SimulateImpactAPIErrorSetting(settings: self)
         ]
 
         return SettingSection(title: NSAttributedString(string: "Debug - Accounts"), children: accountSettings)
+    }
+
+    func getEcosiaDebugFileUploadSection() -> SettingSection {
+        let fileUploadSettings: [Setting] = [
+            SimulateFileUploadAPIErrorSetting(settings: self),
+            SimulateUploadValidationErrorSetting(simulatedError: .tooManyFiles, settings: self),
+            SimulateUploadValidationErrorSetting(simulatedError: .fileTooLarge, settings: self),
+            SimulateUploadValidationErrorSetting(simulatedError: .unsupportedFileType, settings: self)
+        ]
+
+        return SettingSection(title: NSAttributedString(string: "Debug - File Upload"), children: fileUploadSettings)
     }
 }
 
