@@ -309,9 +309,9 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.hasOptedOutOfChatThreads)
     }
 
-    func testSetupTokens_postsCredentialsDidUpdateNotification() async throws {
+    func testSetupTokens_postsChatThreadsOptOutDidChangeWhenClaimFlips() async throws {
         mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
-        let expectation = expectation(forNotification: .EcosiaAuthCredentialsDidUpdate,
+        let expectation = expectation(forNotification: .EcosiaChatThreadsOptOutDidChange,
                                       object: nil) { notification in
             notification.userInfo?["hasOptedOutOfChatThreads"] as? Bool == true
         }
@@ -319,6 +319,23 @@ final class AuthTests: XCTestCase {
         _ = try await auth.login()
 
         await fulfillment(of: [expectation], timeout: 1.0)
+        XCTAssertTrue(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testRenewCredentials_withUnchangedClaim_doesNotPostChatThreadsOptOutDidChange() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
+        let loginPost = expectation(forNotification: .EcosiaChatThreadsOptOutDidChange, object: nil)
+        _ = try await auth.login()
+        await fulfillment(of: [loginPost], timeout: 1.0)
+
+        let expectation = expectation(forNotification: .EcosiaChatThreadsOptOutDidChange, object: nil)
+        expectation.isInverted = true
+
+        mockProvider.canRenewCredentialsResult = true
+        mockProvider.hasStoredCredentials = true
+        try await auth.renewCredentialsIfNeeded()
+
+        await fulfillment(of: [expectation], timeout: 0.5)
         XCTAssertTrue(auth.hasOptedOutOfChatThreads)
     }
 
