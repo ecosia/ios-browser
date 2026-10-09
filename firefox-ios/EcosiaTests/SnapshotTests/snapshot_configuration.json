@@ -47,6 +47,7 @@
         },
         {
           "name": "NTPOmniboxUploadDrawerSnapshotTests",
+          "runSeparately": true,
           "devices": ["iPhone 16 Pro"],
           "locales": ["all"],
           "themes": ["all"]

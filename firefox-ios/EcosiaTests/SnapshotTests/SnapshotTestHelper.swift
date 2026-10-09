@@ -23,6 +23,7 @@ final class SnapshotTestHelper {
 
     private static let snapshotReferencePointerPath = "/tmp/ecosia_snapshot_reference_dir"
     private static let snapshotRecordingPointerPath = "/tmp/ecosia_snapshot_testing_record"
+    private static let snapshotEnvironmentPath = "/tmp/ecosia_snapshot_environment.json"
 
     private static func referenceRoot(from file: StaticString) -> URL {
         if let env = ProcessInfo.processInfo.environment["SNAPSHOT_REFERENCE_DIR"],
@@ -184,7 +185,7 @@ final class SnapshotTestHelper {
         line: UInt
     ) {
         guard let testBundle = Bundle(identifier: "com.ecosia.ecosiaapp.EcosiaSnapshotTests"),
-              let envPath = testBundle.path(forResource: "environment", ofType: "json"),
+              let envPath = runtimeEnvironmentPath(testBundle: testBundle),
               let envData = try? Data(contentsOf: URL(fileURLWithPath: envPath)),
               let envJson = try? JSONSerialization.jsonObject(with: envData, options: []),
               let envDict = envJson as? [String: Any],
@@ -215,6 +216,20 @@ final class SnapshotTestHelper {
             ? localesArray.map { Locale(identifier: $0) }
             : locales
 
+        let snapshotDirectory: String
+        do {
+            let className = URL(fileURLWithPath: "\(file)", isDirectory: false)
+                .deletingPathExtension()
+                .lastPathComponent
+            snapshotDirectory = try Self.snapshotDirectory(
+                for: file,
+                testClassName: className
+            )
+        } catch {
+            XCTFail("Failed to prepare snapshot directory: \(error)", file: file, line: line)
+            return
+        }
+
         for deviceType in devicesToTest {
             let config = deviceType.config
             let deviceName = deviceType.name
@@ -238,20 +253,6 @@ final class SnapshotTestHelper {
 
                     let snapshotName = "\(String.cleanFunctionName(testName))_\(themeSuffix.rawValue)_\(deviceType.rawValue)_\(locale.identifier)"
 
-                    let snapshotDirectory: String
-                    do {
-                        let className = URL(fileURLWithPath: "\(file)", isDirectory: false)
-                            .deletingPathExtension()
-                            .lastPathComponent
-                        snapshotDirectory = try Self.snapshotDirectory(
-                            for: file,
-                            testClassName: className
-                        )
-                    } catch {
-                        XCTFail("Failed to prepare snapshot directory: \(error)", file: file, line: line)
-                        return
-                    }
-
                     let failure = verifySnapshot(
                         of: window,
                         as: snapshotting,
@@ -266,6 +267,13 @@ final class SnapshotTestHelper {
                 }
             }
         }
+    }
+
+    private static func runtimeEnvironmentPath(testBundle: Bundle) -> String? {
+        if FileManager.default.fileExists(atPath: snapshotEnvironmentPath) {
+            return snapshotEnvironmentPath
+        }
+        return testBundle.path(forResource: "environment", ofType: "json")
     }
 
     private static func themesFromEnvironment(

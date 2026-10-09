@@ -1,0 +1,26 @@
+name: 'Xcode compilation cache'
+description: 'Restores DerivedData/CompilationCache.noindex and saves it after the job'
+inputs:
+  cache-name:
+    description: 'Workflow-specific cache name, e.g. unit-tests or snapshot-tests'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Identify Xcode compilation cache generation
+      id: generation
+      shell: bash
+      run: |
+        echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
+        echo "toolchain=$(xcodebuild -version | shasum -a 256 | cut -c1-12)" >> "$GITHUB_OUTPUT"
+
+    - name: Restore Xcode compilation cache
+      uses: actions/cache@v4
+      with:
+        path: DerivedData/CompilationCache.noindex
+        # Cache keys are immutable, so a per-commit suffix lets each run save its new compiler
+        # outputs while still restoring the most recent cache for the same week and toolchain.
+        key: xcode-compilation-${{ inputs.cache-name }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.generation.outputs.toolchain }}-${{ steps.generation.outputs.week }}-${{ github.sha }}
+        restore-keys: |
+          xcode-compilation-${{ inputs.cache-name }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.generation.outputs.toolchain }}-${{ steps.generation.outputs.week }}-
+          xcode-compilation-${{ inputs.cache-name }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.generation.outputs.toolchain }}-
