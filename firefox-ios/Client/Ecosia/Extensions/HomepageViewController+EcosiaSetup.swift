@@ -214,10 +214,27 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             name: .searchSettingsChanged,
             object: nil
         )
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(handleEcosiaAuthCredentialsDidUpdate),
+            name: .EcosiaAuthCredentialsDidUpdate,
+            object: nil
+        )
     }
 
     @objc private func updateNTPUploadButtonVisibility() {
         ntpSearchBar?.updateUploadButtonVisibility()
+    }
+
+    @objc private func handleEcosiaAuthCredentialsDidUpdate() {
+        syncOmniboxChatThreadsOptOutFromAuth()
+    }
+
+    /// Re-reads chat-threads opt-out from Auth0 and updates the NTP control and drawer state.
+    func syncOmniboxChatThreadsOptOutFromAuth() {
+        ntpSearchBar?.refreshUploadControl()
+        ecosiaAdapter?.omniboxSheetState.hasOptedOutOfChatThreads =
+            EcosiaAuthenticationService.shared.hasOptedOutOfChatThreads
     }
 
     @objc private func homePanelPrefsDidChange(_ notification: Notification) {
@@ -246,7 +263,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             actionType: ToolbarActionType.borderPositionChanged
         ))
 
-        ntpSearchBar?.updateUploadButtonVisibility()
+        ntpSearchBar?.refreshUploadControl()
 
         ecosiaAdapter?.viewWillAppear()
         // Full-screen upload pickers (camera / Files) temporarily hide the NTP
