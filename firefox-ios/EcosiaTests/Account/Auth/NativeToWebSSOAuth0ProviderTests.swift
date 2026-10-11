@@ -104,6 +104,68 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         }
     }
 
+    // MARK: - Refresh Token Rotation Tests
+
+    private func makeCredentials(refreshToken: String?) -> Credentials {
+        Credentials(accessToken: "access-token",
+                    tokenType: "Bearer",
+                    idToken: "id-token",
+                    refreshToken: refreshToken,
+                    expiresIn: Date().addingTimeInterval(3600),
+                    scope: "openid profile email offline_access")
+    }
+
+    private func makeSSOCredentials(refreshToken: String?) -> SSOCredentials {
+        SSOCredentials(sessionTransferToken: "session-transfer-token",
+                       issuedTokenType: "urn:auth0:params:oauth:token-type:session_transfer_token",
+                       expiresIn: Date().addingTimeInterval(60),
+                       idToken: "sso-id-token",
+                       refreshToken: refreshToken)
+    }
+
+    func testPersistRotatedRefreshToken_withRotatedToken_storesItInPlaceOfTheConsumedOne() {
+        // Arrange
+        let original = makeCredentials(refreshToken: "consumed-refresh-token")
+        let ssoCredentials = makeSSOCredentials(refreshToken: "rotated-refresh-token")
+
+        // Act
+        provider.persistRotatedRefreshToken(from: ssoCredentials, replacing: original)
+
+        // Assert
+        XCTAssertEqual(mockCredentialsManager.storeCallCount, 1)
+        let stored = mockCredentialsManager.lastStoredCredentials
+        XCTAssertEqual(stored?.refreshToken, "rotated-refresh-token")
+    }
+
+    func testPersistRotatedRefreshToken_withRotatedToken_keepsTheRestOfTheStoredCredentials() {
+        // Arrange
+        let original = makeCredentials(refreshToken: "consumed-refresh-token")
+        let ssoCredentials = makeSSOCredentials(refreshToken: "rotated-refresh-token")
+
+        // Act
+        provider.persistRotatedRefreshToken(from: ssoCredentials, replacing: original)
+
+        // Assert
+        let stored = mockCredentialsManager.lastStoredCredentials
+        XCTAssertEqual(stored?.accessToken, original.accessToken)
+        XCTAssertEqual(stored?.tokenType, original.tokenType)
+        XCTAssertEqual(stored?.idToken, original.idToken)
+        XCTAssertEqual(stored?.expiresIn, original.expiresIn)
+        XCTAssertEqual(stored?.scope, original.scope)
+    }
+
+    func testPersistRotatedRefreshToken_withoutRotation_leavesStoredCredentialsUntouched() {
+        // Arrange
+        let original = makeCredentials(refreshToken: "refresh-token")
+        let ssoCredentials = makeSSOCredentials(refreshToken: nil)
+
+        // Act
+        provider.persistRotatedRefreshToken(from: ssoCredentials, replacing: original)
+
+        // Assert
+        XCTAssertEqual(mockCredentialsManager.storeCallCount, 0)
+    }
+
     // MARK: - Protocol Conformance Tests
 
     func testProvider_conformsToAuth0ProviderProtocol() {

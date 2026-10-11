@@ -89,12 +89,35 @@ extension NativeToWebSSOAuth0Provider {
 
         let configuration: URLSessionConfiguration = .default
         let ecosiaAuth0Session = URLSession(configuration: configuration.withCloudFlareAuthParameters())
-        return try await Auth0
+        let ssoCredentials = try await Auth0
             .authentication(clientId: settings.id,
                             domain: settings.domain,
                             session: ecosiaAuth0Session)
             .ssoExchange(withRefreshToken: refreshToken)
             .start()
+        persistRotatedRefreshToken(from: ssoCredentials, replacing: credentials)
+        return ssoCredentials
+    }
+
+    /// With Refresh Token Rotation enabled the SSO exchange consumes the refresh token it is given and
+    /// returns a new one. Storing it replaces the consumed token, otherwise the next renewal would present
+    /// an already-used token, which Auth0 treats as reuse and answers by revoking the whole token family.
+    /// Without rotation `ssoCredentials.refreshToken` is `nil` and the stored token is left untouched.
+    func persistRotatedRefreshToken(from ssoCredentials: SSOCredentials, replacing credentials: Credentials) {
+        guard let rotatedRefreshToken = ssoCredentials.refreshToken else { return }
+
+        let updatedCredentials = Credentials(accessToken: credentials.accessToken,
+                                             tokenType: credentials.tokenType,
+                                             idToken: credentials.idToken,
+                                             refreshToken: rotatedRefreshToken,
+                                             expiresIn: credentials.expiresIn,
+                                             scope: credentials.scope,
+                                             recoveryCode: credentials.recoveryCode)
+        guard credentialsManager.store(credentials: updatedCredentials) else {
+            EcosiaLogger.auth.error("Failed to store rotated refresh token after SSO exchange")
+            return
+        }
+        EcosiaLogger.auth.info("Stored rotated refresh token after SSO exchange")
     }
 
     /// Retrieves configuration values from the Auth0.plist file.
