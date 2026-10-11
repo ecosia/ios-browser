@@ -317,6 +317,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         self.refreshToken = credentials?.refreshToken
         // Decode only when credentials (and therefore an ID token) are present.
         // Signed-out / no-account states keep the default `false` and never read a claim.
+        let previousHasOptedOutOfChatThreads = self.hasOptedOutOfChatThreads
         self.hasOptedOutOfChatThreads = credentials?.hasOptedOutOfChatThreads ?? false
         let previousIsLoggedIn = self.isLoggedIn
         self.isLoggedIn = newIsLoggedIn
@@ -328,16 +329,19 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             "chat-threads-opt-out applied source=\(source.rawValue) environment=\(Environment.current) isLoggedIn=\(newIsLoggedIn) \(claimDetails)"
         )
 
-        // Observers (NTP upload control) touch UIKit and must run on the main queue.
-        // `setupTokensWithCredentials` is called from auth Tasks on cooperative threads
-        // (login, logout, stored-credentials retrieval, token renew).
-        let optedOutForNotification = hasOptedOutOfChatThreads
-        DispatchQueue.main.async {
-            NotificationCenter.default.post(
-                name: .EcosiaAuthCredentialsDidUpdate,
-                object: nil,
-                userInfo: ["hasOptedOutOfChatThreads": optedOutForNotification]
-            )
+        // The claim can flip on a token refresh without a login transition, so this is
+        // posted independently of the `isLoggedIn` guard below.
+        // Observers (NTP upload control) touch UIKit and must run on the main queue;
+        // `setupTokensWithCredentials` is called from auth Tasks on cooperative threads.
+        if previousHasOptedOutOfChatThreads != hasOptedOutOfChatThreads {
+            let optedOutForNotification = hasOptedOutOfChatThreads
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: .EcosiaChatThreadsOptOutDidChange,
+                    object: nil,
+                    userInfo: ["hasOptedOutOfChatThreads": optedOutForNotification]
+                )
+            }
         }
 
         // Only dispatch the auth state change when the login state actually transitions,
