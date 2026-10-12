@@ -207,6 +207,9 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         // network is already neutralised by the seed above) was a cross-test contaminator that starved
         // later timing-sensitive tests under CI load — the same vector fixed for the MMP tests. (MOB-4384)
         MMP.provider = MockMMPProvider()
+        // Ecosia: the lifecycle tests reach the default-browser check; keep it off the system API and
+        // standard defaults.
+        DefaultBrowserStatusChecker.shared = .inert()
     }
 
     override func tearDown() {

@@ -11,7 +11,8 @@ public final class DefaultBrowserStatusChecker {
     static let retryAvailabilityDateKey = "UIApplicationCategoryDefaultRetryAvailabilityDateErrorKey"
     static let checkInterval = DateComponents(month: 6)
 
-    public static let shared = DefaultBrowserStatusChecker()
+    /// Mutable so tests can swap in a checker that never touches the system API or standard defaults.
+    public static var shared = DefaultBrowserStatusChecker()
 
     private let defaults: UserDefaults
     private let calendar: Calendar

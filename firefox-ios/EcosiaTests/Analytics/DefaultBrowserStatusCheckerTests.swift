@@ -113,3 +113,16 @@ final class DefaultBrowserStatusCheckerTests: XCTestCase {
     }
 }
 // swiftlint:enable implicitly_unwrapped_optional
+
+extension DefaultBrowserStatusChecker {
+    /// A checker for tests that drive the app lifecycle: it never gets an answer, so nothing is tracked or persisted
+    /// outside its own throwaway defaults suite.
+    static func inert() -> DefaultBrowserStatusChecker {
+        let suiteName = "DefaultBrowserStatusChecker.inert"
+        let defaults = UserDefaults(suiteName: suiteName) ?? .standard
+        defaults.removePersistentDomain(forName: suiteName)
+        return DefaultBrowserStatusChecker(defaults: defaults,
+                                           isFreshInstall: { false },
+                                           queryIsDefault: { nil })
+    }
+}
