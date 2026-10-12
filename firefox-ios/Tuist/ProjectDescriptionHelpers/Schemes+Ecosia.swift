@@ -285,6 +285,12 @@ public enum EcosiaSchemes {
         "ECOSIA_RUN_UNIT_TESTS": .environmentVariable(value: "1", isEnabled: true)
     ])
 
+    // Ecosia: snapshot tests can construct account UI before CI injects a production Auth0 value.
+    // A non-secret placeholder keeps DefaultAuth0SettingsProvider from terminating the host app.
+    private static let snapshotTestArguments: Arguments = .arguments(environmentVariables: [
+        "AUTH0_CLIENT_ID": .environmentVariable(value: "test-auth0-client-id", isEnabled: true)
+    ])
+
     // MARK: - Schemes
 
     public static let all: [Scheme] = [
@@ -329,6 +335,7 @@ public enum EcosiaSchemes {
             buildAction: .buildAction(targets: ["Client", "EcosiaSnapshotTests"]),
             testAction: .targets(
                 ["EcosiaSnapshotTests"],
+                arguments: snapshotTestArguments,
                 configuration: "BetaDebug"
             ),
             runAction: .runAction(
