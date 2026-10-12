@@ -8,6 +8,181 @@ Destination of the map in `map.md`. Plan only; nothing is implemented. Detail fo
 - Native is the source of truth for auth; the web session is kept in sync from native. Impact API logic is separate from auth.
 - Never add Sentry logging. Rotation is deferred, not part of this plan.
 
+## How it works today
+
+Auth, web sync and impact are tangled in two singletons, with no single place that reacts to a change.
+
+```mermaid
+flowchart TB
+    subgraph UI["Views"]
+        V["NTP header, avatar, impact views and view models"]
+    end
+
+    subgraph PROV["EcosiaAuthUIStateProvider (singleton)"]
+        P1["UI state: isLoggedIn, profile, avatar"]
+        P2["Impact: registerVisit, seed cache, local seeds, animation"]
+        P3["hasResolved / pending / handled flags"]
+    end
+
+    subgraph SVC["EcosiaAuthenticationService (singleton)"]
+        S1["Auth0 login / logout"]
+        S2["Tokens held in memory"]
+        S3["userinfo fetch, profile"]
+        S4["SSO token, impact cache clearing, wasLoggedIn"]
+    end
+
+    KC[("Keychain via two CredentialsManager instances")]
+    WM["EcosiaBrowserWindowAuthManager: per-window state"]
+    NC(["NotificationCenter: AuthStateChanged, UserProfileUpdated"])
+
+    subgraph FLOW["Client: EcosiaAuth / EcosiaAuthFlow"]
+        F1["Native login, then invisible tab session transfer"]
+        F2["Logout, then invisible tab on logout URL"]
+    end
+
+    WEB[("WKWebsiteDataStore: EASC and Auth0 cookies")]
+    INT["BrowserViewController: sign-in / sign-out URL interception"]
+    ACC["AccountsService: renews on 401 itself"]
+    UP["FileUploadService: renews itself, copies EASC web to native"]
+
+    V --> PROV
+    PROV -->|reads| SVC
+    PROV --> ACC
+    SVC --> KC
+    SVC -->|dispatch| WM --> NC
+    NC --> PROV
+    NC -.->|auto-close invisible tab| FLOW
+    FLOW --> SVC
+    FLOW -->|installs cookie, loads URL| WEB
+    INT -->|web says signed out: force logout and re-login| FLOW
+    WEB -.->|web is the source of truth for this cookie| UP
+    UP -->|renew| SVC
+    ACC -->|renew| SVC
+
+    classDef pain fill:#fde2e2,stroke:#c0392b,color:#000
+    class P3,WM,NC,UP,ACC pain
+```
+
+Pain points (red):
+- No event when tokens or claims change; the provider polls the service when a notification happens to arrive.
+- Notifications only reach registered windows, so launch-time resolution can be missed; the flags exist to compensate.
+- Every consumer renews credentials itself, so renewals are not coordinated.
+- The web session is only synced at login and logout; the web can silently diverge, and a web sign-in redirect forces a logout and re-login.
+- Native uploads depend on a cookie that only the web owns.
+
+## How it will work
+
+Four layers, each depending only on the one above, all driven by one published auth snapshot.
+
+```mermaid
+flowchart TB
+    LC["Lifecycle observer: launch, foreground"]
+
+    subgraph AUTH["AuthSession (MainActor): native source of truth"]
+        A1["Snapshot: status, userId, claims, scopes, credentialsVersion"]
+        A2["Identity stream and credentials stream"]
+        A3["signIn / signOut(reason) / refreshIfNeeded"]
+    end
+
+    subgraph TOK["AccessTokenProvider (actor)"]
+        T1["Only user of the refresh token and keychain"]
+        T2["Single-flight renewal, 401 de-dup"]
+        T3["Typed errors"]
+    end
+
+    KC[("Keychain: one CredentialsManager")]
+    A0[("Auth0")]
+
+    subgraph WS["WebSessionSync"]
+        W1["Single-flight reconcile"]
+        W2["Invisible tab transfer, cookie install and clear"]
+        W3["EASC bridge for native uploads"]
+    end
+    WEB[("WKWebsiteDataStore")]
+
+    subgraph IMP["ImpactService (no UI)"]
+        I1["registerVisit, daily local seed"]
+        I2[("Cache keyed by user id, anonymous slot for guests")]
+    end
+    API[("Impact API")]
+
+    UM["UserManager (ObservableObject): presenter and animation"]
+    V["Views and view models"]
+    UP["FileUploadService"]
+    INT["URL interception: web sign-in / sign-out"]
+
+    LC --> A3
+    LC --> W1
+    LC --> I1
+    AUTH --> TOK --> KC
+    TOK --> A0
+    A2 ==>|identity change| W1
+    A2 ==>|identity change| I1
+    A1 --> UM
+    IMP -->|state and events| UM --> V
+    TOK -->|token| I1 --> API
+    TOK -->|session transfer token| W2 --> WEB
+    UP -->|token| TOK
+    UP -->|cookie| W3
+    WEB --- W3
+    INT -->|signed in: silent re-transfer| W1
+    INT -->|web sign-out| A3
+    TOK -.->|credentials changed, permanent failure| A1
+
+    classDef core fill:#e1f0e1,stroke:#27ae60,color:#000
+    class AUTH,TOK core
+```
+
+Thick arrows are the reactive links: a change of user triggers web sync and impact on its own, with no notification round-trip. A refresh that only renews tokens does not retrigger either.
+
+### Login, end to end
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant F as Auth flow
+    participant S as AuthSession
+    participant T as AccessTokenProvider
+    participant W as WebSessionSync
+    participant I as ImpactService
+    participant M as UserManager
+
+    U->>F: Sign in
+    F->>S: signIn()
+    S->>T: adopt credentials from Auth0
+    T-->>S: credentials changed
+    S-->>M: snapshot: signedIn, userId, claims
+    S-->>I: identity change
+    S-->>W: identity change
+    F->>W: establishWebSession()
+    W->>T: sessionTransferToken()
+    W->>W: install cookie, invisible tab, land on web
+    W-->>F: success (failure signs native out)
+    I->>T: accessToken()
+    I->>I: registerVisit for this user, update keyed cache
+    I-->>M: state and balanceIncreased event
+    M-->>U: avatar and seeds update
+```
+
+### Foreground, end to end
+
+```mermaid
+sequenceDiagram
+    participant L as Lifecycle observer
+    participant S as AuthSession
+    participant T as AccessTokenProvider
+    participant W as WebSessionSync
+    participant I as ImpactService
+
+    L->>S: refreshIfNeeded(foreground)
+    S->>T: renew only if the access token is near expiry
+    T-->>S: credentials changed (claims refresh)
+    L->>W: reconcile
+    W->>W: signed in and no EASC: silent re-transfer. Signed out and web cookies present: clear them
+    L->>I: refresh
+    I->>I: registerVisit (signed in) or daily seed (guest)
+```
+
 ## Target architecture
 Four layers, each depending only on the one above:
 1. **`AuthSession`** (`@MainActor`): immutable snapshot (`status` unresolved/signedOut(reason)/signedIn, `userId`, raw claims, `grantedScopes`, `credentialsVersion`; never tokens) with identity and credentials streams. Owns the gateway. Tickets 01, 04.
