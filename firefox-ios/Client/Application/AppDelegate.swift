@@ -358,6 +358,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
     func ecosiaCheckDefaultBrowserStatusIfDue() -> Bool? {
         guard let isDefault = DefaultBrowserStatusChecker.shared.checkIfDue() else { return nil }
         DefaultBrowserUtility().isDefaultBrowser = isDefault
+        // Ecosia: Firefox's check also kept this in sync; `Experiments` still reads it.
+        UserDefaults.standard.set(isDefault, forKey: PrefsKeys.AppleConfirmedUserIsDefaultBrowser)
         return isDefault
     }
 
