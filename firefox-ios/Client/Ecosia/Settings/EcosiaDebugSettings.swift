@@ -295,6 +295,38 @@ class UnleashVariantResetSetting: HiddenSetting {
     }
 }
 
+@MainActor
+final class UnleashRefreshSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Refresh Unleash flags", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Keeps the Unleash Identifier (Click to refresh)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        Task {
+            let alert: AlertController
+            do {
+                _ = try await Unleash.start(env: .current, appVersion: AppInfo.ecosiaAppVersion, force: true)
+                let searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
+                searchEnginesManager.reconfigureEngineProviderIfNeeded()
+                alert = AlertController(title: "Unleash refreshed ✅",
+                                        message: "Flags were fetched again for the same Unleash Identifier",
+                                        preferredStyle: .alert)
+            } catch {
+                alert = AlertController(title: "Unleash refresh failed ❌",
+                                        message: error.localizedDescription,
+                                        preferredStyle: .alert)
+            }
+            alert.addAction(.init(title: "Ok", style: .default))
+            self.settings.tableView.reloadData()
+            navigationController?.topViewController?.present(alert, animated: true)
+        }
+    }
+}
+
 final class UnleashBrazeIntegrationSetting: UnleashVariantResetSetting {
     override var titleName: String? {
         "Braze Integration"

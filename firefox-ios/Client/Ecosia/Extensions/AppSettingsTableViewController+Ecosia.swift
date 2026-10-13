@@ -115,7 +115,8 @@ extension AppSettingsTableViewController {
             UnleashCustomSearchProviderSetting(settings: self),
             UnleashAIChatMVPSetting(settings: self),
             UnleashAIFreeSearchingSetting(settings: self),
-            UnleashIdentifierSetting(settings: self)
+            UnleashIdentifierSetting(settings: self),
+            UnleashRefreshSetting(settings: self)
         ]
 
         return SettingSection(title: NSAttributedString(string: "Debug - Unleash"), children: unleashSettings)
