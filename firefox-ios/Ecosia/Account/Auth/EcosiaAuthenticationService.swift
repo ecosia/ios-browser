@@ -41,10 +41,6 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// OAuth scopes granted with the current access token (from Auth0 token response).
     private(set) var grantedScope: String?
 
-    /// The current refresh token for the authenticated user.
-    /// This token is used to obtain new access tokens when they expire.
-    private(set) var refreshToken: String?
-
     /// The current SSO credentials for session transfer between web and native contexts.
     private(set) var ssoCredentials: SSOCredentials?
 
@@ -314,7 +310,6 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
         self.grantedScope = credentials?.scope
-        self.refreshToken = credentials?.refreshToken
         // Decode only when credentials (and therefore an ID token) are present.
         // Signed-out / no-account states keep the default `false` and never read a claim.
         self.hasOptedOutOfChatThreads = credentials?.hasOptedOutOfChatThreads ?? false
