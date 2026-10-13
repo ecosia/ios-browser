@@ -272,11 +272,15 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     }
 
     /**
-     Renews credentials if they are renewable and close to expiration.
-     
+     Forces a credential renewal with the stored refresh token, regardless of the access token's expiry.
+
+     Use it only when fresh tokens or claims are required (e.g. after a 401, or to re-read ID token claims
+     and scopes): with refresh token rotation, every renewal spends the current refresh token.
+     Does nothing if there is no refresh token to renew with.
+
      - Note: This method will update the credential properties with the new tokens upon successful renewal.
      */
-    public func renewCredentialsIfNeeded() async throws {
+    public func renewCredentials() async throws {
         guard auth0Provider.canRenewCredentials() else {
             EcosiaLogger.auth.info("No renewable credentials available")
             return

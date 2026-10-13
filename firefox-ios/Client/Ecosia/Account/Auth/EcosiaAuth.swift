@@ -264,7 +264,8 @@ final class EcosiaAuth {
         authService.hasOptedOutOfChatThreads
     }
 
-    func renewCredentialsIfNeeded() async throws {
-        try await authService.renewCredentialsIfNeeded()
+    /// Forces a credential renewal. See `EcosiaAuthenticationService.renewCredentials()`.
+    func renewCredentials() async throws {
+        try await authService.renewCredentials()
     }
 }

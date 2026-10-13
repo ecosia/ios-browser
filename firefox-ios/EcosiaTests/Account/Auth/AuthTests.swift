@@ -299,7 +299,7 @@ final class AuthTests: XCTestCase {
         mockProvider.hasStoredCredentials = true
         mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
 
-        try await auth.renewCredentialsIfNeeded()
+        try await auth.renewCredentials()
 
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertTrue(auth.hasOptedOutOfChatThreads)
@@ -570,7 +570,7 @@ final class AuthTests: XCTestCase {
 
     // MARK: - Renew Credentials Tests
 
-    func testRenewCredentialsIfNeeded_withRenewableCredentials_renewsAndUpdatesState() async {
+    func testRenewCredentials_withRenewableCredentials_renewsAndUpdatesState() async {
         // Arrange
         await setupLoggedInState()
         mockProvider.canRenewCredentialsResult = true
@@ -586,7 +586,7 @@ final class AuthTests: XCTestCase {
 
         // Act
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             XCTFail("Renew credentials should succeed, but failed with: \(error)")
         }
@@ -599,7 +599,7 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.accessToken, renewedCredentials.accessToken)
     }
 
-    func testRenewCredentialsIfNeeded_withNonRenewableCredentials_doesNotRenew() async {
+    func testRenewCredentials_withNonRenewableCredentials_doesNotRenew() async {
         // Arrange
         await setupLoggedInState()
         mockProvider.canRenewCredentialsResult = false
@@ -607,7 +607,7 @@ final class AuthTests: XCTestCase {
 
         // Act
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             XCTFail("Renew credentials should succeed, but failed with: \(error)")
         }
@@ -619,7 +619,7 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.idToken, originalIdToken)
     }
 
-    func testRenewCredentialsIfNeeded_withRenewFailure_maintainsCurrentState() async {
+    func testRenewCredentials_withRenewFailure_maintainsCurrentState() async {
         // Arrange
         await setupLoggedInState()
         mockProvider.canRenewCredentialsResult = true
@@ -629,7 +629,7 @@ final class AuthTests: XCTestCase {
 
         // Act
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             // This test expects renewal to fail, so we should catch the error
             // but the test should continue to verify the state is maintained
@@ -755,7 +755,7 @@ final class AuthTests: XCTestCase {
         )
         mockProvider.mockCredentials = renewedCredentials
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             XCTFail("Renew credentials should succeed, but failed with: \(error)")
         }

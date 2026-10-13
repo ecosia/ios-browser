@@ -182,7 +182,7 @@ public final class FileUploadService: Sendable {
     }
 
     private func validAccessToken() async throws -> String {
-        try await authenticationService.renewCredentialsIfNeeded()
+        try await authenticationService.renewCredentials()
         guard let token = authenticationService.accessToken, !token.isEmpty else {
             log(.error, "No valid access token after renewal")
             throw Error.authenticationRequired
