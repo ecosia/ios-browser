@@ -23,7 +23,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
                 credentialsManager: CredentialsManagerProtocol? = nil,
                 environment: Environment = .current) {
         self.settings = settings
-        self.credentialsManager = credentialsManager ?? DefaultCredentialsManager(auth0SettingsProvider: settings)
+        self.credentialsManager = credentialsManager ?? EcosiaAuthenticationService.defaultCredentialsManager
         self.environment = environment
     }
 
