@@ -9,6 +9,10 @@ struct BrazeIntegrationExperiment {
     private init() {}
 
     static var isEnabled: Bool {
-        Unleash.isEnabled(.brazeCoreMarkets)
+        guard Unleash.isEnabled(.brazeCoreMarkets) else { return false }
+        // Users in the holdout group are withheld from Braze.
+        guard Unleash.getVariant(.brazeCoreMarkets).name != "st_braze_features_holdout" else { return false }
+
+        return true
     }
 }

@@ -25,6 +25,18 @@ final class BrazeIntegrationExperimentTests: XCTestCase {
         XCTAssertTrue(BrazeIntegrationExperiment.isEnabled)
     }
 
+    func testIsEnabled_forTreatmentVariant_returnsTrue() {
+        setCoreMarketsFlag(enabled: true, variant: "st_braze_features_treatment")
+
+        XCTAssertTrue(BrazeIntegrationExperiment.isEnabled)
+    }
+
+    func testIsEnabled_forHoldoutVariant_returnsFalse() {
+        setCoreMarketsFlag(enabled: true, variant: "st_braze_features_holdout")
+
+        XCTAssertFalse(BrazeIntegrationExperiment.isEnabled)
+    }
+
     func testIsEnabled_whenCoreMarketsFlagIsOff_returnsFalse() {
         setCoreMarketsFlag(enabled: false)
 
@@ -39,12 +51,12 @@ final class BrazeIntegrationExperimentTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func setCoreMarketsFlag(enabled: Bool) {
+    private func setCoreMarketsFlag(enabled: Bool, variant: String = "control") {
         var model = Unleash.Model()
         model.toggles.insert(
             Unleash.Toggle(name: Unleash.Toggle.Name.brazeCoreMarkets.rawValue,
                            enabled: enabled,
-                           variant: .init(name: "control", enabled: true, payload: nil))
+                           variant: .init(name: variant, enabled: true, payload: nil))
         )
         Unleash.model = model
     }
