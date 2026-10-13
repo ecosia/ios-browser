@@ -495,6 +495,21 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.accessToken, expectedCredentials.accessToken)
     }
 
+    func testRetrieveStoredCredentials_withValidCredentials_doesNotForceRenewal() async {
+        // Arrange
+        mockProvider.hasStoredCredentials = true
+
+        await waitForInitCredentialRetrieval()
+        mockProvider.renewCredentialsCallCount = 0
+
+        // Act
+        await auth.retrieveStoredCredentials()
+
+        // Assert
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertEqual(mockProvider.renewCredentialsCallCount, 0)
+    }
+
     func testRetrieveStoredCredentials_withFailure_maintainsLoggedOutState() async {
         // Arrange
         mockProvider.shouldFailRetrieveCredentials = true

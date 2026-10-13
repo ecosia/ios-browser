@@ -260,13 +260,10 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             }
             EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
+            // No forced renewal here: `retrieveCredentials()` already renews expired credentials, and with
+            // refresh token rotation every extra renewal spends a refresh token. Callers that need fresh
+            // claims or scopes (e.g. file upload) force a renewal themselves.
             await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
-
-            do {
-                try await renewCredentialsIfNeeded()
-            } catch {
-                EcosiaLogger.auth.error("Failed to refresh stored credentials after retrieval: \(error)")
-            }
         } catch {
             EcosiaLogger.auth.error("Failed to retrieve credentials: \(error)")
             // Even if retrieval fails, dispatch state loaded as false
