@@ -181,10 +181,12 @@ public final class FileUploadService: Sendable {
         log(.info, "EAIST refresh succeeded status=\(http.statusCode)")
     }
 
+    /// Relies on the upload entry point having just forced a credential renewal, which refreshes the
+    /// claims and adds the conversation scopes to older sessions. Renewing again here would only spend
+    /// another refresh token.
     private func validAccessToken() async throws -> String {
-        try await authenticationService.renewCredentials()
         guard let token = authenticationService.accessToken, !token.isEmpty else {
-            log(.error, "No valid access token after renewal")
+            log(.error, "No valid access token")
             throw Error.authenticationRequired
         }
         guard authenticationService.hasConversationScopes else {
