@@ -806,6 +806,28 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         }
     }
 
+    func testAddBrazeABTestContext_forTreatmentVariant_isAppended() {
+        let context = resumeEventABTestContext(brazeVariant: "st_braze_features_treatment")
+
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
+                       ["braze-core-markets": "st_braze_features_treatment"])
+    }
+
+    func testAddBrazeABTestContext_forHoldoutVariant_isAppended() {
+        let context = resumeEventABTestContext(brazeVariant: "st_braze_features_holdout")
+
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
+                       ["braze-core-markets": "st_braze_features_holdout"])
+    }
+
+    func testAddBrazeABTestContext_forControlVariant_isNotAppended() {
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: "control"))
+    }
+
+    func testAddBrazeABTestContext_whenFlagCannotBeEvaluated_isNotAppended() {
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: nil))
+    }
+
     func testAddUserSeedCountContextToAllEvents() {
         // Arrange
         let analyticsSpy = makeAnalyticsSpyContextSUT()
@@ -1063,6 +1085,31 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
 
 // MARK: - Helper SUTs
 extension AnalyticsSpyTests {
+
+    private func resumeEventABTestContext(brazeVariant: String?) -> SelfDescribingJson? {
+        var model = Unleash.Model()
+        if let brazeVariant {
+            model.toggles.insert(
+                Unleash.Toggle(name: Unleash.Toggle.Name.brazeCoreMarkets.rawValue,
+                               enabled: true,
+                               variant: .init(name: brazeVariant, enabled: true, payload: nil))
+            )
+        }
+        let previousModel = Unleash.model
+        Unleash.model = model
+        addTeardownBlock { Unleash.model = previousModel }
+
+        let analyticsSpy = makeAnalyticsSpyContextSUT()
+        let expectation = self.expectation(description: "Event tracked")
+        let event = Structured(category: "", action: Analytics.Action.Activity.resume.rawValue)
+
+        analyticsSpy.appendActivityContextIfNeeded(.resume, event) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1.0, handler: nil)
+
+        return event.entities.first { $0.schema.contains("abtest_context") }
+    }
 
     func makeAnalyticsSpyContextSUT(status: UNAuthorizationStatus = .notDetermined) -> AnalyticsSpy {
         let mockSettings = MockUNNotificationSettings(authorizationStatus: status)

@@ -300,8 +300,12 @@ final class UnleashBrazeIntegrationSetting: UnleashVariantResetSetting {
         "Braze Integration"
     }
 
+    override var variant: Unleash.Variant? {
+        Unleash.getVariant(.brazeCoreMarkets)
+    }
+
     override var unleashEnabled: Bool? {
-        Unleash.isEnabled(.brazeIntegration)
+        Unleash.isEnabled(.brazeCoreMarkets)
     }
 }
 

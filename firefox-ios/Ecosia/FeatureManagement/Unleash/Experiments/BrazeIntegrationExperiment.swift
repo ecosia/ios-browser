@@ -9,6 +9,6 @@ struct BrazeIntegrationExperiment {
     private init() {}
 
     static var isEnabled: Bool {
-        Unleash.isEnabled(.brazeIntegration)
+        Unleash.isEnabled(.brazeCoreMarkets)
     }
 }
