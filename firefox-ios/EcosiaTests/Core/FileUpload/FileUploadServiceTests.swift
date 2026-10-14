@@ -24,6 +24,9 @@ final class FileUploadServiceTests: XCTestCase {
         } catch FileUploadService.Error.unexpectedResponse(let response) {
             XCTAssertEqual(response.step, .presign)
             XCTAssertEqual(response.statusCode, 401)
+            // A rejected token is renewed once and the presign retried once: refresh, presign, presign.
+            XCTAssertEqual(auth0Provider.renewCredentialsCallCount, 1)
+            XCTAssertEqual(client.requests.count, 3)
         }
     }
 
@@ -109,9 +112,9 @@ final class FileUploadServiceTests: XCTestCase {
         }
     }
 
-    func testUpload_doesNotRenewCredentials() async throws {
+    func testUpload_withNonAuthFailure_doesNotRenewCredentials() async throws {
         let service = await makeSignedInService(scope: Self.conversationScope)
-        respond(refreshStatus: 204, presignStatus: 401)
+        respond(refreshStatus: 204, presignStatus: 403)
 
         do {
             _ = try await service.uploadFile(Self.file)

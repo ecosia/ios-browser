@@ -92,8 +92,19 @@ public final class FileUploadService: Sendable {
                 accessToken,
                 grantedScope: authenticationService.grantedScope
             )
-            let fileId = try await withUploadTimeout(timeout) {
-                try await self.uploadSingleFile(file, accessToken: accessToken, authSessionCookie: authSessionCookie)
+            let fileId: String
+            do {
+                fileId = try await withUploadTimeout(timeout) {
+                    try await self.uploadSingleFile(file, accessToken: accessToken, authSessionCookie: authSessionCookie)
+                }
+            } catch Error.unexpectedResponse(let response) where response.step == .presign && response.statusCode == 401 {
+                // The token can expire while the picker is open: renew once and retry, like `AccountsService` does.
+                log(.info, "Presign rejected the access token, renewing credentials and retrying once")
+                try await authenticationService.renewCredentials()
+                let renewedAccessToken = try await validAccessToken()
+                fileId = try await withUploadTimeout(timeout) {
+                    try await self.uploadSingleFile(file, accessToken: renewedAccessToken, authSessionCookie: authSessionCookie)
+                }
             }
             log(.info, "Upload succeeded fileId=\(fileId)")
             return fileId
@@ -183,7 +194,7 @@ public final class FileUploadService: Sendable {
 
     /// Relies on the upload entry point having just forced a credential renewal, which refreshes the
     /// claims and adds the conversation scopes to older sessions. Renewing again here would only spend
-    /// another refresh token.
+    /// another refresh token; `uploadFile` renews only if the presign request rejects the token.
     private func validAccessToken() async throws -> String {
         guard let token = authenticationService.accessToken, !token.isEmpty else {
             log(.error, "No valid access token")
