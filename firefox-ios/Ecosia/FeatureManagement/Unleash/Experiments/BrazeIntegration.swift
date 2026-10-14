@@ -20,6 +20,12 @@ struct BrazeIntegration {
     }
 
     static var isEnabled: Bool {
-        return [BrazeCoreMarketVariant.holdout, BrazeCoreMarketVariant.treatment].contains(state)
+        guard Unleash.isEnabled(.brazeCoreMarkets) else { return false }
+
+        return [BrazeCoreMarketVariant.control, BrazeCoreMarketVariant.treatment].contains(state)
+    }
+
+    static var isReportedToAnalytics: Bool {
+        return [BrazeCoreMarketVariant.treatment, BrazeCoreMarketVariant.holdout].contains(state)
     }
 }

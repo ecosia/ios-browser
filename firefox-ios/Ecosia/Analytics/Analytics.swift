@@ -638,15 +638,15 @@ extension Analytics {
     func appendActivityContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
-            addABTestContexts(to: event, toggles: toggleList())
+            addABTestContexts(to: event, toggles: reportedABTestToggles())
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }
     }
 
-    private func toggleList() -> [Unleash.Toggle.Name] {
+    private func reportedABTestToggles() -> [Unleash.Toggle.Name] {
         var toggles: [Unleash.Toggle.Name] = []
-        if BrazeIntegration.isEnabled {
+        if BrazeIntegration.isReportedToAnalytics {
             toggles.append(.brazeCoreMarkets)
         }
         return toggles

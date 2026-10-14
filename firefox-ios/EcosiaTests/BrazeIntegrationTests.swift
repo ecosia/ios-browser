@@ -19,26 +19,34 @@ final class BrazeIntegrationTests: XCTestCase {
         super.tearDown()
     }
 
-    func testIsEnabled_whenCoreMarketsFlagIsOn_returnsTrue() {
-        setCoreMarketsFlag(enabled: true)
+    // MARK: - isEnabled
+
+    func testIsEnabled_forControlVariant_returnsTrue() {
+        setCoreMarketsFlag(variant: BrazeCoreMarketVariant.control.rawValue)
 
         XCTAssertTrue(BrazeIntegration.isEnabled)
     }
 
     func testIsEnabled_forTreatmentVariant_returnsTrue() {
-        setCoreMarketsFlag(enabled: true, variant: "st_braze_features_treatment")
+        setCoreMarketsFlag(variant: BrazeCoreMarketVariant.treatment.rawValue)
 
         XCTAssertTrue(BrazeIntegration.isEnabled)
     }
 
     func testIsEnabled_forHoldoutVariant_returnsFalse() {
-        setCoreMarketsFlag(enabled: true, variant: "st_braze_features_holdout")
+        setCoreMarketsFlag(variant: BrazeCoreMarketVariant.holdout.rawValue)
+
+        XCTAssertFalse(BrazeIntegration.isEnabled)
+    }
+
+    func testIsEnabled_forUnknownVariant_returnsFalse() {
+        setCoreMarketsFlag(variant: "unknown-variant")
 
         XCTAssertFalse(BrazeIntegration.isEnabled)
     }
 
     func testIsEnabled_whenCoreMarketsFlagIsOff_returnsFalse() {
-        setCoreMarketsFlag(enabled: false)
+        setCoreMarketsFlag(enabled: false, variant: BrazeCoreMarketVariant.treatment.rawValue)
 
         XCTAssertFalse(BrazeIntegration.isEnabled)
     }
@@ -49,9 +57,35 @@ final class BrazeIntegrationTests: XCTestCase {
         XCTAssertFalse(BrazeIntegration.isEnabled)
     }
 
+    // MARK: - isReportedToAnalytics
+
+    func testIsReportedToAnalytics_forTreatmentVariant_returnsTrue() {
+        setCoreMarketsFlag(variant: BrazeCoreMarketVariant.treatment.rawValue)
+
+        XCTAssertTrue(BrazeIntegration.isReportedToAnalytics)
+    }
+
+    func testIsReportedToAnalytics_forHoldoutVariant_returnsTrue() {
+        setCoreMarketsFlag(variant: BrazeCoreMarketVariant.holdout.rawValue)
+
+        XCTAssertTrue(BrazeIntegration.isReportedToAnalytics)
+    }
+
+    func testIsReportedToAnalytics_forControlVariant_returnsFalse() {
+        setCoreMarketsFlag(variant: BrazeCoreMarketVariant.control.rawValue)
+
+        XCTAssertFalse(BrazeIntegration.isReportedToAnalytics)
+    }
+
+    func testIsReportedToAnalytics_whenFlagCannotBeEvaluated_returnsFalse() {
+        Unleash.model = Unleash.Model()
+
+        XCTAssertFalse(BrazeIntegration.isReportedToAnalytics)
+    }
+
     // MARK: - Helpers
 
-    private func setCoreMarketsFlag(enabled: Bool, variant: String = "control") {
+    private func setCoreMarketsFlag(enabled: Bool = true, variant: String) {
         var model = Unleash.Model()
         model.toggles.insert(
             Unleash.Toggle(name: Unleash.Toggle.Name.brazeCoreMarkets.rawValue,

@@ -807,21 +807,27 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     }
 
     func testAddBrazeABTestContext_forTreatmentVariant_isAppended() {
-        let context = resumeEventABTestContext(brazeVariant: "st_braze_features_treatment")
+        let variant = BrazeCoreMarketVariant.treatment.rawValue
 
-        XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
-                       ["braze-core-markets": "st_braze_features_treatment"])
+        let context = resumeEventABTestContext(brazeVariant: variant)
+
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String], ["braze-core-markets": variant])
     }
 
     func testAddBrazeABTestContext_forHoldoutVariant_isAppended() {
-        let context = resumeEventABTestContext(brazeVariant: "st_braze_features_holdout")
+        let variant = BrazeCoreMarketVariant.holdout.rawValue
 
-        XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
-                       ["braze-core-markets": "st_braze_features_holdout"])
+        let context = resumeEventABTestContext(brazeVariant: variant)
+
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String], ["braze-core-markets": variant])
     }
 
     func testAddBrazeABTestContext_forControlVariant_isNotAppended() {
-        XCTAssertNil(resumeEventABTestContext(brazeVariant: "control"))
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.control.rawValue))
+    }
+
+    func testAddBrazeABTestContext_forUnknownVariant_isNotAppended() {
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: "unknown-variant"))
     }
 
     func testAddBrazeABTestContext_whenFlagCannotBeEvaluated_isNotAppended() {
