@@ -62,10 +62,10 @@ open class Analytics {
     }
 
     private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
-        let variant = Unleash.getVariant(toggle).name
-        guard variant != "disabled" else { return nil }
+        let variant = Unleash.getVariant(toggle)
+        guard variant.name != "disabled" else { return nil }
 
-        let variantContext: [String: String] = [toggle.rawValue: variant]
+        let variantContext: [String: String] = [toggle.rawValue: variant.payload?.value ?? variant.name]
         let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
         return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
     }
