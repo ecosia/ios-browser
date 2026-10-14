@@ -87,30 +87,35 @@ public final class FileUploadService: Sendable {
         do {
             try await refreshEAIST()
             let authSessionCookie = await FileUploadAuthCookieSync.syncAuthSessionCookieToSharedStorage()
-            let accessToken = try await validAccessToken()
-            FileUploadAuthDiagnostics.logAccessTokenScopes(
-                accessToken,
-                grantedScope: authenticationService.grantedScope
-            )
             let fileId: String
             do {
-                fileId = try await withUploadTimeout(timeout) {
-                    try await self.uploadSingleFile(file, accessToken: accessToken, authSessionCookie: authSessionCookie)
-                }
+                fileId = try await uploadWithCurrentAccessToken(file, authSessionCookie: authSessionCookie)
             } catch Error.unexpectedResponse(let response) where response.step == .presign && response.statusCode == 401 {
                 // The token can expire while the picker is open: renew once and retry, like `AccountsService` does.
                 log(.info, "Presign rejected the access token, renewing credentials and retrying once")
                 try await authenticationService.renewCredentials()
-                let renewedAccessToken = try await validAccessToken()
-                fileId = try await withUploadTimeout(timeout) {
-                    try await self.uploadSingleFile(file, accessToken: renewedAccessToken, authSessionCookie: authSessionCookie)
-                }
+                fileId = try await uploadWithCurrentAccessToken(file, authSessionCookie: authSessionCookie)
             }
             log(.info, "Upload succeeded fileId=\(fileId)")
             return fileId
         } catch {
             log(.error, "Upload failed: \(error.localizedDescription)")
             throw error
+        }
+    }
+
+    /// One upload attempt with the access token currently held by the authentication service.
+    private func uploadWithCurrentAccessToken(
+        _ file: FileUploadInput,
+        authSessionCookie: HTTPCookie?
+    ) async throws -> String {
+        let accessToken = try await validAccessToken()
+        FileUploadAuthDiagnostics.logAccessTokenScopes(
+            accessToken,
+            grantedScope: authenticationService.grantedScope
+        )
+        return try await withUploadTimeout(timeout) {
+            try await self.uploadSingleFile(file, accessToken: accessToken, authSessionCookie: authSessionCookie)
         }
     }
 
