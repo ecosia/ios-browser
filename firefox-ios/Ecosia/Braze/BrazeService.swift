@@ -35,7 +35,7 @@ public final class BrazeService: NSObject {
     }
 
     public func initialize() {
-        guard BrazeIntegrationExperiment.isEnabled else { return }
+        guard BrazeIntegration.isEnabled else { return }
 
         do {
             try initBraze(userId: userId)

@@ -61,16 +61,6 @@ open class Analytics {
         Analytics.shared.privateTracker = makePrivateTracker()
     }
 
-    private static func getTestContext(from toggle: Unleash.Toggle.Name, excludedVariants: Set<String>) -> SelfDescribingJson? {
-        let variant = Unleash.getVariant(toggle).name
-        guard variant != "disabled" else { return nil }
-        guard !excludedVariants.contains(variant) else { return nil }
-
-        let variantContext: [String: String] = [toggle.rawValue: variant]
-        let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
-        return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
-    }
-
     public func reset() {
         User.shared.analyticsId = .init()
         tracker = Self.makeTracker()
@@ -639,16 +629,34 @@ extension Analytics {
     func appendActivityContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
-            addBrazeABTestContexts(to: event)
+            addABTestContexts(to: event, toggles: toggleList())
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }
     }
+    
+    private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
+        let variant = Unleash.getVariant(toggle).name
+        guard variant != "disabled" else { return nil }
 
-    private func addBrazeABTestContexts(to event: Structured) {
-        // `control` is the baseline group, only `treatment` and `holdout` are reported.
-        if let context = Self.getTestContext(from: .brazeCoreMarkets, excludedVariants: ["control"]) {
-            event.entities.append(context)
+        let variantContext: [String: String] = [toggle.rawValue: variant]
+        let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
+        return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
+    }
+
+    private func toggleList() -> [Unleash.Toggle.Name] {
+        var toggles: [Unleash.Toggle.Name] = []
+        if BrazeIntegration.isEnabled {
+            toggles.append(.brazeCoreMarkets)
+        }
+        return toggles
+    }
+
+    private func addABTestContexts(to event: Structured, toggles: [Unleash.Toggle.Name]) {
+        toggles.forEach { toggle in
+            if let context = Self.getTestContext(from: toggle) {
+                event.entities.append(context)
+            }
         }
     }
 

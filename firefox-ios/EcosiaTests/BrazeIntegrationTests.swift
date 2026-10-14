@@ -5,7 +5,7 @@
 import XCTest
 @testable import Ecosia
 
-final class BrazeIntegrationExperimentTests: XCTestCase {
+final class BrazeIntegrationTests: XCTestCase {
 
     private var previousUnleashModel = Unleash.Model()
 
