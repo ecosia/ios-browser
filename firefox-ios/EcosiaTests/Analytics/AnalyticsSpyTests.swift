@@ -806,6 +806,43 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         }
     }
 
+    func testAddBrazeABTestContext_forTreatmentVariant_reportsThePayloadValue() {
+        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.treatment.rawValue,
+                                               payloadValue: "st_braze_features_treatment")
+
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
+                       ["braze-core-markets": "st_braze_features_treatment"])
+    }
+
+    func testAddBrazeABTestContext_forHoldoutVariant_reportsThePayloadValue() {
+        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.holdout.rawValue,
+                                               payloadValue: "st_braze_features_holdout")
+
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
+                       ["braze-core-markets": "st_braze_features_holdout"])
+    }
+
+    func testAddBrazeABTestContext_forVariantWithoutPayload_reportsTheVariantName() {
+        let variant = BrazeCoreMarketVariant.treatment.rawValue
+
+        let context = resumeEventABTestContext(brazeVariant: variant, payloadValue: nil)
+
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String], ["braze-core-markets": variant])
+    }
+
+    func testAddBrazeABTestContext_forControlVariant_isNotAppended() {
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.control.rawValue,
+                                              payloadValue: "control"))
+    }
+
+    func testAddBrazeABTestContext_forUnknownVariant_isNotAppended() {
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: "unknown-variant", payloadValue: nil))
+    }
+
+    func testAddBrazeABTestContext_whenFlagCannotBeEvaluated_isNotAppended() {
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: nil, payloadValue: nil))
+    }
+
     func testAddUserSeedCountContextToAllEvents() {
         // Arrange
         let analyticsSpy = makeAnalyticsSpyContextSUT()
@@ -1063,6 +1100,32 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
 
 // MARK: - Helper SUTs
 extension AnalyticsSpyTests {
+
+    private func resumeEventABTestContext(brazeVariant: String?, payloadValue: String?) -> SelfDescribingJson? {
+        var model = Unleash.Model()
+        if let brazeVariant {
+            let payload = payloadValue.map { Unleash.Payload(type: "string", value: $0) }
+            model.toggles.insert(
+                Unleash.Toggle(name: Unleash.Toggle.Name.brazeCoreMarkets.rawValue,
+                               enabled: true,
+                               variant: .init(name: brazeVariant, enabled: true, payload: payload))
+            )
+        }
+        let previousModel = Unleash.model
+        Unleash.model = model
+        addTeardownBlock { Unleash.model = previousModel }
+
+        let analyticsSpy = makeAnalyticsSpyContextSUT()
+        let expectation = self.expectation(description: "Event tracked")
+        let event = Structured(category: "", action: Analytics.Action.Activity.resume.rawValue)
+
+        analyticsSpy.appendActivityContextIfNeeded(.resume, event) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1.0, handler: nil)
+
+        return event.entities.first { $0.schema.contains("abtest_context") }
+    }
 
     func makeAnalyticsSpyContextSUT(status: UNAuthorizationStatus = .notDetermined) -> AnalyticsSpy {
         let mockSettings = MockUNNotificationSettings(authorizationStatus: status)

@@ -62,10 +62,10 @@ open class Analytics {
     }
 
     private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
-        let variant = Unleash.getVariant(toggle).name
-        guard variant != "disabled" else { return nil }
+        let variant = Unleash.getVariant(toggle)
+        guard variant.name != "disabled" else { return nil }
 
-        let variantContext: [String: String] = [toggle.rawValue: variant]
+        let variantContext: [String: String] = [toggle.rawValue: variant.payload?.value ?? variant.name]
         let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
         return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
     }
@@ -638,10 +638,18 @@ extension Analytics {
     func appendActivityContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
-            addABTestContexts(to: event, toggles: [.brazeIntegration])
+            addABTestContexts(to: event, toggles: reportedABTestToggles())
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }
+    }
+
+    private func reportedABTestToggles() -> [Unleash.Toggle.Name] {
+        var toggles: [Unleash.Toggle.Name] = []
+        if BrazeIntegration.isReportedToAnalytics {
+            toggles.append(.brazeCoreMarkets)
+        }
+        return toggles
     }
 
     private func addABTestContexts(to event: Structured, toggles: [Unleash.Toggle.Name]) {

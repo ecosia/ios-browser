@@ -45,6 +45,24 @@ final class UnleashTests: XCTestCase {
         XCTAssertNotEqual(model.id, resetModel.id)
     }
 
+    func testStartWithoutForce_whenNoRuleAsksForRefresh_keepsCachedToggles() async throws {
+        Unleash.model = Self.makeModelWithConfigTestToggle()
+
+        let model = try await Unleash.start(client: MockOKHTTPClient(), env: .staging, appVersion: Self.appVersion)
+
+        XCTAssertTrue(model[.configTest]?.enabled == true)
+    }
+
+    func testStartWithForce_whenNoRuleAsksForRefresh_refreshesTogglesAndKeepsIdentifier() async throws {
+        let cachedModel = Self.makeModelWithConfigTestToggle()
+        Unleash.model = cachedModel
+
+        let model = try await Unleash.start(client: MockOKHTTPClient(), env: .staging, appVersion: Self.appVersion, force: true)
+
+        XCTAssertNil(model[.configTest])
+        XCTAssertEqual(model.id, cachedModel.id)
+    }
+
     func testMakeURL() {
         let base = URL(string: "https://ecosia.org")!
         let context = ["foo": "bar"]
@@ -198,6 +216,17 @@ final class UnleashTests: XCTestCase {
         XCTAssertEqual(parameters["country"], "Unknown")
 
         Unleash.localeSource = originalLocaleSource
+    }
+}
+
+extension UnleashTests {
+
+    static func makeModelWithConfigTestToggle() -> Unleash.Model {
+        var model = Unleash.Model()
+        model.toggles.insert(Unleash.Toggle(name: Unleash.Toggle.Name.configTest.rawValue,
+                                            enabled: true,
+                                            variant: .init(name: "control", enabled: true, payload: nil)))
+        return model
     }
 }
 
