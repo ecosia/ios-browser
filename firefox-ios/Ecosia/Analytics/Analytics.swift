@@ -634,7 +634,7 @@ extension Analytics {
             addUserStateContext(to: event, completion: completion)
         }
     }
-    
+
     private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
         let variant = Unleash.getVariant(toggle).name
         guard variant != "disabled" else { return nil }

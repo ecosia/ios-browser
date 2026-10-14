@@ -4,25 +4,22 @@
 
 import Foundation
 
-enum BrazeCoreMarketState: String {
-    case disabled = "disabled"
-    case holdout = "holdout"
-    case treatment = "treatment"
-    case control = "control"
+enum BrazeCoreMarketVariant: String {
+    case holdout
+    case treatment
+    case control
+    case disabled
 }
 
 struct BrazeIntegration {
 
     private init() {}
 
-    static var state: BrazeCoreMarketState {
-        guard let state = BrazeCoreMarketState(rawValue: Unleash.getVariant(.brazeCoreMarkets).name) else {
-            return .disabled
-        }
-        return state
+    private static var state: BrazeCoreMarketVariant {
+        return BrazeCoreMarketVariant(rawValue: Unleash.getVariant(.brazeCoreMarkets).name) ?? .disabled
     }
-    
+
     static var isEnabled: Bool {
-        return [BrazeCoreMarketState.holdout, BrazeCoreMarketState.treatment].contains(state)
+        return [BrazeCoreMarketVariant.holdout, BrazeCoreMarketVariant.treatment].contains(state)
     }
 }
