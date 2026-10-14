@@ -61,6 +61,15 @@ open class Analytics {
         Analytics.shared.privateTracker = makePrivateTracker()
     }
 
+    private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
+        let variant = Unleash.getVariant(toggle).name
+        guard variant != "disabled" else { return nil }
+
+        let variantContext: [String: String] = [toggle.rawValue: variant]
+        let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
+        return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
+    }
+
     public func reset() {
         User.shared.analyticsId = .init()
         tracker = Self.makeTracker()
@@ -633,15 +642,6 @@ extension Analytics {
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }
-    }
-
-    private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
-        let variant = Unleash.getVariant(toggle).name
-        guard variant != "disabled" else { return nil }
-
-        let variantContext: [String: String] = [toggle.rawValue: variant]
-        let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
-        return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
     }
 
     private func toggleList() -> [Unleash.Toggle.Name] {

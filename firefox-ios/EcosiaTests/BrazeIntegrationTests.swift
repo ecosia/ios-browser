@@ -22,31 +22,31 @@ final class BrazeIntegrationTests: XCTestCase {
     func testIsEnabled_whenCoreMarketsFlagIsOn_returnsTrue() {
         setCoreMarketsFlag(enabled: true)
 
-        XCTAssertTrue(BrazeIntegrationExperiment.isEnabled)
+        XCTAssertTrue(BrazeIntegration.isEnabled)
     }
 
     func testIsEnabled_forTreatmentVariant_returnsTrue() {
         setCoreMarketsFlag(enabled: true, variant: "st_braze_features_treatment")
 
-        XCTAssertTrue(BrazeIntegrationExperiment.isEnabled)
+        XCTAssertTrue(BrazeIntegration.isEnabled)
     }
 
     func testIsEnabled_forHoldoutVariant_returnsFalse() {
         setCoreMarketsFlag(enabled: true, variant: "st_braze_features_holdout")
 
-        XCTAssertFalse(BrazeIntegrationExperiment.isEnabled)
+        XCTAssertFalse(BrazeIntegration.isEnabled)
     }
 
     func testIsEnabled_whenCoreMarketsFlagIsOff_returnsFalse() {
         setCoreMarketsFlag(enabled: false)
 
-        XCTAssertFalse(BrazeIntegrationExperiment.isEnabled)
+        XCTAssertFalse(BrazeIntegration.isEnabled)
     }
 
     func testIsEnabled_whenFlagCannotBeEvaluated_returnsFalse() {
         Unleash.model = Unleash.Model()
 
-        XCTAssertFalse(BrazeIntegrationExperiment.isEnabled)
+        XCTAssertFalse(BrazeIntegration.isEnabled)
     }
 
     // MARK: - Helpers
