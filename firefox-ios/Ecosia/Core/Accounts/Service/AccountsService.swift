@@ -33,7 +33,7 @@ public final class AccountsService: AccountsServiceProtocol {
         } catch Error.unauthorized {
             EcosiaLogger.auth.info("Access token expired, attempting to renew credentials")
             do {
-                try await authenticationService.renewCredentialsIfNeeded()
+                try await authenticationService.renewCredentials()
             } catch {
                 EcosiaLogger.auth.error("Failed to renew credentials: \(error)")
                 throw Error.authenticationRequired

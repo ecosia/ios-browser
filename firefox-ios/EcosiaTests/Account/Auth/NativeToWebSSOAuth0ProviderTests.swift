@@ -134,35 +134,5 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         XCTAssertEqual(provider.settings.domain, "custom.auth0.com")
         XCTAssertEqual(provider.settings.cookieDomain, "custom.ecosia.org")
     }
-
-    // MARK: - Error Handling Tests
-
-    func testNativeToWebSSOError_equatableConformance() {
-        // Arrange
-        let error1 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.invalidResponse
-        let error2 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.invalidResponse
-        let error3 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.missingConfiguration("test")
-        let error4 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.missingConfiguration("test")
-        let error5 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.missingConfiguration("different")
-
-        // Act & Assert
-        XCTAssertEqual(error1, error2)
-        XCTAssertEqual(error3, error4)
-        XCTAssertNotEqual(error3, error5)
-        XCTAssertNotEqual(error1, error3)
-    }
-
-    // MARK: - Helper Methods
-
-    private func createTestCredentials() -> Credentials {
-        return Credentials(
-            accessToken: "test-access-token",
-            tokenType: "Bearer",
-            idToken: "test-id-token",
-            refreshToken: "test-refresh-token",
-            expiresIn: Date().addingTimeInterval(3600),
-            scope: "openid profile email offline_access"
-        )
-    }
 }
 // swiftlint:enable implicitly_unwrapped_optional

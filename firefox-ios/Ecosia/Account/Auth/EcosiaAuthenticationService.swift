@@ -260,13 +260,10 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             }
             EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
+            // No forced renewal here: `retrieveCredentials()` already renews expired credentials, and with
+            // refresh token rotation every extra renewal spends a refresh token. Callers that need fresh
+            // claims or scopes (e.g. file upload) force a renewal themselves.
             await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
-
-            do {
-                try await renewCredentialsIfNeeded()
-            } catch {
-                EcosiaLogger.auth.error("Failed to refresh stored credentials after retrieval: \(error)")
-            }
         } catch {
             EcosiaLogger.auth.error("Failed to retrieve credentials: \(error)")
             // Even if retrieval fails, dispatch state loaded as false
@@ -275,11 +272,15 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     }
 
     /**
-     Renews credentials if they are renewable and close to expiration.
-     
+     Forces a credential renewal with the stored refresh token, regardless of the access token's expiry.
+
+     Use it only when fresh tokens or claims are required (e.g. after a 401, or to re-read ID token claims
+     and scopes): with refresh token rotation, every renewal spends the current refresh token.
+     Does nothing if there is no refresh token to renew with.
+
      - Note: This method will update the credential properties with the new tokens upon successful renewal.
      */
-    public func renewCredentialsIfNeeded() async throws {
+    public func renewCredentials() async throws {
         guard auth0Provider.canRenewCredentials() else {
             EcosiaLogger.auth.info("No renewable credentials available")
             return

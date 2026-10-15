@@ -213,7 +213,7 @@ extension BrowserViewController: NTPSearchBarDelegate {
 
         Task { @MainActor in
             if ecosiaAuth?.isLoggedIn == true {
-                try? await ecosiaAuth?.renewCredentialsIfNeeded()
+                try? await ecosiaAuth?.renewCredentials()
             }
             guard !presentChatHistoryOptOutUploadErrorIfBlocked() else { return }
             presentOmniboxUploadForCurrentProvider()

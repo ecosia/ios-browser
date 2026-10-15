@@ -103,7 +103,7 @@ final class AuthWorkflowTests: XCTestCase {
         mockProvider.mockCredentials = renewedCredentials
         mockCredentialsManager.storedCredentials = renewedCredentials
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             XCTFail("Renew credentials should succeed, but failed with: \(error)")
         }
@@ -216,7 +216,7 @@ final class AuthWorkflowTests: XCTestCase {
 
         // Act - Attempt to renew (fails)
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             // Expected to potentially fail, but we don't want to fail the test
         }
@@ -323,7 +323,7 @@ final class AuthWorkflowTests: XCTestCase {
             }
             group.addTask {
                 do {
-                    try await auth.renewCredentialsIfNeeded()
+                    try await auth.renewCredentials()
                 } catch {
                     // Expected to potentially fail during concurrent operations
                 }
@@ -363,7 +363,7 @@ final class AuthWorkflowTests: XCTestCase {
 
         // Act - Attempt to renew without being logged in
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             // Expected to potentially fail, but we don't want to fail the test
         }

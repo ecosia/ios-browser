@@ -14,11 +14,6 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
     public let credentialsManager: CredentialsManagerProtocol
     private let environment: Environment
 
-    enum NativeToWebSSOError: Error, Equatable {
-        case invalidResponse
-        case missingConfiguration(String)
-    }
-
     public init(settings: Auth0SettingsProviderProtocol = DefaultAuth0SettingsProvider(),
                 credentialsManager: CredentialsManagerProtocol? = nil,
                 environment: Environment = .current) {
@@ -85,23 +80,5 @@ extension NativeToWebSSOAuth0Provider {
     /// - Throws: An error if the retrieval fails.
     public func getSSOCredentials() async throws -> SSOCredentials {
         try await credentialsManager.ssoCredentials()
-    }
-
-    /// Retrieves configuration values from the Auth0.plist file.
-    ///
-    /// - Parameter bundle: The bundle containing the Auth0.plist file. Defaults to `.ecosia`.
-    /// - Returns: A tuple containing the `clientId` and `domain` if available, otherwise `nil`.
-    func configurationValues(bundle: Bundle = .ecosia) -> (clientId: String, domain: String)? {
-        guard let path = bundle.path(forResource: "Auth0", ofType: "plist"),
-              let values = NSDictionary(contentsOfFile: path) as? [String: Any] else {
-            EcosiaLogger.auth.error("Missing Auth0.plist file with 'ClientId' and 'Domain' entries in main bundle!")
-            return nil
-        }
-
-        guard let clientId = values["ClientId"] as? String, let domain = values["Domain"] as? String else {
-            EcosiaLogger.auth.error("Auth0.plist file at \(path) is missing 'ClientId' and/or 'Domain' entries!")
-            return nil
-        }
-        return (clientId: clientId, domain: domain)
     }
 }
