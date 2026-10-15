@@ -35,9 +35,9 @@ final class AnalyticsSpy: Analytics, @unchecked Sendable {
     }
 
     var activityActionCalled: Analytics.Action.Activity?
-    override func activity(_ action: Analytics.Action.Activity) {
+    override func activity(_ action: Analytics.Action.Activity, isDefaultBrowser: Bool? = nil) {
         activityActionCalled = action
-        super.activity(action)
+        super.activity(action, isDefaultBrowser: isDefaultBrowser)
     }
 
     var bookmarksImportExportPropertyCalled: Analytics.Property.Bookmarks?
@@ -207,6 +207,9 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         // network is already neutralised by the seed above) was a cross-test contaminator that starved
         // later timing-sensitive tests under CI load — the same vector fixed for the MMP tests. (MOB-4384)
         MMP.provider = MockMMPProvider()
+        // Ecosia: the lifecycle tests reach the default-browser check; keep it off the system API and
+        // standard defaults.
+        DefaultBrowserStatusChecker.shared = .inert()
     }
 
     override func tearDown() {
@@ -1275,6 +1278,46 @@ final class AnalyticsContextTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(event?.category, Analytics.Category.ntp.rawValue)
         XCTAssertEqual(event?.action, Analytics.Action.view.rawValue)
         XCTAssertNil(event?.label)
+    }
+
+    // MARK: - Default browser status
+
+    func testActivityWhenDefaultBrowserTracksDefaultBrowserSetProperty() {
+        // Arrange
+        let sut = makeAnalyticsContextSUT()
+
+        // Act
+        sut.activity(.launch, isDefaultBrowser: true)
+
+        // Assert
+        let event = sut.trackedEvents.first as? Structured
+        XCTAssertEqual(event?.action, Analytics.Action.Activity.launch.rawValue)
+        XCTAssertEqual(event?.property, Analytics.Property.defaultBrowserSet.rawValue)
+    }
+
+    func testActivityWhenNotDefaultBrowserHasNoProperty() {
+        // Arrange
+        let sut = makeAnalyticsContextSUT()
+
+        // Act
+        sut.activity(.launch, isDefaultBrowser: false)
+
+        // Assert
+        let event = sut.trackedEvents.first as? Structured
+        XCTAssertNil(event?.property)
+    }
+
+    func testActivityWithoutDefaultBrowserStatusHasNoProperty() {
+        // Arrange
+        let sut = makeAnalyticsContextSUT()
+
+        // Act
+        sut.activity(.resume)
+
+        // Assert
+        let event = sut.trackedEvents.first as? Structured
+        XCTAssertEqual(event?.action, Analytics.Action.Activity.resume.rawValue)
+        XCTAssertNil(event?.property)
     }
 
     // MARK: - Helpers
