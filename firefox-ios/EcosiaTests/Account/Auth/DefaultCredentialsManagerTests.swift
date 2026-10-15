@@ -244,6 +244,42 @@ final class DefaultCredentialsManagerTests: XCTestCase, @unchecked Sendable {
         }
     }
 
+    // MARK: - SSO Credentials Tests
+
+    func testSSOCredentials_withNoStoredCredentials_throwsNoCredentials() async {
+        // Arrange
+        // No credentials stored
+
+        // Act & Assert
+        do {
+            _ = try await credentialsManager.ssoCredentials()
+            XCTFail("Should throw error when no credentials are stored")
+        } catch {
+            XCTAssertEqual(error as? CredentialsManagerError, .noCredentials)
+        }
+    }
+
+    func testSSOCredentials_withMissingRefreshToken_throwsNoRefreshToken() async {
+        // Arrange
+        let credentialsWithoutRefreshToken = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: "test-id-token",
+            refreshToken: nil,
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+        _ = credentialsManager.store(credentials: credentialsWithoutRefreshToken)
+
+        // Act & Assert
+        do {
+            _ = try await credentialsManager.ssoCredentials()
+            XCTFail("Should throw error when the stored credentials have no refresh token")
+        } catch {
+            XCTAssertEqual(error as? CredentialsManagerError, .noRefreshToken)
+        }
+    }
+
     // MARK: - Integration Tests
 
     func testCompleteCredentialsLifecycle_storeRetrieveClear_worksCorrectly() async throws {

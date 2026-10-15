@@ -37,7 +37,7 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         XCTAssertTrue(provider.credentialsManager is DefaultCredentialsManager)
     }
 
-    func testInit_withSettingsButNoCredentialsManager_createsCredentialsManagerWithSettings() {
+    func testInit_withSettingsButNoCredentialsManager_usesSharedCredentialsManager() {
         // Arrange
         let customSettings = MockAuth0SettingsProvider()
 
@@ -45,63 +45,66 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         let provider = NativeToWebSSOAuth0Provider(settings: customSettings)
 
         // Assert
-        XCTAssertNotNil(provider.credentialsManager)
+        // Ecosia: Must share the app-wide manager so SSO exchanges and renewals are serialized
+        // on the same queue and see the same (rotated) refresh token.
+        XCTAssertTrue(provider.credentialsManager is DefaultCredentialsManager)
     }
 
     // MARK: - SSO Credentials Tests
 
-    func testGetSSOCredentials_withValidRefreshToken_returnsSSOCredentials() async throws {
-        // Ecosia: This test calls Auth0.authentication().ssoExchange().start() which makes a real
-        // network request with no timeout, causing it to hang indefinitely in unit test environments.
-        // Proper fix requires injecting a mock URLSession / Auth0 authentication dependency.
-        // Tracked in MOB-4384.
-        throw XCTSkip("Hangs: real Auth0 network call with no timeout — tracked in MOB-4384")
+    func testGetSSOCredentials_returnsSSOCredentialsFromCredentialsManager() async throws {
+        // Arrange
+        let expectedSSOCredentials = SSOCredentials(
+            sessionTransferToken: "test-session-transfer-token",
+            issuedTokenType: "urn:auth0:params:oauth:token-type:session_transfer_token",
+            expiresIn: Date().addingTimeInterval(60),
+            idToken: "test-id-token",
+            refreshToken: "test-rotated-refresh-token"
+        )
+        mockCredentialsManager.mockSSOCredentials = expectedSSOCredentials
+
+        // Act
+        let ssoCredentials = try await provider.getSSOCredentials()
+
+        // Assert
+        XCTAssertEqual(mockCredentialsManager.ssoCredentialsCallCount, 1)
+        XCTAssertEqual(ssoCredentials.sessionTransferToken, expectedSSOCredentials.sessionTransferToken)
+        XCTAssertEqual(ssoCredentials.expiresIn, expectedSSOCredentials.expiresIn)
+        XCTAssertEqual(ssoCredentials.refreshToken, expectedSSOCredentials.refreshToken)
     }
 
-    func testGetSSOCredentials_withMissingRefreshToken_throwsError() async {
+    func testGetSSOCredentials_withMissingRefreshToken_propagatesCredentialsManagerError() async {
         // Arrange
-        let credentialsWithoutRefreshToken = Credentials(
-            accessToken: "test-access-token",
-            tokenType: "Bearer",
-            idToken: "test-id-token",
-            refreshToken: nil, // Missing refresh token
-            expiresIn: Date().addingTimeInterval(3600),
-            scope: "openid profile email"
-        )
-        mockCredentialsManager.storedCredentials = credentialsWithoutRefreshToken
+        mockCredentialsManager.shouldFailSSOCredentials = true
+        mockCredentialsManager.mockError = CredentialsManagerError.noRefreshToken
 
         // Act & Assert
         do {
             _ = try await provider.getSSOCredentials()
             XCTFail("Expected error to be thrown for missing refresh token")
-        } catch let error as NativeToWebSSOAuth0Provider.NativeToWebSSOError {
-            if case .missingRefreshToken(let message) = error {
-                XCTAssertEqual(message, "Refresh token is missing. Please check your credentials.")
-            } else {
-                XCTFail("Expected missingRefreshToken error, got: \(error)")
-            }
         } catch {
-            XCTFail("Expected NativeToWebSSOError, got: \(error)")
+            XCTAssertEqual(error as? CredentialsManagerError, .noRefreshToken)
         }
     }
 
-    func testGetSSOCredentials_withCredentialsRetrievalFailure_throwsError() async {
+    func testGetSSOCredentials_withSSOExchangeFailure_propagatesError() async {
         // Arrange
-        mockCredentialsManager.shouldFailCredentials = true
+        mockCredentialsManager.shouldFailSSOCredentials = true
         mockCredentialsManager.mockError = NSError(
             domain: "TestError",
             code: 500,
-            userInfo: [NSLocalizedDescriptionKey: "Failed to retrieve credentials"]
+            userInfo: [NSLocalizedDescriptionKey: "Failed to exchange refresh token"]
         )
 
         // Act & Assert
         do {
             _ = try await provider.getSSOCredentials()
-            XCTFail("Expected error to be thrown for credentials retrieval failure")
+            XCTFail("Expected error to be thrown for SSO exchange failure")
         } catch {
             XCTAssertEqual((error as NSError).domain, "TestError")
             XCTAssertEqual((error as NSError).code, 500)
         }
+        XCTAssertEqual(mockCredentialsManager.ssoCredentialsCallCount, 1)
     }
 
     // MARK: - Protocol Conformance Tests
@@ -138,9 +141,9 @@ final class NativeToWebSSOAuth0ProviderTests: XCTestCase {
         // Arrange
         let error1 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.invalidResponse
         let error2 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.invalidResponse
-        let error3 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.missingRefreshToken("test")
-        let error4 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.missingRefreshToken("test")
-        let error5 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.missingRefreshToken("different")
+        let error3 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.missingConfiguration("test")
+        let error4 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.missingConfiguration("test")
+        let error5 = NativeToWebSSOAuth0Provider.NativeToWebSSOError.missingConfiguration("different")
 
         // Act & Assert
         XCTAssertEqual(error1, error2)

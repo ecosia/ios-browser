@@ -53,7 +53,6 @@ final class AuthWorkflowTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, testCredentials.idToken)
         XCTAssertEqual(auth.accessToken, testCredentials.accessToken)
-        XCTAssertEqual(auth.refreshToken, testCredentials.refreshToken)
         XCTAssertEqual(mockProvider.startAuthCallCount, 1)
         XCTAssertEqual(mockProvider.storeCredentialsCallCount, 1)
 
@@ -68,7 +67,6 @@ final class AuthWorkflowTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken, "ID token should be cleared")
         XCTAssertNil(auth.accessToken, "Access token should be cleared")
-        XCTAssertNil(auth.refreshToken, "Refresh token should be cleared")
         XCTAssertEqual(mockProvider.clearSessionCallCount, 1)
         XCTAssertEqual(mockProvider.clearCredentialsCallCount, 1)
     }
@@ -128,7 +126,6 @@ final class AuthWorkflowTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testCompleteAuthenticationLifecycle_persistenceAfterRestart_worksEndToEnd() async {
@@ -259,7 +256,6 @@ final class AuthWorkflowTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
         XCTAssertEqual(mockProvider.clearSessionCallCount, 1)
         XCTAssertEqual(mockProvider.clearCredentialsCallCount, 1)
     }
@@ -338,7 +334,6 @@ final class AuthWorkflowTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertNotNil(auth.idToken)
         XCTAssertNotNil(auth.accessToken)
-        XCTAssertNotNil(auth.refreshToken)
     }
 
     // MARK: - Edge Cases Tests

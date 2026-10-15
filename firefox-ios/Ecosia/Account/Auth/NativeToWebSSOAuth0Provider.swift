@@ -16,7 +16,6 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
 
     enum NativeToWebSSOError: Error, Equatable {
         case invalidResponse
-        case missingRefreshToken(String)
         case missingConfiguration(String)
     }
 
@@ -24,7 +23,7 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
                 credentialsManager: CredentialsManagerProtocol? = nil,
                 environment: Environment = .current) {
         self.settings = settings
-        self.credentialsManager = credentialsManager ?? DefaultCredentialsManager(auth0SettingsProvider: settings)
+        self.credentialsManager = credentialsManager ?? EcosiaAuthenticationService.defaultCredentialsManager
         self.environment = environment
     }
 
@@ -77,24 +76,15 @@ public struct NativeToWebSSOAuth0Provider: Auth0ProviderProtocol, @unchecked Sen
 
 extension NativeToWebSSOAuth0Provider {
 
-    /// Requests the `session_token` with the `refresh_token`.
+    /// Requests the `session_token` by exchanging the stored `refresh_token`.
+    ///
+    /// Goes through the credentials manager so that, with refresh token rotation enabled, the new
+    /// refresh token returned by the exchange is persisted in place of the spent one.
     ///
     /// - Returns: A `session_token` as `SessionToken` (a `String` type).
     /// - Throws: An error if the retrieval fails.
     public func getSSOCredentials() async throws -> SSOCredentials {
-        let credentials = try await retrieveCredentials()
-        guard let refreshToken = credentials.refreshToken else {
-            throw NativeToWebSSOError.missingRefreshToken("Refresh token is missing. Please check your credentials.")
-        }
-
-        let configuration: URLSessionConfiguration = .default
-        let ecosiaAuth0Session = URLSession(configuration: configuration.withCloudFlareAuthParameters())
-        return try await Auth0
-            .authentication(clientId: settings.id,
-                            domain: settings.domain,
-                            session: ecosiaAuth0Session)
-            .ssoExchange(withRefreshToken: refreshToken)
-            .start()
+        try await credentialsManager.ssoCredentials()
     }
 
     /// Retrieves configuration values from the Auth0.plist file.
