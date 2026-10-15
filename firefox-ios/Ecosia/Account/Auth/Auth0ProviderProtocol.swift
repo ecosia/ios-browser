@@ -2,7 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Foundation
 import Auth0
 
 /// Protocol defining authentication operations for Auth0.
@@ -66,12 +65,9 @@ extension Auth0ProviderProtocol {
 
     /// - Returns: An HTTPS `WebAuth`
     func makeHttpsWebAuth() -> WebAuth {
-        let configuration: URLSessionConfiguration = .default
-        let ecosiaAuth0Session = URLSession(configuration: configuration.withCloudFlareAuthParameters())
-        return Auth0
+        Auth0
             .webAuth(clientId: settings.id,
-                     domain: settings.domain,
-                     session: ecosiaAuth0Session)
+                     domain: settings.domain)
             .useHTTPS()
     }
 }
