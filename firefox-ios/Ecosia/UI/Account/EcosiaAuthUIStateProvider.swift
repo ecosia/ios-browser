@@ -176,22 +176,14 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
         hasResolvedAuthState = true
 
-        if let actionType = notification.userInfo?["actionType"] as? EcosiaAuthActionType {
-            switch actionType {
-            case .userLoggedIn:
-                impactManager.handleUserLoggedIn()
-            case .userLoggedOut:
-                impactManager.handleUserLoggedOut()
-            case .authStateLoaded:
-                impactManager.handleAuthStateLoaded()
-            }
-        }
+        impactManager.handleAuthStateChange(actionType: notification.userInfo?["actionType"] as? EcosiaAuthActionType)
     }
 
     @MainActor
     private func handleUserProfileUpdate() {
         Task { @MainActor in
             isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+            impactManager.refreshLoggedInState()
         }
         userProfile = EcosiaAuthenticationService.shared.userProfile
         username = userProfile?.name
@@ -205,16 +197,11 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Public Methods
 
-    /// Refreshes seed state based on authentication status.
-    ///
-    /// Should be called when the NTP appears or app returns from background.
+    /// Call when the NTP appears or the app returns from background.
     @MainActor
     public func refreshSeedState() {
         if !hasResolvedAuthState {
-            // Re-sync directly from the service rather than trusting this mirror alone: its
-            // resolution notification only reaches registered browser windows, so it can resolve
-            // without ever notifying this provider (e.g. none were registered yet) - leaving
-            // hasResolvedAuthState stuck false forever and every future call deferring for nothing.
+            // Same re-sync as `ImpactManager.refreshSeedState()`, for the published mirror.
             isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
             hasResolvedAuthState = EcosiaAuthenticationService.shared.hasResolvedAuthState
         }

@@ -26,8 +26,11 @@ public final class ImpactManager: ObservableObject {
 
     // MARK: - Private Properties
 
-    /// Set when `refreshSeedState()` is called before auth state has resolved, so the call isn't
-    /// answered with a guess; replayed once `handleAuthStateLoaded()` confirms the real value.
+    /// Updated on auth events rather than read live, so a refresh can't run ahead of the login/logout handlers.
+    private var isLoggedIn = false
+    /// Whether `isLoggedIn` is confirmed, or still the default from before the launch credentials check.
+    private var hasResolvedAuthState = false
+    /// Set when `refreshSeedState()` runs before auth resolves; replayed on `authStateLoaded`.
     private var pendingSeedStateRefresh = false
     /// Guards against firing more than one initial `registerVisitIfNeeded()`/`handleLocalSeedCollection()`
     /// for a single resolution: cold launch can dispatch both `userLoggedIn` and `authStateLoaded`
@@ -47,10 +50,11 @@ public final class ImpactManager: ObservableObject {
         self.auth = auth
     }
 
-    /// Seeds real state synchronously so the UI never flashes a placeholder;
-    /// `registerVisitIfNeeded()`, triggered separately, fills in the server values shortly after.
+    /// Must run after the auth observers are registered, so a resolution can't land unheard in between.
     func loadInitialSnapshot() {
-        if let snapshot = Self.resolveInitialImpactSnapshot(isLoggedIn: auth.isLoggedIn) {
+        isLoggedIn = auth.isLoggedIn
+        hasResolvedAuthState = auth.hasResolvedAuthState
+        if let snapshot = Self.resolveInitialImpactSnapshot(isLoggedIn: isLoggedIn) {
             apply(snapshot)
         }
     }
@@ -74,7 +78,28 @@ public final class ImpactManager: ObservableObject {
 
     // MARK: - Auth Events
 
-    func handleUserLoggedIn() {
+    func handleAuthStateChange(actionType: EcosiaAuthActionType?) {
+        // Every auth notification means the service's isLoggedIn is now confirmed.
+        isLoggedIn = auth.isLoggedIn
+        hasResolvedAuthState = true
+
+        switch actionType {
+        case .userLoggedIn:
+            handleUserLoggedIn()
+        case .userLoggedOut:
+            handleUserLoggedOut()
+        case .authStateLoaded:
+            handleAuthStateLoaded()
+        case nil:
+            break
+        }
+    }
+
+    func refreshLoggedInState() {
+        isLoggedIn = auth.isLoggedIn
+    }
+
+    private func handleUserLoggedIn() {
         pendingSeedStateRefresh = false
         guard !hasHandledCurrentResolution else { return }
         hasHandledCurrentResolution = true
@@ -82,7 +107,7 @@ public final class ImpactManager: ObservableObject {
         registerVisitIfNeeded()
     }
 
-    func handleUserLoggedOut() {
+    private func handleUserLoggedOut() {
         hasHandledCurrentResolution = false
         pendingSeedStateRefresh = false
         EcosiaLogger.accounts.info("User logged out - resetting to local seed collection")
@@ -90,8 +115,8 @@ public final class ImpactManager: ObservableObject {
         handleLocalSeedCollection()
     }
 
-    func handleAuthStateLoaded() {
-        if !auth.isLoggedIn, let snapshot = Self.resolveInitialImpactSnapshot(isLoggedIn: false) {
+    private func handleAuthStateLoaded() {
+        if !isLoggedIn, let snapshot = Self.resolveInitialImpactSnapshot(isLoggedIn: false) {
             // EcosiaAuthenticationService already clears the shared logged-in cache
             // whenever this resolves to logged-out following a logged-in session (e.g.
             // an expired token) - re-resolve here to move off whatever this object showed
@@ -100,9 +125,6 @@ public final class ImpactManager: ObservableObject {
             apply(snapshot)
         }
 
-        // Cold launch can dispatch both userLoggedIn and authStateLoaded for the same
-        // "already logged in" event, in unspecified order - hasHandledCurrentResolution
-        // makes sure only whichever arrives first triggers the refresh.
         guard pendingSeedStateRefresh, !hasHandledCurrentResolution else { return }
         pendingSeedStateRefresh = false
         hasHandledCurrentResolution = true
@@ -110,12 +132,10 @@ public final class ImpactManager: ObservableObject {
     }
 
     func handleSeedProgressUpdate() {
-        // Only handle for logged-out users
-        guard !auth.isLoggedIn else { return }
+        guard !isLoggedIn else { return }
 
         let newSeedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
 
-        // If seed count increased, show animation
         if newSeedCount > seedCount {
             let increment = newSeedCount - seedCount
             EcosiaLogger.accounts.info("Seed progress updated for logged-out user: \(seedCount) → \(newSeedCount) (+\(increment))")
@@ -127,23 +147,22 @@ public final class ImpactManager: ObservableObject {
 
     // MARK: - Seed Count Management
 
-    /// Refreshes seed state based on authentication status.
-    ///
-    /// Should be called when the NTP appears or app returns from background.
-    /// - For logged-in users: Registers a visit to fetch latest balance from server
-    /// - For logged-out users: Checks and collects daily seed
+    /// Registers a visit when logged in, collects the daily local seed when logged out.
     public func refreshSeedState() {
-        // isLoggedIn can still be the initial default here (auth resolution runs
-        // asynchronously from launch), so branching on it now could wrongly treat
-        // a logged-in user as a guest. Wait for a confirmed value instead of guessing;
-        // handleAuthStateLoaded replays this call.
-        guard auth.hasResolvedAuthState else {
+        if !hasResolvedAuthState {
+            // The resolution notification only reaches registered browser windows, so it can resolve unheard.
+            isLoggedIn = auth.isLoggedIn
+            hasResolvedAuthState = auth.hasResolvedAuthState
+        }
+
+        // Branching on an unresolved isLoggedIn could treat a logged-in user as a guest.
+        guard hasResolvedAuthState else {
             EcosiaLogger.accounts.debug("Deferring seed state refresh until auth state resolves")
             pendingSeedStateRefresh = true
             return
         }
 
-        if auth.isLoggedIn {
+        if isLoggedIn {
             EcosiaLogger.accounts.debug("Refreshing seed state for logged-in user (server fetch)")
             registerVisitIfNeeded()
         } else {
@@ -178,14 +197,12 @@ public final class ImpactManager: ObservableObject {
 
                 await updateBalance(response)
 
-                // Clear error on success
                 await MainActor.run {
                     hasRegisterVisitError = false
                 }
             } catch {
                 EcosiaLogger.accounts.debug("Could not register visit: \(error.localizedDescription)")
 
-                // Set error state
                 await MainActor.run {
                     hasRegisterVisitError = true
                     if #available(iOS 16.0, *) {
@@ -202,13 +219,11 @@ public final class ImpactManager: ObservableObject {
         let newLevelNumber = response.growthPoints.level.number
         let newProgress = response.progressToNextLevel
 
-        // Update level and progress from API
         currentLevelNumber = newLevelNumber
         currentProgress = newProgress
 
         persistLoggedInImpactSnapshot(seedCount: newSeedCount, currentLevelNumber: newLevelNumber, currentProgress: newProgress)
 
-        // Trigger level-up animation if user leveled up
         if response.didLevelUp {
             EcosiaLogger.accounts.info("Level up detected: triggering animation for level \(newLevelNumber)")
             triggerLevelUpAnimation()
@@ -258,7 +273,7 @@ public final class ImpactManager: ObservableObject {
     /// server refresh completes) can seed from these values next time, instead of flashing the
     /// logged-out cap.
     private func persistLoggedInImpactSnapshot(seedCount: Int, currentLevelNumber: Int, currentProgress: Double) {
-        guard auth.isLoggedIn else { return }
+        guard isLoggedIn else { return }
         Self.loggedInImpactCacheType.save(
             ImpactSnapshot(seedCount: seedCount, currentLevelNumber: currentLevelNumber, currentProgress: currentProgress)
         )
