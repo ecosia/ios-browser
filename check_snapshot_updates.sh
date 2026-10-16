@@ -55,7 +55,9 @@ if ! git rev-parse --verify "$head_ref" >/dev/null 2>&1; then
   exit 1
 fi
 
-mapfile -t changed_files < <(git diff --no-renames --name-only "$base_ref" "$head_ref")
+# Three dots diff from the merge base, so commits merged into the base after the branch was cut
+# don't count as changes made by the branch.
+mapfile -t changed_files < <(git diff --no-renames --name-only "$base_ref...$head_ref")
 
 covered_source_output=$(python3 - "$coverage_file" "$repo_root" <<'PY'
 import glob
