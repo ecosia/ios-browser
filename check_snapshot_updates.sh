@@ -114,6 +114,7 @@ snapshot_infrastructure_patterns=(
   ".github/actions/prepare_environment/**"
   ".github/actions/xcode_compilation_cache/**"
   ".github/scripts/disable_nimbus_checksum_refresh.py"
+  ".github/scripts/only_marketing_version_changed.sh"
   ".github/workflows/snapshot_tests.yml"
   "check_snapshot_updates.sh"
   "firefox-ios/.package.resolved"
@@ -140,6 +141,12 @@ matches_any_pattern() {
   return 1
 }
 
+version_xcconfig="firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig"
+version_only_change=false
+if "$repo_root/.github/scripts/only_marketing_version_changed.sh" "$base_ref" "$head_ref"; then
+  version_only_change=true
+fi
+
 is_ui_change=false
 should_run=false
 ui_changes=()
@@ -157,7 +164,8 @@ for file in "${changed_files[@]}"; do
     esac
   fi
 
-  if matches_any_pattern "$file" "${snapshot_infrastructure_patterns[@]}"; then
+  if matches_any_pattern "$file" "${snapshot_infrastructure_patterns[@]}" &&
+     ! { [ "$file" = "$version_xcconfig" ] && [ "$version_only_change" = true ]; }; then
     should_run=true
   fi
 

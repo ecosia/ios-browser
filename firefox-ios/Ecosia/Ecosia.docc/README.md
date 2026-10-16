@@ -354,7 +354,7 @@ Make sure that `fastlane` and `transifex`-cli is installed.
 
 A check verifies that all localization keys defined in the English source file (`en.lproj/Ecosia.strings`) have corresponding translations for every supported language (German, French, Dutch, Spanish, and Italian). It exists to make missing translations visible before a release candidate ships with untranslated English strings showing to users.
 
-It runs on the release PR (`.github/workflows/translation_check.yml`), on the same trigger used by the snapshot tests: a PR against `main` or `patch/**` that bumps `MARKETING_VERSION` in `EcosiaCommon.xcconfig`. If any keys are missing, the check fails with a descriptive error listing them grouped by language.
+It runs on the release PR (`.github/workflows/translation_check.yml`): a PR against `main` or `patch/**` that bumps `MARKETING_VERSION` in `EcosiaCommon.xcconfig`. If any keys are missing, the check fails with a descriptive error listing them grouped by language.
 
 **The check is non-blocking.** It is there for visibility: a red result can be consciously ignored and the release PR merged anyway, since missing translations often arrive later in the release cycle via Transifex. Read the failure before dismissing it, though.
 

@@ -82,12 +82,9 @@ jobs:
         run: |
           xcconfig=firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig
           changed_files=$(git diff --no-renames --name-only "$BASE_SHA...$HEAD_SHA")
-          changed_lines=$(git diff --no-renames -U0 "$BASE_SHA...$HEAD_SHA" -- "$xcconfig" \
-            | grep -E '^[+-]' | grep -vE '^(\+\+\+|---) ' || true)
           should_run=true
           if [ "$changed_files" = "$xcconfig" ] &&
-             [ -n "$changed_lines" ] &&
-             ! grep -qvE '^[+-]MARKETING_VERSION = [0-9.]+$' <<< "$changed_lines"; then
+             .github/scripts/only_marketing_version_changed.sh "$BASE_SHA" "$HEAD_SHA"; then
             should_run=false
             echo "Only MARKETING_VERSION changed; skipping merge tests."
           fi
