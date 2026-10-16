@@ -1,5 +1,5 @@
 name: 'Xcode compilation cache'
-description: 'Restores DerivedData/CompilationCache.noindex and saves it after the job'
+description: 'Restores DerivedData/CompilationCache.noindex, and saves it after the job on main'
 inputs:
   cache-name:
     description: 'Workflow-specific cache name, e.g. unit-tests or snapshot-tests'
@@ -14,12 +14,25 @@ runs:
         echo "week=$(date -u +%G-%V)" >> "$GITHUB_OUTPUT"
         echo "toolchain=$(xcodebuild -version | shasum -a 256 | cut -c1-12)" >> "$GITHUB_OUTPUT"
 
-    - name: Restore Xcode compilation cache
+    # Pull requests restore main's cache but never save their own: each cache is close to 1 GB, and
+    # per-commit pull request saves fill the repository's 10 GB limit and evict main's cache.
+    - name: Restore and save Xcode compilation cache
+      if: github.ref == 'refs/heads/main'
       uses: actions/cache@v4
       with:
         path: DerivedData/CompilationCache.noindex
         # Cache keys are immutable, so a per-commit suffix lets each run save its new compiler
         # outputs while still restoring the most recent cache for the same week and toolchain.
+        key: xcode-compilation-${{ inputs.cache-name }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.generation.outputs.toolchain }}-${{ steps.generation.outputs.week }}-${{ github.sha }}
+        restore-keys: |
+          xcode-compilation-${{ inputs.cache-name }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.generation.outputs.toolchain }}-${{ steps.generation.outputs.week }}-
+          xcode-compilation-${{ inputs.cache-name }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.generation.outputs.toolchain }}-
+
+    - name: Restore Xcode compilation cache
+      if: github.ref != 'refs/heads/main'
+      uses: actions/cache/restore@v4
+      with:
+        path: DerivedData/CompilationCache.noindex
         key: xcode-compilation-${{ inputs.cache-name }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.generation.outputs.toolchain }}-${{ steps.generation.outputs.week }}-${{ github.sha }}
         restore-keys: |
           xcode-compilation-${{ inputs.cache-name }}-${{ runner.os }}-${{ runner.arch }}-${{ steps.generation.outputs.toolchain }}-${{ steps.generation.outputs.week }}-

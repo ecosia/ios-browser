@@ -25,14 +25,79 @@ on:
       - 'check_snapshot_updates.sh'
       - 'generate_snapshot_coverage_docs.sh'
       - 'perform_snapshot_tests.sh'
-  # Caches saved by pull requests are only visible to that pull request; running on main saves a
-  # compilation cache that every pull request can restore.
-  push:
-    branches: [main]
+  # Pull requests only restore compilation caches, so main refreshes its own cache overnight.
+  schedule:
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
+# A new push to a pull request makes its running merge tests outdated.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
+  classify_changes:
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    name: Check Merge Test Relevance
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      should_run: ${{ steps.classify.outputs.should_run || steps.main_cache.outputs.should_run }}
+
+    steps:
+      - name: Check for a main cache at the latest commit
+        id: main_cache
+        if: github.event_name == 'schedule'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          keys=$(gh api "repos/$GITHUB_REPOSITORY/actions/caches?ref=refs/heads/main&key=xcode-compilation-unit-tests-&per_page=100" \
+            --jq '.actions_caches[].key')
+          should_run=true
+          if grep -q -- "-$GITHUB_SHA\$" <<< "$keys"; then
+            should_run=false
+            echo "main has not changed since its last cache refresh; skipping merge tests."
+          fi
+          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
+
+      # paths-ignore can only skip whole files, and EcosiaCommon.xcconfig also holds build settings
+      # that do need tests, so version bumps are detected line by line instead.
+      - name: Checkout
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Classify changed files
+        id: classify
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          xcconfig=firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig
+          changed_files=$(git diff --no-renames --name-only "$BASE_SHA...$HEAD_SHA")
+          should_run=true
+          if [ "$changed_files" = "$xcconfig" ] &&
+             .github/scripts/only_marketing_version_changed.sh "$BASE_SHA" "$HEAD_SHA"; then
+            should_run=false
+            echo "Only MARKETING_VERSION changed; skipping merge tests."
+          fi
+          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
+
   execute_merge_tests:
+    needs: classify_changes
+    if: >-
+      always() &&
+      (
+        needs.classify_changes.result != 'success' ||
+        needs.classify_changes.outputs.should_run == 'true'
+      )
     runs-on: macos-26-xlarge
     name: Execute Merge Tests
 
