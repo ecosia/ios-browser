@@ -807,16 +807,14 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     }
 
     func testAddBrazeABTestContext_forTreatmentVariant_reportsThePayloadValue() {
-        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.treatment.rawValue,
-                                               payloadValue: "st_braze_features_treatment")
+        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.treatment.rawValue)
 
         XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
                        ["braze_features_holdout_group": "st_braze_features_treatment"])
     }
 
     func testAddBrazeABTestContext_forHoldoutVariant_reportsThePayloadValue() {
-        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.holdout.rawValue,
-                                               payloadValue: "st_braze_features_holdout")
+        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.holdout.rawValue)
 
         XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
                        ["braze_features_holdout_group": "st_braze_features_holdout"])
@@ -825,7 +823,7 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     func testAddBrazeABTestContext_forVariantWithoutPayload_reportsTheVariantName() {
         let variant = BrazeCoreMarketVariant.treatment.rawValue
 
-        let context = resumeEventABTestContext(brazeVariant: variant, payloadValue: nil)
+        let context = resumeEventABTestContext(brazeVariant: variant)
 
         XCTAssertEqual(context?.data["ab_tests"] as? [String: String], ["braze_features_holdout_group": variant])
     }
@@ -836,11 +834,11 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     }
 
     func testAddBrazeABTestContext_forUnknownVariant_isNotAppended() {
-        XCTAssertNil(resumeEventABTestContext(brazeVariant: "unknown-variant", payloadValue: nil))
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: "unknown-variant"))
     }
 
     func testAddBrazeABTestContext_whenFlagCannotBeEvaluated_isNotAppended() {
-        XCTAssertNil(resumeEventABTestContext(brazeVariant: nil, payloadValue: nil))
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: nil))
     }
 
     func testAddUserSeedCountContextToAllEvents() {
@@ -1101,7 +1099,7 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
 // MARK: - Helper SUTs
 extension AnalyticsSpyTests {
 
-    private func resumeEventABTestContext(brazeVariant: String?, payloadValue: String?) -> SelfDescribingJson? {
+    private func resumeEventABTestContext(brazeVariant: String?, payloadValue: String? = nil) -> SelfDescribingJson? {
         var model = Unleash.Model()
         if let brazeVariant {
             let payload = payloadValue.map { Unleash.Payload(type: "string", value: $0) }
