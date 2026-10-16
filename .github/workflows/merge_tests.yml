@@ -25,20 +25,44 @@ on:
       - 'check_snapshot_updates.sh'
       - 'generate_snapshot_coverage_docs.sh'
       - 'perform_snapshot_tests.sh'
+  # Caches saved by pull requests are only visible to that pull request, so main needs its own
+  # compilation cache for new pull requests to restore.
+  schedule:
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 jobs:
-  # paths-ignore can only skip whole files, and EcosiaCommon.xcconfig also holds build settings
-  # that do need tests, so version bumps are detected line by line instead.
   classify_changes:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     name: Check Merge Test Relevance
+    permissions:
+      actions: read
+      contents: read
     outputs:
-      should_run: ${{ steps.classify.outputs.should_run }}
+      should_run: ${{ steps.classify.outputs.should_run || steps.main_cache.outputs.should_run }}
 
     steps:
+      - name: Check for a main cache at the latest commit
+        id: main_cache
+        if: github.event_name == 'schedule'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          keys=$(gh api "repos/$GITHUB_REPOSITORY/actions/caches?ref=refs/heads/main&key=xcode-compilation-unit-tests-&per_page=100" \
+            --jq '.actions_caches[].key')
+          should_run=true
+          if grep -q -- "-$GITHUB_SHA\$" <<< "$keys"; then
+            should_run=false
+            echo "main has not changed since its last cache refresh; skipping merge tests."
+          fi
+          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
+
+      # paths-ignore can only skip whole files, and EcosiaCommon.xcconfig also holds build settings
+      # that do need tests, so version bumps are detected line by line instead.
       - name: Checkout
+        if: github.event_name == 'pull_request'
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
@@ -46,6 +70,7 @@ jobs:
 
       - name: Classify changed files
         id: classify
+        if: github.event_name == 'pull_request'
         shell: bash
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
