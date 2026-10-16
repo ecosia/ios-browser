@@ -395,6 +395,10 @@ We built our snapshot testing setup with `SnapshotTestHelper` to streamline UI c
 
 More details [here](SNAPSHOT_TESTING_WIKI.md)
 
+## 🔄 CI test workflows
+
+Merge Unit Tests and Snapshot Tests only run when a pull request's own changes need them, restore a compilation cache that `main` refreshes nightly, and stale caches are purged every night. See the [workflow overview](CI_WORKFLOWS.md) for the full flow.
+
 ## Accounts / Signing in
 
 [See our documentation here](https://ecosia.atlassian.net/wiki/spaces/MOB/pages/4800118791/iOS+-+Accounts+integration+setup)
