@@ -65,7 +65,7 @@ open class Analytics {
         let variant = Unleash.getVariant(toggle)
         guard variant.name != "disabled" else { return nil }
 
-        let variantContext: [String: String] = [contextName:  variant.name]
+        let variantContext: [String: String] = [contextName: variant.name]
         let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
         return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
     }
@@ -646,7 +646,7 @@ extension Analytics {
 
     private func addABTestContexts(to event: Structured) {
         if BrazeIntegration.isReportedToAnalytics,
-            let brazeContext = Self.getTestContext(from: .brazeCoreMarkets, named: "braze_features_holdout_group")  {
+            let brazeContext = Self.getTestContext(from: .brazeCoreMarkets, named: "braze_features_holdout_group") {
             event.entities.append(brazeContext)
         }
     }
