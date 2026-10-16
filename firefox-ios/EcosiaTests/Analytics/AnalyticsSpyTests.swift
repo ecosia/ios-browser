@@ -811,7 +811,7 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
                                                payloadValue: "st_braze_features_treatment")
 
         XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
-                       ["braze-core-markets": "st_braze_features_treatment"])
+                       ["braze_features_holdout_group": "st_braze_features_treatment"])
     }
 
     func testAddBrazeABTestContext_forHoldoutVariant_reportsThePayloadValue() {
@@ -819,7 +819,7 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
                                                payloadValue: "st_braze_features_holdout")
 
         XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
-                       ["braze-core-markets": "st_braze_features_holdout"])
+                       ["braze_features_holdout_group": "st_braze_features_holdout"])
     }
 
     func testAddBrazeABTestContext_forVariantWithoutPayload_reportsTheVariantName() {
@@ -827,7 +827,7 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
 
         let context = resumeEventABTestContext(brazeVariant: variant, payloadValue: nil)
 
-        XCTAssertEqual(context?.data["ab_tests"] as? [String: String], ["braze-core-markets": variant])
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String], ["braze_features_holdout_group": variant])
     }
 
     func testAddBrazeABTestContext_forControlVariant_isNotAppended() {
