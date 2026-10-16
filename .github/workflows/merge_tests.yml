@@ -25,8 +25,7 @@ on:
       - 'check_snapshot_updates.sh'
       - 'generate_snapshot_coverage_docs.sh'
       - 'perform_snapshot_tests.sh'
-  # Caches saved by pull requests are only visible to that pull request, so main needs its own
-  # compilation cache for new pull requests to restore.
+  # Pull requests only restore compilation caches, so main refreshes its own cache overnight.
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch:
