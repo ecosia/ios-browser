@@ -25,14 +25,53 @@ on:
       - 'check_snapshot_updates.sh'
       - 'generate_snapshot_coverage_docs.sh'
       - 'perform_snapshot_tests.sh'
-  # Caches saved by pull requests are only visible to that pull request; running on main saves a
-  # compilation cache that every pull request can restore.
-  push:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
+  # paths-ignore can only skip whole files, and EcosiaCommon.xcconfig also holds build settings
+  # that do need tests, so version bumps are detected line by line instead.
+  classify_changes:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    name: Check Merge Test Relevance
+    outputs:
+      should_run: ${{ steps.classify.outputs.should_run }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Classify changed files
+        id: classify
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          xcconfig=firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig
+          changed_files=$(git diff --no-renames --name-only "$BASE_SHA...$HEAD_SHA")
+          changed_lines=$(git diff --no-renames -U0 "$BASE_SHA...$HEAD_SHA" -- "$xcconfig" \
+            | grep -E '^[+-]' | grep -vE '^(\+\+\+|---) ' || true)
+          should_run=true
+          if [ "$changed_files" = "$xcconfig" ] &&
+             [ -n "$changed_lines" ] &&
+             ! grep -qvE '^[+-]MARKETING_VERSION = [0-9.]+$' <<< "$changed_lines"; then
+            should_run=false
+            echo "Only MARKETING_VERSION changed; skipping merge tests."
+          fi
+          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
+
   execute_merge_tests:
+    needs: classify_changes
+    if: >-
+      always() &&
+      (
+        needs.classify_changes.result != 'success' ||
+        needs.classify_changes.outputs.should_run == 'true'
+      )
     runs-on: macos-26-xlarge
     name: Execute Merge Tests
 
