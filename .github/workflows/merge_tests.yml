@@ -30,6 +30,11 @@ on:
     - cron: '0 2 * * *'
   workflow_dispatch:
 
+# A new push to a pull request makes its running merge tests outdated.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   classify_changes:
     if: github.event_name == 'pull_request' || github.event_name == 'schedule'
