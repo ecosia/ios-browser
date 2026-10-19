@@ -4,7 +4,11 @@ Remote actions to take when Dario decides to publish M0. Everything up to here h
 
 ## Before pushing
 
-- [x] Remove the four Mozilla workflows that arrived with the 155.1 graft (done on the branch, `[MOB-5031] Remove the Mozilla workflows that came with Firefox 155.1`).
+- [ ] **Disable two Mozilla workflows in GitHub's Actions settings** (Actions → workflow → "Disable workflow"); the files stay byte-identical to upstream so future Firefox upgrades merge their changes without conflicts:
+  - `assign-tech-lead-review.yml` (`pull_request_target`): on non-draft PRs over 800 changed lines it adds a label and requests Mozilla's tech leads as reviewers, which fails on Ecosia's repo; the sync PR is often that big.
+  - `check-kingfisher-dependency.yml` (weekly cron): inert while `upgrade/firefox` is not the default branch; disable it before `main` migrates in M5 at the latest, or it tries to open Kingfisher update PRs.
+  - Unverified: GitHub may only list a workflow for disabling after it has run or once it is on the default branch, so the first large PR into `upgrade/firefox` may trigger `assign-tech-lead-review` once.
+  - `contribution-guardrails.yml` and `security-pr-reminder.yml` can stay enabled: they only act on labels Ecosia does not use or on PRs that mention Bugzilla.
 - [ ] **Add `-skipMacroValidation` to CI's unit-test build** (`.github/actions/perform_unit_tests/action.yml`, `build-for-testing` step) on `upgrade/firefox`. The upgrade brings the `ModifiedCopy` macro package, and an unattended Xcode stops with `Macro "ModifiedCopyMacros" … must be enabled before it can be used`. `verify.sh` already passes the flag.
 
 ## Push and protect
