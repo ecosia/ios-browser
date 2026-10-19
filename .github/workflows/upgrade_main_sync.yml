@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TARGET: upgrade/firefox
-      OWNER: dariocarlomagno        # confirm the GitHub handle at publish time
+      OWNER: d4r1091
     steps:
       - uses: actions/checkout@v4
         with:
