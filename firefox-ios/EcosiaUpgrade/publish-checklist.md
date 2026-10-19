@@ -34,7 +34,7 @@ Remote actions to take when Dario decides to publish M0. Everything up to here h
 - [ ] Create the `UPGRADE_SYNC_TOKEN` repository secret: a PAT or GitHub App token with `contents: write` and `pull_requests: write`. Pull requests opened with the default `GITHUB_TOKEN` do not trigger other workflows, so CI would never run on the sync PR.
 - [ ] Enable "Allow auto-merge" in the repository settings if it is off (the workflow enables auto-merge with a merge commit on clean syncs).
 - [ ] Confirm the `OWNER` GitHub handle in `.github/workflows/upgrade_main_sync.yml` (currently `dariocarlomagno`); conflicting syncs request that person's review.
-- [ ] Merge `.github/workflows/upgrade_main_sync.yml` into `main` through a normal PR (it only runs on pushes to `main` when it lives there; it touches no app code). Push `upgrade/firefox` first: the workflow calls `firefox-ios/EcosiaUpgrade/tools/sync-main.sh` from that branch and does nothing while the branch is missing.
+- [ ] Merge `.github/workflows/upgrade_main_sync.yml` into `main` through a normal PR, byte-identical to the copy on `upgrade/firefox` (any review change goes to both branches, or the first sync conflicts on this file) (it only runs on pushes to `main` when it lives there; it touches no app code). Push `upgrade/firefox` first: the workflow calls `firefox-ios/EcosiaUpgrade/tools/sync-main.sh` from that branch and does nothing while the branch is missing.
 
 ## Jira
 
