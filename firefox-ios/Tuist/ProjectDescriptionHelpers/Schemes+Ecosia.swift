@@ -165,12 +165,31 @@ public enum EcosiaSchemes {
         "TopSitesManagerTests/test_recalculateTopSites_shouldShowSponsoredSites_returnOnlyMaxSponsoredSites()",
         "TopSitesManagerTests/test_recalculateTopSites_withOtherSitesAndNoGoogleSite_returnNoGoogleTopSite()",
         "TopSitesManagerTests/test_searchEngine_sponsoredSite_getsRemoved()",
+        // - Firefox 155.1 relies on the hardcoded default, which Ecosia sets to off (UserFeaturePreferenceManager):
+        "TopSitesManagerTests/test_sponsoredShortcutsFlagEnabled_withoutUserPref_returnsSponsoredSites()",
         // - Firefox homepage stories-redesign + glass status-bar scroll coupling:
         "HomepageViewControllerTests/test_newState_forTriggeringImpression_withStoriesRedesignEnabled_triggersHomepageAction()",
         "HomepageViewControllerTests/test_scrollViewDidEndDecelerating_withStoriesRedesignEnabled_triggersHomepageAction()",
         "HomepageViewControllerTests/test_viewDidAppear_withStoriesRedesignEnabled_triggersHomepageAction()",
         "HomepageViewControllerTests/test_scrollToTop_updatesStatusBarScrollDelegate_andSetsCollectionViewOffset()",
         "HomepageViewControllerTests/test_newState_didSelectedTabChangeToHomepageAction_forScrollToTop_setsCollectionViewOffsetToZero()",
+        // - Ecosia's wallpaper is an inset card pinned top and bottom, so there is no height constraint to update:
+        "HomepageViewControllerTests/test_newState_updatesWallpaperHeightConstraint_withAvailableWallpaperHeight()",
+        // - Google Lens is out (product decision); the Xcode 27 simulator also reports a camera, which this test assumes absent:
+        "BrowserCoordinatorTests/testShowGoogleLensCamera_whenCameraUnavailable_doesNotPresentOrLeaveChild()",
+        // - Ecosia removes the synced tabs panel from the tab tray (TabTrayCoordinator.makeChildPanels):
+        "BrowserCoordinatorTests/testShowTabTray_withSyncedTabs_withoutExperiment_showDefaultPresentation()",
+        "BrowserCoordinatorTests/testShowTabTray_withSyncedTabs_withExperiment_showDefaultPresentation()",
+        // - Asserts Firefox's MOZ_CHANNEL_developer flags; EcosiaTesting.xcconfig compiles with MOZ_CHANNEL_FENNEC:
+        "CoreBuildFlagsTests/testExpectedCoreFeatures()",
+        // - The reset is compiled only for MOZ_CHANNEL_beta / MOZ_CHANNEL_developer, neither of which Ecosia defines:
+        "ResetTipsSettingTests/test_resetDatastoreIfNeeded_whenResetIsScheduled_thenClearsPref()",
+        // - Ecosia never enters overlay mode for `.topSites` new tabs; main had this test disabled as faulty:
+        "ContextualHintEligibilityUtilityTests/test_shouldNotPresentJumpBackHint_WithOverlayMode()",
+        // - Hosted summarizer is disabled in Ecosia (on-device only), so these pass only when the cached Apple
+        //   Intelligence availability happens to be true on the test device:
+        "AddressBarStateTests/test_readerModeStateChangedAction_onWebsite_returnsExpectedState_whenSummarizeFeatureOn()",
+        "AddressBarStateTests/test_summarizeModeStateChangedAction_onWebsite_returnsExpectedState_whenSummarizeFeatureOn()",
 
         // Ecosia: Firefox's Glean telemetry is NOT used at all in Ecosia (Ecosia uses Snowplow via
         // Analytics.shared, tested separately by EcosiaTests/AnalyticsSpyTests). DefaultGleanWrapper delegates
@@ -190,6 +209,8 @@ public enum EcosiaSchemes {
         "OnboardingTelemetryUtilityTests",
         "PasswordGeneratorTelemetryTests",
         "PrivateBrowsingTelemetryTests",
+        // Firefox 155.1: reads its Nimbus context back from Glean; passes alone, fails after other suites leave Glean disabled
+        "RecordedNimbusContextTests/testObjectRecordedToGleanMatchesExpected()",
         "SearchTelemetryTests",
         "SettingsTelemetryTests",
         "ShareExtensionTelemetryTests",
