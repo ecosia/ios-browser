@@ -159,7 +159,11 @@ final class BrowserCoordinatorTests: XCTestCase,
         )
 
         let homepageViewController = try XCTUnwrap(subject.homepageViewController)
-        // Ecosia: The collection view is a child of the wallpaper card, not of `view`
+        /* Ecosia: The collection view is a child of the wallpaper card, not of `view`
+        let collectionView = try XCTUnwrap(
+            homepageViewController.view.subviews.first(where: { $0 is UICollectionView }) as? UICollectionView
+        )
+         */
         homepageViewController.loadViewIfNeeded()
         let collectionView = try XCTUnwrap(homepageViewController.homepageCollectionView)
         collectionView.contentOffset = CGPoint(x: 0, y: 75)
