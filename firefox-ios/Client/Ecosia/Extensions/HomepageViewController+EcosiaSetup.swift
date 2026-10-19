@@ -216,8 +216,8 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         )
         notificationCenter.addObserver(
             self,
-            selector: #selector(handleEcosiaAuthCredentialsDidUpdate),
-            name: .EcosiaAuthCredentialsDidUpdate,
+            selector: #selector(handleChatThreadsOptOutDidChange),
+            name: .EcosiaChatThreadsOptOutDidChange,
             object: nil
         )
     }
@@ -226,7 +226,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         ntpSearchBar?.updateUploadButtonVisibility()
     }
 
-    @objc private func handleEcosiaAuthCredentialsDidUpdate() {
+    @objc private func handleChatThreadsOptOutDidChange() {
         syncOmniboxChatThreadsOptOutFromAuth()
     }
 
