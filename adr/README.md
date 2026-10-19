@@ -14,6 +14,7 @@ This log lists the architectural decisions for MADR.
 - [ADR-0005](0005-redux-and-navigation.md) - Redux-driven Navigation via Navigation Actions & State
 - [ADR-0006](0006-adopt-three-tier-documentation-structure.md) - Adopt Three-Tier Documentation Structure
 - [ADR-0007](0007-deeplink-startup-flow-refactor.md) - Deeplink Startup Flow Refactor
+- [ADR-0007](0007-graft-firefox-upgrades-onto-main-via-upgrade-branch.md) - Graft Firefox Upgrades onto Main via a Long-Lived Upgrade Branch
 - [ADR-0008](0008-lazy-tab-screenshot-restoration.md) - Lazy Tab Screenshot Restoration
 - [ADR-0009](0009-feature-flags-refactor) - Feature Flags Refactor
 - [ADR-0010](0010-offload-background-webviews-on-memory-warning.md) - Offload Background WebViews on Memory Warning
