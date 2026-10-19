@@ -1,6 +1,6 @@
 #!/bin/bash
 # Builds, unit-tests and lints the current checkout the way CI's merge tests do.
-# Exit codes: 0 ok, 1 build failed, 2 tests failed, 3 lint failed.
+# Exit codes: 0 ok, 1 project generation or build failed, 2 tests failed, 3 lint failed.
 set -uo pipefail
 
 root=$(git rev-parse --show-toplevel)
@@ -31,6 +31,11 @@ if xcodebuild -version | head -1 | grep -q '^Xcode 27'; then
     -skip-testing:EcosiaTests/FeedbackThemeTests/testIntegrationWithFeedbackView
   )
 fi
+
+# Regenerate the project first, as CI does: a sync can change the Tuist manifests (targets, schemes,
+# skip lists), and building the old generated project would test something CI never builds.
+echo "verify: generating the project (log: $logs/generate.log)"
+./tuist-setup.sh --no-open --skip-bootstrap > "$logs/generate.log" 2>&1 || { echo "verify: project generation failed"; exit 1; }
 
 echo "verify: building (log: $logs/build.log)"
 xcodebuild "${common[@]}" build-for-testing > "$logs/build.log" 2>&1 || { echo "verify: build failed"; exit 1; }
