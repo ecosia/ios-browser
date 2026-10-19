@@ -44,11 +44,14 @@ features:
           pinned-header-enabled: false
           add-shortcut-tile: false
 
+      # Ecosia: The pinned newsfeed header is off on every channel including developer. It pins the
+      # homepage container to the screen top, so Ecosia's wallpaper card ran under the status bar in
+      # Debug builds; production and beta already had it off.
       - channel: developer
         value:
           search-bar: false
           bookmarks-section-default: false
           jbi-section-default: false
           categories-enabled: true
-          pinned-header-enabled: true
+          pinned-header-enabled: false
           add-shortcut-tile: false
