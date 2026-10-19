@@ -42,7 +42,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.hasOptedOutOfChatThreads)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testInit_withCustomProvider_usesProvidedProvider() {
@@ -87,7 +86,6 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, expectedCredentials.idToken)
         XCTAssertEqual(auth.accessToken, expectedCredentials.accessToken)
-        XCTAssertEqual(auth.refreshToken, expectedCredentials.refreshToken)
     }
 
     func testSignUp_usesSignUpScreenHint() async {
@@ -133,7 +131,6 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.isLoggedIn, initialLoginState)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testLogin_withStoreCredentialsFailure_doesNotUpdateState() async {
@@ -155,7 +152,6 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.isLoggedIn, initialLoginState)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     // MARK: - Account Origin Tests
@@ -303,7 +299,7 @@ final class AuthTests: XCTestCase {
         mockProvider.hasStoredCredentials = true
         mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
 
-        try await auth.renewCredentialsIfNeeded()
+        try await auth.renewCredentials()
 
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertTrue(auth.hasOptedOutOfChatThreads)
@@ -341,7 +337,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testLogout_withoutTriggerWebLogout_clearsCredentialsOnly() async {
@@ -361,7 +356,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testLogout_withClearSessionFailure_stillClearsCredentials() async {
@@ -382,7 +376,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testLogout_withClearCredentialsFailure_maintainsLoggedInState() async {
@@ -404,7 +397,6 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertNotNil(auth.idToken)
         XCTAssertNotNil(auth.accessToken)
-        XCTAssertNotNil(auth.refreshToken)
     }
 
     func testLogout_withStaleEASCCookieInSharedStorage_removesIt() async {
@@ -501,7 +493,21 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, expectedCredentials.idToken)
         XCTAssertEqual(auth.accessToken, expectedCredentials.accessToken)
-        XCTAssertEqual(auth.refreshToken, expectedCredentials.refreshToken)
+    }
+
+    func testRetrieveStoredCredentials_withValidCredentials_doesNotForceRenewal() async {
+        // Arrange
+        mockProvider.hasStoredCredentials = true
+
+        await waitForInitCredentialRetrieval()
+        mockProvider.renewCredentialsCallCount = 0
+
+        // Act
+        await auth.retrieveStoredCredentials()
+
+        // Assert
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertEqual(mockProvider.renewCredentialsCallCount, 0)
     }
 
     func testRetrieveStoredCredentials_withFailure_maintainsLoggedOutState() async {
@@ -519,7 +525,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testRetrieveStoredCredentials_withFailureAfterPreviousLogin_clearsLoggedInImpactCacheAndWasLoggedIn() async {
@@ -565,7 +570,7 @@ final class AuthTests: XCTestCase {
 
     // MARK: - Renew Credentials Tests
 
-    func testRenewCredentialsIfNeeded_withRenewableCredentials_renewsAndUpdatesState() async {
+    func testRenewCredentials_withRenewableCredentials_renewsAndUpdatesState() async {
         // Arrange
         await setupLoggedInState()
         mockProvider.canRenewCredentialsResult = true
@@ -581,7 +586,7 @@ final class AuthTests: XCTestCase {
 
         // Act
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             XCTFail("Renew credentials should succeed, but failed with: \(error)")
         }
@@ -592,10 +597,9 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, renewedCredentials.idToken)
         XCTAssertEqual(auth.accessToken, renewedCredentials.accessToken)
-        XCTAssertEqual(auth.refreshToken, renewedCredentials.refreshToken)
     }
 
-    func testRenewCredentialsIfNeeded_withNonRenewableCredentials_doesNotRenew() async {
+    func testRenewCredentials_withNonRenewableCredentials_doesNotRenew() async {
         // Arrange
         await setupLoggedInState()
         mockProvider.canRenewCredentialsResult = false
@@ -603,7 +607,7 @@ final class AuthTests: XCTestCase {
 
         // Act
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             XCTFail("Renew credentials should succeed, but failed with: \(error)")
         }
@@ -615,18 +619,17 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.idToken, originalIdToken)
     }
 
-    func testRenewCredentialsIfNeeded_withRenewFailure_maintainsCurrentState() async {
+    func testRenewCredentials_withRenewFailure_maintainsCurrentState() async {
         // Arrange
         await setupLoggedInState()
         mockProvider.canRenewCredentialsResult = true
         mockProvider.shouldFailRenewCredentials = true
         let originalIdToken = auth.idToken
         let originalAccessToken = auth.accessToken
-        let originalRefreshToken = auth.refreshToken
 
         // Act
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             // This test expects renewal to fail, so we should catch the error
             // but the test should continue to verify the state is maintained
@@ -638,7 +641,6 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, originalIdToken)
         XCTAssertEqual(auth.accessToken, originalAccessToken)
-        XCTAssertEqual(auth.refreshToken, originalRefreshToken)
     }
 
     // MARK: - SSO Methods Tests
@@ -712,7 +714,6 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertNotNil(auth.idToken)
         XCTAssertNotNil(auth.accessToken)
-        XCTAssertNotNil(auth.refreshToken)
 
         // Act - Logout
         do {
@@ -725,7 +726,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testCompleteAuthFlow_loginRenewLogoutCycle_worksCorrectly() async {
@@ -755,7 +755,7 @@ final class AuthTests: XCTestCase {
         )
         mockProvider.mockCredentials = renewedCredentials
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             XCTFail("Renew credentials should succeed, but failed with: \(error)")
         }
@@ -776,7 +776,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     // MARK: - Helper Methods

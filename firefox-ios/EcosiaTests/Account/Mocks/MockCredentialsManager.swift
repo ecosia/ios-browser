@@ -11,12 +11,14 @@ final class MockCredentialsManager: CredentialsManagerProtocol, @unchecked Senda
     // MARK: - Test Control Properties
     var shouldFailCredentials = false
     var shouldFailRenew = false
+    var shouldFailSSOCredentials = false
     var canRenewResult = true
     var clearResult = true
 
     // MARK: - Mock Data
     var storedCredentials: Credentials?
     var mockCredentials: Credentials?
+    var mockSSOCredentials: SSOCredentials?
     var mockError: Error?
     var lastStoredCredentials: Credentials? // Track the last credentials that were stored
 
@@ -26,6 +28,7 @@ final class MockCredentialsManager: CredentialsManagerProtocol, @unchecked Senda
     var storeCallCount = 0
     var clearCallCount = 0
     var canRenewCallCount = 0
+    var ssoCredentialsCallCount = 0
 
     // MARK: - Mock Implementations
     func credentials() async throws -> Credentials {
@@ -48,6 +51,16 @@ final class MockCredentialsManager: CredentialsManagerProtocol, @unchecked Senda
         let renewedCredentials = mockCredentials ?? createMockCredentials()
         storedCredentials = renewedCredentials
         return renewedCredentials
+    }
+
+    func ssoCredentials() async throws -> SSOCredentials {
+        ssoCredentialsCallCount += 1
+
+        if shouldFailSSOCredentials {
+            throw mockError ?? NSError(domain: "MockCredentialsManager", code: 2003, userInfo: [NSLocalizedDescriptionKey: "Mock ssoCredentials failure"])
+        }
+
+        return mockSSOCredentials ?? createMockSSOCredentials()
     }
 
     func store(credentials: Credentials) -> Bool {
@@ -83,14 +96,26 @@ final class MockCredentialsManager: CredentialsManagerProtocol, @unchecked Senda
         )
     }
 
+    private func createMockSSOCredentials() -> SSOCredentials {
+        return SSOCredentials(
+            sessionTransferToken: "mock-session-transfer-token-\(UUID().uuidString)",
+            issuedTokenType: "urn:auth0:params:oauth:token-type:session_transfer_token",
+            expiresIn: Date().addingTimeInterval(60),
+            idToken: "mock-id-token-\(UUID().uuidString)",
+            refreshToken: "mock-rotated-refresh-token-\(UUID().uuidString)"
+        )
+    }
+
     func reset() {
         shouldFailCredentials = false
         shouldFailRenew = false
+        shouldFailSSOCredentials = false
         canRenewResult = true
         clearResult = true
 
         storedCredentials = nil
         mockCredentials = nil
+        mockSSOCredentials = nil
         mockError = nil
         lastStoredCredentials = nil
 
@@ -99,6 +124,7 @@ final class MockCredentialsManager: CredentialsManagerProtocol, @unchecked Senda
         storeCallCount = 0
         clearCallCount = 0
         canRenewCallCount = 0
+        ssoCredentialsCallCount = 0
     }
 }
 

@@ -15,7 +15,7 @@ final class FileUploadServiceTests: XCTestCase {
     private let auth0Provider = MockAuth0Provider()
 
     func testPresignUnauthorized_throwsUnexpectedPresignResponse() async throws {
-        let service = makeSignedInService(scope: Self.conversationScope)
+        let service = await makeSignedInService(scope: Self.conversationScope)
         respond(refreshStatus: 204, presignStatus: 401)
 
         do {
@@ -24,11 +24,14 @@ final class FileUploadServiceTests: XCTestCase {
         } catch FileUploadService.Error.unexpectedResponse(let response) {
             XCTAssertEqual(response.step, .presign)
             XCTAssertEqual(response.statusCode, 401)
+            // A rejected token is renewed once and the presign retried once: refresh, presign, presign.
+            XCTAssertEqual(auth0Provider.renewCredentialsCallCount, 1)
+            XCTAssertEqual(client.requests.count, 3)
         }
     }
 
     func testPresignForbidden_throwsUnexpectedPresignResponse() async throws {
-        let service = makeSignedInService(scope: Self.conversationScope)
+        let service = await makeSignedInService(scope: Self.conversationScope)
         respond(refreshStatus: 204, presignStatus: 403)
 
         do {
@@ -41,7 +44,7 @@ final class FileUploadServiceTests: XCTestCase {
     }
 
     func testRefreshForbidden_throwsUnexpectedRefreshResponseWithoutRequestingPresign() async throws {
-        let service = makeSignedInService(scope: Self.conversationScope)
+        let service = await makeSignedInService(scope: Self.conversationScope)
         respond(
             refreshStatus: 403,
             presignStatus: 200,
@@ -65,7 +68,7 @@ final class FileUploadServiceTests: XCTestCase {
         defer { URLProtocol.unregisterClass(PresignedUploadStub.self) }
         PresignedUploadStub.statusCode = 500
         PresignedUploadStub.headers = ["cf-ray": "a45b07659cec62ca-HAM", "Content-Type": "application/xml"]
-        let service = makeSignedInService(scope: Self.conversationScope)
+        let service = await makeSignedInService(scope: Self.conversationScope)
         respond(
             refreshStatus: 204,
             presignStatus: 200,
@@ -85,7 +88,7 @@ final class FileUploadServiceTests: XCTestCase {
 
     func testMissingAccessToken_throwsAuthenticationRequiredWithoutRequestingPresign() async throws {
         auth0Provider.hasStoredCredentials = false
-        let service = makeService()
+        let service = await makeService()
         respond(refreshStatus: 204, presignStatus: 200)
 
         do {
@@ -97,7 +100,7 @@ final class FileUploadServiceTests: XCTestCase {
     }
 
     func testMissingConversationScopes_throwsAuthenticationRequiredWithoutRequestingPresign() async throws {
-        let service = makeSignedInService(scope: "openid profile email")
+        let service = await makeSignedInService(scope: "openid profile email")
         respond(refreshStatus: 204, presignStatus: 200)
 
         do {
@@ -105,10 +108,24 @@ final class FileUploadServiceTests: XCTestCase {
             XCTFail("Expected the upload to fail")
         } catch FileUploadService.Error.authenticationRequired {
             XCTAssertEqual(client.requests.count, 1)
+            XCTAssertEqual(auth0Provider.renewCredentialsCallCount, 0)
         }
     }
 
-    private func makeSignedInService(scope: String) -> FileUploadService {
+    func testUpload_withNonAuthFailure_doesNotRenewCredentials() async throws {
+        let service = await makeSignedInService(scope: Self.conversationScope)
+        respond(refreshStatus: 204, presignStatus: 403)
+
+        do {
+            _ = try await service.uploadFile(Self.file)
+            XCTFail("Expected the upload to fail")
+        } catch FileUploadService.Error.unexpectedResponse(let response) {
+            XCTAssertEqual(response.step, .presign)
+            XCTAssertEqual(auth0Provider.renewCredentialsCallCount, 0)
+        }
+    }
+
+    private func makeSignedInService(scope: String) async -> FileUploadService {
         auth0Provider.hasStoredCredentials = true
         auth0Provider.mockCredentials = Credentials(
             accessToken: "mock-access-token",
@@ -118,13 +135,15 @@ final class FileUploadServiceTests: XCTestCase {
             expiresIn: Date().addingTimeInterval(3600),
             scope: scope
         )
-        return makeService()
+        return await makeService()
     }
 
     /// Production skips the staging Cloudflare Access bootstrap, which would make a real network call.
-    private func makeService() -> FileUploadService {
+    private func makeService() async -> FileUploadService {
         let authenticationService = EcosiaAuthenticationService(auth0Provider: auth0Provider)
         authenticationService.skipUserInfoFetch = true
+        // The service uses the tokens already loaded, so wait for them rather than racing init's own retrieval.
+        await authenticationService.retrieveStoredCredentials()
         return FileUploadService(client: client, authenticationService: authenticationService, environment: .production)
     }
 

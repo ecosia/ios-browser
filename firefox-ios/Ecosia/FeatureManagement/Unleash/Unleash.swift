@@ -64,7 +64,8 @@ public enum Unleash: UnleashProtocol {
     public static func start(client: HTTPClient = URLSessionHTTPClient(),
                              request: BaseRequest? = nil,
                              env: Environment = .production,
-                             appVersion: String) async throws -> Model {
+                             appVersion: String,
+                             force: Bool = false) async throws -> Model {
         return try await withCheckedThrowingContinuation({ continuation in
             Self.queue.async {
                 Task {
@@ -82,7 +83,8 @@ public enum Unleash: UnleashProtocol {
                                                        request: request,
                                                        model: model,
                                                        env: env,
-                                                       appVersion: appVersion)
+                                                       appVersion: appVersion,
+                                                       force: force)
 
                         // Save the updated model to the filesystem
                         try await save(Self.model)
@@ -113,15 +115,17 @@ public enum Unleash: UnleashProtocol {
     ///   - model: The current model.
     ///   - env: The environment for the session.
     ///   - appVersion: The package's hosting app version (`CFShortVersionString`)
+    ///   - force: Refreshes even if no refreshing rule asks for it. Default is `false`.
     /// - Returns: The latest available `Model` after refreshing.
     /// - Throws: An error if the model fails to refresh or update.
     static func refresh(client: HTTPClient = URLSessionHTTPClient(),
                         request: BaseRequest? = nil,
                         model: Model,
                         env: Environment,
-                        appVersion: String) async throws -> Model {
+                        appVersion: String,
+                        force: Bool = false) async throws -> Model {
 
-        guard shouldRefresh else {
+        guard force || shouldRefresh else {
             // Return the cached model if refresh is not required
             return model
         }
