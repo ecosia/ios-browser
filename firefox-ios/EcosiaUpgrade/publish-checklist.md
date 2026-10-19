@@ -9,7 +9,7 @@ Remote actions to take when Dario decides to publish M0. Everything up to here h
   - `check-kingfisher-dependency.yml` (weekly cron): inert while `upgrade/firefox` is not the default branch; disable it before `main` migrates in M5 at the latest, or it tries to open Kingfisher update PRs.
   - Unverified: GitHub may only list a workflow for disabling after it has run or once it is on the default branch, so the first large PR into `upgrade/firefox` may trigger `assign-tech-lead-review` once.
   - `contribution-guardrails.yml` and `security-pr-reminder.yml` can stay enabled: they only act on labels Ecosia does not use or on PRs that mention Bugzilla.
-- [ ] **Add `-skipMacroValidation` to CI's unit-test build** (`.github/actions/perform_unit_tests/action.yml`, `build-for-testing` step) on `upgrade/firefox`. The upgrade brings the `ModifiedCopy` macro package, and an unattended Xcode stops with `Macro "ModifiedCopyMacros" … must be enabled before it can be used`. `verify.sh` already passes the flag.
+- [ ] **Add `-skipMacroValidation` to every CI `xcodebuild` that builds the app** on `upgrade/firefox`: `.github/actions/perform_unit_tests/action.yml` (`build-for-testing`) and `perform_snapshot_tests.sh` (`build-for-testing`, around line 422), both of which now run on PRs into the branch. The upgrade brings the `ModifiedCopy` macro package, and an unattended Xcode stops with `Macro "ModifiedCopyMacros" … must be enabled before it can be used`. `verify.sh` already passes the flag.
 
 ## Push and protect
 
@@ -17,7 +17,7 @@ Remote actions to take when Dario decides to publish M0. Everything up to here h
 - [ ] Branch protection for `upgrade/firefox` matching `main`:
   - no direct pushes;
   - PRs need an approving review;
-  - the same required status checks as `main` (copy the check names from `main`'s protection in GitHub settings at publish time; `merge_tests.yml`, `swift_lint.yml`, `snapshot_tests.yml` and `snapshot_update_check.yml` now run on PRs into `upgrade/firefox`);
+  - the same required status checks as `main` (copy the check names from `main`'s protection in GitHub settings at publish time; `merge_tests.yml`, `swift_lint.yml`, `snapshot_tests.yml` and `snapshot_update_check.yml` now run on PRs into `upgrade/firefox`). **Decide first whether the snapshot checks should be required before M2:** snapshot differences on 155.1 are expected until ticket 11 triages them, so requiring them blocks every PR, including the automatic sync PR, whose auto-merge would then never fire;
   - merge commits allowed;
   - linear history **not** required (the branch takes merge commits from `main`).
 
