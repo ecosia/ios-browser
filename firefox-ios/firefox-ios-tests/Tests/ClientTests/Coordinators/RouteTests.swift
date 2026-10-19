@@ -524,7 +524,10 @@ class RouteTests: XCTestCase {
     }
 
     private func wrappedDeepLink(for url: URL) -> URL {
+        /* Ecosia: Ecosia registers the `ecosia` URL scheme only, so URLScanner rejects `firefox://`
         var components = URLComponents(string: "firefox://open-url")!
+         */
+        var components = URLComponents(string: "ecosia://open-url")!
         components.queryItems = [URLQueryItem(name: "url", value: url.absoluteString)]
         return components.url!
     }

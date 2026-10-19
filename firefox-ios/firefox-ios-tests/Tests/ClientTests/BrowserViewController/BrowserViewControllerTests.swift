@@ -117,7 +117,11 @@ class BrowserViewControllerTests: XCTestCase, StoreTestUtility {
 
         subject.tabManager(tabManager, didSelectedTabChange: testTab, previousTab: nil, isRestoring: false)
 
+        /* Ecosia: PrivateModeButton tints its selected state with theme.colors.ecosia.buttonContentPrimary
         XCTAssertEqual(topTabsViewController.privateModeButton.tintColor, DarkTheme().colors.iconOnColor)
+         */
+        let theme = (AppContainer.shared.resolve() as ThemeManager).getCurrentTheme(for: .XCTestDefaultUUID)
+        XCTAssertEqual(topTabsViewController.privateModeButton.tintColor, theme.colors.ecosia.buttonContentPrimary)
     }
 
     func test_didSelectedTabChange_fromHomepageToHomepage_triggersAppropriateDispatchAction() throws {
@@ -144,7 +148,12 @@ class BrowserViewControllerTests: XCTestCase, StoreTestUtility {
     func testUpdateReaderModeState_whenSummarizeFeatureOn_dispatchesToolbarMiddlewareAction() throws {
         setIsHostedSummarizerEnabled(true)
         let expectation = XCTestExpectation(description: "expect mock store to dispatch an action")
+        /* Ecosia: the hosted summarizer is disabled (on-device only), so its flag no longer enables the toolbar entry point
         let subject = createSubject()
+         */
+        let summarizerNimbusUtils = MockSummarizerNimbusUtils()
+        summarizerNimbusUtils.isToolbarButtonEnabled = true
+        let subject = createSubject(summarizerNimbusUtils: summarizerNimbusUtils)
         let tab = MockTab(profile: profile, windowUUID: .XCTestDefaultUUID)
         tab.webView = MockTabWebView(tab: tab)
 
@@ -331,7 +340,12 @@ class BrowserViewControllerTests: XCTestCase, StoreTestUtility {
     func testMotionEnded_withShakeGestureEnabled_showsSummaryPanel() throws {
         profile.prefs.setBool(true, forKey: PrefsKeys.Summarizer.shakeGestureEnabled)
         setupSummarizedShakeGestureForTesting(isEnabled: true)
+        /* Ecosia: the hosted summarizer is disabled (on-device only), so its flag no longer enables the shake gesture
         let subject = createSubject()
+         */
+        let summarizerNimbusUtils = MockSummarizerNimbusUtils()
+        summarizerNimbusUtils.isShakeGestureEnabled = true
+        let subject = createSubject(summarizerNimbusUtils: summarizerNimbusUtils)
         let expectation = XCTestExpectation(description: "General browser action is dispatched")
         mockStore.dispatchCalled = {
             expectation.fulfill()
@@ -836,11 +850,14 @@ class BrowserViewControllerTests: XCTestCase, StoreTestUtility {
 
     // MARK: - Private
 
-    private func createSubject(file: StaticString = #filePath,
+    // Ecosia: `summarizerNimbusUtils` added so tests can enable the summarizer entry points directly
+    private func createSubject(summarizerNimbusUtils: SummarizerNimbusUtils = DefaultSummarizerNimbusUtils(),
+                               file: StaticString = #filePath,
                                line: UInt = #line) -> BrowserViewController {
         let subject = BrowserViewController(profile: profile,
                                             tabManager: tabManager,
                                             appStartupTelemetry: appStartupTelemetry,
+                                            summarizerNimbusUtils: summarizerNimbusUtils,
                                             recordVisitManager: recordVisitManager)
         screenshotHelper = MockScreenshotHelper(controller: subject)
         subject.screenshotHelper = screenshotHelper

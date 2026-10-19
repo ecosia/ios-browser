@@ -67,10 +67,17 @@ final class LaunchScreenViewModelTests: XCTestCase {
         XCTAssertEqual(delegate.launchBrowserCalled, 0)
         XCTAssertEqual(delegate.finishedLoadingLaunchOrderCalled, 1)
 
+        /* Ecosia: intro is presented before terms of service (see testLaunchType_termsOfServiceAndIntro_sequence)
         subject.loadNextLaunchType()
 
         assertSavedLaunchType(.termsOfService(manager: TermsOfServiceManager(prefs: profile.prefs)))
         XCTAssertEqual(delegate.launchWithTypeCalled, 1)
+         */
+        subject.loadNextLaunchType()
+        subject.loadNextLaunchType()
+
+        assertSavedLaunchType(.termsOfService(manager: TermsOfServiceManager(prefs: profile.prefs)))
+        XCTAssertEqual(delegate.launchWithTypeCalled, 2)
     }
 
     func testLaunchType_survey() {

@@ -345,9 +345,8 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
 
         subject.loadViewIfNeeded()
 
-        guard let collectionView = subject.view.subviews.first(where: {
-            $0 is UICollectionView
-        }) as? UICollectionView else {
+        // Ecosia: The collection view is a child of the wallpaper card, not of `view`
+        guard let collectionView = subject.homepageCollectionView else {
             XCTFail()
             return
         }
@@ -368,9 +367,8 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
 
         subject.loadViewIfNeeded()
 
-        guard let collectionView = subject.view.subviews.first(where: {
-            $0 is UICollectionView
-        }) as? UICollectionView else {
+        // Ecosia: The collection view is a child of the wallpaper card, not of `view`
+        guard let collectionView = subject.homepageCollectionView else {
             XCTFail()
             return
         }
@@ -393,9 +391,8 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
         subject.loadViewIfNeeded()
         subject.viewWillAppear(false)
 
-        guard let collectionView = subject.view.subviews.first(where: {
-            $0 is UICollectionView
-        }) as? UICollectionView else {
+        // Ecosia: The collection view is a child of the wallpaper card, not of `view`
+        guard let collectionView = subject.homepageCollectionView else {
             XCTFail()
             return
         }
@@ -417,9 +414,8 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
         subject.loadViewIfNeeded()
         subject.viewWillAppear(false)
 
-        guard let collectionView = subject.view.subviews.first(where: {
-            $0 is UICollectionView
-        }) as? UICollectionView else {
+        // Ecosia: The collection view is a child of the wallpaper card, not of `view`
+        guard let collectionView = subject.homepageCollectionView else {
             XCTFail()
             return
         }
@@ -441,9 +437,8 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
         subject.loadViewIfNeeded()
         subject.viewWillAppear(false)
 
-        guard let collectionView = subject.view.subviews.first(where: {
-            $0 is UICollectionView
-        }) as? UICollectionView else {
+        // Ecosia: The collection view is a child of the wallpaper card, not of `view`
+        guard let collectionView = subject.homepageCollectionView else {
             XCTFail()
             return
         }
@@ -465,9 +460,8 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
         subject.loadViewIfNeeded()
         subject.viewWillAppear(false)
 
-        guard let collectionView = subject.view.subviews.first(where: {
-            $0 is UICollectionView
-        }) as? UICollectionView else {
+        // Ecosia: The collection view is a child of the wallpaper card, not of `view`
+        guard let collectionView = subject.homepageCollectionView else {
             XCTFail()
             return
         }
@@ -489,9 +483,8 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
         subject.loadViewIfNeeded()
         subject.viewWillAppear(false)
 
-        guard let collectionView = subject.view.subviews.first(where: {
-            $0 is UICollectionView
-        }) as? UICollectionView else {
+        // Ecosia: The collection view is a child of the wallpaper card, not of `view`
+        guard let collectionView = subject.homepageCollectionView else {
             XCTFail()
             return
         }
