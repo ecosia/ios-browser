@@ -220,7 +220,7 @@ public enum URLProvider {
     /// Builds the AI chat URL, optionally tagged with where the user came
     /// from (`origin`), seeded with a `query` to start the conversation,
     /// with optional `files` for attachment routing, and extended with
-    /// `additionalQueryItems` (e.g. an omnibox chat mode's backend flags).
+    /// `additionalQueryItems` (e.g. an omnibox chat mode's `mode` parameter).
     /// Centralizing the parameters here keeps callers from having to know
     /// the URL's query-item conventions.
     public func aiChat(

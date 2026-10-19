@@ -41,16 +41,35 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// OAuth scopes granted with the current access token (from Auth0 token response).
     private(set) var grantedScope: String?
 
-    /// The current refresh token for the authenticated user.
-    /// This token is used to obtain new access tokens when they expire.
-    private(set) var refreshToken: String?
-
     /// The current SSO credentials for session transfer between web and native contexts.
     private(set) var ssoCredentials: SSOCredentials?
 
     /// Indicates whether the user is currently logged in.
     /// This property is automatically updated when login/logout operations complete successfully.
     public private(set) var isLoggedIn: Bool = false
+
+    /// Whether `isLoggedIn` reflects a confirmed state rather than the initial default.
+    /// `isLoggedIn` starts `false` before the stored-credentials check on launch completes, so a
+    /// reader that can't tell the two apart may mistake "not yet checked" for "confirmed logged out".
+    public private(set) var hasResolvedAuthState: Bool = false
+
+    private static let wasLoggedInKey = "EcosiaAuthenticationService.wasLoggedIn"
+
+    /// Whether the user was logged in as of the last confirmed transition (login, logout, or a
+    /// successful credential renewal/retrieval) - persisted across launches, unlike `isLoggedIn`,
+    /// which always restarts at `false` until this launch's own credential check resolves. Lets a
+    /// reader tell "this session's stored credentials just turned out to be invalid" (e.g. an
+    /// expired token) apart from "this device was never logged in to begin with", since both
+    /// resolve to the same `isLoggedIn == false` on cold launch.
+    public static var wasLoggedIn: Bool {
+        get { UserDefaults.standard.bool(forKey: wasLoggedInKey) }
+        set { UserDefaults.standard.set(newValue, forKey: wasLoggedInKey) }
+    }
+
+    /// Whether the authenticated user has opted out of chat history / chat threads.
+    /// `false` when signed out, when the ID token cannot be decoded, or when
+    /// the `https://ecosia.org/chat_threads_opt_out` ID-token claim is missing.
+    public private(set) var hasOptedOutOfChatThreads: Bool = false
 
     /// The current user's profile information from Auth0.
     /// This includes name, email, profile picture URL, etc.
@@ -132,7 +151,10 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         do {
             let didStore = try auth0Provider.storeCredentials(credentials)
             if didStore {
-                setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, accountOrigin: accountOrigin)
+                setupTokensWithCredentials(credentials,
+                                           settingLoggedInStateTo: true,
+                                           accountOrigin: accountOrigin,
+                                           source: .login)
                 if !skipUserInfoFetch {
                     await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
                 }
@@ -184,7 +206,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         let credentialsCleared = auth0Provider.clearCredentials()
 
         if credentialsCleared {
-            setupTokensWithCredentials(nil)
+            setupTokensWithCredentials(nil, source: .logout)
 
             // Stale SSO credentials would otherwise let getSessionTokenCookie() hand out
             // the previous user's session transfer token before the next login refreshes it.
@@ -232,19 +254,16 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     public func retrieveStoredCredentials() async {
         do {
             let credentials = try await auth0Provider.retrieveCredentials()
-            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, source: .stored)
             if !skipUserInfoFetch {
                 await fetchUserInfoFromAuth0(accessToken: credentials.accessToken)
             }
             EcosiaLogger.auth.info("Retrieved stored credentials successfully")
 
+            // No forced renewal here: `retrieveCredentials()` already renews expired credentials, and with
+            // refresh token rotation every extra renewal spends a refresh token. Callers that need fresh
+            // claims or scopes (e.g. file upload) force a renewal themselves.
             await dispatchAuthStateChange(isLoggedIn: self.isLoggedIn, fromCredentialRetrieval: true)
-
-            do {
-                try await renewCredentialsIfNeeded()
-            } catch {
-                EcosiaLogger.auth.error("Failed to refresh stored credentials after retrieval: \(error)")
-            }
         } catch {
             EcosiaLogger.auth.error("Failed to retrieve credentials: \(error)")
             // Even if retrieval fails, dispatch state loaded as false
@@ -253,11 +272,15 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     }
 
     /**
-     Renews credentials if they are renewable and close to expiration.
-     
+     Forces a credential renewal with the stored refresh token, regardless of the access token's expiry.
+
+     Use it only when fresh tokens or claims are required (e.g. after a 401, or to re-read ID token claims
+     and scopes): with refresh token rotation, every renewal spends the current refresh token.
+     Does nothing if there is no refresh token to renew with.
+
      - Note: This method will update the credential properties with the new tokens upon successful renewal.
      */
-    public func renewCredentialsIfNeeded() async throws {
+    public func renewCredentials() async throws {
         guard auth0Provider.canRenewCredentials() else {
             EcosiaLogger.auth.info("No renewable credentials available")
             return
@@ -265,7 +288,7 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
 
         do {
             let credentials = try await auth0Provider.renewCredentials()
-            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true)
+            setupTokensWithCredentials(credentials, settingLoggedInStateTo: true, source: .renew)
             EcosiaLogger.auth.info("Renewed credentials successfully")
         } catch {
             EcosiaLogger.auth.error("Failed to renew credentials: \(error)")
@@ -273,21 +296,54 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         }
     }
 
+    private enum CredentialApplySource: String {
+        case login
+        case logout
+        case stored
+        case renew
+    }
+
     /// Helper method to setup tokens and login flag
     private func setupTokensWithCredentials(_ credentials: Credentials?,
-                                            settingLoggedInStateTo isLoggedIn: Bool = false,
-                                            accountOrigin: AccountOrigin? = nil) {
+                                            settingLoggedInStateTo newIsLoggedIn: Bool = false,
+                                            accountOrigin: AccountOrigin? = nil,
+                                            source: CredentialApplySource) {
         self.idToken = credentials?.idToken
         self.accessToken = credentials?.accessToken
         self.grantedScope = credentials?.scope
-        self.refreshToken = credentials?.refreshToken
-        let wasLoggedIn = self.isLoggedIn
-        self.isLoggedIn = isLoggedIn
+        // Decode only when credentials (and therefore an ID token) are present.
+        // Signed-out / no-account states keep the default `false` and never read a claim.
+        let previousHasOptedOutOfChatThreads = self.hasOptedOutOfChatThreads
+        self.hasOptedOutOfChatThreads = credentials?.hasOptedOutOfChatThreads ?? false
+        let previousIsLoggedIn = self.isLoggedIn
+        self.isLoggedIn = newIsLoggedIn
+        Self.wasLoggedIn = newIsLoggedIn
+
+        let claimDetails = credentials?.chatThreadsOptOutClaimLogDetails()
+            ?? "no-credentials optedOut=false"
+        EcosiaLogger.auth.info(
+            "chat-threads-opt-out applied source=\(source.rawValue) environment=\(Environment.current) isLoggedIn=\(newIsLoggedIn) \(claimDetails)"
+        )
+
+        // The claim can flip on a token refresh without a login transition, so this is
+        // posted independently of the `isLoggedIn` guard below.
+        // Observers (NTP upload control) touch UIKit and must run on the main queue;
+        // `setupTokensWithCredentials` is called from auth Tasks on cooperative threads.
+        if previousHasOptedOutOfChatThreads != hasOptedOutOfChatThreads {
+            let optedOutForNotification = hasOptedOutOfChatThreads
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(
+                    name: .EcosiaChatThreadsOptOutDidChange,
+                    object: nil,
+                    userInfo: ["hasOptedOutOfChatThreads": optedOutForNotification]
+                )
+            }
+        }
 
         // Only dispatch the auth state change when the login state actually transitions,
         // to avoid triggering observers (e.g. EcosiaAuthUIStateProvider.registerVisitIfNeeded)
         // on every token refresh when the user is already logged in.
-        guard wasLoggedIn != isLoggedIn else { return }
+        guard previousIsLoggedIn != newIsLoggedIn else { return }
         Task {
             await dispatchAuthStateChange(isLoggedIn: isLoggedIn, fromCredentialRetrieval: false, accountOrigin: accountOrigin)
         }
@@ -443,6 +499,8 @@ extension EcosiaAuthenticationService {
      -   fromCredentialRetrieval: Whether this is from credential retrieval (for state loaded)
      */
     private func dispatchAuthStateChange(isLoggedIn: Bool, fromCredentialRetrieval: Bool, accountOrigin: AccountOrigin? = nil) async {
+        hasResolvedAuthState = true
+
         // Determine the correct action type
         let actionType: EcosiaAuthActionType
         if fromCredentialRetrieval {
@@ -453,7 +511,32 @@ extension EcosiaAuthenticationService {
             actionType = .userLoggedOut
         }
 
+        if !isLoggedIn {
+            clearLoggedInImpactCacheIfNeeded(actionType: actionType)
+        }
+
         // Dispatch to the new state management system
         EcosiaBrowserWindowAuthManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType, accountOrigin: accountOrigin)
+    }
+
+    /// Clears the shared logged-in impact cache directly, here, rather than relying on a UI
+    /// observer to react to the notification dispatched above: `EcosiaBrowserWindowAuthManager`
+    /// only notifies registered browser windows, and can have none registered yet when this
+    /// resolves (e.g. very early in launch) - in which case no observer would ever hear about it
+    /// and the cache would stay stale on disk for the next launch to read.
+    private func clearLoggedInImpactCacheIfNeeded(actionType: EcosiaAuthActionType) {
+        switch actionType {
+        case .userLoggedOut:
+            // An explicit logout always means a logged-in account's snapshot is now stale.
+            LoggedInImpactCache.clear()
+        case .authStateLoaded where Self.wasLoggedIn:
+            // Credential resolution confirmed logged-out, but the previous session was logged
+            // in (e.g. an expired token) rather than an explicit logout. An ordinary continuing
+            // guest, whose wasLoggedIn is already false, is unaffected.
+            LoggedInImpactCache.clear()
+            Self.wasLoggedIn = false
+        default:
+            break
+        }
     }
 }

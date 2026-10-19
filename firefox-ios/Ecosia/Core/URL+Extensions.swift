@@ -124,6 +124,13 @@ extension URL {
         return components.path == "/search"
     }
 
+    /// Check whether the URL is one of the accounts error pages that auth flows land on when they fail
+    public func isEcosiaErrorPage(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
+        guard isEcosia(urlProvider) else { return false }
+        let path = path.lowercased()
+        return urlProvider.errorPaths.contains { $0.lowercased() == path }
+    }
+
     public func isEcosiaSearchVertical(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
         getEcosiaSearchVerticalPath(urlProvider) != nil
     }
@@ -233,8 +240,10 @@ extension URL {
     }
 
     public func isEcosia(_ urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
-        let hasURLProviderDomainSuffix = host?.hasSuffix(urlProvider.domain) == true
-        return isBrowser() && hasURLProviderDomainSuffix
+        guard isBrowser(), let host else { return false }
+        let domain = urlProvider.domain.lowercased()
+        let normalizedHost = host.lowercased()
+        return normalizedHost == domain || normalizedHost.hasSuffix(".\(domain)")
     }
 
     private var components: URLComponents? {

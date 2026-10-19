@@ -18,6 +18,7 @@ enum FileUploadAuthCookieSync {
     }
 
     @discardableResult
+    @MainActor
     static func syncAuthSessionCookieToSharedStorage(
         urlProvider: URLProvider = Environment.current.urlProvider,
         cookieStore: CookieStoreProtocol? = nil

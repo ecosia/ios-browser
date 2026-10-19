@@ -37,16 +37,16 @@ public final class Statistics {
     }
 
     public static let shared = Statistics()
-    // Ecosia: defaults updated from live API on 2026-02-26 (previously Nov 2020 hardcoded values)
-    public internal(set) var treesPlanted = Double(244_418_472)                                    // "2025-12-01T16:34:00.0Z"
-    public internal(set) var treesPlantedLastUpdated = Date(timeIntervalSince1970: 1_764_606_840)  // 2025-12-01T16:34:00Z
-    public internal(set) var timePerTree = Double(2.2)
+    // Ecosia: defaults updated from live API on 2026-09-09 (previously 2026-02-26 hardcoded values)
+    public internal(set) var treesPlanted = Double(249_631_817)                                    // "2026-04-13T10:30:00.0Z"
+    public internal(set) var treesPlantedLastUpdated = Date(timeIntervalSince1970: 1_776_076_200)  // 2026-04-13T10:30:00Z
+    public internal(set) var timePerTree = Double(2.1267)
     public internal(set) var searchesPerTree = Double(50)
     public internal(set) var activeUsers = Double(20000000)
     public internal(set) var eurToUsdMultiplier = Double(1.08)
     public internal(set) var investmentPerSecond = Double(0.25)
-    public internal(set) var totalInvestments = Double(88_666_760)                                 // "2024-10-08T00:00:00.000000Z"
-    public internal(set) var totalInvestmentsLastUpdated = Date(timeIntervalSince1970: 1_728_345_600) // 2024-10-08T00:00:00Z
+    public internal(set) var totalInvestments = Double(99_870_541)                                 // "2026-03-12T00:00:00.000000Z"
+    public internal(set) var totalInvestmentsLastUpdated = Date(timeIntervalSince1970: 1_773_273_600) // 2026-03-12T00:00:00Z
 
     init() { }
 

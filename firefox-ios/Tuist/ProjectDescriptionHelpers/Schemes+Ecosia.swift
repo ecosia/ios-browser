@@ -70,12 +70,9 @@ public enum EcosiaSchemes {
         // this is purely process-load isolation. Legit per-method XCTSkips also remain in the file for
         // genuinely removed-in-v147 APIs (getSharingAction, menuStatus, TopSitesViewModel, AppSettings ctor).
         // (MOB-4384)
-        // -- 5 BrowserViewController / WKWebView in-app-search tests:
-        "AnalyticsSpyTests/testWebViewDelegateTracksSearchEventOnEcosiaVerticalURLChange()",
-        "AnalyticsSpyTests/testWebViewDelegateTracksSearchEventBasedOnNavigationType()",
-        "AnalyticsSpyTests/testWebViewDelegateTracksSearchEventOnSameURLWhenLinkActivated()",
-        "AnalyticsSpyTests/testEcosiaHandleDidCommitDoesNotFireWhenURLDoesNotMatchPending()",
-        "AnalyticsSpyTests/testInappSearchPrivateFlagIsForwardedCorrectly()",
+        // -- The 5 in-app-search tests are deliberately NOT skipped (MOB-4948). They no longer build a
+        //    WKWebView or route through the navigation delegate, so only a BrowserViewController
+        //    remains, and they guard the in-app search event that regressed twice while skipped.
         // -- 4 MultiplyImpact referral tests (the "multiple fulfill" contaminator that hit ReferralsModelTests):
         "AnalyticsSpyTests/testMultiplyImpactViewDidAppearTracksReferralViewInviteScreen()",
         "AnalyticsSpyTests/testMultiplyImpactLearnMoreButtonTracksReferralClickLearnMore()",
@@ -288,6 +285,12 @@ public enum EcosiaSchemes {
         "ECOSIA_RUN_UNIT_TESTS": .environmentVariable(value: "1", isEnabled: true)
     ])
 
+    // Ecosia: snapshot tests can construct account UI before CI injects a production Auth0 value.
+    // A non-secret placeholder keeps DefaultAuth0SettingsProvider from terminating the host app.
+    private static let snapshotTestArguments: Arguments = .arguments(environmentVariables: [
+        "AUTH0_CLIENT_ID": .environmentVariable(value: "test-auth0-client-id", isEnabled: true)
+    ])
+
     // MARK: - Schemes
 
     public static let all: [Scheme] = [
@@ -332,6 +335,7 @@ public enum EcosiaSchemes {
             buildAction: .buildAction(targets: ["Client", "EcosiaSnapshotTests"]),
             testAction: .targets(
                 ["EcosiaSnapshotTests"],
+                arguments: snapshotTestArguments,
                 configuration: "BetaDebug"
             ),
             runAction: .runAction(

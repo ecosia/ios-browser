@@ -69,6 +69,9 @@ protocol TabManager: AnyObject {
                 zombie: Bool,
                 isPrivate: Bool) -> Tab
 
+    // Ecosia: inserts a tab the caller has already created, so it can be set up before delegates are notified
+    func addTab(_ tab: Tab, request: URLRequest)
+
     // MARK: - Remove tab
 
     /// Remove tab option using tabUUID.

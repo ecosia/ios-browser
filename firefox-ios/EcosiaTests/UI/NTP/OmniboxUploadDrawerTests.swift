@@ -53,14 +53,15 @@ final class OmniboxUploadDrawerTests: XCTestCase {
     }
 
     func testChatModesExposeAllCases() {
-        XCTAssertEqual(OmniboxChatMode.allCases.count, 4)
-        XCTAssertEqual(OmniboxChatMode.allCases, [.standard, .thinkLonger, .displaySources, .learning])
+        XCTAssertEqual(OmniboxChatMode.allCases.count, 5)
+        XCTAssertEqual(OmniboxChatMode.allCases, [.standard, .thinkLonger, .generateImage, .displaySources, .learning])
     }
 
     func testChatModeAccessibilityMetadata() {
         XCTAssertEqual(OmniboxChatMode.standard.accessibilityLabel, String.localized(.chatModeStandard))
         XCTAssertEqual(OmniboxChatMode.standard.accessibilityIdentifier, "OmniboxChatModeStandardOption")
         XCTAssertEqual(OmniboxChatMode.thinkLonger.accessibilityIdentifier, "OmniboxChatModeThinkLongerOption")
+        XCTAssertEqual(OmniboxChatMode.generateImage.accessibilityIdentifier, "OmniboxChatModeGenerateImageOption")
         XCTAssertEqual(OmniboxChatMode.displaySources.accessibilityIdentifier, "OmniboxChatModeDisplaySourcesOption")
         XCTAssertEqual(OmniboxChatMode.learning.accessibilityIdentifier, "OmniboxChatModeLearningOption")
     }
@@ -68,18 +69,21 @@ final class OmniboxUploadDrawerTests: XCTestCase {
     func testChatModeIconsLoadFromFrameworkBundle() {
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-standard-ai-chat"))
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-think-longer"))
+        XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-generate-images"))
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-display-sources"))
         XCTAssertNotNil(UIImage.ecosia(named: "chatmodes-learning"))
     }
 
-    func testChatModeAIChatQueryItemsMapToBackendFlags() {
+    func testChatModeAIChatQueryItemsMapToModeParameter() {
         XCTAssertTrue(OmniboxChatMode.standard.aiChatQueryItems.isEmpty)
         XCTAssertEqual(OmniboxChatMode.thinkLonger.aiChatQueryItems,
-                       [URLQueryItem(name: "t", value: "1")])
+                       [URLQueryItem(name: "mode", value: "think_longer")])
+        XCTAssertEqual(OmniboxChatMode.generateImage.aiChatQueryItems,
+                       [URLQueryItem(name: "mode", value: "generate_image")])
         XCTAssertEqual(OmniboxChatMode.displaySources.aiChatQueryItems,
-                       [URLQueryItem(name: "m", value: "2")])
+                       [URLQueryItem(name: "mode", value: "web_search")])
         XCTAssertEqual(OmniboxChatMode.learning.aiChatQueryItems,
-                       [URLQueryItem(name: "m", value: "1")])
+                       [URLQueryItem(name: "mode", value: "guided_learning")])
     }
 
     func testAIChatURLCarriesChatModeQueryItems() {
@@ -90,14 +94,25 @@ final class OmniboxUploadDrawerTests: XCTestCase {
                                           additionalQueryItems: OmniboxChatMode.standard.aiChatQueryItems)
         let standardItems = URLComponents(url: standardURL, resolvingAgainstBaseURL: false)?.queryItems ?? []
         XCTAssertTrue(standardURL.path.hasSuffix("/ai-chat"))
-        XCTAssertFalse(standardItems.contains { $0.name == "t" || $0.name == "m" })
+        XCTAssertFalse(standardItems.contains { ["mode", "t", "m"].contains($0.name) })
 
-        let learningURL = provider.aiChat(origin: .omnibox,
-                                          query: "hello",
-                                          additionalQueryItems: OmniboxChatMode.learning.aiChatQueryItems)
-        let learningItems = URLComponents(url: learningURL, resolvingAgainstBaseURL: false)?.queryItems ?? []
-        XCTAssertTrue(learningItems.contains(URLQueryItem(name: "m", value: "1")))
-        XCTAssertTrue(learningItems.contains(URLQueryItem(name: "q", value: "hello")))
+        let expectedModes: [OmniboxChatMode: String] = [
+            .thinkLonger: "think_longer",
+            .displaySources: "web_search",
+            .learning: "guided_learning"
+        ]
+        let origin = URLQueryItem(name: "origin", value: URLProvider.AIChatOrigin.omnibox.rawValue)
+        for (mode, value) in expectedModes {
+            let url = provider.aiChat(origin: .omnibox,
+                                      query: "hello",
+                                      additionalQueryItems: mode.aiChatQueryItems)
+            let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
+            XCTAssertTrue(url.path.hasSuffix("/ai-chat"), "\(mode)")
+            XCTAssertTrue(items.contains(URLQueryItem(name: "mode", value: value)), "\(mode)")
+            XCTAssertTrue(items.contains(URLQueryItem(name: "q", value: "hello")), "\(mode)")
+            XCTAssertTrue(items.contains(origin), "\(mode)")
+            XCTAssertFalse(items.contains { $0.name == "t" || $0.name == "m" }, "\(mode)")
+        }
     }
 
     func testAIChatURLCarriesChatModeQueryItemsAndFiles() throws {
@@ -121,7 +136,8 @@ final class OmniboxUploadDrawerTests: XCTestCase {
         )
 
         XCTAssertEqual(items["q"], "summarize this")
-        XCTAssertEqual(items["m"], "1")
+        XCTAssertEqual(items["mode"], "guided_learning")
+        XCTAssertEqual(items["origin"], URLProvider.AIChatOrigin.omnibox.rawValue)
         XCTAssertNotNil(items["files"])
     }
 }
@@ -255,6 +271,21 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
 
         state.handleUploadDrawerDismissed()
         XCTAssertTrue(didLogin)
+    }
+
+    func testPresentUploadDrawerStoresChatThreadsOptOut() {
+        let state = NTPOmniboxSheetState()
+        present(state, isAuthenticated: true)
+        XCTAssertFalse(state.hasOptedOutOfChatThreads)
+
+        state.presentUploadDrawer(provider: .ecosia,
+                                  isAuthenticated: true,
+                                  hasOptedOutOfChatThreads: true,
+                                  onSelectUpload: { _ in },
+                                  onChatModeSelectionChanged: { _ in },
+                                  onLogin: {})
+        XCTAssertTrue(state.hasOptedOutOfChatThreads)
+        XCTAssertTrue(state.isAuthenticated)
     }
 
     func testUploadSelectionTakesPrecedenceOverPendingLogin() {
@@ -400,6 +431,27 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
         XCTAssertTrue(spy.didTapUpload)
     }
 
+    func testGenerateImageModeSwapsPlaceholderAndRestoresItWhenCleared() {
+        let bar = NTPSearchBarView(frame: CGRect(x: 0, y: 0, width: 320, height: 110))
+        let placeholderTexts = { bar.subviews.compactMap { ($0 as? UILabel)?.text } }
+        XCTAssertTrue(placeholderTexts().contains(String.localized(.askSearchBrowse)))
+
+        bar.setSelectedChatMode(.generateImage)
+        XCTAssertTrue(placeholderTexts().contains(String.localized(.chatModeGenerateImagePlaceholder)))
+        XCTAssertFalse(placeholderTexts().contains(String.localized(.askSearchBrowse)))
+
+        bar.setSelectedChatMode(nil)
+        XCTAssertTrue(placeholderTexts().contains(String.localized(.askSearchBrowse)))
+    }
+
+    func testOnlyGenerateImageModeOverridesThePlaceholder() {
+        for mode in OmniboxChatMode.allCases where mode != .generateImage {
+            XCTAssertNil(mode.generateImagePlaceholder, "\(mode) should keep the default placeholder")
+        }
+        XCTAssertEqual(OmniboxChatMode.generateImage.generateImagePlaceholder,
+                       String.localized(.chatModeGenerateImagePlaceholder))
+    }
+
     func testUploadButtonHiddenWhenFileUploadFlagDisabled() throws {
         Self.enableFileUploadFlag(false)
         let bar = NTPSearchBarView(frame: CGRect(x: 0, y: 0, width: 320, height: 110))
@@ -424,6 +476,23 @@ final class NTPSearchBarUploadDelegateTests: XCTestCase {
         let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first
         let button = try XCTUnwrap(uploadButton)
         XCTAssertFalse(button.isHidden)
+    }
+
+    func testUploadButtonShowsRestrictedAppearanceWhenChatThreadsOptedOut() throws {
+        let bar = NTPSearchBarView(frame: CGRect(x: 0, y: 0, width: 320, height: 110))
+        let uploadButton = bar.subviews.compactMap { $0 as? EcosiaOmniboxUploadButton }.first
+        let button = try XCTUnwrap(uploadButton)
+
+        XCTAssertTrue(button.isEnabled)
+        XCTAssertFalse(button.showsUploadRestrictedAppearance)
+
+        bar.updateFileUploadAvailability(hasOptedOutOfChatThreads: true)
+        XCTAssertTrue(button.isEnabled)
+        XCTAssertTrue(button.showsUploadRestrictedAppearance)
+
+        bar.updateFileUploadAvailability(hasOptedOutOfChatThreads: false)
+        XCTAssertTrue(button.isEnabled)
+        XCTAssertFalse(button.showsUploadRestrictedAppearance)
     }
 
     private static func enableFileUploadAndAIFreeSearching() {

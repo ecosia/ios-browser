@@ -221,6 +221,7 @@ final class EcosiaAuthFlow {
 
         EcosiaLogger.session.info("Retrieving session transfer token for SSO")
         await authService.getSessionTransferToken()
+        await InvisibleTabSession.installSessionCookie(from: authService)
 
         // Create invisible tab session (must be on main thread for UI operations)
         EcosiaLogger.invisibleTabs.info("Creating invisible tab session for login")
@@ -228,16 +229,12 @@ final class EcosiaAuthFlow {
             try InvisibleTabSession(
                 url: signUpURL,
                 browserViewController: browserViewController,
-                authService: authService,
                 timeout: 10.0
             )
         }
 
         // Retain session until completion
         activeSession = session
-
-        // Set up session cookies (main-actor isolated)
-        await MainActor.run { session.setupSessionCookies() }
 
         // Wait for session completion (startMonitoring is main-actor isolated)
         await withCheckedContinuation { continuation in
@@ -286,7 +283,6 @@ final class EcosiaAuthFlow {
             try InvisibleTabSession(
                 url: logoutURL,
                 browserViewController: browserViewController,
-                authService: authService,
                 timeout: 10.0
             )
         }

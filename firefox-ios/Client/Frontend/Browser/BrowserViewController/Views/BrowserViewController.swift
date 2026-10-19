@@ -149,10 +149,10 @@ class BrowserViewController: UIViewController,
         view.accessibilityIdentifier = AccessibilityIdentifiers.Browser.statusBarOverlay
     }
 
-    // Ecosia: Bridges eligibility (checked in decidePolicyFor, where WKNavigationAction
-    // and its navigationType are available) to the actual tracking call in didCommit.
-    // Set when eligible, cleared on commit or on the next navigation.
-    var pendingInappSearchUrl: URL?
+    // Ecosia: Bridges eligibility (checked in decidePolicyFor) to the tracking call in didCommit,
+    // gated on a successful navigation response. Cleared on commit or on the next navigation,
+    // but retained past a commit that ran before the response so the late arrival stays detectable.
+    var pendingInappSearch: PendingInappSearch?
 
     private(set) lazy var addressToolbarContainer: AddressToolbarContainer = .build(nil, {
         AddressToolbarContainer(toolbarHelper: self.toolbarHelper)

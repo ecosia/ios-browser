@@ -128,7 +128,14 @@ class CreditCardValidatorTests: XCTestCase {
         var result = creditCardValidator.isExpirationValidFor(date: "1230")
         XCTAssert(result)
 
+        /* Ecosia: a hardcoded expiry stops being valid once its month passes, so use one a year ahead
         result = creditCardValidator.isExpirationValidFor(date: "0926")
+         */
+        let nextYear = Calendar(identifier: .gregorian).date(byAdding: .year, value: 1, to: Date()) ?? Date()
+        let expiryFormatter = DateFormatter()
+        expiryFormatter.locale = Locale(identifier: "en_US_POSIX")
+        expiryFormatter.dateFormat = "MMyy"
+        result = creditCardValidator.isExpirationValidFor(date: expiryFormatter.string(from: nextYear))
         XCTAssert(result)
     }
 

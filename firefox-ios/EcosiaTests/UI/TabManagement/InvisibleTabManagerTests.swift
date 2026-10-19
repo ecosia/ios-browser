@@ -45,9 +45,10 @@ final class InvisibleTabManagerTests: XCTestCase, @unchecked Sendable {
 
     // MARK: - Helper Methods
 
-    private func createTestTab(url: URL? = URL(string: "https://example.com")) -> Tab {
+    private func createTestTab(url: URL? = URL(string: "https://example.com"),
+                               windowUUID: WindowUUID? = nil) -> Tab {
         let profile = MockProfile()  // Use existing MockProfile from test suite
-        return Tab(profile: profile, isPrivate: false, windowUUID: windowUUID)
+        return Tab(profile: profile, isPrivate: false, windowUUID: windowUUID ?? self.windowUUID)
     }
 
     // MARK: - Tab Visibility Management Tests
@@ -190,13 +191,30 @@ final class InvisibleTabManagerTests: XCTestCase, @unchecked Sendable {
 
         // When
         let existingTabUUIDs: Set<TabUUID> = [tab1.tabUUID, tab3.tabUUID]
-        manager.cleanupRemovedTabs(existingTabUUIDs: existingTabUUIDs)
+        manager.cleanupRemovedTabs(existingTabUUIDs: existingTabUUIDs, in: windowUUID)
 
         // Then
         XCTAssertEqual(manager.invisibleTabUUIDs.count, 2)
         XCTAssertTrue(manager.isTabInvisible(tab1))
         XCTAssertFalse(manager.isTabInvisible(tab2))
         XCTAssertTrue(manager.isTabInvisible(tab3))
+    }
+
+    func testCleanupRemovedTabsLeavesOtherWindowsUntouched() {
+        // Given
+        let otherWindowUUID = WindowUUID()
+        let tabInThisWindow = createTestTab()
+        let tabInOtherWindow = createTestTab(windowUUID: otherWindowUUID)
+
+        manager.markTabAsInvisible(tabInThisWindow)
+        manager.markTabAsInvisible(tabInOtherWindow)
+
+        // When
+        manager.cleanupRemovedTabs(existingTabUUIDs: [], in: windowUUID)
+
+        // Then
+        XCTAssertFalse(manager.isTabInvisible(tabInThisWindow))
+        XCTAssertTrue(manager.isTabInvisible(tabInOtherWindow))
     }
 
     // MARK: - Thread Safety Tests

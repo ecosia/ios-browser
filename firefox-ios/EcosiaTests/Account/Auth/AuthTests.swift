@@ -39,9 +39,9 @@ final class AuthTests: XCTestCase {
         XCTAssertNotNil(auth)
         XCTAssertNotNil(auth.auth0Provider)
         XCTAssertFalse(auth.isLoggedIn)
+        XCTAssertFalse(auth.hasOptedOutOfChatThreads)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testInit_withCustomProvider_usesProvidedProvider() {
@@ -86,7 +86,6 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, expectedCredentials.idToken)
         XCTAssertEqual(auth.accessToken, expectedCredentials.accessToken)
-        XCTAssertEqual(auth.refreshToken, expectedCredentials.refreshToken)
     }
 
     func testSignUp_usesSignUpScreenHint() async {
@@ -132,7 +131,6 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.isLoggedIn, initialLoginState)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testLogin_withStoreCredentialsFailure_doesNotUpdateState() async {
@@ -154,7 +152,6 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.isLoggedIn, initialLoginState)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     // MARK: - Account Origin Tests
@@ -242,6 +239,102 @@ final class AuthTests: XCTestCase {
         }
     }
 
+    // MARK: - Chat Threads Opt-Out Tests
+
+    func testLogin_withChatThreadsOptOutTrue_setsHasOptedOutOfChatThreads() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
+
+        _ = try await auth.login()
+
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertTrue(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testLogin_withChatThreadsOptOutFalse_keepsUploadAvailable() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: false)
+
+        _ = try await auth.login()
+
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertFalse(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testLogin_withMissingChatThreadsOptOutClaim_defaultsToFalse() async throws {
+        let idToken = try makeJWT(claims: [
+            "sub": "auth0|12345",
+            "iat": Date().timeIntervalSince1970
+        ])
+        mockProvider.mockCredentials = Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: idToken,
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
+
+        _ = try await auth.login()
+
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertFalse(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testLogout_clearsChatThreadsOptOut() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
+        _ = try await auth.login()
+        XCTAssertTrue(auth.hasOptedOutOfChatThreads)
+
+        try await auth.logout(triggerWebLogout: false)
+
+        XCTAssertFalse(auth.isLoggedIn)
+        XCTAssertFalse(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testRenewCredentials_reevaluatesChatThreadsOptOutFromNewIdToken() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: false)
+        _ = try await auth.login()
+        XCTAssertFalse(auth.hasOptedOutOfChatThreads)
+
+        mockProvider.canRenewCredentialsResult = true
+        mockProvider.hasStoredCredentials = true
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
+
+        try await auth.renewCredentials()
+
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertTrue(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testSetupTokens_postsChatThreadsOptOutDidChangeWhenClaimFlips() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
+        let expectation = expectation(forNotification: .EcosiaChatThreadsOptOutDidChange,
+                                      object: nil) { notification in
+            notification.userInfo?["hasOptedOutOfChatThreads"] as? Bool == true
+        }
+
+        _ = try await auth.login()
+
+        await fulfillment(of: [expectation], timeout: 1.0)
+        XCTAssertTrue(auth.hasOptedOutOfChatThreads)
+    }
+
+    func testRenewCredentials_withUnchangedClaim_doesNotPostChatThreadsOptOutDidChange() async throws {
+        mockProvider.mockCredentials = try credentials(chatThreadsOptOut: true)
+        let loginPost = expectation(forNotification: .EcosiaChatThreadsOptOutDidChange, object: nil)
+        _ = try await auth.login()
+        await fulfillment(of: [loginPost], timeout: 1.0)
+
+        let expectation = expectation(forNotification: .EcosiaChatThreadsOptOutDidChange, object: nil)
+        expectation.isInverted = true
+
+        mockProvider.canRenewCredentialsResult = true
+        mockProvider.hasStoredCredentials = true
+        try await auth.renewCredentialsIfNeeded()
+
+        await fulfillment(of: [expectation], timeout: 0.5)
+        XCTAssertTrue(auth.hasOptedOutOfChatThreads)
+    }
+
     // MARK: - Logout Tests
 
     func testLogout_withTriggerWebLogout_clearsSessionAndCredentials() async {
@@ -261,7 +354,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testLogout_withoutTriggerWebLogout_clearsCredentialsOnly() async {
@@ -281,7 +373,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testLogout_withClearSessionFailure_stillClearsCredentials() async {
@@ -302,7 +393,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testLogout_withClearCredentialsFailure_maintainsLoggedInState() async {
@@ -324,7 +414,6 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertNotNil(auth.idToken)
         XCTAssertNotNil(auth.accessToken)
-        XCTAssertNotNil(auth.refreshToken)
     }
 
     func testLogout_withStaleEASCCookieInSharedStorage_removesIt() async {
@@ -376,6 +465,25 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(remainingNames.contains(Cookie.authSession.rawValue))
     }
 
+    func testLogout_clearsLoggedInImpactCache() async {
+        // An explicit logout always means a logged-in account's cached snapshot is now stale -
+        // cleared here, in the service, rather than relying on a UI observer to react to the
+        // notification (which requires at least one registered browser window to even arrive).
+        await setupLoggedInState()
+        LoggedInImpactCache.save(ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.5))
+        defer { LoggedInImpactCache.clear() }
+
+        // Act
+        do {
+            try await auth.logout()
+        } catch {
+            XCTFail("Logout should succeed, but failed with: \(error)")
+        }
+
+        // Assert
+        XCTAssertNil(LoggedInImpactCache.load())
+    }
+
     // MARK: - Retrieve Stored Credentials Tests
 
     func testRetrieveStoredCredentials_withValidCredentials_updatesState() async {
@@ -402,7 +510,21 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, expectedCredentials.idToken)
         XCTAssertEqual(auth.accessToken, expectedCredentials.accessToken)
-        XCTAssertEqual(auth.refreshToken, expectedCredentials.refreshToken)
+    }
+
+    func testRetrieveStoredCredentials_withValidCredentials_doesNotForceRenewal() async {
+        // Arrange
+        mockProvider.hasStoredCredentials = true
+
+        await waitForInitCredentialRetrieval()
+        mockProvider.renewCredentialsCallCount = 0
+
+        // Act
+        await auth.retrieveStoredCredentials()
+
+        // Assert
+        XCTAssertTrue(auth.isLoggedIn)
+        XCTAssertEqual(mockProvider.renewCredentialsCallCount, 0)
     }
 
     func testRetrieveStoredCredentials_withFailure_maintainsLoggedOutState() async {
@@ -420,12 +542,52 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
+    }
+
+    func testRetrieveStoredCredentials_withFailureAfterPreviousLogin_clearsLoggedInImpactCacheAndWasLoggedIn() async {
+        // Arrange: flush the init-time automatic retrieval first, then simulate the previous
+        // session having ended logged in (persisted across launches) before the explicit retry -
+        // this represents credentials that turned out to be invalid (e.g. an expired token)
+        // rather than an explicit logout.
+        mockProvider.shouldFailRetrieveCredentials = true
+        await waitForInitCredentialRetrieval()
+
+        EcosiaAuthenticationService.wasLoggedIn = true
+        LoggedInImpactCache.save(ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.5))
+        defer {
+            LoggedInImpactCache.clear()
+            EcosiaAuthenticationService.wasLoggedIn = false
+        }
+
+        // Act
+        await auth.retrieveStoredCredentials()
+
+        // Assert
+        XCTAssertNil(LoggedInImpactCache.load())
+        XCTAssertFalse(EcosiaAuthenticationService.wasLoggedIn)
+    }
+
+    func testRetrieveStoredCredentials_withFailureWhileWasLoggedInIsFalse_doesNotClearLoggedInImpactCache() async {
+        // An ordinary continuing guest resolves to logged-out on every cold launch too - this
+        // must not disturb a cache it never populated in the first place.
+        mockProvider.shouldFailRetrieveCredentials = true
+        await waitForInitCredentialRetrieval()
+
+        EcosiaAuthenticationService.wasLoggedIn = false
+        let snapshot = ImpactSnapshot(seedCount: 7, currentLevelNumber: 2, currentProgress: 0.3)
+        LoggedInImpactCache.save(snapshot)
+        defer { LoggedInImpactCache.clear() }
+
+        // Act
+        await auth.retrieveStoredCredentials()
+
+        // Assert
+        XCTAssertEqual(LoggedInImpactCache.load(), snapshot)
     }
 
     // MARK: - Renew Credentials Tests
 
-    func testRenewCredentialsIfNeeded_withRenewableCredentials_renewsAndUpdatesState() async {
+    func testRenewCredentials_withRenewableCredentials_renewsAndUpdatesState() async {
         // Arrange
         await setupLoggedInState()
         mockProvider.canRenewCredentialsResult = true
@@ -441,7 +603,7 @@ final class AuthTests: XCTestCase {
 
         // Act
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             XCTFail("Renew credentials should succeed, but failed with: \(error)")
         }
@@ -452,10 +614,9 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, renewedCredentials.idToken)
         XCTAssertEqual(auth.accessToken, renewedCredentials.accessToken)
-        XCTAssertEqual(auth.refreshToken, renewedCredentials.refreshToken)
     }
 
-    func testRenewCredentialsIfNeeded_withNonRenewableCredentials_doesNotRenew() async {
+    func testRenewCredentials_withNonRenewableCredentials_doesNotRenew() async {
         // Arrange
         await setupLoggedInState()
         mockProvider.canRenewCredentialsResult = false
@@ -463,7 +624,7 @@ final class AuthTests: XCTestCase {
 
         // Act
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             XCTFail("Renew credentials should succeed, but failed with: \(error)")
         }
@@ -475,18 +636,17 @@ final class AuthTests: XCTestCase {
         XCTAssertEqual(auth.idToken, originalIdToken)
     }
 
-    func testRenewCredentialsIfNeeded_withRenewFailure_maintainsCurrentState() async {
+    func testRenewCredentials_withRenewFailure_maintainsCurrentState() async {
         // Arrange
         await setupLoggedInState()
         mockProvider.canRenewCredentialsResult = true
         mockProvider.shouldFailRenewCredentials = true
         let originalIdToken = auth.idToken
         let originalAccessToken = auth.accessToken
-        let originalRefreshToken = auth.refreshToken
 
         // Act
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             // This test expects renewal to fail, so we should catch the error
             // but the test should continue to verify the state is maintained
@@ -498,7 +658,6 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertEqual(auth.idToken, originalIdToken)
         XCTAssertEqual(auth.accessToken, originalAccessToken)
-        XCTAssertEqual(auth.refreshToken, originalRefreshToken)
     }
 
     // MARK: - SSO Methods Tests
@@ -572,7 +731,6 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.isLoggedIn)
         XCTAssertNotNil(auth.idToken)
         XCTAssertNotNil(auth.accessToken)
-        XCTAssertNotNil(auth.refreshToken)
 
         // Act - Logout
         do {
@@ -585,7 +743,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     func testCompleteAuthFlow_loginRenewLogoutCycle_worksCorrectly() async {
@@ -615,7 +772,7 @@ final class AuthTests: XCTestCase {
         )
         mockProvider.mockCredentials = renewedCredentials
         do {
-            try await auth.renewCredentialsIfNeeded()
+            try await auth.renewCredentials()
         } catch {
             XCTFail("Renew credentials should succeed, but failed with: \(error)")
         }
@@ -636,7 +793,6 @@ final class AuthTests: XCTestCase {
         XCTAssertFalse(auth.isLoggedIn)
         XCTAssertNil(auth.idToken)
         XCTAssertNil(auth.accessToken)
-        XCTAssertNil(auth.refreshToken)
     }
 
     // MARK: - Helper Methods
@@ -698,6 +854,22 @@ final class AuthTests: XCTestCase {
         }
 
         return "\(base64URLEncode(header)).\(base64URLEncode(payload)).mock-signature"
+    }
+
+    private func credentials(chatThreadsOptOut: Bool) throws -> Credentials {
+        let idToken = try makeJWT(claims: [
+            "sub": "auth0|12345",
+            "iat": Date().timeIntervalSince1970,
+            "https://ecosia.org/chat_threads_opt_out": chatThreadsOptOut
+        ])
+        return Credentials(
+            accessToken: "test-access-token",
+            tokenType: "Bearer",
+            idToken: idToken,
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
     }
 
     private func waitForInitCredentialRetrieval(

@@ -4,6 +4,7 @@
 
 import Foundation
 import Common
+import Ecosia
 import Redux
 import Shared
 import Storage

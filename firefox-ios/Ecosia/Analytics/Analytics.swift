@@ -61,11 +61,11 @@ open class Analytics {
         Analytics.shared.privateTracker = makePrivateTracker()
     }
 
-    private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
-        let variant = Unleash.getVariant(toggle).name
-        guard variant != "disabled" else { return nil }
+    private static func getTestContext(from toggle: Unleash.Toggle.Name, named contextName: String) -> SelfDescribingJson? {
+        let variant = Unleash.getVariant(toggle)
+        guard variant.name != "disabled" else { return nil }
 
-        let variantContext: [String: String] = [toggle.rawValue: variant]
+        let variantContext: [String: String] = [contextName: variant.name]
         let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
         return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
     }
@@ -225,6 +225,14 @@ open class Analytics {
     }
 
     // MARK: NTP
+    /// Structured-event stand-in for a Snowplow page view of the new-tab page.
+    /// iOS has no `page_view`, and screen-view autotracking is off because
+    /// Firefox's view-controller graph would flood the pipeline.
+    public func ntpViewed() {
+        track(Structured(category: Category.ntp.rawValue,
+                         action: Action.view.rawValue))
+    }
+
     public func ntpCustomisation(_ action: Action.NTPCustomization, label: Label.NTP) {
         track(Structured(category: Category.ntp.rawValue,
                          action: action.rawValue)
@@ -630,17 +638,16 @@ extension Analytics {
     func appendActivityContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
-            addABTestContexts(to: event, toggles: [.brazeIntegration])
+            addABTestContexts(to: event)
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }
     }
 
-    private func addABTestContexts(to event: Structured, toggles: [Unleash.Toggle.Name]) {
-        toggles.forEach { toggle in
-            if let context = Self.getTestContext(from: toggle) {
-                event.entities.append(context)
-            }
+    private func addABTestContexts(to event: Structured) {
+        if BrazeIntegration.isReportedToAnalytics,
+            let brazeContext = Self.getTestContext(from: .brazeCoreMarkets, named: "braze_features_holdout_group") {
+            event.entities.append(brazeContext)
         }
     }
 

@@ -48,7 +48,7 @@ extension BrowserViewController {
     func ecosiaPrepareNTPOmniboxForDisplay() {
         guard let homepage = ecosiaEmbeddedHomepage,
               homepage.ntpSearchBar?.isFirstResponder == false else { return }
-        homepage.ntpSearchBar?.updateUploadButtonVisibility()
+        homepage.ntpSearchBar?.refreshUploadControl()
         homepage.resetNTPOmniboxSession()
     }
 
@@ -385,7 +385,7 @@ extension BrowserViewController {
         )
 
         let hostingController = UIHostingController(rootView: profileView)
-        hostingController.modalPresentationStyle = .pageSheet
+        hostingController.modalPresentationStyle = .formSheet
 
         if let sheet = hostingController.sheetPresentationController {
             sheet.detents = [UISheetPresentationController.Detent.large()]

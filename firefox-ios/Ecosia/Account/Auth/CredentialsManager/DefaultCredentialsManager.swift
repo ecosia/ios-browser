@@ -34,4 +34,8 @@ struct DefaultCredentialsManager: CredentialsManagerProtocol, @unchecked Sendabl
     func renew() async throws -> Auth0.Credentials {
         try await credentialManager.renew()
     }
+
+    func ssoCredentials() async throws -> SSOCredentials {
+        try await credentialManager.ssoCredentials()
+    }
 }

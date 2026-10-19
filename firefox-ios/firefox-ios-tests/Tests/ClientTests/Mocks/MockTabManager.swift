@@ -146,6 +146,11 @@ class MockTabManager: TabManager {
         return MockTab(profile: MockProfile(), isPrivate: isPrivate, windowUUID: windowUUID, isHomePage: isHomePage)
     }
 
+    // Ecosia: inserts a caller-created tab
+    func addTab(_ tab: Tab, request: URLRequest) {
+        tabs.append(tab)
+    }
+
     func backgroundRemoveAllTabs(isPrivate: Bool,
                                  didClearTabs: @escaping (_ tabsToRemove: [Tab],
                                                           _ isPrivate: Bool,

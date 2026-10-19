@@ -17,6 +17,19 @@ Rules that apply to every task. See [AGENTS.md](../../../AGENTS.md) for overview
 - Follow SwiftLint rules defined in `.swiftlint.yml`
 - Await user confirmation before pushing or making commits
 
+## Comments
+
+Default to none. Code that needs a comment to be understood usually means the code needs to be simplified.
+
+- Never restate the code. If the comment paraphrases the line below it, delete it.
+- Comment only non-obvious **why**: a constraint, a subtle failure mode, a deliberate trade-off.
+- Only a single line. Don't write essays in doc comments.
+- Never explain the same thing in two places.
+- Don't narrate the change itself ("now gated on…", "moved from…").
+- Comments that describe changes should only do so with reference to the main branch. Don't refer to things that never existed on main.
+- Same rules in tests. The test name carries the intent.
+- The `// Ecosia:` marker on Firefox core changes is exempt from "default to none" — it is required for upstream merges. Keep the reason after it to one line.
+
 ## Ask First
 
 Before doing any of these, ask the user:

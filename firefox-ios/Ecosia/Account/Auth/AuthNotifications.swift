@@ -13,4 +13,9 @@ extension Notification.Name {
     /// Posted when user profile information is updated from Auth0
     /// This includes user name, email, and profile picture URL
     public static let EcosiaUserProfileUpdated = Notification.Name("EcosiaUserProfileUpdated")
+
+    /// Posted when the chat-threads opt-out ID-token claim changes value, including on a
+    /// token refresh where the login state stays the same.
+    /// UserInfo contains `hasOptedOutOfChatThreads`.
+    public static let EcosiaChatThreadsOptOutDidChange = Notification.Name("EcosiaChatThreadsOptOutDidChange")
 }

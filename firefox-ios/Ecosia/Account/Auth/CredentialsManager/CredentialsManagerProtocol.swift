@@ -36,4 +36,13 @@ public protocol CredentialsManagerProtocol {
     /// - Returns: A `Credentials` object upon successful renewal.
     /// - Throws: An error if the credential renewal fails.
     func renew() async throws -> Credentials
+
+    /// Exchanges the stored refresh token for SSO credentials asynchronously, to perform Native to Web SSO.
+    ///
+    /// With refresh token rotation enabled, the exchange also returns a new refresh token, which is
+    /// persisted in place of the spent one.
+    ///
+    /// - Returns: An `SSOCredentials` object containing the session transfer token.
+    /// - Throws: An error if there are no stored credentials or refresh token, or if the exchange fails.
+    func ssoCredentials() async throws -> SSOCredentials
 }

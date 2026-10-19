@@ -27,7 +27,7 @@ SNAPSHOT_TESTING_RECORD=all ./perform_snapshot_tests.sh \
 
 Commit both the parent repo and the `SnapshotArtifacts` submodule.
 
-`environment.json` is a minimal checked-in fixture for local Xcode runs. `perform_snapshot_tests.sh` overwrites it at runtime from `snapshot_configuration.json` for each test-class batch (device list in config still includes SE / Pro Max / iPad for other suites).
+`environment.json` is a minimal checked-in fixture for local Xcode runs. `perform_snapshot_tests.sh` builds the test bundle once, then writes each test-class batch's configuration from `snapshot_configuration.json` to `/tmp/ecosia_snapshot_environment.json` so the bundle does not need rebuilding between batches (device list in config still includes SE / Pro Max / iPad for other suites). `SnapshotTestHelper` reads that file when present and falls back to the bundled `environment.json` otherwise, so delete it if a stale batch configuration affects a local Xcode run.
 
 ## SnapshotTestHelper
 
@@ -45,7 +45,7 @@ SnapshotTestHelper is a utility class designed to facilitate snapshot testing ac
   - `precision`: The accuracy of the snapshot comparison.
   - `file`, `testName`, `line`: Standard XCTest parameters for identifying the test source.
 
-The device name, orientation, and locales of the current test run are retrieved from the `environment.json` file.
+The device name, orientation, and locales of the current test run are retrieved from `/tmp/ecosia_snapshot_environment.json` when `perform_snapshot_tests.sh` has written it, otherwise from the bundled `environment.json` file.
 
 #### assertSnapshot
 

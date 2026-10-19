@@ -43,6 +43,7 @@ final class AuthNotificationSystemTests: XCTestCase {
     func testNotificationNames_haveCorrectValues() {
         // Test notification name has correct string value
         XCTAssertEqual(Notification.Name.EcosiaAuthStateChanged.rawValue, "EcosiaAuthStateChanged")
+        XCTAssertEqual(Notification.Name.EcosiaChatThreadsOptOutDidChange.rawValue, "EcosiaChatThreadsOptOutDidChange")
     }
 
     // MARK: - EcosiaAuthStateChanged Notification Tests

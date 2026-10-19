@@ -126,6 +126,12 @@ final class AnalyticsSpy: Analytics, @unchecked Sendable {
         inappSearchIsPrivateCalled = isPrivate
     }
 
+    var ntpViewedCalled = false
+    override func ntpViewed() {
+        ntpViewedCalled = true
+        super.ntpViewed()
+    }
+
     var ntpTopSiteActionCalled: Action.TopSite?
     var ntpTopSitePropertyCalled: Property.TopSite?
     var ntpTopSitePositionCalled: NSNumber?
@@ -603,13 +609,8 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
             let url = URL(string: urlString)!
-            let action = FakeNavigationAction(url: url, navigationType: .other)
-            browser.webView(makeWebView(),
-                            decidePolicyFor: action) { policy in
-                XCTAssertEqual(policy, .allow, "Should allow independent of tracking behavior")
-            }
-            // inappSearch is now fired at didCommit, not decidePolicyFor
-            browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+            browser.ecosiaHandleNavigationAction(url: url)
+            respondAndCommit(browser, url: url)
 
             if shouldTrack {
                 XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
@@ -627,33 +628,73 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
 
         let rootURL = EcosiaEnvironment.current.urlProvider.root
+        // A nil responseStatus means no navigation response arrived, i.e. a cache restore.
+        struct Case {
+            let responseStatus: Int?
+            let shouldTrack: Bool
+            let message: String
+        }
+
+        let url = URL(string: "\(rootURL)/search?q=test")!
         let testCases = [
-            (WKNavigationType.other, "\(rootURL)/search?q=test", true, "Tracks regular navigation"),
-            (WKNavigationType.reload, "\(rootURL)/search?q=test", true, "Tracks reload"),
-            (WKNavigationType.backForward, "\(rootURL)/search?q=test", false, "Does not track back/forward"),
+            Case(responseStatus: 200, shouldTrack: true, message: "Tracks a loaded document"),
+            Case(responseStatus: 304, shouldTrack: true, message: "Tracks a revalidated document"),
+            Case(responseStatus: nil, shouldTrack: false, message: "Does not track a cache restore, which produces no response"),
+            Case(responseStatus: 403, shouldTrack: false, message: "Does not track a challenge or forbidden response"),
+            Case(responseStatus: 502, shouldTrack: false, message: "Does not track a server error page"),
         ]
 
-        for (type, urlString, shouldTrack, message) in testCases {
+        for testCase in testCases {
             analyticsSpy = AnalyticsSpy()
             Analytics.shared = analyticsSpy
-            let url = URL(string: urlString)!
-            let action = FakeNavigationAction(url: url, navigationType: type)
-            browser.webView(makeWebView(),
-                            decidePolicyFor: action) { policy in
-                XCTAssertEqual(policy, .allow, "Should allow independent of tracking behavior")
+            browser.ecosiaHandleNavigationAction(url: url)
+            if let status = testCase.responseStatus {
+                browser.ecosiaHandleNavigationResponse(response: Self.makeResponse(url: url, statusCode: status),
+                                                       isForMainFrame: true)
             }
             browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
 
-            if shouldTrack {
+            if testCase.shouldTrack {
                 XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
                                url.absoluteString,
-                               "Failure on: \(message)")
+                               "Failure on: \(testCase.message)")
             } else {
-                XCTAssertNil(analyticsSpy.inappSearchUrlCalled, "Failure on: \(message)")
+                XCTAssertNil(analyticsSpy.inappSearchUrlCalled, "Failure on: \(testCase.message)")
             }
             analyticsSpy = nil
             Analytics.shared = Analytics()
         }
+    }
+
+    func testWebViewDelegateDoesNotConfirmBackForwardSearchFromSubframeResponse() {
+        let browser = BrowserViewController(profile: profileMock, tabManager: tabManagerMock)
+        let rootURL = EcosiaEnvironment.current.urlProvider.root
+        let url = URL(string: "\(rootURL)/search?q=test")!
+
+        analyticsSpy = AnalyticsSpy()
+        Analytics.shared = analyticsSpy
+
+        browser.ecosiaHandleNavigationAction(url: url)
+        browser.ecosiaHandleNavigationResponse(response: Self.makeResponse(url: url, statusCode: 200),
+                                               isForMainFrame: false)
+        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+
+        XCTAssertNil(analyticsSpy.inappSearchUrlCalled,
+                     "A subframe response should not confirm a back/forward search")
+
+        analyticsSpy = nil
+        Analytics.shared = Analytics()
+    }
+
+    private static func makeResponse(url: URL, statusCode: Int) -> URLResponse {
+        HTTPURLResponse(url: url, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
+    }
+
+    /// Models WebKit's real order for a loaded document: successful main-frame response, then commit.
+    private func respondAndCommit(_ browser: BrowserViewController, url: URL, isPrivate: Bool = false) {
+        browser.ecosiaHandleNavigationResponse(response: Self.makeResponse(url: url, statusCode: 200),
+                                               isForMainFrame: true)
+        browser.ecosiaHandleDidCommit(url: url, isPrivate: isPrivate)
     }
 
     func testWebViewDelegateTracksSearchEventOnSameURLWhenLinkActivated() {
@@ -662,16 +703,14 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         let url = URL(string: "\(rootURL)/search?q=test")!
 
         // Load the URL once to establish it as the current page
-        let firstAction = FakeNavigationAction(url: url, navigationType: .other)
-        browser.webView(makeWebView(), decidePolicyFor: firstAction) { _ in }
-        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+        browser.ecosiaHandleNavigationAction(url: url)
+        respondAndCommit(browser, url: url)
 
-        // Navigate to the same URL again via link activation (e.g. tapping the same search vertical)
+        // Navigate to the same URL again, which must not be mistaken for a restore
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
-        let secondAction = FakeNavigationAction(url: url, navigationType: .linkActivated)
-        browser.webView(makeWebView(), decidePolicyFor: secondAction) { _ in }
-        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+        browser.ecosiaHandleNavigationAction(url: url)
+        respondAndCommit(browser, url: url)
 
         XCTAssertEqual(analyticsSpy.inappSearchUrlCalled?.absoluteString,
                        url.absoluteString,
@@ -688,8 +727,11 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         let differentUrl = URL(string: "\(rootURL)/images?q=test")!
 
         // Simulate decidePolicyFor setting the pending URL to searchUrl
-        let action = FakeNavigationAction(url: searchUrl, navigationType: .other)
-        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
+        browser.ecosiaHandleNavigationAction(url: searchUrl)
+
+        // The response confirms the pending search, so the mismatch below is the only reason to drop it
+        browser.ecosiaHandleNavigationResponse(response: Self.makeResponse(url: searchUrl, statusCode: 200),
+                                               isForMainFrame: true)
 
         // didCommit fires with a different URL (e.g. a redirect landed elsewhere)
         browser.ecosiaHandleDidCommit(url: differentUrl, isPrivate: false)
@@ -703,13 +745,12 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
 
         let rootURL = EcosiaEnvironment.current.urlProvider.root
         let url = URL(string: "\(rootURL)/search?q=test")!
-        let action = FakeNavigationAction(url: url, navigationType: .other)
 
         // Non-private
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
-        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
-        browser.ecosiaHandleDidCommit(url: url, isPrivate: false)
+        browser.ecosiaHandleNavigationAction(url: url)
+        respondAndCommit(browser, url: url, isPrivate: false)
         XCTAssertEqual(analyticsSpy.inappSearchIsPrivateCalled,
                        false,
                        "Should forward isPrivate: false for normal tabs")
@@ -717,8 +758,8 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         // Private
         analyticsSpy = AnalyticsSpy()
         Analytics.shared = analyticsSpy
-        browser.webView(makeWebView(), decidePolicyFor: action) { _ in }
-        browser.ecosiaHandleDidCommit(url: url, isPrivate: true)
+        browser.ecosiaHandleNavigationAction(url: url)
+        respondAndCommit(browser, url: url, isPrivate: true)
         XCTAssertEqual(analyticsSpy.inappSearchIsPrivateCalled,
                        true,
                        "Should forward isPrivate: true for private tabs")
@@ -766,6 +807,41 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         if let userContext = userContext {
             XCTAssertEqual(userContext.data["push_notification_state"] as? String, "disabled")
         }
+    }
+
+    func testAddBrazeABTestContext_forTreatmentVariant_reportsThePayloadValue() {
+        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.treatment.rawValue)
+
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
+                       ["braze_features_holdout_group": "st_braze_features_treatment"])
+    }
+
+    func testAddBrazeABTestContext_forHoldoutVariant_reportsThePayloadValue() {
+        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.holdout.rawValue)
+
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
+                       ["braze_features_holdout_group": "st_braze_features_holdout"])
+    }
+
+    func testAddBrazeABTestContext_forVariantWithoutPayload_reportsTheVariantName() {
+        let variant = BrazeCoreMarketVariant.treatment.rawValue
+
+        let context = resumeEventABTestContext(brazeVariant: variant)
+
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String], ["braze_features_holdout_group": variant])
+    }
+
+    func testAddBrazeABTestContext_forControlVariant_isNotAppended() {
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.control.rawValue,
+                                              payloadValue: "control"))
+    }
+
+    func testAddBrazeABTestContext_forUnknownVariant_isNotAppended() {
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: "unknown-variant"))
+    }
+
+    func testAddBrazeABTestContext_whenFlagCannotBeEvaluated_isNotAppended() {
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: nil))
     }
 
     func testAddUserSeedCountContextToAllEvents() {
@@ -933,6 +1009,15 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(payload["logged_in"] as? Bool, true)
     }
 
+    func testAIToolsMenuChatModeSelectionGenerateImageTracksItsModeIdentifier() throws {
+        User.shared.sendAnonymousUsageData = true
+
+        analyticsSpy.aiToolsMenuChatModeSelection(mode: .generateImage, action: .select, isLoggedIn: true)
+
+        let payload = try decodeProperty(try lastStructuredEvent())
+        XCTAssertEqual(payload["mode"] as? String, "generate_image")
+    }
+
     func testAIToolsMenuChatModeSelectionDeselectLoggedOutTracksJSONPayload() throws {
         User.shared.sendAnonymousUsageData = true
 
@@ -1014,6 +1099,32 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
 // MARK: - Helper SUTs
 extension AnalyticsSpyTests {
 
+    private func resumeEventABTestContext(brazeVariant: String?, payloadValue: String? = nil) -> SelfDescribingJson? {
+        var model = Unleash.Model()
+        if let brazeVariant {
+            let payload = payloadValue.map { Unleash.Payload(type: "string", value: $0) }
+            model.toggles.insert(
+                Unleash.Toggle(name: Unleash.Toggle.Name.brazeCoreMarkets.rawValue,
+                               enabled: true,
+                               variant: .init(name: brazeVariant, enabled: true, payload: payload))
+            )
+        }
+        let previousModel = Unleash.model
+        Unleash.model = model
+        addTeardownBlock { Unleash.model = previousModel }
+
+        let analyticsSpy = makeAnalyticsSpyContextSUT()
+        let expectation = self.expectation(description: "Event tracked")
+        let event = Structured(category: "", action: Analytics.Action.Activity.resume.rawValue)
+
+        analyticsSpy.appendActivityContextIfNeeded(.resume, event) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 1.0, handler: nil)
+
+        return event.entities.first { $0.schema.contains("abtest_context") }
+    }
+
     func makeAnalyticsSpyContextSUT(status: UNAuthorizationStatus = .notDetermined) -> AnalyticsSpy {
         let mockSettings = MockUNNotificationSettings(authorizationStatus: status)
         let mockNotificationCenter = MockAnalyticsUserNotificationCenter(mockSettings: mockSettings)
@@ -1048,10 +1159,6 @@ extension AnalyticsSpyTests {
             EmptyView()
         }
     }
-
-    func makeWebView() -> WKWebView {
-        return WKWebView(frame: CGRect(width: 100, height: 100))
-    }
 }
 
 // MARK: - Helper Classes
@@ -1061,21 +1168,6 @@ class MultiplyImpactTestable: MultiplyImpact {
 
     override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
         capturedPresentedViewController = viewControllerToPresent
-    }
-}
-
-final class FakeNavigationAction: WKNavigationAction {
-    let urlRequest: URLRequest
-    let type: WKNavigationType
-
-    override var request: URLRequest { urlRequest }
-
-    override var navigationType: WKNavigationType { type }
-
-    init(url: URL, navigationType: WKNavigationType) {
-        self.urlRequest = URLRequest(url: url)
-        self.type = navigationType
-        super.init()
     }
 }
 
@@ -1164,6 +1256,23 @@ final class AnalyticsContextTests: XCTestCase, @unchecked Sendable {
         if let seedCountContext = seedCountContext {
             XCTAssertEqual(seedCountContext.data["amount"] as? Int, User.shared.seedCount)
         }
+    }
+
+    // MARK: - NTP page view
+
+    func testNTPViewedTracksStructuredViewEvent() {
+        // Arrange
+        User.shared.sendAnonymousUsageData = true
+
+        // Act
+        analyticsSpy.ntpViewed()
+
+        // Assert
+        XCTAssertTrue(analyticsSpy.ntpViewedCalled)
+        let event = analyticsSpy.trackedEvents.first as? Structured
+        XCTAssertEqual(event?.category, Analytics.Category.ntp.rawValue)
+        XCTAssertEqual(event?.action, Analytics.Action.view.rawValue)
+        XCTAssertNil(event?.label)
     }
 
     // MARK: - Helpers
