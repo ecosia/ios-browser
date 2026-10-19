@@ -329,7 +329,7 @@ final class AuthTests: XCTestCase {
 
         mockProvider.canRenewCredentialsResult = true
         mockProvider.hasStoredCredentials = true
-        try await auth.renewCredentialsIfNeeded()
+        try await auth.renewCredentials()
 
         await fulfillment(of: [expectation], timeout: 0.5)
         XCTAssertTrue(auth.hasOptedOutOfChatThreads)
