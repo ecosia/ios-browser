@@ -13,7 +13,7 @@ name: Merge Unit Tests
 # the not-yet-shipped wallpaper-header feature).
 on:
   pull_request:
-    branches: [main, 'patch/**', 'develop']
+    branches: [main, 'patch/**', 'develop', 'upgrade/firefox']
     paths-ignore:
       - '**/*.md'
       - '.cursor/**'

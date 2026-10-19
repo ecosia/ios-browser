@@ -2,7 +2,7 @@ name: Snapshot Tests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, 'upgrade/firefox']
   workflow_dispatch:
 
 jobs:

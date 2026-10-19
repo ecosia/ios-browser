@@ -12,11 +12,11 @@ MAIN_SHA merged in step 4: 7137bd6c306c82cac8b646d0db66e3f93d15af71
 - [x] 2 Upstream base (MOB-5029): 2f38473cab
 - [x] 3 Diary and planning docs (MOB-5032): dd8377bcc0
 - [x] 4 Merge main and green build (MOB-5028): 4109f52d18 (merge), 96cbca736c, 56a0e6e1c7, 5ec2be7376, da7c287567, f3da78472b, 698efe9dd5, c0f31b69f1, 9b0860b50d, d0ffbb23cc, plus the diary commit
-- [ ] 5 CI triggers and checklist (MOB-5031): <commit>
+- [x] 5 CI triggers and checklist (MOB-5031): see git log ([MOB-5031] Run PR checks on upgrade/firefox)
 - [ ] 6 Main sync (MOB-5030): <commits>; proof: <done | waiting for main to move>
 - [ ] 7 Close-out
 
-In progress: 5 CI triggers and checklist
+In progress: 6 Main sync
 
 ## Waiting on Dario
 
@@ -31,6 +31,8 @@ B2. **42 deterministic test failures, 39 of them in ClientTests the 155.1 experi
 Non-blocking (work continues; answer whenever):
 
 1. **ADR number collision (step 3).** Upstream Firefox 155.1 ships `adr/0007-deeplink-startup-flow-refactor.md` (and 0008 to 0013), so Ecosia's `adr/0007-graft-firefox-upgrades-onto-main-via-upgrade-branch.md` shares number 0007 with an upstream ADR. Per the plan, `adr/README.md` now lists both 0007 entries in number order. Options: (a) leave as-is; (b) renumber Ecosia's to the next free number (0014), which upstream will likely collide with again on a later release; (c) give Ecosia ADRs their own namespace (for example `adr/ecosia-0001-...` or a folder under `firefox-ios/Ecosia/`), so upstream additions never collide. (b) and (c) need a new commit that updates links in milestones.md, spec.md, tickets 01, 06 and 23, GLOSSARY-MAP.md, the diary and the M0 plan; they can be done at any point without history rewriting.
+
+3. **Four Mozilla workflows from 155.1** (`assign-tech-lead-review`, `contribution-guardrails`, `security-pr-reminder` on `pull_request_target`, `check-kingfisher-dependency` on cron) would run on PRs into `upgrade/firefox` once pushed. Recommend deleting them (matches the experiment's policy); put on the publish checklist as a required pre-push item. Say if you want the deletion committed on the branch now.
 
 2. (Resolved: committed 56a0e6e1c7 on Dario's answer.) **`version.xcconfig` trailing newline.** Every build rewrites `firefox-ios/Client/Configuration/version.xcconfig` with a trailing newline (build script in `Tuist/ProjectDescriptionHelpers/BuildScripts.swift:35`), which is exactly the `a9bd75f175` change step 1 dropped as cosmetic. It leaves the tree dirty after every build, so `sync-main.sh` (clean-tree check) would refuse to run after `verify.sh` in step 6d. Suggest committing the newline as `[MOB-5028] Keep version.xcconfig as the build script writes it`. Left uncommitted until you say.
 
@@ -62,3 +64,4 @@ none (moved into firefox-ios/EcosiaUpgrade/diary/157.md in step 3)
 - 2026-10-19 16:14 verify.sh run 4: crash gone (attempt 2 worked); 4993 tests, 1 failure: RecordedNimbusContextTests/testObjectRecordedToGleanMatchesExpected (Glean read-back nil in full suite, passes alone; previously masked by the crash restarting the host). Added to the Glean skip section. Characterization + InvisibleTab suites pass. Re-running.
 - 2026-10-19 16:22 verify.sh run 5: 4992 tests, 1 failure: EcosiaTests AuthTests/testRetrieveStoredCredentials_withFailureAfterPreviousLogin_clearsLoggedInImpactCacheAndWasLoggedIn (process-wide LoggedInImpactCache); passed in runs 1-4 and on main; AuthTests alone x3: 0 failures -> flaky, files identical to main. Re-running verify.sh.
 - 2026-10-19 16:34 verify.sh run 6: verify: OK (4992 tests, 4982 passed, 0 failed, 10 skipped; tests 257 s, total 321 s; lint clean). Step 4 committed in 9 commits after the merge; diary entry written. Temporary baseline worktree removed.
+- 2026-10-19 16:31 Step 5: 4 trigger lines edited, actionlint clean on them (6 shellcheck infos only in upstream check-kingfisher-dependency.yml, absent on main), CircleCI unchanged, publish checklist written. Found 4 upstream Mozilla workflows from 155.1 (3 pull_request_target): on checklist, asked Dario (non-blocking 3).
