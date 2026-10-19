@@ -23,7 +23,7 @@ flowchart TB
 
   subgraph Nightly["Nightly on main"]
     direction TB
-    n2(["02:00 UTC"]) --> nCheck{"main already has a cache<br/>for its latest commit?<br/>(checked for each workflow)"}
+    n2(["02:00 UTC"]) --> nCheck{"main already has a cache<br/>for its latest commit this week?<br/>(checked for each workflow)"}
     nCheck -- yes --> nSkip[Skip, a few seconds on Ubuntu]
     nCheck -- no --> nRun["Run Merge Tests and Snapshot Tests<br/>save a fresh cache on main"]
     n4(["04:00 UTC"]) --> purge["Purge stale caches:<br/>older main compile caches,<br/>PR compile caches,<br/>all caches of closed PRs"]
@@ -43,7 +43,7 @@ flowchart TB
 - Merge Tests and Snapshot Tests each keep their own compilation cache on `main` (`unit-tests` and `snapshot-tests`).
 - A new push to a pull request cancels that pull request's running Merge Tests and Snapshot Tests. Runs on `main` (nightly and manual) are never cancelled, only queued.
 - The purge runs two hours after the nightly refresh, so it keeps the cache just saved and deletes the previous night's.
-- After the ISO week changes or the runner's Xcode is updated, the first run may build without a cache until the next nightly refresh saves a matching one.
+- Cache keys include the ISO week and a hash of the Xcode version. The nightly check also refreshes when the week changes, so `main` gets a new cache at least once a week. Xcode is pinned in `prepare_environment`, so changing it means a commit to `main`, which the next nightly refresh picks up. If the runner image swaps in a different build of the pinned version, pull requests build without a cache until the next commit or week.
 - Pull requests only restore caches. Each compilation cache is close to 1 GB, and per-commit pull request saves used to fill the repository's 10 GB cache limit, evicting `main`'s cache and causing cold builds of around 11 minutes instead of around 7.
 - Commits merged during the day reach `main`'s cache that night. Until then pull requests restore the previous cache, which costs well under a minute of extra build time on average.
 - Snapshot change detection diffs from the point where the branch left `main`, so commits merged into `main` afterwards never count as the branch's changes.
