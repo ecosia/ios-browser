@@ -4,11 +4,7 @@ Remote actions to take when Dario decides to publish M0. Everything up to here h
 
 ## Before pushing
 
-- [ ] **Remove the four Mozilla workflows that arrived with the 155.1 graft** (they are new in 155.1, so the experiment's deletion of Mozilla's workflows missed them). Three run on `pull_request_target`, which uses the workflow file from the PR's *base* branch, so they would run on every PR into `upgrade/firefox`, including the sync PR, with no repository guard:
-  - `.github/workflows/assign-tech-lead-review.yml` (adds labels and requests reviews)
-  - `.github/workflows/contribution-guardrails.yml` (comments on and closes PRs labelled `does-not-meet-guidelines` / `outside-approved-scope`)
-  - `.github/workflows/security-pr-reminder.yml` (comments on every PR opened by a person)
-  - `.github/workflows/check-kingfisher-dependency.yml` (weekly cron that opens Kingfisher update PRs; schedules only run on the default branch, so it starts firing once `main` migrates in M5)
+- [x] Remove the four Mozilla workflows that arrived with the 155.1 graft (done on the branch, `[MOB-5031] Remove the Mozilla workflows that came with Firefox 155.1`).
 - [ ] **Add `-skipMacroValidation` to CI's unit-test build** (`.github/actions/perform_unit_tests/action.yml`, `build-for-testing` step) on `upgrade/firefox`. The upgrade brings the `ModifiedCopy` macro package, and an unattended Xcode stops with `Macro "ModifiedCopyMacros" … must be enabled before it can be used`. `verify.sh` already passes the flag.
 
 ## Push and protect
