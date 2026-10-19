@@ -38,8 +38,14 @@ final class AccountSyncHandler: TabEventHandler, Notifiable, Sendable {
     private let profile: Profile
     private let logger: Logger
     private let queueDelay: Double
+    /* Ecosia: Use resolveOptional() so a sync that finishes after its unit test has reset AppContainer
+       does not trap; storeTabs() bails out instead.
     private var windowManager: WindowManager {
         return AppContainer.shared.resolve()
+    }
+     */
+    private var windowManager: WindowManager? {
+        return AppContainer.shared.resolveOptional()
     }
     let tabEventWindowResponseType: TabEventHandlerWindowResponseType =
         .allWindows
@@ -107,7 +113,10 @@ final class AccountSyncHandler: TabEventHandler, Notifiable, Sendable {
     }
 
     private func storeTabs() {
+        /* Ecosia: windowManager is optional, see above
         let tabManagers = windowManager.allWindowTabManagers()
+         */
+        guard let tabManagers = windowManager?.allWindowTabManagers() else { return }
         let windowCount = tabManagers.count
 
         // We want all normal and inactive tabs, we never sync private tabs

@@ -511,6 +511,9 @@ final class TabTrayViewController: UIViewController,
     }
 
     func applyTheme() {
+        // Ecosia: A tab tray outliving its unit test can receive a theme change while the test host's
+        // AppContainer is reset; the feature flag lookups below would then trap. The app never hits this.
+        guard (AppContainer.shared.resolveOptional() as FeatureFlagProviding?) != nil else { return }
         childPanelThemes = childPanelControllers.compactMap { panel in
             (panel.topViewController as? TabTrayThemeable)?.retrieveTheme()
         }
