@@ -91,10 +91,15 @@ final class MockTabQueue: TabQueue, @unchecked Sendable {
     }
 
     func getQueuedTabs(completion: @MainActor @escaping ([ShareItem]) -> Void) {
+        /* Ecosia: count synchronously; Ecosia's DefaultBackgroundTabLoaderTests assert right after loadBackgroundTabs()
         Task { @MainActor in
             completion(queuedTabs)
             getQueuedTabsCalled += 1
         }
+         */
+        getQueuedTabsCalled += 1
+        let tabs = queuedTabs
+        Task { @MainActor in completion(tabs) }
     }
 
     func clearQueuedTabs() -> Success {
