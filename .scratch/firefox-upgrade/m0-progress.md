@@ -13,16 +13,16 @@ MAIN_SHA merged in step 4: 7137bd6c306c82cac8b646d0db66e3f93d15af71
 - [x] 3 Diary and planning docs (MOB-5032): dd8377bcc0
 - [x] 4 Merge main and green build (MOB-5028): 4109f52d18 (merge), 96cbca736c, 56a0e6e1c7, 5ec2be7376, da7c287567, f3da78472b, 698efe9dd5, c0f31b69f1, 9b0860b50d, d0ffbb23cc, plus the diary commit
 - [x] 5 CI triggers and checklist (MOB-5031): 7bdea16c14
-- [ ] 6 Main sync (MOB-5030): f9c88024a8 (script + tests, 6/6 pass), 53dd6a81cf + 947f8e1b0f (workflow, actionlint clean), d6cc94628b (diary); proof: waiting for main to move
-- [x] 7 Close-out: code review recorded, M0 diary summary and retro in diary/157.md (the summary's sync line updates after 6d)
+- [x] 6 Main sync (MOB-5030): f9c88024a8 (script + tests, 6/6 pass), 53dd6a81cf + 947f8e1b0f (workflow, actionlint clean), d6cc94628b (diary); proof: done, 5462a4ba6c merges main's 1c1359b5dd (#1341), verify.sh OK
+- [x] 7 Close-out: code review recorded, M0 diary summary and retro in diary/157.md
 
-M0 local: done except 6d.
+M0 local: done.
 
-In progress: 6d local proof, WAITING for main to move past 7137bd6c30 (then: sync-main.sh, verify.sh, a short proof note in the 04 entry and the M0 summary, tick step 6)
+In progress: nothing
 
 ## Waiting on Dario
 
-Blocking (step 6d): `origin/main` has not moved since step 4 (still `7137bd6c30`), so there is no real main commit to prove the sync on. Everything else in step 6 is committed. Resume when main moves; MOB-4907's squash would exercise the conflict path (pre-decided resolution in plan section 3).
+(Resolved: step 6d proven on #1341.) Was blocking: `origin/main` had not moved since step 4.
 
 
 Answered 2026-10-19 by Dario: B1 (a) add -skipMacroValidation to verify.sh; B2 (c) baseline on origin/main first, then (a) fix all failures in ticket 02; non-blocking 2: commit the newline. Kept below for the record.
@@ -34,6 +34,8 @@ B1. **Macro trust.** `verify.sh` as written fails in 75s on this machine: `Macro
 B2. **42 deterministic test failures, 39 of them in ClientTests the 155.1 experiment never ran.** Diagnostic run (verify.sh copy with -skipMacroValidation, build/diag-verify/): build OK, 0 duplicate symbols, 5005 tests, 4951 passed, 44 failed, 10 skipped; re-running the 44 alone: 42 still fail, 2 flaky. Lint clean. Ticket 19's "947 tests" was EcosiaTests only; the Ecosia scheme (identical on main) also runs ClientTests. By class: Merino 12, Homepage 11 (HomepageViewController 8, DiffableDataSource 2, TopSitesManager 1), BrowserCoordinator 4, BrowserViewController 3, Route 2, ReaderModeSchemeHandler 2 (Reader.css not found: the experiment excluded Client/Assets/reader-mode/** from the Tuist glob, ticket 19 §9a, which may also break reader mode at runtime), ContextualHintEligibility 1, CoreBuildFlags 1, DefaultRouter 1, LaunchScreenViewModel 1, ResetTipsSetting 1; plus 3 in files identical to main (DefaultBackgroundTabLoaderTests, EcosiaAIChatButtonThemeTests, FeedbackThemeTests), possibly pre-existing on main or Xcode 27. Full list: build/diag-failing-deterministic.txt. This is far past the plan's "two attempts" scale and contradicts its 947-tests fact. Options: (a) work through all 42 inside ticket 02 under the 4f fix-loop rules, one commit per fix, asking on product-decision ones (Google Lens, summarizer); (b) narrow M0's done-when to "build, EcosiaTests, lint green", record the ClientTests failures as a new ticket, continue with steps 5 and 6 (verify.sh would then need a scope flag); (c) first measure a baseline: run the same suite on origin/main in a temporary second worktree (a git operation the plan does not list) to see which failures are pre-existing.
 
 Non-blocking (work continues; answer whenever):
+
+6. **Sync owner handle.** `OWNER` in `.github/workflows/upgrade_main_sync.yml` is `dariocarlomagno`, but Dario's GitHub login is `d4r1091`. Fix on `upgrade/firefox` now, or at publish time (checklist item).
 
 4. **Sync PR head (code review, step 7).** The plan (6a) makes the sync PR's head `main`; ticket 04 says "a PR from a sync branch". With head `main`, a conflicting sync cannot be resolved on the PR itself (GitHub's "Resolve conflicts" would commit to `main`). Resolution then has to go through a separate branch off `upgrade/firefox` (merge `main` there, resolve, PR into `upgrade/firefox`), after which the sync PR becomes empty and closes. Options: keep head `main` and document that, or push the merge to a `sync/main-<sha>` branch and open the PR from it. Kept as the plan says until you decide.
 5. **Snapshot checks as required checks** before M2 would block every PR into `upgrade/firefox` (expected 155.1 differences, ticket 11). Noted on the publish checklist as a decision.
@@ -79,3 +81,5 @@ none (moved into firefox-ios/EcosiaUpgrade/diary/157.md in step 3)
 - 2026-10-19 16:53 Code review (10 findings): fixed 7 (sync workflow: token scoped to the PR step, owner assigned and @-mentioned instead of a review request to the PR author, conflict comment only when it changes; verify.sh regenerates the project first; one shared removingEcosiaAuthTabs helper + test instead of two copies; homepage test hunks keep the original Firefox lines in Ecosia blocks; checklist: -skipMacroValidation for snapshot tests too, snapshot checks as required before M2). Asked Dario: sync PR head (4). Not changed: resolveOptional guards (two attempts spent, follow-up). Rejected: MOB-4907 squash claim (f5b8fa1118 is an earlier MOB-4907 PR; the squash is not on main). Re-running verify.sh.
 - 2026-10-19 22:09 verify.sh on 66a076f103: OK (4994 tests, 4984 passed, 0 failed, 10 skipped; lint clean). Dario's Xcode build of EcosiaBeta first failed on macro trust only (Trust & Enable), then built.
 - 2026-10-19 22:55 Step 7: 04 diary entry (d6cc94628b; checklist: sync workflow byte-identical on both branches), code review entry, M0 summary and retro. /retro skill not installed; retro written in the summary. origin/main still 7137bd6c30.
+- 2026-10-19 22:58 Dario approved PR #1341 (one blank line in Ecosia.docc/agents/COMMANDS.md, branch dc-mob-5030-main-sync-proof from a temporary worktree ../ios-browser-sync-proof) and it was merged to main as 1c1359b5dd. Found: the gh account is d4r1091, but OWNER in upgrade_main_sync.yml is dariocarlomagno (asked Dario).
+- 2026-10-19 23:16 Step 6d: sync-main.sh exit 0, merge 5462a4ba6c (parents c0fdeb0bea, 1c1359b5dd); verify.sh OK (4994 tests, 4984 passed, 0 failed, 10 skipped; lint clean). M0 local: done.
