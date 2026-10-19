@@ -13,10 +13,12 @@ MAIN_SHA merged in step 4: 7137bd6c306c82cac8b646d0db66e3f93d15af71
 - [x] 3 Diary and planning docs (MOB-5032): dd8377bcc0
 - [x] 4 Merge main and green build (MOB-5028): 4109f52d18 (merge), 96cbca736c, 56a0e6e1c7, 5ec2be7376, da7c287567, f3da78472b, 698efe9dd5, c0f31b69f1, 9b0860b50d, d0ffbb23cc, plus the diary commit
 - [x] 5 CI triggers and checklist (MOB-5031): 7bdea16c14
-- [ ] 6 Main sync (MOB-5030): f9c88024a8 (script + tests, 6/6 pass), 53dd6a81cf (workflow, actionlint clean); proof: waiting for main to move
-- [ ] 7 Close-out
+- [ ] 6 Main sync (MOB-5030): f9c88024a8 (script + tests, 6/6 pass), 53dd6a81cf + 947f8e1b0f (workflow, actionlint clean), d6cc94628b (diary); proof: waiting for main to move
+- [x] 7 Close-out: code review recorded, M0 diary summary and retro in diary/157.md (the summary's sync line updates after 6d)
 
-In progress: 6d local proof, WAITING for main to move past 7137bd6c30 (then: sync-main.sh, verify.sh, diary entry; then step 7)
+M0 local: done except 6d.
+
+In progress: 6d local proof, WAITING for main to move past 7137bd6c30 (then: sync-main.sh, verify.sh, a short proof note in the 04 entry and the M0 summary, tick step 6)
 
 ## Waiting on Dario
 
@@ -75,3 +77,5 @@ none (moved into firefox-ios/EcosiaUpgrade/diary/157.md in step 3)
 - 2026-10-19 16:45 Dario: Mozilla workflows not needed. Deleted the four, actionlint clean on the whole folder.
 - 2026-10-19 16:46 Dario: keep the Mozilla workflows to reduce future conflicts unless they bother. Restored all four byte-identical to 155.1; checklist: disable assign-tech-lead-review and check-kingfisher-dependency in GitHub settings.
 - 2026-10-19 16:53 Code review (10 findings): fixed 7 (sync workflow: token scoped to the PR step, owner assigned and @-mentioned instead of a review request to the PR author, conflict comment only when it changes; verify.sh regenerates the project first; one shared removingEcosiaAuthTabs helper + test instead of two copies; homepage test hunks keep the original Firefox lines in Ecosia blocks; checklist: -skipMacroValidation for snapshot tests too, snapshot checks as required before M2). Asked Dario: sync PR head (4). Not changed: resolveOptional guards (two attempts spent, follow-up). Rejected: MOB-4907 squash claim (f5b8fa1118 is an earlier MOB-4907 PR; the squash is not on main). Re-running verify.sh.
+- 2026-10-19 22:09 verify.sh on 66a076f103: OK (4994 tests, 4984 passed, 0 failed, 10 skipped; lint clean). Dario's Xcode build of EcosiaBeta first failed on macro trust only (Trust & Enable), then built.
+- 2026-10-19 22:55 Step 7: 04 diary entry (d6cc94628b; checklist: sync workflow byte-identical on both branches), code review entry, M0 summary and retro. /retro skill not installed; retro written in the summary. origin/main still 7137bd6c30.
