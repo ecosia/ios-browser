@@ -5,8 +5,6 @@
 import Common
 import Foundation
 import TabDataStore
-// Ecosia: EcosiaURLInterceptor, to drop restored auth tabs
-import Ecosia
 
 /// Owns the full tab restoration lifecycle for a single window.
 ///
@@ -61,7 +59,7 @@ final class DefaultTabRestorer: TabRestorer {
         /* Ecosia: drop tabs restored onto an intercepted auth URL
         let filteredTabData = filterPrivateTabs(from: windowData)
          */
-        let filteredTabData = filterEcosiaAuthTabs(from: filterPrivateTabs(from: windowData))
+        let filteredTabData = filterPrivateTabs(from: windowData).removingEcosiaAuthTabs()
 
         guard !filteredTabData.isEmpty else {
             logger.log("Not restoring tabs: no tab data after filtering", level: .warning, category: .tabs)
@@ -93,17 +91,5 @@ final class DefaultTabRestorer: TabRestorer {
     private func filterPrivateTabs(from windowData: WindowData) -> [TabData] {
         guard shouldClearPrivateTabs else { return windowData.tabData }
         return windowData.tabData.filter { !$0.isPrivate }
-    }
-
-    // Ecosia: a visible tab never commits an intercepted auth URL because detection cancels that
-    // navigation, so a restored one is an invisible auth tab orphaned by a kill mid-flow - restoring it
-    // reports an inconsistency and forces a logout on every selection and reload.
-    // Same filter as `TabManagerImplementation`'s legacy restore path.
-    private func filterEcosiaAuthTabs(from savedTabs: [TabData]) -> [TabData] {
-        let interceptor = EcosiaURLInterceptor()
-        return savedTabs.filter { tabData in
-            guard let url = URL(string: tabData.siteUrl) else { return true }
-            return !interceptor.shouldIntercept(url)
-        }
     }
 }
