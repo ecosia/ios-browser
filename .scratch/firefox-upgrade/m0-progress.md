@@ -12,13 +12,16 @@ MAIN_SHA merged in step 4: 7137bd6c306c82cac8b646d0db66e3f93d15af71
 - [x] 2 Upstream base (MOB-5029): 2f38473cab
 - [x] 3 Diary and planning docs (MOB-5032): dd8377bcc0
 - [x] 4 Merge main and green build (MOB-5028): 4109f52d18 (merge), 96cbca736c, 56a0e6e1c7, 5ec2be7376, da7c287567, f3da78472b, 698efe9dd5, c0f31b69f1, 9b0860b50d, d0ffbb23cc, plus the diary commit
-- [x] 5 CI triggers and checklist (MOB-5031): see git log ([MOB-5031] Run PR checks on upgrade/firefox)
-- [ ] 6 Main sync (MOB-5030): <commits>; proof: <done | waiting for main to move>
+- [x] 5 CI triggers and checklist (MOB-5031): 7bdea16c14
+- [ ] 6 Main sync (MOB-5030): f9c88024a8 (script + tests, 6/6 pass), 53dd6a81cf (workflow, actionlint clean); proof: waiting for main to move
 - [ ] 7 Close-out
 
-In progress: 6 Main sync
+In progress: 6d local proof, WAITING for main to move past 7137bd6c30 (then: sync-main.sh, verify.sh, diary entry; then step 7)
 
 ## Waiting on Dario
+
+Blocking (step 6d): `origin/main` has not moved since step 4 (still `7137bd6c30`), so there is no real main commit to prove the sync on. Everything else in step 6 is committed. Resume when main moves; MOB-4907's squash would exercise the conflict path (pre-decided resolution in plan section 3).
+
 
 Answered 2026-10-19 by Dario: B1 (a) add -skipMacroValidation to verify.sh; B2 (c) baseline on origin/main first, then (a) fix all failures in ticket 02; non-blocking 2: commit the newline. Kept below for the record.
 
@@ -65,3 +68,4 @@ none (moved into firefox-ios/EcosiaUpgrade/diary/157.md in step 3)
 - 2026-10-19 16:22 verify.sh run 5: 4992 tests, 1 failure: EcosiaTests AuthTests/testRetrieveStoredCredentials_withFailureAfterPreviousLogin_clearsLoggedInImpactCacheAndWasLoggedIn (process-wide LoggedInImpactCache); passed in runs 1-4 and on main; AuthTests alone x3: 0 failures -> flaky, files identical to main. Re-running verify.sh.
 - 2026-10-19 16:34 verify.sh run 6: verify: OK (4992 tests, 4982 passed, 0 failed, 10 skipped; tests 257 s, total 321 s; lint clean). Step 4 committed in 9 commits after the merge; diary entry written. Temporary baseline worktree removed.
 - 2026-10-19 16:31 Step 5: 4 trigger lines edited, actionlint clean on them (6 shellcheck infos only in upstream check-kingfisher-dependency.yml, absent on main), CircleCI unchanged, publish checklist written. Found 4 upstream Mozilla workflows from 155.1 (3 pull_request_target): on checklist, asked Dario (non-blocking 3).
+- 2026-10-19 16:33 Step 6: sync-main.sh + tests (TDD: 6/6 failed without the script, 6/6 pass), workflow committed (conflict list moved to $RUNNER_TEMP: the plan's redirect into the checkout would make the script see a dirty tree). Smoke test on the real branch: already up to date. 6d waiting: origin/main unchanged at 7137bd6c30.
