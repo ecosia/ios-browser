@@ -86,6 +86,8 @@ public enum ClientTarget {
                 // is byte-identical to one already bundled, and app resources land flat in Client.app, so
                 // this glob picking up both makes the build fail with "Multiple commands produce ...".
                 // Upstream doesn't hit this because their Xcode project lists resources explicitly.
+                // The folder still has to ship, nested at `reader-mode/`: `BuildScripts.populateReaderModeScript`
+                // copies it there, as upstream's "Populate reader-mode script" phase does.
                 .glob(
                     pattern: "Client/Assets/**/*.{css,html,png,jpg,jpeg,pdf,otf,ttf}",
                     excluding: ["Client/Assets/reader-mode/**"]

@@ -15,6 +15,7 @@ public enum BuildScripts {
         updateVersionScript +
         swiftlintScript +
         populateTestFixturesScript +
+        populateReaderModeScript +
         gleanSDKGeneratorScript +
         nimbusFeatureManifestScript +
         addOptionalResourcesScript +
@@ -161,6 +162,22 @@ public enum BuildScripts {
             rsync -zvrt --update "$fixtures" "$outpath"
             """,
             name: "Populate test-fixtures script",
+            basedOnDependencyAnalysis: false
+        )
+    ]
+
+    /// Copies `Client/Assets/reader-mode/` into the app bundle at `reader-mode/`, where `ReaderFileRoute`
+    /// serves it from (Firefox 155.1). The folder is excluded from the Client resource glob because its files
+    /// duplicate existing resources and resources land flat in the bundle.
+    private static let populateReaderModeScript: [TargetScript] = [
+        .post(
+            script: """
+            readermode="${SRCROOT}/Client/Assets/reader-mode"
+            [[ -e $readermode ]] || exit 1
+            outpath="${TARGET_BUILD_DIR}/Client.app"
+            rsync -zvrt --update "$readermode" "$outpath"
+            """,
+            name: "Populate reader-mode script",
             basedOnDependencyAnalysis: false
         )
     ]
