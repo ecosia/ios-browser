@@ -1,0 +1,83 @@
+name: Sync main into upgrade/firefox
+
+# Keeps a pull request open from main into the Firefox upgrade branch. Clean syncs merge
+# automatically (merge commit only: squash or rebase would break the shared history);
+# conflicting ones become a draft assigned to the upgrade owner. This file must live on
+# main to run on pushes to main; the sync script lives on upgrade/firefox.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: upgrade-main-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      TARGET: upgrade/firefox
+      OWNER: dariocarlomagno        # confirm the GitHub handle at publish time
+      # Pull requests created with GITHUB_TOKEN do not trigger other workflows, so CI would
+      # never run on the sync PR; this token must be a PAT or GitHub App token instead.
+      GH_TOKEN: ${{ secrets.UPGRADE_SYNC_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Stop when the upgrade branch no longer exists
+        id: target
+        run: |
+          if git ls-remote --exit-code --heads origin "$TARGET" > /dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "$TARGET does not exist; nothing to sync."
+          fi
+
+      - name: Check for conflicts
+        if: steps.target.outputs.exists == 'true'
+        id: check
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch --detach "origin/$TARGET"
+          # Outside the checkout: a file created in it would make the script see a dirty tree.
+          set +e
+          firefox-ios/EcosiaUpgrade/tools/sync-main.sh --base-ref origin/main > "$RUNNER_TEMP/conflicts.txt"
+          code=$?
+          set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" -ne 0 ] && [ "$code" -ne 2 ]; then exit "$code"; fi
+
+      - name: Open or update the sync pull request
+        if: steps.target.outputs.exists == 'true'
+        env:
+          SYNC_CODE: ${{ steps.check.outputs.code }}
+        run: |
+          pr=$(gh pr list --base "$TARGET" --head main --state open --json number --jq '.[0].number')
+          if [ -z "$pr" ]; then
+            if git merge-base --is-ancestor origin/main "origin/$TARGET"; then
+              echo "Already up to date."; exit 0
+            fi
+            gh pr create --base "$TARGET" --head main \
+              --title "Sync main into $TARGET" \
+              --body "Automatic merge of main into $TARGET. Merge with a merge commit, never squash or rebase."
+            pr=$(gh pr list --base "$TARGET" --head main --state open --json number --jq '.[0].number')
+          fi
+          if [ "$SYNC_CODE" = "2" ]; then
+            gh pr ready "$pr" --undo || true
+            # The backticks are literal Markdown code spans around each path.
+            # shellcheck disable=SC2016
+            { echo "Conflicts with $TARGET:"; echo; sed 's/^/- `/; s/$/`/' "$RUNNER_TEMP/conflicts.txt"; } > "$RUNNER_TEMP/comment.md"
+            gh pr comment "$pr" --body-file "$RUNNER_TEMP/comment.md"
+            gh pr edit "$pr" --add-reviewer "$OWNER"
+          else
+            gh pr ready "$pr" || true
+            gh pr merge "$pr" --auto --merge
+          fi
