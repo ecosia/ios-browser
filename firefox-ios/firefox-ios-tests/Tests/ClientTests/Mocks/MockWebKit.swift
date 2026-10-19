@@ -79,7 +79,11 @@ class WKSecurityOriginMock: WKSecurityOrigin {
 }
 
 // MARK: WKWebViewMock
-class WKWebViewMock: WKWebView {
+// MARK: MockWKWebView
+// Ecosia: upstream renamed this to `MockWKWebView`; the alias keeps Ecosia's existing
+// `WKWebViewMock` call sites (and WKFrameInfoMock.new's parameter type) compiling.
+typealias WKWebViewMock = MockWKWebView
+class MockWKWebView: WKWebView {
     var overridenURL: URL
 
     init(_ url: URL) {
@@ -130,5 +134,47 @@ class WKScriptMessageMock: WKScriptMessage {
             return try? JSONDecoder().decode(type, from: data)
         }
         return nil
+    }
+}
+
+// MARK: - MockWKURLSchemeTask
+
+/// Minimal fake WKURLSchemeTask used to capture callbacks.
+final class MockWKURLSchemeTask: NSObject, WKURLSchemeTask {
+    private let _request: URLRequest
+    var request: URLRequest { _request }
+
+    init(request: URLRequest) {
+        self._request = request
+    }
+
+    private(set) var receivedResponses: [URLResponse] = []
+    private(set) var receivedBodies: [Data] = []
+    private(set) var finishCallCount = 0
+    private(set) var failedErrors: [Error] = []
+
+    var onResponse: (() -> Void)?
+    var onBody: (() -> Void)?
+    var onFinish: (() -> Void)?
+    var onFail: (() -> Void)?
+
+    func didReceive(_ response: URLResponse) {
+        receivedResponses.append(response)
+        onResponse?()
+    }
+
+    func didReceive(_ data: Data) {
+        receivedBodies.append(data)
+        onBody?()
+    }
+
+    func didFinish() {
+        finishCallCount += 1
+        onFinish?()
+    }
+
+    func didFailWithError(_ error: Error) {
+        failedErrors.append(error)
+        onFail?()
     }
 }

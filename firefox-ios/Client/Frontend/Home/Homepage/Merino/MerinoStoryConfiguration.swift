@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Converts the Merino story model to be presentable for the `MerinoStandardCell` view
+/// Converts the Merino story model to be presentable for the `StoryCell` view
 final class MerinoStoryConfiguration: Sendable, Equatable, Hashable {
     private let story: MerinoStory
 
@@ -16,6 +16,7 @@ final class MerinoStoryConfiguration: Sendable, Equatable, Hashable {
     var url: URL? { story.url }
     var imageURL: URL? { story.imageURL }
     var iconURL: URL? { story.iconURL }
+    var rank: Int { story.receivedRank }
     var description: String {
         return "\(story.publisher)"
     }

@@ -5,17 +5,13 @@
 import UIKit
 import Common
 
-final class TabNumberButton: ToolbarButton {
+final class TabNumberButton: ToolbarButton, TabCountable {
     // MARK: - UX Constants
     struct UX {
         static let cornerRadius: CGFloat = 2
         static let dimmedOpacity: CGFloat = 0.2
         static let titleFont = FXFontStyles.Bold.caption2.systemFont()
-
-        // Tab count related constants
         static let defaultCountLabelText = "0"
-        static let maxTabCount = 99
-        static let infinitySymbol = "\u{221E}"
     }
 
     // MARK: - Properties
@@ -40,9 +36,7 @@ final class TabNumberButton: ToolbarButton {
         element: ToolbarElement,
         notificationCenter: NotificationProtocol = NotificationCenter.default) {
         super.configure(element: element)
-
-        guard let numberOfTabs = element.numberOfTabs, let largeContentTitle = element.largeContentTitle else { return }
-        updateTabCount(numberOfTabs, largeContentTitle: largeContentTitle)
+        countLabel.text = updateTabCount(for: element)
     }
 
     override func tintColorDidChange() {
@@ -58,22 +52,15 @@ final class TabNumberButton: ToolbarButton {
         countLabel.textColor = configuration?.baseForegroundColor
     }
 
-    private func updateTabCount(_ count: Int, largeContentTitle: String) {
-        let count = max(count, 1)
-        let countToBe = (count <= UX.maxTabCount) ? count.description : UX.infinitySymbol
-        countLabel.text = countToBe
-        accessibilityValue = countToBe
-        self.largeContentTitle = largeContentTitle
-    }
-
     // MARK: - Layout
     private func setupLayout() {
         addSubview(countLabel)
         NSLayoutConstraint.activate([
-            countLabel.topAnchor.constraint(equalTo: topAnchor),
+            countLabel.topAnchor.constraint(greaterThanOrEqualTo: topAnchor),
             countLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             countLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
-            countLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            countLabel.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor),
+            countLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 1)
         ])
     }
 }

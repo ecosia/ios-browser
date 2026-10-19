@@ -5,14 +5,30 @@
 import XCTest
 
 class FirefoxSuggestTest: BaseTestCase {
+    override func setUp() async throws {
+        try await super.setUp()
+        if !isFennec {
+            throw XCTSkip("Skipping FirefoxSuggestTest on Firefox or FirefoxBeta schemas")
+        }
+    }
+
     // https://mozilla.testrail.io/index.php?/cases/view/2360075
+    // Regression
     func testFirefoxSuggestExists() {
-        navigator.openURL("www.example.com")
-        navigator.createNewTab()
+        // Firefox Suggest only appears once a search has been performed for the same text,
+        // so perform the search first and then search again with the same text.
         navigator.goto(URLBarOpen)
-        urlBarAddress.typeText("ex")
-        mozWaitForElementToExist(app.tables["SiteTable"])
-        mozWaitForElementToExist(app.tables["SiteTable"].staticTexts["Google Search"])
-        mozWaitForElementToExist(app.tables["SiteTable"].staticTexts["Firefox Suggest"])
+        urlBarAddress.typeText("sho\n")
+        navigator.nowAt(BrowserTab)
+
+        navigator.goto(URLBarOpen)
+        urlBarAddress.typeText("sho")
+        waitForElementsToExist(
+            [
+            app.tables["SiteTable"],
+            app.tables["SiteTable"].staticTexts["Google Search"],
+            app.tables["SiteTable"].staticTexts["Firefox Suggest"]
+            ]
+        )
     }
 }

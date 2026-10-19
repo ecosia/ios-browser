@@ -128,7 +128,14 @@ class CertificatesViewController: UIViewController,
     // MARK: Header Actions
     private func setupHeaderViewActions() {
         headerView.backToMainMenuCallback = { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
+            guard let self else { return }
+            let nav = self.navigationController
+            // When presented from error page we are the root of a modal nav stack; Back should dismiss.
+            if nav?.viewControllers.count == 1 {
+                nav?.dismissVC()
+            } else {
+                nav?.popViewController(animated: true)
+            }
         }
         headerView.dismissMenuCallback = { [weak self] in
             self?.navigationController?.dismissVC()
@@ -184,9 +191,10 @@ class CertificatesViewController: UIViewController,
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let headerView = tableView.dequeueReusableHeaderFooterView(
             withIdentifier: CertificatesHeaderView.cellIdentifier) as? CertificatesHeaderView else {
-            logger.log("Failed to dequeue CertificatesHeaderView with identifier \(CertificatesHeaderView.cellIdentifier)",
+            logger.log("Failed to dequeue CertificatesHeaderView",
                        level: .fatal,
-                       category: .certificate)
+                       category: .certificate,
+                       extra: ["identifier": CertificatesHeaderView.cellIdentifier])
             return UIView()
         }
         var items: [CertificatesHeaderItem] = []
@@ -310,9 +318,21 @@ class CertificatesViewController: UIViewController,
 extension CertificatesViewController {
     func applyTheme() {
         let theme = currentTheme()
-        view.backgroundColor = theme.colors.layer3
+        overrideUserInterfaceStyle = theme.type.getInterfaceStyle()
+        let panelBackground = theme.isNova ? theme.colors.layer1 : theme.colors.layer3
+        view.backgroundColor = panelBackground
         titleLabel.textColor = theme.colors.textPrimary
         titleLabel.backgroundColor = theme.colors.layer5
         headerView.applyTheme(theme: theme)
+
+        certificatesTableView.backgroundColor = panelBackground
+        certificatesTableView.separatorColor = theme.colors.borderPrimary
+
+        for case let cell as CertificatesCell in certificatesTableView.visibleCells {
+            cell.applyTheme(theme: theme)
+        }
+        for section in 0..<certificatesTableView.numberOfSections {
+            (certificatesTableView.headerView(forSection: section) as? CertificatesHeaderView)?.applyTheme(theme: theme)
+        }
     }
 }

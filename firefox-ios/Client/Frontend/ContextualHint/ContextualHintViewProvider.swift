@@ -17,16 +17,20 @@ enum ContextualHintType: String {
     case jumpBackIn = "JumpBackIn"
     case jumpBackInSyncedTab = "JumpBackInSyncedTab"
     case mainMenu = "MainMenu"
-    case dataClearance = "DataClearance"
     case navigation = "Navigation"
     case relay = "Relay"
-    case toolbarUpdate = "ToolbarUpdate"
     case translation = "Translation"
     case summarizeToolbarEntry = "SummarizeToolbarEntry"
 }
 
+enum TipKitHintType: String {
+    case googleLens = "GoogleLens"
+}
+
 @MainActor
-class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLocationProvider {
+class ContextualHintViewProvider: ContextualHintPrefsKeysProvider,
+                                  SearchBarLocationProvider,
+                                  FeatureFlaggable {
     typealias CFRPrefsKeys = PrefsKeys.ContextualHints
     typealias CFRStrings = String.ContextualHints
 
@@ -51,8 +55,7 @@ class ContextualHintViewProvider: ContextualHintPrefsKeysProvider, SearchBarLoca
     func shouldPresentContextualHint() -> Bool {
         let hintEligibilityUtility = ContextualHintEligibilityUtility(
             with: profile,
-            overlayState: overlayState,
-            isToolbarUpdateCFRFeatureEnabled: featureFlags.isFeatureEnabled(.toolbarUpdateHint, checking: .buildOnly)
+            overlayState: overlayState
         )
 
         return hintEligibilityUtility.canPresent(hintType)

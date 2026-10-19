@@ -40,6 +40,12 @@
 /* Accessibility label for address and search field, both words (Address, Search) are therefore nouns. */
 "Address and Search" = "Adrese un meklēšana";
 
+/* Accessibility label for action adding current page to reading list. */
+"Address.Bar.ReadingList.v106" = "Pievienot lasīšanas sarakstam";
+
+/* Accessibility label for the Address Bar, where a user can enter the search they wish to make */
+"Address.Bar.v99" = "Adrešu josla";
+
 /* Used as a button label for crash dialog prompt */
 "Always Send" = "Vienmēr sūtīt";
 
@@ -53,7 +59,7 @@
 "Back" = "Atpakaļ";
 
 /* Block pop-up windows setting */
-"Block Pop-up Windows" = "Bloķēt uzlecošos logus";
+"Block Pop-up Windows" = "Liegt uzlecošos logus";
 
 /* Toggle bookmarks syncing setting */
 "Bookmarks" = "Grāmatzīmes";
@@ -209,7 +215,7 @@
 "ErrorPages.CertWarning.Description" = "%@ īpašnieks ir nepareizi uzstādījis savu mājaslapu. Lai aizsargātu jūsu informāciju no zagšanas, Ecosia nav pieslēdzies šai mājaslapai.";
 
 /* Title on the certificate error page */
-"ErrorPages.CertWarning.Title" = "Šis savienojums nav drošs";
+"ErrorPages.CertWarning.Title" = "Šis savienojums nav uzticams";
 
 /* Label for button to go back from the error page */
 "ErrorPages.GoBack.Button" = "Iet atpakaļ";
@@ -225,6 +231,9 @@
 
 /* Title for firefox about:home page in tab history list */
 "Firefox.HomePage.Title" = "Ecosia sākuma lapu";
+
+/* A button at bottom of the Firefox homepage that, when clicked, takes users straight to the settings options, where they can customize the Firefox Home page */
+"FirefoxHome.CustomizeHomeButton.Title" = "Pielāgot sākumlapu";
 
 /* Accessibility Label for the tab toolbar Forward button */
 "Forward" = "Pārsūtīt";
@@ -248,10 +257,10 @@
 "FxAPush_DeviceConnected_title" = "Sync pievienots";
 
 /* Body of a notification displayed when named device has been disconnected from FxA. %@ refers to the name of the disconnected device. */
-"FxAPush_DeviceDisconnected_body" = "%@ ir veiksmīgi atienota.";
+"FxAPush_DeviceDisconnected_body" = "%@ tika sekmīgi atvienota.";
 
 /* Body of a notification displayed when this device has been disconnected from FxA by another device. */
-"FxAPush_DeviceDisconnected_ThisDevice_body" = "Šī ierīce ir veiksmīgi atvienota no Ecosia Sync.";
+"FxAPush_DeviceDisconnected_ThisDevice_body" = "Šī ierīce tika sekmīgi atvienota no Ecosia Sync.";
 
 /* Title of a notification displayed when this device has been disconnected by another device. */
 "FxAPush_DeviceDisconnected_ThisDevice_title" = "Sync atvienots";
@@ -358,6 +367,12 @@
 /* Relative time for a tab that was visited within the last few moments. */
 "just now" = "tikko";
 
+/* A label indicating the keyboard shortcut of adding the currently viewing web page as a bookmark. This label is displayed in the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
+"Keyboard.Shortcuts.AddBookmark" = "Pievienot grāmatzīmi";
+
+/* A label indicating the keyboard shortcut of finding text a user desires within a page again. This label is displayed in the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
+"Keyboard.Shortcuts.FindAgain" = "Meklēt vēlreiz";
+
 /* This label is meant to signify the section containing a group of items from the past thirty days. */
 "Last month" = "Pēdējā mēnesī";
 
@@ -397,6 +412,9 @@
 /* Placeholder test for search box in logins list view. */
 "LoginsList.LoginsListSearchPlaceholder" = "Filtrs";
 
+/* Label that appears after the search if there are no logins matching the search */
+"LoginsList.NoMatchingResult.Subtitle" = "Nekas neatbilst meklētajam.";
+
 /* Restore Tabs Prompt Description */
 "Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Izskatās, ka Ecosia iepriekš avarēja. Vai vēlaties atjaunot cilnes?";
 
@@ -409,14 +427,26 @@
 /* Toast displayed to the user after a bookmark has been added. */
 "Menu.AddBookmark.Confirm" = "Grāmatzīme pievienota";
 
+/* Label for the add bookmark button in the menu. Pressing this button bookmarks the current page. Please keep the text as short as possible for this label. */
+"Menu.AddBookmark.Label.v99" = "Pievienot";
+
+/* Label for the add to reading list button in the menu. Pressing this button adds the current page to the reading list. Please keep the text as short as possible for this label. */
+"Menu.AddReadingList.Label.v99" = "Pievienot";
+
 /* Toast displayed to the user after adding the item to their reading list. */
 "Menu.AddToReadingList.Confirm" = "Pievienots lasīšanas sarakstam";
+
+/* Label for the add to shortcuts button in the menu. Pressing this button pins the current website as a shortcut on the home page. */
+"Menu.AddToShortcuts.v99" = "Pievienot īsceļiem";
 
 /* The title for the button that lets you copy the url from the location bar. */
 "Menu.Copy.Title" = "Kopēt adresi";
 
 /* Toast displayed to user after copy url pressed. */
 "Menu.CopyURL.Confirm" = "Adrese nokopēta starpliktuvē";
+
+/* Label for the customize homepage button in the menu page. Pressing this button takes users to the settings options, where they can customize the Firefox Home page */
+"Menu.CustomizeHomePage.v99" = "Pielāgot sākumlapu";
 
 /* The title for the button that lets you paste into the location bar */
 "Menu.Paste.Title" = "Ielīmēt";
@@ -490,6 +520,12 @@
 /* Show Firefox Browser Privacy Policy page from the Privacy section in the settings. See https://www.mozilla.org/privacy/firefox/ */
 "Privacy Policy" = "Privātuma politika";
 
+/* This is the value for a label that indicates if a user is on an unencrypted website. */
+"ProtectionStatus.NotSecure" = "Savienojums nav drošs";
+
+/* This is the value for a label that indicates if a user is on a secure https connection. */
+"ProtectionStatus.Secure" = "Savienojums ir drošs";
+
 /* Title for quick-search engines settings section. */
 "Quick-Search Engines" = "Ātrie meklētāji";
 
@@ -539,10 +575,10 @@
 "ScanQRCode.View.Title" = "Skanēt QR kodu";
 
 /* Open search section of settings */
-"Search" = "Meklēt";
+"Search" = "Meklēšana";
 
 /* The text shown in the URL bar on about:home */
-"Search or enter address" = "Meklējiet vai ievadiet adresi";
+"Search or enter address" = "Meklē vai ievadi adresi";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
 "Search.ThirdPartyEngines.AddMessage" = "Jaunais meklētājs parādīsies ātrās meklēšanas joslā.";
@@ -658,6 +694,15 @@
 /* The placeholder for URL Field when saving a custom search engine */
 "Settings.AddCustomEngine.URLPlaceholder" = "URL (aizstāt vaicājums ar %s)";
 
+/* In the settings menu, in the Address Bar customization menu, this is the title of the section where the user can toggle the address bar position. */
+"Settings.AddressBar.SectionTitle.v138" = "Adrešu joslas novietojums";
+
+/* In the settings menu, this label indicates that there is an option of customizing the Address Bar position. */
+"Settings.AddressBar.SettingsTitle.v138" = "Adrešu josla";
+
+/* Title of setting to block opening external apps when pressing links. */
+"Settings.BlockOpeningExternalApps.Title" = "Liegt ārēju lietotņu atvēršanu";
+
 /* Button in settings that clears private data for the selected items. */
 "Settings.ClearPrivateData.Clear.Button" = "Notīrīt privātos datus";
 
@@ -709,11 +754,17 @@
 /* General settings section title */
 "Settings.General.SectionName" = "Vispārīgi";
 
+/* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the Homepage every time they open up Firefox */
+"Settings.Home.Option.StartAtHome.Always" = "Sākumlapa";
+
+/* In the settings menu, this is the title of the Firefox Homepage customization settings section */
+"Settings.Home.Option.Title.v101" = "Iekļaut sākumlapā";
+
 /* Label used as an item in Settings. When touched it will open a dialog to configure the home page and its uses. */
-"Settings.HomePage.SectionName" = "Mājas lapa";
+"Settings.HomePage.SectionName" = "Sākumlapa";
 
 /* Title of the setting section containing the URL of the current home page. */
-"Settings.HomePage.URL.Title" = "Pašreizējā mājas lapa";
+"Settings.HomePage.URL.Title" = "Pašreizējā sākumlapa";
 
 /* Button in settings to use the current page as home page. */
 "Settings.HomePage.UseCurrent.Button" = "Lietot pašreizējo lapu";
@@ -725,7 +776,7 @@
 "Settings.NewTab.Option.FirefoxHome" = "Ecosia sākumlapa";
 
 /* Option in settings to show your homepage when you open a new tab */
-"Settings.NewTab.Option.HomePage" = "Mājas lapa";
+"Settings.NewTab.Option.HomePage" = "Sākumlapa";
 
 /* Label used as an item in Settings. When touched it will open a dialog to configure the new tab behavior. */
 "Settings.NewTab.SectionName" = "Jauna cilne";
@@ -739,11 +790,14 @@
 /* Footer at the bottom of the New Tab screen after entering New Tab in settings */
 "Settings.NewTab.TopSectionNameFooter" = "Izvēlieties ko rādīt atverot jaunu cilni";
 
+/* Label for the block images toggle displayed in the settings menu. Enabling this toggle will hide images on any webpage the user visits. */
+"Settings.NoImageModeBlockImages.Label.v99" = "Liegt attēlus";
+
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
 "Settings.OfferClipboardBar.Status" = "Atverot Ecosia";
 
 /* Title of setting to enable the Go to Copied URL feature. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Title" = "Piedāvāt atvērt nokopētās saites";
+"Settings.OfferClipboardBar.Title" = "Piedāvāt atvērt starpliktuvē ievietotās saites";
 
 /* Title for Open With Settings */
 "Settings.OpenWith.PageTitle" = "Atvērt pasta saites ar";
@@ -774,6 +828,9 @@
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Siri saīsnes";
+
+/* Dismiss button for the tracker protection alert. */
+"Settings.TrackingProtection.Alert.Button" = "Labi, sapratu";
 
 /* Row in top-level of settings that gets tapped to show the tracking protection settings detail view. */
 "Settings.TrackingProtection.SectionName" = "Izsekošanas aizsardzība";
@@ -850,6 +907,9 @@
 /* The button to undo the delete all tabs */
 "Tabs.DeleteAllUndo.Button" = "Atcelt";
 
+/* Accessibility label for the Add Tab button in the Tab Tray. */
+"TabTray.AddTab.Button" = "Pievienot cilni";
+
 /* A label indicating the keyboard shortcut of closing all tabs from the tab tray. This label is displayed inside the Discoverability overlay when a user presses the Command key. The Discoverability overlay and shortcut become available only when a user has connected a hardware keyboard to an iPad. See https://drive.google.com/file/d/1gH3tbvDceg7yG5N67NIHS-AXgDgCzBHN/view?usp=sharing for more details. */
 "TabTray.CloseAllTabs.KeyCodeTitle" = "Aizvērt visas cilnes";
 
@@ -909,6 +969,9 @@
 
 /* Username textbox in Authentication prompt */
 "Username" = "Lietotājvārds";
+
+/* Action displayed when changing wallpaper fails. */
+"Wallpaper.Error.TryAgain.v106" = "Mēģināt vēlreiz";
 
 /* Accessibility label for the main web content view */
 "Web content" = "Tīmekļa saturs";

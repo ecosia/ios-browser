@@ -10,12 +10,13 @@ import Storage
 
 final class HomepageViewController: UIViewController,
                                     UICollectionViewDelegate,
+                                    UIGestureRecognizerDelegate,
                                     UIPopoverPresentationControllerDelegate,
                                     UIAdaptivePresentationControllerDelegate,
-                                    FeatureFlaggable,
                                     ContentContainable,
                                     Screenshotable,
                                     Themeable,
+                                    FeatureFlaggable,
                                     StoreSubscriber {
     // MARK: - Typealiases
     typealias SubscriberStateType = HomepageState
@@ -59,6 +60,10 @@ final class HomepageViewController: UIViewController,
     var homepageCellTypesToRegister: [ReusableCell.Type]?
     /// Ecosia: Called after the data source is created so customizations (e.g. Ecosia adapter) can be applied.
     var onDataSourceConfigured: ((HomepageDiffableDataSource) -> Void)?
+    private lazy var sectionProvider = HomepageSectionLayoutProvider(windowUUID: windowUUID)
+    // Tracks which tab the shared homepage instance is currently representing.
+    private var activeTabUUID: TabUUID?
+
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
     private var wallpaperBottomConstraint: NSLayoutConstraint?
     // Ecosia: Guards against re-applying the iPad cross-hierarchy constraint on each layout pass
@@ -72,6 +77,14 @@ final class HomepageViewController: UIViewController,
     var homepageState: HomepageState
     private var lastContentOffsetY: CGFloat = 0
     private var didFinishFirstLayout = false
+    private var wallpaperTopConstraint: NSLayoutConstraint?
+    private var wallpaperHeightConstraint: NSLayoutConstraint?
+    private var collectionViewTopContentInset: CGFloat = 0
+
+    private var currentHomepageTabState: HomepageTabState {
+        guard let activeTabUUID else { return HomepageTabState() }
+        return homepageTabStateStore.state(for: activeTabUUID)
+    }
 
     private var currentTheme: Theme {
         themeManager.getCurrentTheme(for: windowUUID)
@@ -82,6 +95,9 @@ final class HomepageViewController: UIViewController,
     }
 
     // MARK: - Private constants
+    private let profile: Profile
+    private let tabManager: TabManager
+    private let homepageTabStateStore: HomepageTabStateStoring
     private let overlayManager: OverlayModeManager
     private let logger: Logger
     private let toastContainer: UIView
@@ -95,6 +111,8 @@ final class HomepageViewController: UIViewController,
     init(windowUUID: WindowUUID,
          profile: Profile = AppContainer.shared.resolve(),
          themeManager: ThemeManager = AppContainer.shared.resolve(),
+         tabManager: TabManager,
+         homepageTabStateStore: HomepageTabStateStoring = HomepageTabStateStore(),
          overlayManager: OverlayModeManager,
          statusBarScrollDelegate: StatusBarScrollDelegate? = nil,
          toastContainer: UIView,
@@ -105,6 +123,9 @@ final class HomepageViewController: UIViewController,
         self.windowUUID = windowUUID
         self.themeManager = themeManager
         self.notificationCenter = notificationCenter
+        self.profile = profile
+        self.tabManager = tabManager
+        self.homepageTabStateStore = homepageTabStateStore
         self.overlayManager = overlayManager
         self.statusBarScrollDelegate = statusBarScrollDelegate
         self.toastContainer = toastContainer
@@ -143,7 +164,7 @@ final class HomepageViewController: UIViewController,
     deinit {
         // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
         guard Thread.isMainThread else {
-            assertionFailure("AddressBarPanGestureHandler was not deallocated on the main thread. Observer was not removed")
+            assertionFailure("TabSwipeGestureHandler was not deallocated on the main thread. Observer was not removed")
             return
         }
 
@@ -173,6 +194,12 @@ final class HomepageViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        activeTabUUID = tabManager.selectedTab?.tabUUID
+        refreshHomepageDataSourceSnapshot { [weak self] in
+            self?.updateNewsHeaderPickerState()
+        }
+
         /// Used as a trigger for showing a microsurvey based on viewing the homepage
         Experiments.events.recordEvent(BehavioralTargetingEvent.homepageViewed)
         store.dispatch(
@@ -213,7 +240,15 @@ final class HomepageViewController: UIViewController,
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
+        store.dispatch(
+            HomepageAction(
+                windowUUID: windowUUID,
+                actionType: HomepageActionType.viewWillDisappear
+            )
+        )
         stopCFRsTimer()
+        saveVerticalScrollOffset()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -240,7 +275,6 @@ final class HomepageViewController: UIViewController,
             store.dispatch(
                 HomepageAction(
                     numberOfTopSitesPerRow: numberOfTilesPerRow(for: availableWidth),
-                    showiPadSetup: shouldUseiPadSetup(),
                     windowUUID: windowUUID,
                     actionType: HomepageActionType.initialize
                 )
@@ -248,7 +282,9 @@ final class HomepageViewController: UIViewController,
         }
 
         let numberOfTilesPerRow = numberOfTilesPerRow(for: availableWidth)
-        guard homepageState.topSitesState.numberOfTilesPerRow != numberOfTilesPerRow else { return }
+        guard homepageState.topSitesState.numberOfTilesPerRow != numberOfTilesPerRow else {
+            return
+        }
 
         store.dispatch(
             HomepageAction(
@@ -273,12 +309,61 @@ final class HomepageViewController: UIViewController,
         updateEcosiaScrollability(for: size)
     }
 
-    // called when the homepage is displayed to make sure it's scrolled to top
+    // Called when the homepage is displayed to make sure it's vertical scroll position is persisted.
+    // If no scroll position exists for tab, scroll the homepage to the top
+    func restoreVerticalScrollOffset(force: Bool = true) {
+        let selectedTabUUID = tabManager.selectedTab?.tabUUID
+        guard force || activeTabUUID != selectedTabUUID else { return }
+
+        activeTabUUID = selectedTabUUID
+        guard let activeTabUUID,
+              let homepageScrollOffset = homepageTabStateStore.state(for: activeTabUUID).scrollOffsetY
+        else {
+            scrollToTop()
+            return
+        }
+        collectionView?.contentOffset.y = homepageScrollOffset
+        updateNewsTransitionHeaderProgress()
+    }
+
     func scrollToTop(animated: Bool = false) {
-        collectionView?.setContentOffset(.zero, animated: animated)
         if let collectionView = collectionView {
+            collectionView.setContentOffset(CGPoint(x: 0, y: -collectionView.adjustedContentInset.top), animated: animated)
             handleScroll(collectionView, isUserInteraction: false)
         }
+    }
+
+    func stopScrollingAndSaveVerticalScrollOffset() {
+        guard let collectionView else { return }
+        collectionView.setContentOffset(collectionView.contentOffset, animated: false)
+        saveVerticalScrollOffset()
+    }
+
+    func updateTopContentInset(_ topInset: CGFloat) {
+        // Pinned header mode lets BVC represent its status bar overlay as homepage content inset.
+        // When disabled, use the legacy zero-inset layout so collection view offsets are not adjusted.
+        let shouldPinNewsHeader = featureFlagsProvider.isEnabled(.homepagePinnedHeader)
+                                  && featureFlagsProvider.isEnabled(.homepageStoryCategories)
+        let effectiveTopInset = shouldPinNewsHeader ? topInset : 0
+        guard collectionViewTopContentInset != effectiveTopInset else { return }
+        let previousAdjustedTopInset = collectionView?.adjustedContentInset.top ?? collectionViewTopContentInset
+        let wasScrolledToTop = collectionView.map { $0.contentOffset.y <= 0 } ?? true
+        collectionViewTopContentInset = effectiveTopInset
+        updateCollectionViewContentInset()
+
+        guard let collectionView else { return }
+
+        if wasScrolledToTop {
+            // Top of scrollable content is always -topInset, e.g. a 54pt top inset means y = -54.
+            collectionView.contentOffset.y = -collectionView.adjustedContentInset.top
+        } else {
+            // Preserve the visible content when BVC chrome changes the collection view's top inset.
+            // Example: offset 120 + inset 0 shows normalized y = 120. If inset becomes 54,
+            // move offset to 66 so 66 + 54 still shows normalized y = 120.
+            let adjustedTopInsetDelta = collectionView.adjustedContentInset.top - previousAdjustedTopInset
+            collectionView.contentOffset.y -= adjustedTopInsetDelta
+        }
+        handleScroll(collectionView, isUserInteraction: false)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -291,10 +376,29 @@ final class HomepageViewController: UIViewController,
     }
 
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        snapNewsTransitionHeaderIfNeeded()
+        saveVerticalScrollOffset()
         trackVisibleItemImpressions()
     }
 
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            snapNewsTransitionHeaderIfNeeded()
+            saveVerticalScrollOffset()
+        }
+        trackVisibleItemImpressions()
+    }
+
+    private func saveVerticalScrollOffset() {
+        guard let activeTabUUID else { return }
+        homepageTabStateStore.updateState(for: activeTabUUID) { state in
+            state.scrollOffsetY = collectionView?.contentOffset.y
+        }
+    }
+
     private func handleScroll(_ scrollView: UIScrollView, isUserInteraction: Bool) {
+        updateNewsTransitionHeaderProgress()
+
         // We only handle status bar overlay alpha if there's a wallpaper applied on the homepage
         if homepageState.wallpaperState.wallpaperConfiguration.hasImage {
             let theme = themeManager.getCurrentTheme(for: windowUUID)
@@ -357,10 +461,10 @@ final class HomepageViewController: UIViewController,
 
     // MARK: - Redux
     func subscribeToRedux() {
-        let action = ScreenAction(
+        let action = ComponentAction(
             windowUUID: windowUUID,
-            actionType: ScreenActionType.showScreen,
-            screen: .homepage
+            actionType: ComponentActionType.addComponent,
+            component: .homepage
         )
         store.dispatch(action)
 
@@ -388,26 +492,31 @@ final class HomepageViewController: UIViewController,
         // TODO: - FXIOS-13346 / FXIOS-13343 - fix collection view being reloaded all the time also when data don't change
         // this is a quick workaround to avoid blocking the main thread by calling apply snapshot many times.
         if homepageState != state {
-            dataSource?.updateSnapshot(
-                state: state,
-                jumpBackInDisplayConfig: getJumpBackInDisplayConfig()
-            )
+            let animatingDifferences = state.wallpaperState.availableContentHeight
+                                        == homepageState.wallpaperState.availableContentHeight
+            self.homepageState = state
+
+            refreshHomepageDataSourceSnapshot(
+                animatingDifferences: animatingDifferences
+            ) { [weak self] in
+                self?.collectionView?.layoutIfNeeded()
+                self?.updateNewsTransitionHeaderProgress()
+            }
+            updateWallpaperConstraints(availableWallpaperHeight: state.wallpaperState.availableWallpaperHeight)
         }
 
         // FXIOS-11523 - Trigger impression when user opens homepage view new tab + scroll to top
-        if state.shouldTriggerImpression {
-            scrollToTop()
+        if state.telemetryState.shouldTriggerImpression {
             resetTrackedObjects()
             trackVisibleItemImpressions()
         }
-        self.homepageState = state
     }
 
     func unsubscribeFromRedux() {
-        let action = ScreenAction(
+        let action = ComponentAction(
             windowUUID: windowUUID,
-            actionType: ScreenActionType.closeScreen,
-            screen: .homepage
+            actionType: ComponentActionType.removeComponent,
+            component: .homepage
         )
         store.dispatch(action)
     }
@@ -425,18 +534,23 @@ final class HomepageViewController: UIViewController,
 
     // MARK: - Layout
 
-    func configureWallpaperView() {
+    private func configureWallpaperView() {
         view.addSubview(wallpaperView)
 
         /* Ecosia: Wallpaper as a card that ends cleanly above the URL bar.
-        // Constraint so wallpaper appears under the status bar
-        let wallpaperTopConstant: CGFloat = UIWindow.keyWindow?.safeAreaInsets.top ?? statusBarFrame?.height ?? 0
+        let heightConstraint = wallpaperView.heightAnchor.constraint(
+            equalToConstant: homepageState.wallpaperState.availableWallpaperHeight
+        )
+        let topConstraint = wallpaperView.topAnchor.constraint(equalTo: view.topAnchor)
+
+        wallpaperTopConstraint = topConstraint
+        wallpaperHeightConstraint = heightConstraint
 
         NSLayoutConstraint.activate([
-            wallpaperView.topAnchor.constraint(equalTo: view.topAnchor, constant: -wallpaperTopConstant),
+            topConstraint,
             wallpaperView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            wallpaperView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            heightConstraint
         ])
         */
         // Ecosia: Wallpaper card with rounded corners and insets.
@@ -457,6 +571,20 @@ final class HomepageViewController: UIViewController,
         wallpaperView.applyEcosiaCornerRadius(CGFloat.ecosia.borderRadius._1l)
 
         view.sendSubviewToBack(wallpaperView)
+    }
+
+    private func updateWallpaperConstraints(availableWallpaperHeight: CGFloat) {
+        guard let window = view.window else {
+            wallpaperHeightConstraint?.constant = availableWallpaperHeight
+            wallpaperTopConstraint?.constant = 0
+            return
+        }
+
+        // Shift up by the homepage view's window offset so wallpaper stays anchored to window top.
+        let viewTopOffset = view.convert(CGPoint.zero, to: window).y
+        // Height is authoritative from state and already includes the window-relative content offset.
+        wallpaperHeightConstraint?.constant = availableWallpaperHeight
+        wallpaperTopConstraint?.constant = -viewTopOffset
     }
 
     private func setupLayout() {
@@ -503,7 +631,11 @@ final class HomepageViewController: UIViewController,
 
         collectionView.registerSupplementary(
             of: UICollectionView.elementKindSectionHeader,
-            cellType: LabelButtonHeaderView.self
+            cellType: LabelButtonHeaderCell.self
+        )
+        collectionView.registerSupplementary(
+            of: UICollectionView.elementKindSectionHeader,
+            cellType: NewsTransitionHeaderCell.self
         )
 
         // Ecosia: Register supplementary views for Ecosia sections
@@ -513,25 +645,15 @@ final class HomepageViewController: UIViewController,
         )
 
         collectionView.keyboardDismissMode = .onDrag
+        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.addGestureRecognizer(longPressRecognizer)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.backgroundColor = .clear
         collectionView.accessibilityIdentifier = a11y.collectionView
         collectionView.delegate = self
-        /* Ecosia: Collection view sits inside the wallpaper card; inner spacing is owned by
-         section layouts rather than a global top content inset.
-        // Per design requirement, set spacing on top. We may want to revisit this spacing when implement liquid glass.
-        collectionView.contentInset = UIEdgeInsets(
-            top: HomepageSectionLayoutProvider.UX.topSpacing,
-            left: 0,
-            bottom: 0,
-            right: 0
-        )
-        collectionView.scrollIndicatorInsets = collectionView.contentInset
-        */
-        collectionView.contentInset = .zero
         self.collectionView = collectionView
+        updateCollectionViewContentInset()
 
         /* Ecosia: Parenting is handled by setupLayout, which places the collection view
          inside wallpaperView so it scrolls within the card's clipped, rounded bounds.
@@ -539,9 +661,25 @@ final class HomepageViewController: UIViewController,
         */
     }
 
+    private func updateCollectionViewContentInset() {
+        guard let collectionView else { return }
+
+        /* Ecosia: Collection view sits inside the wallpaper card; inner spacing is owned by
+         section layouts rather than a global top content inset.
+        // Per design requirement, set spacing on top. We may want to revisit this spacing when implement liquid glass.
+        collectionView.contentInset = UIEdgeInsets(
+            top: collectionViewTopContentInset,
+            left: 0,
+            bottom: 0,
+            right: 0
+        )
+        collectionView.scrollIndicatorInsets = collectionView.contentInset
+        */
+        collectionView.contentInset = .zero
+    }
+
     private func createLayout() -> UICollectionViewCompositionalLayout {
-        let sectionProvider = HomepageSectionLayoutProvider(windowUUID: windowUUID)
-        let layout = UICollectionViewCompositionalLayout { [weak self] (sectionIndex, environment)
+        let layout = UICollectionViewCompositionalLayout { [weak self, sectionProvider] (sectionIndex, environment)
             -> NSCollectionLayoutSection? in
             guard let section = self?.dataSource?.snapshot().sectionIdentifiers[safe: sectionIndex] else {
                 self?.logger.log(
@@ -558,10 +696,11 @@ final class HomepageViewController: UIViewController,
                 return sectionProvider.makeEmptyLayoutSection()
             }
 
-            return sectionProvider.createLayoutSection(
+            let layoutSection = sectionProvider.createLayoutSection(
                 for: section,
                 with: environment
             )
+            return layoutSection
         }
         return layout
     }
@@ -597,166 +736,76 @@ final class HomepageViewController: UIViewController,
         }
     }
 
-    private func configurePrivacyNoticeCell(cell: PrivacyNoticeCell) {
-        cell.configure(theme: currentTheme,
-                       closeButtonAction: { [weak self] in
-                           self?.dispatchPrivacyNoticeCloseButtonTapped()
-                       },
-                       linkAction: { [weak self] url in
-                           self?.dispatchPrivacyNoticeLinkTapped(url: url)
-                       }
-        )
-    }
-
     private func configureCell(
         for item: HomepageDiffableDataSource.HomeItem,
         at indexPath: IndexPath
     ) -> UICollectionViewCell {
         switch item {
+        case .header(let state, let logoTextColor, let showiPadSetup):
+            return configuredCell(cellType: HomepageHeaderCell.self, at: indexPath) { cell in
+                cell.configure(
+                    headerState: state,
+                    showiPadSetup: showiPadSetup,
+                    logoTextColor: logoTextColor,
+                    tipPresenter: self
+                )
+                cell.applyTheme(theme: currentTheme)
+            }
         case .privacyNotice:
-            guard let privacyNoticeCell = collectionView?.dequeueReusableCell(
-                cellType: PrivacyNoticeCell.self,
-                for: indexPath
-            ) else {
-                return UICollectionViewCell()
+            return configuredCell(cellType: PrivacyNoticeCell.self, at: indexPath) { cell in
+                configurePrivacyNoticeCell(cell: cell)
             }
-
-            configurePrivacyNoticeCell(cell: privacyNoticeCell)
-
-            return privacyNoticeCell
         case .messageCard(let config):
-            guard let messageCardCell = collectionView?.dequeueReusableCell(
-                cellType: HomepageMessageCardCell.self,
-                for: indexPath
-            ) else {
-                return UICollectionViewCell()
+            return configuredCell(cellType: HomepageMessageCardCell.self, at: indexPath) { cell in
+                cell.configure(with: config, windowUUID: windowUUID, theme: currentTheme)
             }
-
-            messageCardCell.configure(with: config, windowUUID: windowUUID, theme: currentTheme)
-            return messageCardCell
         case .topSite(let site, let textColor):
-            let cellType: ReusableCell.Type = TopSiteCell.self
-
-            guard let topSiteCell = collectionView?.dequeueReusableCell(cellType: cellType, for: indexPath) else {
-                return UICollectionViewCell()
-            }
-
-            if let topSiteCell = topSiteCell as? TopSiteCell {
+            return configuredCell(cellType: TopSiteCell.self, at: indexPath) { cell in
                 // Ecosia: Enable glass style before configure() so adjustBlur runs with the flag set.
-                topSiteCell.ecosiaGlassStyleEnabled = true
-                topSiteCell.configure(site, position: indexPath.row, theme: currentTheme, textColor: textColor)
-                return topSiteCell
+                cell.ecosiaGlassStyleEnabled = true
+                cell.configure(site, position: indexPath.row, theme: currentTheme, textColor: textColor)
             }
-
-            return UICollectionViewCell()
-
+        case .addShortcutTile(let textColor):
+            return configuredCell(cellType: TopSiteCell.self, at: indexPath) { cell in
+                // Ecosia: Same glass treatment as the surrounding shortcut tiles.
+                cell.ecosiaGlassStyleEnabled = true
+                cell.configureAddShortcutTile(theme: currentTheme, textColor: textColor)
+            }
         case .topSiteEmpty:
-            guard let emptyCell = collectionView?.dequeueReusableCell(cellType: EmptyTopSiteCell.self, for: indexPath) else {
-                return UICollectionViewCell()
+            return configuredCell(cellType: EmptyTopSiteCell.self, at: indexPath) { cell in
+                cell.applyTheme(theme: currentTheme)
             }
-
-            emptyCell.applyTheme(theme: currentTheme)
-            return emptyCell
-
         case .searchBar:
-            guard let searchBar = collectionView?.dequeueReusableCell(
-                cellType: SearchBarCell.self,
-                for: indexPath
-            ) else {
-                return UICollectionViewCell()
+            return configuredCell(cellType: SearchBarCell.self, at: indexPath) { cell in
+                cell.applyTheme(theme: currentTheme)
             }
-            searchBar.applyTheme(theme: currentTheme)
-            return searchBar
-
         case .jumpBackIn(let tab):
-            let isStoriesRedesignV2Enabled = featureFlags.isFeatureEnabled(.homepageStoriesRedesignV2, checking: .buildOnly)
-            let cellType: (UICollectionViewCell & JumpBackInCellProtocol).Type =
-                isStoriesRedesignV2Enabled ? JumpBackInCell.self : LegacyJumpBackInCell.self
-
-            guard let cell = collectionView?.dequeueReusableCell(cellType: cellType, for: indexPath) else {
-                return UICollectionViewCell()
+            return configuredCell(cellType: JumpBackInCell.self, at: indexPath) { cell in
+                cell.configure(config: tab, theme: currentTheme)
             }
-
-            cell.configure(config: tab, theme: currentTheme)
-            return cell
-
         case .jumpBackInSyncedTab(let config):
-            guard let syncedTabCell = collectionView?.dequeueReusableCell(
-                cellType: SyncedTabCell.self,
-                for: indexPath
-            ) else {
-                return UICollectionViewCell()
+            return configureSyncedTabCell(config, item: item, at: indexPath)
+        case .trackerBlockerModule(let count):
+            return configuredCell(
+                cellType: TrackerBlockerModuleCell.self,
+                at: indexPath
+            ) { cell in
+                cell.configure(
+                    count: count,
+                    theme: currentTheme,
+                    onTap: { [weak self] in
+                        self?.navigateToTrackerBlocker()
+                    }
+                )
             }
-            syncedTabCell.configure(
-                configuration: config,
-                theme: currentTheme,
-                onTapShowAllAction: { [weak self] in
-                    self?.navigateToTabTray(with: .syncedTabs)
-                },
-                onOpenSyncedTabAction: { [weak self] url in
-                    guard let self else { return }
-                    self.navigateToNewTab(with: url)
-                    self.sendItemActionWithTelemetryExtras(item: item, actionType: .didSelectItem)
-                }
-            )
-            prepareSyncedTabContextualHint(onCell: syncedTabCell)
-            return syncedTabCell
-
         case .bookmark(let item):
-            let isStoriesRedesignV2Enabled = featureFlags.isFeatureEnabled(.homepageStoriesRedesignV2, checking: .buildOnly)
-            let cellType: (UICollectionViewCell & BookmarksCellProtocol).Type =
-                isStoriesRedesignV2Enabled ? BookmarksCell.self : LegacyBookmarksCell.self
-
-            guard let cell = collectionView?.dequeueReusableCell(cellType: cellType, for: indexPath) else {
-                return UICollectionViewCell()
+            return configuredCell(cellType: BookmarksCell.self, at: indexPath) { cell in
+                cell.configure(config: item, theme: currentTheme)
             }
-
-            cell.configure(config: item, theme: currentTheme)
-            return cell
-
-        case .merino(let story):
-            let cellType: ReusableCell.Type = isAnyStoriesRedesignEnabled ? StoryCell.self : MerinoStandardCell.self
-
-            guard let storyCell = collectionView?.dequeueReusableCell(cellType: cellType, for: indexPath) else {
-                return UICollectionViewCell()
-            }
-
-            if let storyCell = storyCell as? StoryCell {
-                let position = indexPath.item + 1
-                let currentSection = dataSource?.snapshot().sectionIdentifiers[indexPath.section] ?? .pocket(.clear)
-                let totalCount = dataSource?.snapshot().numberOfItems(inSection: currentSection)
-                storyCell.configure(story: story, theme: currentTheme, position: position, totalCount: totalCount)
-                return storyCell
-            } else if let legacyPocketCell = storyCell as? MerinoStandardCell {
-                legacyPocketCell.configure(story: story, theme: currentTheme)
-                return legacyPocketCell
-            }
-
-            return UICollectionViewCell()
-
-        case .customizeHomepage:
-            guard let customizeHomeCell = collectionView?.dequeueReusableCell(
-                cellType: CustomizeHomepageSectionCell.self,
-                for: indexPath
-            ) else {
-                return UICollectionViewCell()
-            }
-
-            customizeHomeCell.configure(onTapAction: { [weak self] _ in
-                self?.navigateToHomepageSettings()
-            }, theme: currentTheme)
-
-            return customizeHomeCell
-
+        case .merino(let story, _):
+            return configureMerinoCell(story, at: indexPath)
         case .spacer:
-            guard let spacerCell = collectionView?.dequeueReusableCell(
-                cellType: HomepageSpacerCell.self,
-                for: indexPath
-            ) else {
-                return UICollectionViewCell()
-            }
-
-            return spacerCell
+            return configuredCell(cellType: HomepageSpacerCell.self, at: indexPath) { _ in }
 
         // Ecosia: Custom cell configuration
         case .ecosiaHeader:
@@ -769,6 +818,64 @@ final class HomepageViewController: UIViewController,
             return configureEcosiaImpactCell(at: indexPath, sectionIndex: sectionIndex, showRows: showRows)
         case .ecosiaNTPCustomization:
             return configureEcosiaNTPCustomizationCell(at: indexPath)
+        }
+    }
+
+    private func configuredCell<T: UICollectionViewCell & ReusableCell>(
+        cellType: T.Type,
+        at indexPath: IndexPath,
+        configure: (T) -> Void
+    ) -> UICollectionViewCell {
+        guard let cell = collectionView?.dequeueReusableCell(cellType: cellType, for: indexPath) else {
+            return UICollectionViewCell()
+        }
+        configure(cell)
+        return cell
+    }
+
+    private func configurePrivacyNoticeCell(cell: PrivacyNoticeCell) {
+        cell.configure(theme: currentTheme,
+                       closeButtonAction: { [weak self] in
+                           self?.dispatchPrivacyNoticeCloseButtonTapped()
+                       },
+                       linkAction: { [weak self] url in
+                           self?.dispatchPrivacyNoticeLinkTapped(url: url)
+                       }
+        )
+    }
+
+    private func configureSyncedTabCell(
+        _ config: JumpBackInSyncedTabConfiguration,
+        item: HomepageItem,
+        at indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        return configuredCell(cellType: SyncedTabCell.self, at: indexPath) { cell in
+            cell.configure(
+                configuration: config,
+                theme: currentTheme,
+                onTapShowAllAction: { [weak self] in
+                    self?.navigateToTabTray(with: .syncedTabs)
+                },
+                onOpenSyncedTabAction: { [weak self] url in
+                    guard let self else { return }
+                    self.navigateToNewTab(with: url)
+                    self.sendItemActionWithTelemetryExtras(item: item, actionType: .didSelectItem)
+                }
+            )
+            prepareSyncedTabContextualHint(onCell: cell)
+        }
+    }
+
+    private func configureMerinoCell(
+        _ story: MerinoStoryConfiguration,
+        at indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        let position = indexPath.item + 1
+        let currentSection = dataSource?.snapshot().sectionIdentifiers[indexPath.section] ?? .pocket(.clear)
+        let totalCount = dataSource?.snapshot().numberOfItems(inSection: currentSection)
+
+        return configuredCell(cellType: StoryCell.self, at: indexPath) { cell in
+            cell.configure(story: story, theme: currentTheme, position: position, totalCount: totalCount)
         }
     }
 
@@ -788,11 +895,30 @@ final class HomepageViewController: UIViewController,
 
         switch kind {
         case UICollectionView.elementKindSectionHeader:
+            if case .pocket = section,
+               SectionHeaderConfiguration.merino.style == .newsAffordance {
+                guard let newsTransitionHeaderCell = collectionView.dequeueSupplementary(
+                    of: kind,
+                    cellType: NewsTransitionHeaderCell.self,
+                    for: indexPath
+                ) else {
+                    return UICollectionReusableView()
+                }
+                return configureNewsTransitionHeader(
+                    with: collectionView,
+                    at: indexPath,
+                    with: newsTransitionHeaderCell
+                )
+            }
+
             guard let sectionHeaderView = collectionView.dequeueSupplementary(
                 of: kind,
-                cellType: LabelButtonHeaderView.self,
-                for: indexPath)
-            else { return UICollectionReusableView() }
+                cellType: LabelButtonHeaderCell.self,
+                for: indexPath
+            ) else {
+                return UICollectionReusableView()
+            }
+
             return self.configureSectionHeader(for: section, with: sectionHeaderView)
         case UICollectionView.elementKindSectionFooter:
             // Ecosia: Handle footer for impact section
@@ -811,14 +937,38 @@ final class HomepageViewController: UIViewController,
         }
     }
 
+    private func configureNewsTransitionHeader(
+        with collectionView: UICollectionView,
+        at indexPath: IndexPath,
+        with newsTransitionHeaderCell: NewsTransitionHeaderCell
+    ) -> NewsTransitionHeaderCell {
+        let transitionEnabled = isNewsTransitionEnabled()
+        newsTransitionHeaderCell.configure(
+            sectionHeaderConfiguration: SectionHeaderConfiguration.merino,
+            textColor: homepageState.wallpaperState.wallpaperConfiguration.textColor,
+            theme: currentTheme,
+            transitionEnabled: transitionEnabled,
+            categories: homepageState.merinoState.availableCategories,
+            selectedNewsfeedCategoryID: currentHomepageTabState.selectedNewsfeedCategoryID,
+            newsfeedCategoryPickerOffsetX: currentHomepageTabState.newsfeedCategoryPickerOffsetX,
+            onCategoryPickerScroll: updateNewsfeedCategoryPickerOffsetX,
+            onNewsAffordanceTap: { [weak self] in
+                self?.scrollNewsfeedToTop(onlyIfScrolledPastHeader: false, animated: true)
+            },
+            onSelection: updatedSelectedNewsfeedCategory
+        )
+        newsTransitionHeaderCell.setTransitionProgress(newsTransitionProgress())
+        return newsTransitionHeaderCell
+    }
+
     private func configureSectionHeader(
         for section: HomepageSection,
-        with sectionLabelCell: LabelButtonHeaderView
-    ) -> LabelButtonHeaderView? {
+        with sectionLabelCell: LabelButtonHeaderCell
+    ) -> LabelButtonHeaderCell? {
         switch section {
-        case .topSites(let textColor, _):
+        case .topSites(let textColor, _, _):
             sectionLabelCell.configure(
-                state: homepageState.topSitesState.sectionHeaderState,
+                sectionHeaderConfiguration: SectionHeaderConfiguration.topSites,
                 moreButtonAction: { [weak self] _ in
                     self?.navigateToShortcutsLibrary()
                 },
@@ -828,7 +978,7 @@ final class HomepageViewController: UIViewController,
             return sectionLabelCell
         case .jumpBackIn(let textColor, _):
             sectionLabelCell.configure(
-                state: homepageState.jumpBackInState.sectionHeaderState,
+                sectionHeaderConfiguration: SectionHeaderConfiguration.jumpBackIn,
                 moreButtonAction: { [weak self] _ in
                     self?.navigateToTabTray(with: .tabs)
                 },
@@ -839,7 +989,7 @@ final class HomepageViewController: UIViewController,
             return sectionLabelCell
         case .bookmarks(let textColor):
             sectionLabelCell.configure(
-                state: homepageState.bookmarkState.sectionHeaderState,
+                sectionHeaderConfiguration: SectionHeaderConfiguration.bookmarks,
                 moreButtonAction: { [weak self] _ in
                     self?.navigateToBookmarksPanel()
                 },
@@ -849,10 +999,7 @@ final class HomepageViewController: UIViewController,
             return sectionLabelCell
         case .pocket(let textColor):
             sectionLabelCell.configure(
-                state: homepageState.merinoState.sectionHeaderState,
-                moreButtonAction: { [weak self] _ in
-                    self?.navigateToStoriesFeed()
-                },
+                sectionHeaderConfiguration: SectionHeaderConfiguration.merino,
                 textColor: textColor,
                 theme: currentTheme
             )
@@ -860,6 +1007,62 @@ final class HomepageViewController: UIViewController,
         default:
             return nil
         }
+    }
+
+    /// Updates the `NewsTransitionHeaderCell`s transition progress
+    private func updateNewsTransitionHeaderProgress() {
+        // We only want the stories header to transition if there is enough empty space on the homepage,
+        // which is denoted by the existence of the spacer
+        let transitionEnabled = isNewsTransitionEnabled()
+        let transitionProgress = newsTransitionProgress()
+
+        guard let headerView = getNewsTransitionHeader()  else { return }
+        headerView.setTransitionEnabled(transitionEnabled)
+        headerView.setTransitionProgress(transitionProgress)
+    }
+
+    /// Returns whether there is enough room at the bottom of the unscrolled homepage for the header to transition.
+    /// This is determined by the existence of the spacer with a meaningful height
+    private func isNewsTransitionEnabled() -> Bool {
+        guard SectionHeaderConfiguration.merino.style == .newsAffordance,
+              let collectionView,
+              let spacerSectionIndex = dataSource?.snapshot().sectionIdentifiers.firstIndex(where: {
+                  if case .spacer = $0 {
+                      return true
+                  }
+                  return false
+              }),
+              let spacerAttributes = collectionView.layoutAttributesForItem(at: IndexPath(item: 0,
+                                                                                          section: spacerSectionIndex))
+        else {
+            return true
+        }
+
+        return spacerAttributes.size.height > 0.1
+    }
+
+    /// Converts the homepage's vertical scroll offset into normalized transition progress for the
+    /// stories header crossfade, clamping the result to the 0...1 range over the fixed transition distance.
+    private func newsTransitionProgress() -> CGFloat {
+        guard let collectionView else { return 0 }
+
+        let normalizedOffset = collectionView.contentOffset.y + collectionView.adjustedContentInset.top
+        let progress = normalizedOffset / NewsTransitionHeaderCell.UX.transitionDistance
+        return min(max(progress, 0), 1)
+    }
+
+    /// Snaps the news transition header to either the start or end of the transition when scrolling stops mid-transition.
+    private func snapNewsTransitionHeaderIfNeeded() {
+        guard isNewsTransitionEnabled(), let collectionView else { return }
+
+        let normalizedOffset = collectionView.contentOffset.y + collectionView.adjustedContentInset.top
+        guard let targetNormalizedOffset = NewsTransitionHeaderCell.UX.snappedTransitionOffset(for: normalizedOffset)
+        else { return }
+
+        let targetOffset = CGPoint(x: collectionView.contentOffset.x,
+                                   y: targetNormalizedOffset - collectionView.adjustedContentInset.top)
+        collectionView.setContentOffset(targetOffset, animated: true)
+        updateNewsTransitionHeaderProgress()
     }
 
     // MARK: - Screenshotable
@@ -917,9 +1120,17 @@ final class HomepageViewController: UIViewController,
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
+        if traitCollection.preferredContentSizeCategory != previousTraitCollection?.preferredContentSizeCategory {
+            // Wait for a layout pass so the header has its correct height before determining
+            // whether the transition should be enabled.
+            DispatchQueue.main.async { [weak self] in
+                self?.updateNewsTransitionHeaderProgress()
+            }
+        }
+
         store.dispatch(
             HomepageAction(
-                showiPadSetup: shouldUseiPadSetup(),
                 windowUUID: windowUUID,
                 actionType: HomepageActionType.traitCollectionDidChange
             )
@@ -954,6 +1165,7 @@ final class HomepageViewController: UIViewController,
         // We want any interaction with the homepage to dismiss the keyboard, including taps
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
+        tap.delegate = self
         view.addGestureRecognizer(tap)
     }
 
@@ -987,18 +1199,21 @@ final class HomepageViewController: UIViewController,
         // Ecosia: Top sites use native UIContextMenuConfiguration; PhotonActionSheet is skipped for this section.
         if case .topSites = section { return }
 
-        if section.canHandleLongPress {
+        if section.canHandleLongPress && item.canHandleLongPress {
             navigateToContextMenu(for: item, sourceView: sourceView)
         }
     }
 
-    /// Ecosia: Internal so Ecosia cell configuration extension can open homepage settings.
+    /// Ecosia: Internal so the Ecosia NTP customization cell can open homepage settings.
+    /// Upstream removed this along with its `customizeHomepage` item, and deleted
+    /// `NavigationBrowserActionType.tapOnCustomizeHomepageButton` with it; `tapOnSettingsSection`
+    /// is its successor for `.settings(_)` destinations.
     func navigateToHomepageSettings() {
         store.dispatch(
             NavigationBrowserAction(
                 navigationDestination: NavigationDestination(.settings(.homePage)),
                 windowUUID: self.windowUUID,
-                actionType: NavigationBrowserActionType.tapOnCustomizeHomepageButton
+                actionType: NavigationBrowserActionType.tapOnSettingsSection
             )
         )
     }
@@ -1008,7 +1223,7 @@ final class HomepageViewController: UIViewController,
             NavigationBrowserAction(
                 navigationDestination: NavigationDestination(
                     .link,
-                    url: homepageState.merinoState.footerURL,
+                    url: MerinoState.Constants.footerURL,
                     visitType: .link
                 ),
                 windowUUID: self.windowUUID,
@@ -1050,6 +1265,14 @@ final class HomepageViewController: UIViewController,
         self.dispatchNavigationBrowserAction(with: destination, actionType: NavigationBrowserActionType.tapOnCell)
     }
 
+    private func navigateToTrackerBlocker() {
+        guard featureFlagsProvider.isEnabled(.privacyDashboard) else { return }
+        dispatchNavigationBrowserAction(
+            with: NavigationDestination(.trackerBlockerSheet),
+            actionType: NavigationBrowserActionType.tapOnCell
+        )
+    }
+
     private func navigateToBookmarksPanel() {
         store.dispatch(
             NavigationBrowserAction(
@@ -1070,16 +1293,6 @@ final class HomepageViewController: UIViewController,
         )
     }
 
-    private func navigateToStoriesFeed() {
-        store.dispatch(
-            NavigationBrowserAction(
-                navigationDestination: NavigationDestination(.storiesFeed),
-                windowUUID: windowUUID,
-                actionType: NavigationBrowserActionType.tapOnAllStoriesButton
-            )
-        )
-    }
-
     private func dispatchNavigationBrowserAction(with destination: NavigationDestination, actionType: ActionType) {
         store.dispatch(
             NavigationBrowserAction(
@@ -1091,7 +1304,7 @@ final class HomepageViewController: UIViewController,
     }
 
     private func dispatchOpenPocketAction(at index: Int, actionType: ActionType) {
-        let config = OpenPocketTelemetryConfig(isZeroSearch: homepageState.isZeroSearch, position: index)
+        let config = OpenPocketTelemetryConfig(isZeroSearch: homepageState.telemetryState.isZeroSearch, position: index)
         store.dispatch(
             MerinoAction(
                 telemetryConfig: config,
@@ -1103,7 +1316,7 @@ final class HomepageViewController: UIViewController,
 
     private func dispatchTopSitesAction(at index: Int, config: TopSiteConfiguration, actionType: ActionType) {
         let config = TopSitesTelemetryConfig(
-            isZeroSearch: homepageState.isZeroSearch,
+            isZeroSearch: homepageState.telemetryState.isZeroSearch,
             position: index,
             topSiteConfiguration: config
         )
@@ -1135,6 +1348,109 @@ final class HomepageViewController: UIViewController,
         )
     }
 
+    private func updatedSelectedNewsfeedCategory(selectedNewsfeedCategoryID: String?) {
+        guard let activeTabUUID else { return }
+
+        // If the user switches categories while scrolled through the newsfeed, jump back to the
+        // offset where the pinned news header sits at the top before replacing the story items.
+        scrollNewsfeedToTop()
+
+        homepageTabStateStore.updateState(for: activeTabUUID) { state in
+            state.selectedNewsfeedCategoryID = selectedNewsfeedCategoryID
+        }
+        refreshHomepageDataSourceSnapshot()
+    }
+
+    private func updateNewsfeedCategoryPickerOffsetX(_ newsfeedCategoryPickerOffsetX: CGFloat) {
+        guard let activeTabUUID else { return }
+        homepageTabStateStore.updateState(for: activeTabUUID) { state in
+            state.newsfeedCategoryPickerOffsetX = newsfeedCategoryPickerOffsetX
+        }
+    }
+
+    private func refreshHomepageDataSourceSnapshot(animatingDifferences: Bool = true,
+                                                   completion: (() -> Void)? = nil) {
+        dataSource?.updateSnapshot(
+            state: homepageState,
+            selectedNewsfeedCategoryID: currentHomepageTabState.selectedNewsfeedCategoryID,
+            jumpBackInDisplayConfig: getJumpBackInDisplayConfig(),
+            showiPadSetup: shouldUseiPadSetup(),
+            animatingDifferences: animatingDifferences
+        ) {
+            completion?()
+        }
+    }
+
+    /// Applies the active `HomepageTabState`'s relevant properties to the category picker without rebuilding the section.
+    /// This keeps the category picker selection and horizontal offset in sync across tab switches
+    private func updateNewsHeaderPickerState() {
+        guard let headerView = getNewsTransitionHeader() else { return }
+        headerView.updatePickerState(
+            selectedNewsfeedCategoryID: currentHomepageTabState.selectedNewsfeedCategoryID,
+            newsfeedCategoryPickerOffsetX: currentHomepageTabState.newsfeedCategoryPickerOffsetX
+        )
+    }
+
+    private func scrollNewsfeedToTop(onlyIfScrolledPastHeader: Bool = true, animated: Bool = false) {
+        guard let activeTabUUID,
+              let collectionView,
+              let targetOffsetY = newsfeedHeaderPinnedOffsetY()
+        else { return }
+
+        guard !onlyIfScrolledPastHeader || collectionView.contentOffset.y > targetOffsetY else { return }
+
+        let targetOffset = CGPoint(x: collectionView.contentOffset.x, y: targetOffsetY)
+        collectionView.setContentOffset(targetOffset, animated: animated)
+        homepageTabStateStore.updateState(for: activeTabUUID) { state in
+            state.scrollOffsetY = targetOffsetY
+        }
+    }
+
+    private func newsfeedHeaderPinnedOffsetY() -> CGFloat? {
+        guard let collectionView,
+              let pocketSectionIndex = dataSource?.snapshot().sectionIdentifiers.firstIndex(where: {
+                  if case .pocket = $0 { return true }
+                  return false
+              })
+        else {
+            return nil
+        }
+
+        let headerIndexPath = IndexPath(item: 0, section: pocketSectionIndex)
+        let firstStoryIndexPath = IndexPath(item: 0, section: pocketSectionIndex)
+        guard let firstStoryAttributes = collectionView.layoutAttributesForItem(at: firstStoryIndexPath),
+              let headerAttributes = collectionView.collectionViewLayout.layoutAttributesForSupplementaryView(
+                  ofKind: UICollectionView.elementKindSectionHeader,
+                  at: headerIndexPath
+              )
+        else {
+            return nil
+        }
+
+        // The pinned position is the header's natural minY adjusted for the collection view's top inset.
+        // Derive it from the first story cell so the calculation stays aligned with compositional layout spacing.
+        let naturalHeaderMinY = firstStoryAttributes.frame.minY
+            - HomepageSectionLayoutProvider.UX.headerSectionSpacing
+            - headerAttributes.frame.height
+        return naturalHeaderMinY - collectionView.adjustedContentInset.top
+    }
+
+    private func getNewsTransitionHeader() -> NewsTransitionHeaderCell? {
+        guard let collectionView,
+              let pocketSectionIndex = dataSource?.snapshot().sectionIdentifiers.firstIndex(where: {
+                  if case .pocket = $0 { return true }
+                  return false
+              })
+        else {
+            return nil
+        }
+
+        return collectionView.supplementaryView(
+            forElementKind: UICollectionView.elementKindSectionHeader,
+            at: IndexPath(item: 0, section: pocketSectionIndex)
+        ) as? NewsTransitionHeaderCell
+    }
+
     // Ecosia: Internal so HomepageViewController+EcosiaContextMenu can resolve the site for context menu items.
     func getSiteForContextMenu(for item: HomepageItem) -> Site? {
         switch item {
@@ -1146,7 +1462,7 @@ final class HomepageViewController: UIViewController,
             return Site.createBasicSite(url: config.url.absoluteString, title: config.titleText)
         case .bookmark(let state):
             return Site.createBasicSite(url: state.site.url, title: state.site.title)
-        case .merino(let state):
+        case .merino(let state, _):
             return Site.createBasicSite(url: state.url?.absoluteString ?? "", title: state.title)
         default:
             return nil
@@ -1163,9 +1479,11 @@ final class HomepageViewController: UIViewController,
             )
             return
         }
-        dispatchDidSelectCardItemAction(with: item)
         switch item {
+        case .addShortcutTile:
+            presentAddShortcutAlert()
         case .topSite(let config, _):
+            dispatchDidSelectCardItemAction(with: item)
             let destination = NavigationDestination(
                 .link,
                 url: config.site.url.asURL,
@@ -1179,11 +1497,13 @@ final class HomepageViewController: UIViewController,
                 actionType: TopSitesActionType.tapOnHomepageTopSitesCell
             )
         case .searchBar:
+            dispatchDidSelectCardItemAction(with: item)
             dispatchNavigationBrowserAction(
                 with: NavigationDestination(.homepageZeroSearch),
                 actionType: NavigationBrowserActionType.tapOnHomepageSearchBar
             )
         case .jumpBackIn(let config):
+            dispatchDidSelectCardItemAction(with: item)
             store.dispatch(
                 JumpBackInAction(
                     tab: config.tab,
@@ -1192,6 +1512,7 @@ final class HomepageViewController: UIViewController,
                 )
             )
         case .bookmark(let config):
+            dispatchDidSelectCardItemAction(with: item)
             let destination = NavigationDestination(
                 .link,
                 url: URIFixup.getURL(config.site.url),
@@ -1199,7 +1520,8 @@ final class HomepageViewController: UIViewController,
                 visitType: .bookmark
             )
             dispatchNavigationBrowserAction(with: destination, actionType: NavigationBrowserActionType.tapOnCell)
-        case .merino(let story):
+        case .merino(let story, _):
+            dispatchDidSelectCardItemAction(with: item)
             let destination = NavigationDestination(
                 .link,
                 url: story.url,
@@ -1210,6 +1532,28 @@ final class HomepageViewController: UIViewController,
         default:
             return
         }
+    }
+
+    private func presentAddShortcutAlert() {
+        let alert = UIAlertController.addShortcutAlert { [weak self] url in
+            self?.addPinnedShortcut(url: url)
+        }
+        present(alert, animated: true)
+    }
+
+    private func addPinnedShortcut(url: URL) {
+        let site = Site.createBasicSite(
+            url: url.absoluteString,
+            title: url.shortDisplayString.capitalized
+        )
+        profile.pinnedSites.addPinnedTopSite(site)
+        store.dispatch(
+            TopSitesAction(
+                shortcutPinnedSource: .homescreenButton,
+                windowUUID: windowUUID,
+                actionType: TopSitesActionType.shortcutPinned
+            )
+        )
     }
 
     /// Sends telemetry data associated with tapping on a card item. The jump back in synced card item
@@ -1304,7 +1648,7 @@ final class HomepageViewController: UIViewController,
         return true
     }
 
-    private func prepareJumpBackInContextualHint(onView headerView: LabelButtonHeaderView) {
+    private func prepareJumpBackInContextualHint(onView headerView: LabelButtonHeaderCell) {
         guard jumpBackInContextualHintViewController.shouldPresentHint(),
               dataSource?.snapshot().sectionIdentifiers.contains(.messageCard) == nil
         else { return }
@@ -1338,7 +1682,7 @@ final class HomepageViewController: UIViewController,
     }
 
     private var canContextHintBePresented: Bool {
-        return presentedViewController == nil && homepageState.isZeroSearch
+        return presentedViewController == nil && homepageState.telemetryState.isZeroSearch
     }
 
     @objc
@@ -1356,5 +1700,24 @@ final class HomepageViewController: UIViewController,
         traitCollection: UITraitCollection
     ) -> UIModalPresentationStyle {
         .none
+    }
+
+    // MARK: - UIGestureRecognizerDelegate
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        // Ecosia: Tap-outside must not steal touches from the suggestions overlay — scrolling the
+        // list was dismissing the overlay and leaving a stale omnibox. This was a separate
+        // `UIGestureRecognizerDelegate` conformance in HomepageViewController+EcosiaSetup until
+        // 155.1 added its own; the two are merged here because `collectionView` is private to this
+        // file. See `isTouchOnOmniboxSessionChrome` in that extension.
+        guard !isTouchOnOmniboxSessionChrome(touch) else { return false }
+
+        guard gestureRecognizer.view === view,
+              let collectionView else {
+            return true
+        }
+
+        let location = touch.location(in: collectionView)
+        return collectionView.indexPathForItem(at: location) == nil
     }
 }

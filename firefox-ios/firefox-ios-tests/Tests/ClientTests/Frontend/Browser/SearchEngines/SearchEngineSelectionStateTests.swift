@@ -22,7 +22,6 @@ final class SearchEngineSelectionStateTests: XCTestCase {
     func testInitialization() {
         let initialState = createSubject()
 
-        XCTAssertFalse(initialState.shouldDismiss)
         XCTAssertEqual(initialState.searchEngines, [])
     }
 
@@ -39,7 +38,7 @@ final class SearchEngineSelectionStateTests: XCTestCase {
 
         XCTAssertEqual(initialState.searchEngines, [])
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             SearchEngineSelectionAction(
                 windowUUID: .XCTestDefaultUUID,
@@ -49,6 +48,37 @@ final class SearchEngineSelectionStateTests: XCTestCase {
         )
 
         XCTAssertEqual(newState.searchEngines, expectedResult)
+        /* Ecosia: selected-search-engine coverage stays removed (removal predates this upgrade and
+           carries no recorded reason — do not restore without confirming Ecosia's own selection
+           behaviour satisfies it). Upstream's 155.1 version is kept verbatim below so the next
+           upgrade can diff it; note that as of 155.1 upstream's state also models engines as
+           `SearchEngineModel`, so the original divergence may no longer apply.
+        XCTAssertNil(newState.selectedSearchEngine)
+    }
+
+    @MainActor
+    func testDidTapSearchEngine() {
+        let initialState = createSubject()
+        let reducer = searchEngineSelectionReducer()
+
+        let selectedSearchEngine = OpenSearchEngineTests.generateOpenSearchEngine(type: .wikipedia, withImage: UIImage())
+                                   .generateModel()
+
+        XCTAssertEqual(initialState.searchEngines, [])
+        XCTAssertNil(initialState.selectedSearchEngine)
+
+        let newState = reducer.legacyReducer(
+            initialState,
+            SearchEngineSelectionAction(
+                windowUUID: .XCTestDefaultUUID,
+                actionType: SearchEngineSelectionActionType.didTapSearchEngine,
+                selectedSearchEngine: selectedSearchEngine
+            )
+        )
+
+        XCTAssertTrue(newState.searchEngines.isEmpty)
+        XCTAssertEqual(newState.selectedSearchEngine, selectedSearchEngine)
+         */
     }
 
     // MARK: - Private

@@ -12,8 +12,13 @@ final class WebServerUtil {
     private let webServer: WebServerProtocol
     private let profile: Profile
 
+    /// Handlers persist on the GCDWebServer instance across stop/start, so they only
+    /// need to be registered once. Re-registering on every foreground would risk
+    /// touching the server concurrently with a backgrounded shutdown.
+    private var hasRegisteredHandlers = false
+
     init(readerModeHandler: some ReaderModeHandlersProtocol,
-         webServer: WebServer = WebServer.sharedInstance,
+         webServer: WebServerProtocol = WebServer.sharedInstance,
          profile: Profile) {
         self.readerModeHander = readerModeHandler
         self.webServer = webServer
@@ -22,13 +27,20 @@ final class WebServerUtil {
 
     @MainActor
     func setUpWebServer() {
-        guard !webServer.server.isRunning else { return }
+        registerHandlersIfNeeded()
+        webServer.startIfNeeded()
+    }
+
+    @MainActor
+    private func registerHandlersIfNeeded() {
+        guard !hasRegisteredHandlers else { return }
 
         readerModeHander.register(webServer, profile: profile)
-        let responders: [(String, InternalSchemeResponse)] =
-             [(AboutHomeHandler.path, AboutHomeHandler()),
-              (AboutLicenseHandler.path, AboutLicenseHandler()),
-              (ErrorPageHandler.path, ErrorPageHandler())]
+        let responders: [(String, InternalSchemeResponse)] = [
+            (AboutHomeHandler.path, AboutHomeHandler()),
+            (AboutLicenseHandler.path, AboutLicenseHandler()),
+            (ErrorPageHandler.path, ErrorPageHandler())
+        ]
         responders.forEach { (path, responder) in
             InternalSchemeHandler.responders[path] = responder
         }
@@ -37,13 +49,7 @@ final class WebServerUtil {
             registerHandlersForTestMethods(server: webServer.server)
         }
 
-        // Bug 1223009 was an issue whereby CGDWebserver crashed when moving to a background task
-        // catching and handling the error seemed to fix things, but we're not sure why.
-        // Either way, not implicitly unwrapping a try is not a great way of doing things
-        // so this is better anyway.
-        do {
-            try webServer.start()
-        } catch {}
+        hasRegisteredHandlers = true
     }
 
     private func registerHandlersForTestMethods(server: GCDWebServer) {
@@ -67,6 +73,7 @@ of Mammon shall tremble. from The Book of Mozilla, 3:31 (Red Letter Edition) </s
 
         let htmlFixtures =  ["test-indexeddb-private",
                              "test-window-opener",
+                             "test-window-open-on-tap",
                              "test-password",
                              "test-password-submit",
                              "test-password-2",

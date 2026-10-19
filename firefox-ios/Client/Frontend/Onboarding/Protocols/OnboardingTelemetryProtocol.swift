@@ -4,16 +4,15 @@
 
 import Foundation
 
+enum OnboardingReason: String {
+    case newUser = "new_user"
+    case showTour = "show_tour"
+}
+
 protocol OnboardingTelemetryProtocol: AnyObject {
-    func sendCardViewTelemetry(from cardName: String)
-    func sendButtonActionTelemetry(from cardName: String,
-                                   with action: OnboardingActions,
-                                   and primaryButton: Bool)
-    func sendMultipleChoiceButtonActionTelemetry(
-        from cardName: String,
-        with action: OnboardingMultipleChoiceAction
-    )
-    func sendDismissOnboardingTelemetry(from cardName: String)
     func sendGoToSettingsButtonTappedTelemetry()
     func sendDismissButtonTappedTelemetry()
+    func sendWallpaperSelectorViewTelemetry()
+    func sendWallpaperSelectorCloseTelemetry()
+    func sendWallpaperSelectorSelectedTelemetry(wallpaperName: String, wallpaperType: String)
 }

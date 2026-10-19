@@ -47,7 +47,7 @@
 "Add to Reading List" = "Přidat do seznamu ke čtení";
 
 /* Accessibility message e.g. spoken by VoiceOver after the current page gets added to the Reading List using the Reader View button, e.g. by long-pressing it or by its accessibility custom action. */
-"Added page to Reading List" = "Přidat stránku do seznamu ke čtení";
+"Added page to Reading List" = "Stránka přidána do seznamu ke čtení";
 
 /* Button to dismiss the 'Add Pass Failed' alert.  See https://support.apple.com/HT204003 for context on Wallet. */
 "AddPass.Error.Dismiss" = "OK";
@@ -224,7 +224,7 @@
 "CoverSheet.v24.ETP.Settings.Button" = "Přejít do Nastavení";
 
 /* Title for the new ETP mode i.e. standard vs strict */
-"CoverSheet.v24.ETP.Title" = "Ochrana proti sledováním reklamami";
+"CoverSheet.v24.ETP.Title" = "Ochrana před sledováním reklamami";
 
 /* See http://mzl.la/1Qtkf0j */
 "Create an account" = "Vytvořit účet";
@@ -302,10 +302,10 @@
 "ErrorPages.Advanced.Button" = "Rozšířené";
 
 /* Warning text when clicking the Advanced button on error pages */
-"ErrorPages.AdvancedWarning1.Text" = "Varování: nemůžeme potvrdit, že je připojení k této stránce bezpečné.";
+"ErrorPages.AdvancedWarning1.Text" = "Varování: nemůžeme potvrdit, že je spojení s tímto serverem zabezpečené.";
 
 /* Additional warning text when clicking the Advanced button on error pages */
-"ErrorPages.AdvancedWarning2.Text" = "Může to být chybná konfigurace nebo manipulace útočníkem. Pokračujte, pokud příjímáte potenciální riziko.";
+"ErrorPages.AdvancedWarning2.Text" = "Může to být chybná konfigurace nebo manipulace útočníkem. Pokračujte, pokud přijímáte potenciální riziko.";
 
 /* Warning text on the certificate error page. %@ is the domain of the website. */
 "ErrorPages.CertWarning.Description" = "Majitel webu %@ nakonfiguroval svůj server nesprávně. Abychom chránili vaše údaje před odcizením, Ecosia se k tomuto webu nepřipojil.";
@@ -365,7 +365,7 @@
 "FirefoxHomepage.JumpBackIn.TabPickup.ShowAll.ButtonTitle.v104" = "Zobrazit synchronizované panely";
 
 /* If a user is signed in, and a sync has been performed to collect their recent tabs from other signed in devices, their most recent tab from another device can now appear in the Jump Back In section. This label specifically points out which cell inside the Jump Back In section shows that synced tab. */
-"FirefoxHomepage.JumpBackIn.TabPickup.v104" = "Panely";
+"FirefoxHomepage.JumpBackIn.TabPickup.v104" = "Vyzvednutý panel";
 
 /* This string will show under the description on pocket story, indicating that the story is sponsored. */
 "FirefoxHomepage.Pocket.Sponsored.v103" = "Sponzorováno";
@@ -380,7 +380,7 @@
 "Forward" = "Vpřed";
 
 /* Settings section title for Firefox Account */
-"FxA.FirefoxAccount" = "Účet Ecosiau";
+"FxA.FirefoxAccount" = "Účet Ecosia";
 
 /* Button label to go to Firefox Account settings */
 "FxA.ManageAccount" = "Spravovat účet a zařízení";
@@ -662,7 +662,7 @@
 "Logins.WelcomeView.Tagline" = "Vezměte si svá hesla všude s sebou";
 
 /* Label displaying welcome view title */
-"Logins.WelcomeView.Title2" = "Automatické vyplňování hesel z Ecosiau";
+"Logins.WelcomeView.Title2" = "Automatické vyplňování hesel z Ecosia";
 
 /* Title of the big blue button to enable AutoFill */
 "Logins.WelcomeView.TurnOnAutoFill" = "Zapnout automatické vyplňování";
@@ -695,7 +695,7 @@
 "LoginsList.Title" = "ULOŽENÉ PŘIHLAŠOVACÍ ÚDAJE";
 
 /* Restore Tabs Prompt Description */
-"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Zdá se, že dříve došlo k pádu Ecosiau. Přejete si obnovit své panely?";
+"Looks like Firefox crashed previously. Would you like to restore your tabs?" = "Zdá se, že dříve došlo k pádu Ecosia. Přejete si obnovit své panely?";
 
 /* Title for the button that marks a reading list item as read */
 "Mark as Read" = "Označit jako přečtené";
@@ -728,7 +728,7 @@
 "Menu.Copy.Title" = "Zkopírovat adresu";
 
 /* Toast displayed to user after copy url pressed. */
-"Menu.CopyURL.Confirm" = "URL adresa zkopírována do schránky";
+"Menu.CopyURL.Confirm" = "Adresa URL zkopírována do schránky";
 
 /* Label for the customize homepage button in the menu page. Pressing this button takes users to the settings options, where they can customize the Firefox Home page */
 "Menu.CustomizeHomePage.v99" = "Přizpůsobit";
@@ -938,7 +938,7 @@
 "Reader View" = "Zobrazení čtečky";
 
 /* Accessibility message e.g. spoken by VoiceOver when Reader Mode becomes available. */
-"ReaderMode.Available.VoiceOverAnnouncement" = "Je dostupný Režim čtení";
+"ReaderMode.Available.VoiceOverAnnouncement" = "Je dostupný Zobrazení čtečky";
 
 /* Name for Mark as read button in reader mode */
 "ReaderModeBar.MarkAsRead.v106" = "Označit jako přečtené";
@@ -995,7 +995,7 @@
 "ScanQRCode.InvalidDataError.Message" = "Data nejsou platná";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "V zařízení přejděte do „Nastavení“ > „Ecosia“. Povolte Ecosiau přístup k fotoaparátu.";
+"ScanQRCode.PermissionError.Message.v100" = "V zařízení přejděte do „Nastavení“ > „Ecosia“. Povolte Ecosia přístup k fotoaparátu.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "Skenovat QR kód";
@@ -1010,10 +1010,10 @@
 "Search.Awesomebar.SwitchToTab" = "Přepnout na panel";
 
 /* When making a new search from the awesome bar, suggestions appear to the user as they write new letters in their search. Different types of suggestions can appear. This string will be used as a header to separate Firefox suggestions from normal suggestions. */
-"Search.SuggestSectionTitle.v102" = "Návrhy od Ecosiau";
+"Search.SuggestSectionTitle.v102" = "Návrhy od Ecosia";
 
 /* The message that asks the user to Add the search provider explaining where the search engine will appear */
-"Search.ThirdPartyEngines.AddMessage" = "Nový vyhledávač se zobrazi v panelu rychlého hledání.";
+"Search.ThirdPartyEngines.AddMessage" = "Nový vyhledávač se zobrazí v panelu rychlého hledání.";
 
 /* The success message that appears after a user sucessfully adds a new search engine */
 "Search.ThirdPartyEngines.AddSuccess" = "Vyhledávač byl přidán!";
@@ -1064,25 +1064,25 @@
 "SendTo.DeviceList.Text" = "Dostupná zařízení:";
 
 /* Message in error prompt explaining why the URL is invalid. */
-"SendTo.Error.Message" = "Pouze HTTP a HTTPS odkazy mohou být sdíleny.";
+"SendTo.Error.Message" = "Sdílet lze pouze HTTP a HTTPS odkazy.";
 
 /* OK button to dismiss the error prompt. */
 "SendTo.Error.OK.Button" = "OK";
 
 /* Title of error prompt displayed when an invalid URL is shared. */
-"SendTo.Error.Title" = "Odkaz, který se pokoušíte sdílet, nemůže být sdílen.";
+"SendTo.Error.Title" = "Tento odkaz nelze sdílet.";
 
 /* Title of the dialog that allows you to send a tab to a different device */
 "SendTo.NavBar.Title" = "Poslat panel";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "K tomuto účtu Ecosiau nemáte připojena žádná další zařízení dostupná pro synchronizaci.";
+"SendTo.NoDevicesFound.Message" = "K tomuto účtu Ecosia nemáte připojena žádná další zařízení dostupná pro synchronizaci.";
 
 /* See http://mzl.la/1ISlXnU */
 "SendTo.NotSignedIn.Message" = "Pro pokračování prosím otevřete Ecosia, přejděte do Nastavení a přihlaste se.";
 
 /* See http://mzl.la/1ISlXnU */
-"SendTo.NotSignedIn.Title" = "Nejste přihlášeni k vašemu účtu Ecosiau.";
+"SendTo.NotSignedIn.Title" = "Nejste přihlášeni k vašemu účtu Ecosia.";
 
 /* Navigation bar button to Send the current page to a device */
 "SendTo.SendAction.Text" = "Poslat";
@@ -1259,7 +1259,7 @@
 "Settings.FxA.Sync.SectionName" = "Nastavení synchronizace";
 
 /* Title displayed in header of the FxA settings panel. */
-"Settings.FxA.Title" = "Účet Ecosiau";
+"Settings.FxA.Title" = "Účet Ecosia";
 
 /* General settings section title */
 "Settings.General.SectionName" = "Obecné";
@@ -1268,7 +1268,7 @@
 "Settings.Home.Current.Description.v101" = "Vyberte, co se má zobrazit na domovské stránce.";
 
 /* In the settings menu, on the Firefox homepage customization section, this is the description below the section, describing what the options in the section are for. */
-"Settings.Home.Option.Description.v101" = "Vyberte, co chcete vidět na domovské stránce Ecosiau.";
+"Settings.Home.Option.Description.v101" = "Vyberte, co chcete vidět na domovské stránce Ecosia.";
 
 /* In the settings menu, in the Firefox homepage customization section, this is the title for the option that allows users to toggle the Jump Back In section on homepage on or off */
 "Settings.Home.Option.JumpBackIn" = "Návrat zpět";
@@ -1292,7 +1292,7 @@
 "Settings.Home.Option.StartAtHome.Always" = "Domovská stránka";
 
 /* In the settings menu, in the Start at Home customization options, this is text that appears below the section, describing what the section settings do. */
-"Settings.Home.Option.StartAtHome.Description" = "Vyberte si, co chcete vidět při návratu do Ecosiau.";
+"Settings.Home.Option.StartAtHome.Description" = "Vyberte si, co chcete vidět při návratu do Ecosia.";
 
 /* In the settings menu, on the Start at Home homepage customization option, this allows users to set this setting to return to the last tab they were on, every time they open up Firefox */
 "Settings.Home.Option.StartAtHome.Never" = "Poslední panel";
@@ -1307,25 +1307,25 @@
 "Settings.Home.Option.Wallpaper" = "Tapeta";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the amethyst firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Tapeta Ecosiau, ametystový vzor.";
+"Settings.Home.Option.Wallpaper.Accessibility.AmethystWallpaper.v99" = "Tapeta Ecosia, ametystový vzor.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the beach hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Tapeta Ecosiau, vzor s pláží a kopci.";
+"Settings.Home.Option.Wallpaper.Accessibility.BeachHillsWallpaper.v100" = "Tapeta Ecosia, vzor s pláží a kopci.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the cerulean firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Tapeta Ecosiau, blankytný vzor.";
+"Settings.Home.Option.Wallpaper.Accessibility.CeruleanWallpaper.v99" = "Tapeta Ecosia, blankytný vzor.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string for the default wallpaper. */
 "Settings.Home.Option.Wallpaper.Accessibility.DefaultWallpaper.v99" = "Výchozí prázdná tapeta.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the sunrise firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Tapeta Ecosiau, východ slunce.";
+"Settings.Home.Option.Wallpaper.Accessibility.SunriseWallpaper.v99" = "Tapeta Ecosia, východ slunce.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the accessibility string of the toggle for turning wallpaper cycling shortcut on or off on the homepage. */
 "Settings.Home.Option.Wallpaper.Accessibility.ToggleButton" = "Přepínač tapety domovské stránky";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title accessibility string for the twilight hills firefox wallpaper. */
-"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Tapeta Ecosiau, vzor s kopci za soumraku.";
+"Settings.Home.Option.Wallpaper.Accessibility.TwilightHillsWallpaper.v100" = "Tapeta Ecosia, vzor s kopci za soumraku.";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of the group of wallpapers that are always available to the user. The %@ will be replaced by the app name and thus doesn't need translation. */
 "Settings.Home.Option.Wallpaper.Classic.Title.v106" = "Klasický %@";
@@ -1346,7 +1346,7 @@
 "Settings.Home.Option.Wallpaper.LimitedEdition.Title.v106" = "Limitovaná edice";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the string titling the switch button's function, which allows a user to toggle wallpaper switching from the homepage logo on or off. */
-"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Klepnutím na logo Ecosiau na domovské stránce změníte její tapetu";
+"Settings.Home.Option.Wallpaper.SwitchTitle.v99" = "Klepnutím na logo Ecosia na domovské stránce změníte její tapetu";
 
 /* In the settings menu, on the Firefox wallpaper customization screen, this is the title of that screen, which allows users to change the wallpaper settings for the application. */
 "Settings.Home.Option.Wallpaper.Title" = "Tapeta";
@@ -1421,7 +1421,7 @@
 "Settings.NoImageModeBlockImages.Label.v99" = "Blokovat obrázky";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349 */
-"Settings.OfferClipboardBar.Status" = "při otevření Ecosiau";
+"Settings.OfferClipboardBar.Status" = "při otevření Ecosia";
 
 /* Description displayed under the ”Offer to Open Copied Link” option. See https://bug1223660.bmoattachments.org/attachment.cgi?id=8898349. %@ is for the app name. */
 "Settings.OfferClipboardBar.Status.v128" = "Při otevření %@";
@@ -1460,7 +1460,7 @@
 "Settings.SendUsage.Link" = "Zjistit více.";
 
 /* A short description that explains why mozilla collects usage data. */
-"Settings.SendUsage.Message" = "Ecosia sbírá jenom informace potřené pro vylepšování Ecosiau.";
+"Settings.SendUsage.Message" = "Ecosia sbírá jenom informace potřebné pro vylepšování Ecosia.";
 
 /* The title for the setting to send usage data. */
 "Settings.SendUsage.Title" = "Odesílat údaje o používání";
@@ -1481,7 +1481,7 @@
 "Settings.Siri.OpenTabShortcut" = "Otevřít nový panel";
 
 /* The description that describes what siri shortcuts are */
-"Settings.Siri.SectionDescription" = "Použijte zkratky Siri pro rychlé otevření Ecosiau přes Siri";
+"Settings.Siri.SectionDescription" = "Použijte zkratky Siri pro rychlé otevření Ecosia přes Siri";
 
 /* The option that takes you to the siri shortcuts settings page */
 "Settings.Siri.SectionName" = "Zkratky Siri";
@@ -1500,6 +1500,9 @@
 
 /* Button label that appears in the settings to prompt the user to sign in to Firefox for iOS sync service to sync and save data. */
 "Settings.Sync.ButtonTitle.v103" = "Synchronizovat a ukládat data";
+
+/* In the settings account row, shown transiently while the user is being signed out of their account. */
+"Settings.Sync.SigningOut.Title.v154" = "Probíhá odhlášení…";
 
 /* Title for the page where the user sign in to their Firefox Sync account. */
 "Settings.Sync.SignInView.Title.v103" = "Synchronizace a ukládání dat";
@@ -1607,13 +1610,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Načíst v pozadí";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Načítání ve Ecosiau";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Načítání ve Ecosia";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Otevřít ve Ecosiau";
+"ShareExtension.OpenInFirefoxAction.Title" = "Otevřít ve Ecosia";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Vyhledat ve Ecosiau";
+"ShareExtension.SeachInFirefoxAction.Title" = "Vyhledat ve Ecosia";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "Kopírovat";

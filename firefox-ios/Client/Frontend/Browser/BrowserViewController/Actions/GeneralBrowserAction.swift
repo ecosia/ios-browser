@@ -12,6 +12,7 @@ struct GeneralBrowserAction: Action {
     let windowUUID: WindowUUID
     let actionType: ActionType
     let selectedTabURL: URL?
+    let destinationURL: URL?
     let isPrivateBrowsing: Bool?
     let toastType: ToastType?
     let showOverlay: Bool?
@@ -19,7 +20,12 @@ struct GeneralBrowserAction: Action {
     let isNativeErrorPage: Bool?
     let frameContext: PasswordGeneratorFrameContext?
     let summarizerConfig: SummarizerConfig?
+    let summarizerTrigger: SummarizerTrigger
+    let translationLanguages: [String]?
+    let isPageTranslated: Bool
+    let translatedToLanguage: String?
     init(selectedTabURL: URL? = nil,
+         destinationURL: URL? = nil,
          isPrivateBrowsing: Bool? = nil,
          toastType: ToastType? = nil,
          showOverlay: Bool? = nil,
@@ -27,11 +33,16 @@ struct GeneralBrowserAction: Action {
          isNativeErrorPage: Bool? = nil,
          frameContext: PasswordGeneratorFrameContext? = nil,
          summarizerConfig: SummarizerConfig? = nil,
+         summarizerTrigger: SummarizerTrigger = .shakeGesture,
+         translationLanguages: [String]? = nil,
+         isPageTranslated: Bool = false,
+         translatedToLanguage: String? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
         self.windowUUID = windowUUID
         self.actionType = actionType
         self.selectedTabURL = selectedTabURL
+        self.destinationURL = destinationURL
         self.isPrivateBrowsing = isPrivateBrowsing
         self.toastType = toastType
         self.buttonTapped = buttonTapped
@@ -39,6 +50,10 @@ struct GeneralBrowserAction: Action {
         self.isNativeErrorPage = isNativeErrorPage
         self.frameContext = frameContext
         self.summarizerConfig = summarizerConfig
+        self.summarizerTrigger = summarizerTrigger
+        self.translationLanguages = translationLanguages
+        self.isPageTranslated = isPageTranslated
+        self.translatedToLanguage = translatedToLanguage
     }
 }
 
@@ -61,19 +76,21 @@ enum GeneralBrowserActionType: ActionType {
     case stopLoadingWebsite
     case reloadWebsite
     case reloadWebsiteNoCache
+    case loadWaybackURL
     case showShare
-    case showReaderMode
-    case startAtHome
     case addNewTab
     case showNewTabLongPressActions
     case addToReadingListLongPressAction
-    case clearData
     case showPasswordGenerator
     case didSelectedTabChangeToHomepage
     case enteredZeroSearchScreen
     case didUnhideToolbar
     case didCloseTabFromToolbar
+    case didTapReaderModeBarSummarizerButton
     case shakeMotionEnded
+    case showTranslationLanguagePicker
+    case showGoogleLensPhotoPicker
+    case showGoogleLensCamera
     // Ecosia: QR code scanner action
     case showQRCode
     // Ecosia: History panel action triggered from the NTP toolbar history button

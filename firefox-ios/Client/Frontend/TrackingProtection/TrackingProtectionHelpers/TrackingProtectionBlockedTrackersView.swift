@@ -128,12 +128,18 @@ final class TrackingProtectionBlockedTrackersView: UIView, ThemeApplicable {
         }
     }
 
-    func setupAccessibilityIdentifiers(arrowImageA11yId: String,
-                                       trackersBlockedButtonA11yId: String,
-                                       shieldImageA11yId: String) {
+    func setupAccessibilityIdentifiers(
+        arrowImageA11yId: String,
+        trackersBlockedButtonA11yId: String,
+        shieldImageA11yId: String,
+        trackersLabelA11yId: String,
+        trackersHorizontalLineA11yId: String
+    ) {
         trackersDetailArrow.accessibilityIdentifier = arrowImageA11yId
         trackersButton.accessibilityIdentifier = trackersBlockedButtonA11yId
         shieldImage.accessibilityIdentifier = shieldImageA11yId
+        trackersLabel.accessibilityIdentifier = trackersLabelA11yId
+        trackersHorizontalLine.accessibilityIdentifier = trackersHorizontalLineA11yId
     }
 
     func adjustLayout() {
@@ -173,7 +179,7 @@ final class TrackingProtectionBlockedTrackersView: UIView, ThemeApplicable {
     }
 
     func applyTheme(theme: Theme) {
-        self.backgroundColor = theme.colors.layer2
+        self.backgroundColor = theme.isNova ? theme.colors.layerSurfaceMedium : theme.colors.layer2
         trackersDetailArrow.tintColor = theme.colors.iconSecondary
         shieldImage.tintColor = theme.colors.iconSecondary
         trackersHorizontalLine.backgroundColor = theme.colors.borderPrimary

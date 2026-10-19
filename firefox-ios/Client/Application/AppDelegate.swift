@@ -8,11 +8,16 @@ import UIKit
 import Common
 import Glean
 import TabDataStore
+import TipKit
 import Ecosia
 
 import class MozillaAppServices.Viaduct
+import struct MozillaAppServices.RustAdsClient
+import enum MozillaAppServices.MozAdsEnvironment
 
-class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
+class AppDelegate: UIResponder,
+                   UIApplicationDelegate,
+                   FeatureFlaggable {
     let logger = DefaultLogger.shared
     var notificationCenter: NotificationProtocol = NotificationCenter.default
     var orientationLock = UIInterfaceOrientationMask.all
@@ -31,13 +36,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
     */
     lazy var themeManager: ThemeManager = EcosiaThemeManager(
         sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
-        isNewAppearanceMenuOnClosure: { self.featureFlags.isFeatureEnabled(.appearanceMenu, checking: .buildOnly) }
+        isNovaDesignOnClosure: { self.featureFlagsProvider.isEnabled(.novaDesign) }
     )
     lazy var documentLogger = DocumentLogger(logger: logger)
     lazy var appSessionManager: AppSessionProvider = AppSessionManager()
     lazy var notificationSurfaceManager = NotificationSurfaceManager()
     lazy var tabDataStore = DefaultTabDataStore()
     lazy var windowManager = WindowManagerImplementation()
+    lazy var relayController: RelayControllerProtocol = RelayController()
     lazy var backgroundTabLoader: BackgroundTabLoader = {
         return DefaultBackgroundTabLoader(tabQueue: (AppContainer.shared.resolve() as Profile).queue)
     }()
@@ -54,6 +60,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
     private var suggestBackgroundUtility: BackgroundFirefoxSuggestIngestUtility?
     private var suggestBackgroundTaskID: UIBackgroundTaskIdentifier = .invalid
     private static let suggestBackgroundTaskName = "SuggestIngest"
+    private var webServerShutdownTaskID: UIBackgroundTaskIdentifier = .invalid
+    private static let webServerShutdownTaskName = "WebServerShutdown"
     private var widgetManager: TopSitesWidgetManager?
     private var menuBuilderHelper: MenuBuilderHelper?
     private lazy var metricKitWrapper = MetricKitWrapper()
@@ -72,7 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
             Analytics.persistShouldUseMicroInstance(true)
         }
 
-        startRecordingStartupOpenURLTime()
+        shareTelemetry.recordOpenDeeplinkTime()
         // Configure app information for BrowserKit, needed for logger
         BrowserKitInformation.shared.configure(buildChannel: AppConstants.buildChannel,
                                                nightlyAppVersion: AppConstants.nightlyAppVersion,
@@ -95,9 +103,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
 
         // Set-up Rust network stack. Note that this has to be called
         // before any Application Services component gets used.
-        Viaduct.shared.useReqwestBackend()
+        Viaduct.shared.initialize(userAgent: UserAgent.fxaUserAgent)
 
-        initializeRustErrors(logger: logger)
         logger.log("willFinishLaunchingWithOptions begin",
                    level: .info,
                    category: .lifecycle)
@@ -112,11 +119,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
             // Ecosia: Add Feature Management dependency
             .featureManagementInitialized
         ])
-
-        // Initialize the feature flag subsystem.
-        // Among other things, it toggles on and off Nimbus, Unified ads, Adjust.
-        // i.e. this must be run before initializing those systems.
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
 
         // Ecosia: Hydrate Unleash from disk before DI bootstrap so flags are readable when
         // SearchEnginesManager picks its engine provider (network refresh still runs later).
@@ -143,55 +145,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         Tab.ChangeUserAgent.performMigration()
 
         return true
-    }
-
-    // Ecosia: Sendable token pair replacing mutable var captures for Swift 6 compliance
-    private final class ActionTokenPair: Sendable {
-        nonisolated(unsafe) var complete: ActionToken?
-        nonisolated(unsafe) var cancelled: ActionToken?
-
-        func cancelAll() {
-            if let complete { AppEventQueue.cancelAction(token: complete) }
-            if let cancelled { AppEventQueue.cancelAction(token: cancelled) }
-        }
-    }
-
-    private func startRecordingStartupOpenURLTime() {
-        shareTelemetry.recordOpenDeeplinkTime()
-        /* Ecosia: Replace mutable var token captures with ActionTokenPair for Swift 6 @Sendable compliance;
-           all access is on the main thread via ensureMainThread
-        var recordCompleteToken: ActionToken?
-        var recordCancelledToken: ActionToken?
-        recordCompleteToken = AppEventQueue.wait(for: .recordStartupTimeOpenDeeplinkComplete) { [weak self] in
-            ensureMainThread { [weak self] in
-                self?.shareTelemetry.sendOpenDeeplinkTimeRecord()
-                guard let recordCancelledToken, let recordCompleteToken  else { return }
-                AppEventQueue.cancelAction(token: recordCancelledToken)
-                AppEventQueue.cancelAction(token: recordCompleteToken)
-            }
-        }
-        recordCancelledToken = AppEventQueue.wait(for: .recordStartupTimeOpenDeeplinkCancelled) { [weak self] in
-            ensureMainThread { [weak self] in
-                self?.shareTelemetry.cancelOpenURLTimeRecord()
-                guard let recordCancelledToken, let recordCompleteToken  else { return }
-                AppEventQueue.cancelAction(token: recordCancelledToken)
-                AppEventQueue.cancelAction(token: recordCompleteToken)
-            }
-        }
-        */
-        let tokens = ActionTokenPair()
-        tokens.complete = AppEventQueue.wait(for: .recordStartupTimeOpenDeeplinkComplete) { [weak self] in
-            ensureMainThread { [weak self] in
-                self?.shareTelemetry.sendOpenDeeplinkTimeRecord()
-                tokens.cancelAll()
-            }
-        }
-        tokens.cancelled = AppEventQueue.wait(for: .recordStartupTimeOpenDeeplinkCancelled) { [weak self] in
-            ensureMainThread { [weak self] in
-                self?.shareTelemetry.cancelOpenURLTimeRecord()
-                tokens.cancelAll()
-            }
-        }
     }
 
     func application(
@@ -263,6 +216,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
 
         widgetManager = TopSitesWidgetManager(topSitesProvider: topSitesProvider)
 
+        if featureFlagsProvider.isEnabled(.backgroundAudio) {
+            BackgroundAudioHelper.shared.configure(prefs: profile.prefs)
+        }
+
         addObservers()
 
         // Ecosia: Send the install event. It happens only once per App install.
@@ -271,9 +228,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         /// Prewarm translation resources off the main thread
         /// This will fetch the translator WASM and model attachments for the device language.
         /// Running this on a utility QoS to avoid impacting app launch time.
-        if featureFlags.isFeatureEnabled(.translation, checking: .buildOnly) {
+        if featureFlagsProvider.isEnabled(.translation) {
             Task(priority: .utility) {
                 await ASTranslationModelsFetcher().prewarmResourcesForStartup()
+            }
+        }
+
+        if #available(iOS 17.0, *) {
+            ResetTipsSetting.resetDatastoreIfNeeded(prefs: profile.prefs)
+            do {
+                try Tips.configure()
+            } catch {
+                logger.log("Failed to configure TipKit: \(error.localizedDescription)",
+                           level: .warning,
+                           category: .lifecycle)
             }
         }
 
@@ -320,6 +288,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
             profile?.pollCommands(forcePoll: false)
         }
 
+        prefetchMerinoStories()
+
         // Ecosia: Foreground analytics + MMP, extracted into a testable unit so unit tests can verify
         // it without driving the rest of applicationDidBecomeActive. (MOB-4384)
         ecosiaTrackBecomeActiveLifecycle()
@@ -327,6 +297,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         updateWallpaperMetadata()
         loadBackgroundTabs()
         ingestFirefoxSuggestions(in: application)
+
         logger.log("applicationDidBecomeActive end",
                    level: .info,
                    category: .lifecycle)
@@ -391,15 +362,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
         // 2 seconds is ample for a localhost request to be completed by GCDWebServer.
         // <500ms is expected on newer devices.
         singleShotTimer.schedule(deadline: .now() + 2.0, repeating: .never)
-        singleShotTimer.setEventHandler {
-            WebServer.sharedInstance.server.stop()
+        singleShotTimer.setEventHandler { [weak self] in
+            guard let self else { return }
             self.shutdownWebServer = nil
+            // Stop the server off the main thread so a slow shutdown can't trip the watchdog.
+            // Hold a background task so iOS lets the stop finish while we're backgrounded, and
+            // end it both when the stop completes and if the OS deadline expires first.
+            // End any task still outstanding from a previous, slow shutdown so we don't clobber
+            // and leak its identifier.
+            self.endWebServerShutdownTask()
+            self.webServerShutdownTaskID = application.beginBackgroundTask(
+                withName: Self.webServerShutdownTaskName) { [weak self] in
+                self?.endWebServerShutdownTask()
+            }
+            WebServer.sharedInstance.stop { [weak self] in
+                Task { @MainActor in self?.endWebServerShutdownTask() }
+            }
         }
         singleShotTimer.resume()
         shutdownWebServer = singleShotTimer
         backgroundWorkUtility?.scheduleOnAppBackground()
 
         logger.log("applicationDidEnterBackground end", level: .info, category: .lifecycle)
+    }
+
+    @MainActor
+    private func endWebServerShutdownTask() {
+        guard webServerShutdownTaskID != .invalid else { return }
+        UIApplication.shared.endBackgroundTask(webServerShutdownTaskID)
+        webServerShutdownTaskID = .invalid
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
@@ -411,6 +402,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
 
     func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
         logger.log("Received memory warning", level: .info, category: .lifecycle)
+        Task {
+            for uuid in windowManager.allWindowUUIDs(includingReserved: false) {
+                await windowManager.tabManager(for: uuid)?.offloadBackgroundWebViews()
+            }
+        }
     }
 
     private func updateTopSitesWidget() {
@@ -433,6 +429,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate, FeatureFlaggable {
                 self?.isLoadingBackgroundTabs = false
                 self?.backgroundTabLoader.loadBackgroundTabs()
             }
+        }
+    }
+
+    private func prefetchMerinoStories() {
+        Task(priority: .utility) {
+            let merinoManager: MerinoManagerProvider = AppContainer.shared.resolve()
+            await merinoManager.prefetchStories()
         }
     }
 

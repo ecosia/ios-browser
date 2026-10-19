@@ -89,7 +89,7 @@
 "Onboarding.Modern.BrandRefresh.Customization.Theme.Dark.v148" = "Tywyll";
 
 /* Description for the theme selection card in the v148 brand refresh onboarding flow. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.BrandRefresh.Customization.Theme.Description.v148" = "Dewiswch eich hoff thema neu gofynnwch i %@ gydweddu â'ch dyfais, sy'n eich rhoi chi mewn rheolaeth.";
+"Onboarding.Modern.BrandRefresh.Customization.Theme.Description.v148" = "Dewiswch eich hoff thema neu gofynnwch i %@ gydweddu â'ch dyfais, fel mai chi sy'n rheoli.";
 
 /* Option for the light theme in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.Customization.Theme.Light.v148" = "Golau";
@@ -187,6 +187,9 @@
 /* Title for the welcome card in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.Welcome.Title.v148.v2" = "Agor eich dolenni gyda phreifatrwydd cynhenid";
 
+/* Title for the welcome card in the v149 brand refresh onboarding flow. */
+"Onboarding.Modern.BrandRefresh.Welcome.TitleV3.v149" = "Agorwch eich holl ddolenni gyda phreifatrwydd cynhenid";
+
 /* Option for the automatic theme. */
 "Onboarding.Modern.Customization.Theme.Automatic.v145" = "Awtomatig";
 
@@ -197,7 +200,7 @@
 "Onboarding.Modern.Customization.Theme.Dark.v145" = "Tywyll";
 
 /* Description for the theme selection card. %@ is the app name (e.g. Firefox). */
-"Onboarding.Modern.Customization.Theme.Description.v145" = "Dewiswch eich hoff thema neu gofynnwch i %@ gydweddu â'ch dyfais, gan eich rhoi chi mewn rheolaeth.";
+"Onboarding.Modern.Customization.Theme.Description.v145" = "Dewiswch eich hoff thema neu gofynnwch i %@ gydweddu â'ch dyfais, fel mai chi sy'n rheoli.";
 
 /* Option for the light theme. */
 "Onboarding.Modern.Customization.Theme.Light.v145" = "Golau";

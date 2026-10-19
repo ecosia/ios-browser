@@ -3,12 +3,12 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Storage
 import Common
 import Shared
 import Redux
 
 import struct MozillaAppServices.Device
+import struct Storage.ClientAndTabs
 
 @MainActor
 final class RemoteTabsPanelMiddleware: Notifiable {
@@ -26,7 +26,13 @@ final class RemoteTabsPanelMiddleware: Notifiable {
         observeNotifications()
     }
 
-    lazy var remoteTabsPanelProvider: Middleware<AppState> = { [self] state, action in
+    lazy var remoteTabsPanelProvider: Middleware<AppState> = (legacyProvider, modernProvider)
+
+    lazy var modernProvider: MiddlewareClosure<AppState> = { [self] state, action, windowUUID in
+        // Does not test any modern actions
+    }
+
+    lazy var legacyProvider: LegacyMiddlewareClosure<AppState> = { [self] state, action in
         let uuid = action.windowUUID
         if let action = action as? RemoteTabsPanelAction {
             self.resolveRemoteTabsPanelActions(action: action, state: state)

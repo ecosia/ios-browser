@@ -839,7 +839,7 @@
 "Menu.TrackingProtectionDescription.CryptominersNew" = "Kryptoutvinnarar brukar i hemmelegheit datakrafta til systemet for å utvinne digitale pengar. Kryptoutvinningsskript tappar batteriet, gjer datamaskina tregare og kan auke straumrekninga.";
 
 /* Description of fingerprinters. */
-"Menu.TrackingProtectionDescription.Fingerprinters" = "Innstillingane i nettlesaren og datamaskina er unike. Fingerprinters samlar ei rekkje av desse unike innstillingane for å opprette ein profil av deg som kan brukast til å spore deg når du surfar.";
+"Menu.TrackingProtectionDescription.Fingerprinters" = "Innstillingane i nettlesaren og datamaskina er unike. Nettlesaravtrykk samlar ei rekkje av desse unike innstillingane for å opprette ein profil av deg som kan brukast til å spore deg når du surfar.";
 
 /* Description of social network trackers. */
 "Menu.TrackingProtectionDescription.SocialNetworksNew" = "Sosiale nettverk plasserer sporarar på andre nettstadar for å byggje ein meir fullstendig og målretta profil av deg. Blokkering av desse sporarane reduserer kor mykje sosiale media-selskap kan sjå kva du gjer på nettet.";
@@ -1500,6 +1500,9 @@
 
 /* Button label that appears in the settings to prompt the user to sign in to Firefox for iOS sync service to sync and save data. */
 "Settings.Sync.ButtonTitle.v103" = "Synkroniser og lagre data";
+
+/* In the settings account row, shown transiently while the user is being signed out of their account. */
+"Settings.Sync.SigningOut.Title.v154" = "Loggar ut…";
 
 /* Title for the page where the user sign in to their Firefox Sync account. */
 "Settings.Sync.SignInView.Title.v103" = "Synkroniser og lagre data";

@@ -10,7 +10,7 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 class XCodeBuild(object):
     binary = 'xcodebuild'
-    destination = 'platform=iOS Simulator,name=iPhone 15,OS=17.4'
+    destination = 'platform=iOS Simulator,name=iPhone 17,OS=26.5'
     logger = logging.getLogger()
     scheme = 'Fennec'
     testPlan = 'SyncIntegrationTestPlan'
@@ -53,7 +53,8 @@ class XCodeBuild(object):
             '-scheme', self.scheme,
             '-destination', self.destination,
             '-only-testing:{}'.format(identifier),
-            '-testPlan', self.testPlan]
+            '-testPlan', self.testPlan,
+            '-skipMacroValidation']
         self.logger.info('Running: {}'.format(' '.join(args)))
         try:
             out = subprocess.check_output(

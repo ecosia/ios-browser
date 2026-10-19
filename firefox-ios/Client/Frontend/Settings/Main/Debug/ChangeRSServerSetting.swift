@@ -38,12 +38,6 @@ class ChangeRSServerSetting: HiddenSetting {
             guard let self else { return }
             self.prefs.setString(RemoteSettingsEnvironment.stage.rawValue, forKey: self.prefsKey)
         }))
-        alert.addAction(UIAlertAction(title: "Staging + SEC Reset", style: .default, handler: { [weak self] _ in
-            guard let self else { return }
-            self.prefs.setString(RemoteSettingsEnvironment.stage.rawValue, forKey: self.prefsKey)
-            let searchManager: SearchEnginesManager = AppContainer.shared.resolve()
-            searchManager.resetPrefs()
-        }))
         alert.addAction(UIAlertAction(title: "Dev", style: .default, handler: { [weak self] _ in
             guard let self else { return }
             self.prefs.setString(RemoteSettingsEnvironment.dev.rawValue, forKey: self.prefsKey)

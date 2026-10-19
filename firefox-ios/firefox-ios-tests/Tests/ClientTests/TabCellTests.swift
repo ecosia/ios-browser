@@ -30,21 +30,22 @@ class TabCellTests: XCTestCase {
     func testConfigureTabAXLabel() {
         let cell = TabCell(frame: .zero)
         let state = createDefaultState()
-        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "test")
+        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "", newTabTitle: nil)
         XCTAssert(cell.accessibilityLabel!.contains(state.tabTitle))
     }
 
     func testConfigureTabAXHint() {
         let cell = TabCell(frame: .zero)
         let state = createDefaultState()
-        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "test")
-        XCTAssertNotNil(cell.accessibilityHint)
+        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "", newTabTitle: nil)
+        XCTAssertEqual(cell.accessibilityHint!,
+                       .TabsTray.TabTraySwipeToCloseAccessibilityHint)
     }
 
     func testConfigureTabSelectedState() {
         let cell = TabCell(frame: .zero)
         let state = createDefaultState()
-        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "test")
+        cell.configure(with: state, theme: nil, delegate: cellDelegate, a11yId: "", newTabTitle: nil)
         XCTAssertEqual(cell.isSelectedTab,
                        state.isSelected)
     }
@@ -58,7 +59,8 @@ class TabCellTests: XCTestCase {
                         tabTitle: "Firefox Browser",
                         url: URL(string: "https://www.mozilla.org/en-US/firefox/")!,
                         screenshot: nil,
-                        hasHomeScreenshot: false)
+                        hasHomeScreenshot: false,
+                        hasScreenshotOnDisk: false)
     }
 }
 

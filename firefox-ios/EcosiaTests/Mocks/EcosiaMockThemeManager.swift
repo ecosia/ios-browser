@@ -90,8 +90,6 @@ final class EcosiaMockThemeManager: ThemeManager {
         return currentThemeStorage
     }
 
-    var isNewAppearanceMenuOn: Bool { return false }
-
     func reloadTheme(for window: UUID) { }
 
     func setWindow(_ window: UIWindow, for uuid: UUID) { }

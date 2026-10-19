@@ -85,7 +85,8 @@ class RemoteTabsEmptyView: UIView,
     }
 
     func configure(config: RemoteTabsPanelEmptyStateReason,
-                   delegate: RemoteTabsEmptyViewDelegate?) {
+                   delegate: RemoteTabsEmptyViewDelegate?,
+                   isSyncing: Bool) {
         self.delegate = delegate
 
         emptyStateImageView.image = UIImage.templateImageNamed(StandardImageIdentifiers.Large.cloud)
@@ -139,7 +140,7 @@ class RemoteTabsEmptyView: UIView,
         titleLabel.textColor = theme.colors.textPrimary
         instructionsLabel.textColor = theme.colors.textPrimary
         signInButton.applyTheme(theme: theme)
-        backgroundColor = theme.colors.layer3
+        backgroundColor = theme.isNova ? theme.colors.layer1 : theme.colors.layer3
     }
 
     @objc

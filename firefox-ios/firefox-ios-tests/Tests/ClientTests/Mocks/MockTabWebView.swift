@@ -5,6 +5,7 @@
 import WebKit
 import Common
 import Shared
+import Storage
 @testable import Client
 
 final class MockTabWebView: TabWebView {
@@ -19,6 +20,10 @@ final class MockTabWebView: TabWebView {
     var loadedURL: URL?
     var takeSnapshotWasCalled = false
     var takeSnapshotShouldFail = false
+    var mockHasOnlySecureContent = false
+    var mockCanGoBack = false
+    var mockCanGoForward = false
+    var mockInteractionState: Data?
 
     override var title: String? {
         return mockTitle
@@ -28,12 +33,32 @@ final class MockTabWebView: TabWebView {
         return loadedURL
     }
 
-    override init(frame: CGRect, configuration: WKWebViewConfiguration, windowUUID: WindowUUID) {
-        super.init(frame: frame, configuration: configuration, windowUUID: windowUUID)
+    override var hasOnlySecureContent: Bool {
+        return mockHasOnlySecureContent
+    }
+
+    override var canGoBack: Bool {
+        return mockCanGoBack
+    }
+
+    override var canGoForward: Bool {
+        return mockCanGoForward
+    }
+
+    override var interactionState: Any? {
+        get { return mockInteractionState }
+        set { mockInteractionState = newValue as? Data }
+    }
+
+    override init(frame: CGRect, configuration: WKWebViewConfiguration, windowUUID: WindowUUID, certStore: CertStore) {
+        super.init(frame: frame, configuration: configuration, windowUUID: windowUUID, certStore: certStore)
     }
 
     init(tab: Tab) {
-        super.init(frame: .zero, configuration: WKWebViewConfiguration(), windowUUID: .XCTestDefaultUUID)
+        super.init(frame: .zero,
+                   configuration: WKWebViewConfiguration(),
+                   windowUUID: .XCTestDefaultUUID,
+                   certStore: MockProfile().certStore)
         // Simulating the observer setup is required to use this mock because in production
         // the observers are set up in Tab.createWebView() which we don't call during test
         // and the observers are removed every time we call Tab.deinit(), so an error occurs
@@ -99,10 +124,15 @@ final class MockTabWebView: TabWebView {
 class MockTab: Tab {
     private var isHomePage: Bool
     var enqueueDocumentCalled = 0
+    var overrideReaderModeState: ReaderModeState?
 
     init(profile: Profile, isPrivate: Bool = false, windowUUID: WindowUUID, isHomePage: Bool = false) {
         self.isHomePage = isHomePage
         super.init(profile: profile, isPrivate: isPrivate, windowUUID: windowUUID)
+    }
+
+    override var readerModeState: ReaderModeState? {
+        return overrideReaderModeState
     }
 
     override var isFxHomeTab: Bool {

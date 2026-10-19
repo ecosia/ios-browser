@@ -3,35 +3,42 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Storage
 import Common
 @testable import Client
 
 final class MockWindowManager: WindowManager {
     private let wrappedManager: WindowManagerImplementation
+    private let tabManager: MockTabManager
 
     var closePrivateTabsMultiActionCalled = 0
+    var overrideWindows = false
+    var windowsWereAccessed = false
 
-    init(wrappedManager: WindowManagerImplementation, tabManager: TabManager? = nil) {
+    init(
+        wrappedManager: WindowManagerImplementation,
+        tabManager: MockTabManager = MockTabManager()
+    ) {
         self.wrappedManager = wrappedManager
-        if let tabManager {
-            let windowUUID = WindowUUID.XCTestDefaultUUID
-            wrappedManager.newBrowserWindowConfigured(AppWindowInfo(tabManager: tabManager), uuid: windowUUID)
-        }
+        self.tabManager = tabManager
     }
 
     // MARK: - WindowManager Protocol
 
     var windows: [WindowUUID: AppWindowInfo] {
-        wrappedManager.windows
+        windowsWereAccessed = true
+        if overrideWindows {
+            return [.XCTestDefaultUUID: AppWindowInfo(tabManager: tabManager, sceneCoordinator: nil)]
+        } else {
+            return wrappedManager.windows
+        }
     }
 
     func newBrowserWindowConfigured(_ windowInfo: AppWindowInfo, uuid: WindowUUID) {
         wrappedManager.newBrowserWindowConfigured(windowInfo, uuid: uuid)
     }
 
-    func tabManager(for windowUUID: WindowUUID) -> TabManager {
-        wrappedManager.tabManager(for: windowUUID)
+    func tabManager(for windowUUID: WindowUUID) -> TabManager? {
+        return tabManager
     }
 
     func allWindowTabManagers() -> [TabManager] {
@@ -64,11 +71,7 @@ final class MockWindowManager: WindowManager {
         wrappedManager.performMultiWindowAction(action)
     }
 
-    func window(for tab: TabUUID) -> WindowUUID? {
-        wrappedManager.window(for: tab)
-    }
-
-    func windowExists(uuid: WindowUUID) -> Bool {
-        wrappedManager.windowExists(uuid: uuid)
+    func windowUUID(forTab tab: TabUUID) -> WindowUUID? {
+        wrappedManager.windowUUID(forTab: tab)
     }
 }

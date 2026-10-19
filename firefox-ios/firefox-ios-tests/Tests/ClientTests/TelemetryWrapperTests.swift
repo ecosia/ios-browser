@@ -145,6 +145,9 @@ class TelemetryWrapperTests: XCTestCase {
 
     // MARK: - CFR Analytics
 
+    /* Ecosia: 155.1 removed the data-clearance CFR along with `ContextualHintType.dataClearance`,
+       and upstream deleted these three "with extras" CFR tests in the same change. Kept commented
+       out rather than silently dropped so the deletion is visible next upgrade.
     func test_contextualHintDismissButton_GleanIsCalled() {
         let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: ContextualHintType.dataClearance.rawValue]
         TelemetryWrapper.recordEvent(
@@ -157,6 +160,7 @@ class TelemetryWrapperTests: XCTestCase {
 
         testEventMetricRecordingSuccess(metric: GleanMetrics.CfrAnalytics.dismissCfrFromButton)
     }
+     */
 
     func test_contextualHintDismissButtonWithoutExtras_GleanIsNotCalled() {
         TelemetryWrapper.recordEvent(
@@ -168,6 +172,9 @@ class TelemetryWrapperTests: XCTestCase {
         XCTAssertNil(GleanMetrics.CfrAnalytics.dismissCfrFromButton.testGetValue())
     }
 
+    /* Ecosia: 155.1 removed the data-clearance CFR along with `ContextualHintType.dataClearance`,
+       and upstream deleted these three "with extras" CFR tests in the same change. Kept commented
+       out rather than silently dropped so the deletion is visible next upgrade.
     func test_contextualHintDismissOutsideTap_GleanIsCalled() {
         let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: ContextualHintType.dataClearance.rawValue]
         TelemetryWrapper.recordEvent(
@@ -180,6 +187,7 @@ class TelemetryWrapperTests: XCTestCase {
 
         testEventMetricRecordingSuccess(metric: GleanMetrics.CfrAnalytics.dismissCfrFromOutsideTap)
     }
+     */
 
     func test_contextualHintDismissOutsideTapWithoutExtras_GleanIsNotCalled() {
         TelemetryWrapper.recordEvent(
@@ -191,6 +199,9 @@ class TelemetryWrapperTests: XCTestCase {
         XCTAssertNil(GleanMetrics.CfrAnalytics.dismissCfrFromOutsideTap.testGetValue())
     }
 
+    /* Ecosia: 155.1 removed the data-clearance CFR along with `ContextualHintType.dataClearance`,
+       and upstream deleted these three "with extras" CFR tests in the same change. Kept commented
+       out rather than silently dropped so the deletion is visible next upgrade.
     func test_contextualHintPressAction_GleanIsCalled() {
         let extra = [TelemetryWrapper.EventExtraKey.cfrType.rawValue: ContextualHintType.dataClearance.rawValue]
         TelemetryWrapper.recordEvent(
@@ -203,6 +214,7 @@ class TelemetryWrapperTests: XCTestCase {
 
         testEventMetricRecordingSuccess(metric: GleanMetrics.CfrAnalytics.pressCfrActionButton)
     }
+     */
 
     func test_contextualHintPressActionWithoutExtras_GleanIsNotCalled() {
         TelemetryWrapper.recordEvent(
@@ -231,55 +243,12 @@ class TelemetryWrapperTests: XCTestCase {
     */
 
     // MARK: - Onboarding
-    func test_onboardingSelectWallpaperWithExtras_GleanIsCalled() {
-        let wallpaperNameKey = TelemetryWrapper.EventExtraKey.wallpaperName.rawValue
-        let wallpaperTypeKey = TelemetryWrapper.EventExtraKey.wallpaperType.rawValue
-        let extras = [wallpaperNameKey: "defaultBackground",
-                      wallpaperTypeKey: "default"]
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .tap,
-                                     object: .onboardingSelectWallpaper,
-                                     value: .wallpaperSelected,
-                                     extras: extras)
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.wallpaperSelected)
-    }
-
-    /* Ecosia: removed in v147 - notificationPermissionIsGranted, notificationPermission
-    func test_onboardingNotificationPermission_GleanIsCalled() {
-        let isGrantedKey = TelemetryWrapper.EventExtraKey.notificationPermissionIsGranted.rawValue
-        let extras = [isGrantedKey: true]
-        TelemetryWrapper.recordEvent(category: .prompt,
-                                     method: .tap,
-                                     object: .notificationPermission,
-                                     extras: extras)
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.notificationPermissionPrompt)
-    }
-    */
-
-    func test_onboardingEngagementNotificationTapped_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .tap,
-                                     object: .engagementNotification)
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.engagementNotificationTapped)
-    }
-
-    func test_onboardingEngagementNotificationCancel_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(category: .action,
-                                     method: .cancel,
-                                     object: .engagementNotification)
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.engagementNotificationCancel)
-    }
 
     // MARK: Wallpapers
 
     func test_backgroundWallpaperMetric_defaultBackgroundIsNotSent() {
         let profile = MockProfile()
         TelemetryWrapper.shared.setup(profile: profile)
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
 
         let defaultWallpaper = Wallpaper(id: "fxDefault",
                                          textColor: nil,
@@ -298,7 +267,6 @@ class TelemetryWrapperTests: XCTestCase {
 
     func test_backgroundWallpaperMetric_themedWallpaperIsSent() {
         let profile = MockProfile()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         TelemetryWrapper.shared.setup(profile: profile)
 
         let themedWallpaper = Wallpaper(id: "amethyst",
@@ -472,18 +440,6 @@ class TelemetryWrapperTests: XCTestCase {
         testEventMetricRecordingSuccess(metric: GleanMetrics.Urlbar.abandonment)
     }
 
-    // MARK: - Page Action Menu
-
-    func test_createNewTab_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .createNewTab
-        )
-
-        testCounterMetricRecordingSuccess(metric: GleanMetrics.PageActionMenu.createNewTab)
-    }
-
     // MARK: - History
 
     func test_HistoryPanelOpened_GleanIsCalled() {
@@ -508,32 +464,6 @@ class TelemetryWrapperTests: XCTestCase {
                                      object: .historySingleItemRemoved)
 
         testEventMetricRecordingSuccess(metric: GleanMetrics.History.removed)
-    }
-
-    /* Ecosia: removed in v147 - History.removedToday, removedTodayAndYesterday, removedAll
-    func test_todaysHistoryRemoved_GleanIsCalled() { ... }
-    func test_todayAndYesterdaysHistoryRemoved_GleanIsCalled() { ... }
-    func test_allHistoryRemoved_GleanIsCalled() { ... }
-    */
-
-    func test_viewHistoryPanel_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .viewHistoryPanel
-        )
-
-        testCounterMetricRecordingSuccess(metric: GleanMetrics.PageActionMenu.viewHistoryPanel)
-    }
-
-    func test_viewDownloadsPanel_GleanIsCalled() {
-        TelemetryWrapper.recordEvent(
-            category: .action,
-            method: .tap,
-            object: .viewDownloadsPanel
-        )
-
-        testCounterMetricRecordingSuccess(metric: GleanMetrics.PageActionMenu.viewDownloadsPanel)
     }
 
     // Accessibility
@@ -1019,6 +949,15 @@ class TelemetryWrapperTests: XCTestCase {
                                      value: .tabLossDetected)
 
         testEventMetricRecordingSuccess(metric: GleanMetrics.AppErrors.tabLossDetected)
+    }
+
+    func test_error_tabDiscrepancyIsCalled() throws {
+        TelemetryWrapper.recordEvent(category: .information,
+                                     method: .error,
+                                     object: .app,
+                                     value: .tabCountDiscrepancy)
+
+        try testEventMetricRecordingSuccess(metric: GleanMetrics.AppErrors.tabCountDiscrepancy)
     }
 
     // MARK: - RecordSearch

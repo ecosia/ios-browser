@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "აპის ხატულა";
+
 /* (No Comment) */
 "New Private Tab" = "ახალი პირადი ჩანართი";
 
@@ -5,7 +8,7 @@
 "New Tab" = "ახალი ჩანართი";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "საშუალებას გაძლევთ, სურათის გადაღებისა და ატვირთვის.";
+"NSCameraUsageDescription" = "Ecosia შეძლებს გამოიყენოს თქვენი კამერა QR-კოდების წასაკითხად ან სურათისა თU ვიდეოს გადასაღებად.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "ვებსაიტებმა, შესაძლოა მოითხოვოს თქვენი მდებარეობის მონაცემები.";
@@ -15,6 +18,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "სურათების შენახვის საშუალებას იძლევა.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Ecosia მეტყველების ამომცნობს იყენებს თქვენი ხმის საძიებო ტექსტად ქცევისთვის.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR კოდის წაკითხვა";

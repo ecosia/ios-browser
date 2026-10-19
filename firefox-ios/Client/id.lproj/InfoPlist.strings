@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "Ikon Aplikasi";
+
 /* (No Comment) */
 "New Private Tab" = "Tab Pribadi Baru";
 
@@ -5,7 +8,7 @@
 "New Tab" = "Tab Baru";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia menggunakan kamera Anda untuk memindai kode QR dan mengambil foto dan video.";
+"NSCameraUsageDescription" = "Ecosia dapat menggunakan kamera Anda untuk memindai kode QR atau mengambil foto dan video.";
 
 /* Privacy - Face ID Usage Description */
 "NSFaceIDUsageDescription" = "Ecosia memerlukan Face ID untuk mengakses kata sandi dan metode pembayaran Anda yang tersimpan.";
@@ -18,6 +21,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Ini memungkinkan Anda menyimpan foto.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Ecosia menggunakan pengenalan ucapan untuk mengubah suara Anda menjadi teks untuk pencarian suara.";
 
 /* (No Comment) */
 "Scan QR Code" = "Pindai Kode QR";

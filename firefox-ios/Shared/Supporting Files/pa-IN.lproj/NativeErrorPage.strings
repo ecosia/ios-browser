@@ -1,5 +1,44 @@
+/* On certificate error page, this is the text on a button that will show advanced information about the certificate error. */
+"NativeErrorPage.BadCertDomain.AdvancedButton.v149" = "ਤਕਨੀਕੀ";
+
+/* On certificate error page, this is the advanced information explaining why the certificate is invalid. %1$@ is the app name (e.g. Firefox). %2$@ is the site URL. */
+"NativeErrorPage.BadCertDomain.AdvancedInfo.v149" = "ਸਰਟੀਫਿਕੇਟ %2$@ ਲਈ ਵਾਜਬ ਨਾ ਹੋਣ ਕਰਕੇ %1$@ ਇਸ ਸਾਈਟ ਉੱਤੇ ਭਰੋਸਾ ਨਹੀਂ ਕਰਦਾ ਹੈ।";
+
+/* On certificate error page, this is the security information shown in the advanced section. */
+"NativeErrorPage.BadCertDomain.AdvancedSecurityInfo.v149" = "ਇਹ ਸਾਈਟ ਨਾ-ਸੁਰੱਖਿਅਤ ਕਨੈਕਸ਼ਨਾਂ ਲਈ ਇਜਾਜ਼ਤ ਨਹੀਂ ਦਿੰਦੀ ਹੈ।";
+
+/* On certificate error page, this is the first warning message in the advanced section suggesting possible solutions. */
+"NativeErrorPage.BadCertDomain.AdvancedWarning1.v149" = "ਤੁਹਾਨੂੰ ਆਪਣੇ Wi-Fi ਨੈੱਟਵਰਕ ਵਿੱਚ ਸਾਈਨ-ਇਨ ਕਰਨ ਦੀ ਲੋੜ ਹੋ ਸਕਦੀ ਹੈ ਜਾਂ ਆਪਣੀਆਂ VPN ਸੈਟਿੰਗਾਂ ਦੀ ਜਾਂਚ ਕਰੋ।";
+
+/* On certificate error page, this is the second warning message in the advanced section for users on corporate networks. */
+"NativeErrorPage.BadCertDomain.AdvancedWarning2.v149" = "ਜੇ ਤੁਸੀਂ ਕਾਰਪੋਰੇਟ ਨੈੱਟਵਰਕ ਵਰਤ ਰਹੇ ਹੋ ਤਾਂ ਤੁਹਾਡੀ ਸਹਿਯੋਗ ਟੀਮ ਕੋਲ ਹੋਰ ਜਾਣਕਾਰੀ ਹੋ ਸਕਦੀ ਹੈ।";
+
+/* On certificate error page, this is the description explaining the security risk. */
+"NativeErrorPage.BadCertDomain.Description.v149" = "ਸਾਈਟ ਦਾ ਦਿਖਾਵਾ ਕਰਕੇ ਕੋਈ ਤੁਹਾਡੀ ਨਿੱਜੀ ਜਾਣਕਾਰੀ ਨੂੰ ਚੋਰੀ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰ ਸਕਦਾ ਹੈ। ਤੁਹਾਡੀ ਕਨੈਕਸ਼ਨ ਸੈਟਿੰਗਾਂ ਵੀ ਗਲਤ ਢੰਗ ਨਾਲ ਸੈੱਟ ਅੱਪ ਕੀਤੀਆਂ ਹੋ ਸਕਦੀਆਂ ਹਨ।";
+
+/* On certificate error page, this is the label prefix for the error code. %@ is the error code (e.g. SSL_ERROR_BAD_CERT_DOMAIN). */
+"NativeErrorPage.BadCertDomain.ErrorCodeLabel.v149" = "ਗਲਤੀ ਕੋਡ: %@";
+
+/* On certificate error page, this is the text on a button that will hide the advanced information section. */
+"NativeErrorPage.BadCertDomain.HideAdvancedButton.v149" = "ਤਕਨੀਕੀ ਓਹਲੇ ਕਰੋ";
+
+/* On certificate error page, this is a link to learn more about certificate errors. */
+"NativeErrorPage.BadCertDomain.LearnMoreLink.v149" = "ਹੋਰ ਜਾਣੋ";
+
+/* On certificate error page, this is the text on a button that will proceed to the site despite the certificate error. %@ is the site URL. This is a risky action. */
+"NativeErrorPage.BadCertDomain.ProceedButton.v149" = "%@ ਨਾਲ ਜਾਰੀ ਰੱਖੋ (ਖ਼ਤਰਨਾਕ)";
+
+/* On certificate error page, this is the title warning the user about a potential security issue. */
+"NativeErrorPage.BadCertDomain.TitleLabel.v149" = "ਧਿਆਨ ਰੱਖੋ। ਕੁਝ ਸਹੀ ਨਹੀਂ ਜਾਪਦਾ ਹੈ।";
+
+/* On certificate error page, this is a link that will show the site’s certificate details. */
+"NativeErrorPage.BadCertDomain.ViewCertificateLink.v149" = "ਸਾਈਟ ਦਾ ਸਰਟੀਫਿਕੇਟ ਵੇਖੋ";
+
 /* On error page, this is the text on a button that will try to load the page again. */
 "NativeErrorPage.ButtonLabel.v131" = "ਮੁੜ-ਲੋਡ";
+
+/* On error page, this is the text on a button that will try to load the page again. */
+"NativeErrorPage.ButtonLabel.v155" = "ਫੇਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ";
 
 /* On error page, this is the description for a generic error. %@ is the site url. */
 "NativeErrorPage.GenericError.Description.v134" = "%@ ਦੇ ਮਾਲਕ ਨੇ ਇਸ ਨੂੰ ਠੀਕ ਢੰਗ ਨਾਲ ਸੈੱਟਅੱਪ ਨਹੀਂ ਕੀਤਾ ਹੈ ਅਤੇ ਸੁਰੱਖਿਅਤ ਕਨੈਕਸ਼ਨ ਬਣਾਇਆ ਨਹੀਂ ਜਾ ਸਕਦਾ ਹੈ।";
@@ -7,9 +46,36 @@
 /* On error page, this is the title for generic error. */
 "NativeErrorPage.GenericError.TitleLabel.v131" = "ਧਿਆਨ ਰੱਖੋ। ਕੁਝ ਸਹੀ ਨਹੀਂ ਜਾਪਦਾ ਹੈ।";
 
+/* On error page, this is the text on a button that will go back to the previous page. Recommended action. */
+"NativeErrorPage.GoBackButton.v149" = "ਪਿੱਛੇ ਜਾਓ (ਸਿਫਾਰਸ਼ੀ)";
+
 /* On error page, this is the description for no internet connection. */
 "NativeErrorPage.NoInternetConnection.Description.v131" = "ਵੱਖਰੇ ਡਿਵਾਈਸ ਨਾਲ ਕਨੈਕਟ ਕਰਨ ਦੀ ਕੋਸ਼ਿਸ਼ ਕਰੋ। ਆਪਣੇ ਮਾਡਮ ਜਾਂ ਰਾਊਟਰ ਦੀ ਜਾਂਚ ਕਰੋ। Wi-Fi ਤੋਂ ਡਿਸ-ਕਨੈਕਟ ਕਰਕੇ ਫੇਰ ਕਨੈਕਟ ਕਰੋ।";
 
 /* On error page, this is the title for no internet connection */
 "NativeErrorPage.NoInternetConnection.TitleLabel.v131" = "ਤੁਹਾਡੇ ਇੰਟਰਨੈੱਟ ਕਨੈਕਸ਼ਨ ਨਾਲ ਸਮੱਸਿਆ ਜਾਪਦੀ ਹੈ।";
+
+/* Label of the button on the connection error page - displayed if the user clicks on the button to requested an earlier version of the page and the search is in progress. */
+"NativeErrorPage.Wayback.Error.Checking.v155" = "…ਅਕਾਇਵ ਦੀ ਜਾਂਚ ਕੀਤੀ ਜਾ ਰਹੀ ਹੈ";
+
+/* Description of the error page when the app is unable to connect to the server and will show a wayback fallback. %@ is the app name (e.g. Firefox). */
+"NativeErrorPage.Wayback.Error.Description.v154" = "ਸਾਈਟ ਰੁੱਝੀ ਹੋਈ ਜਾਂ ਗ਼ੈਰ-ਮੌਜੂਦ ਹੋ ਸਕਦੀ ਹੈ। ਬਾਅਦ ਵਿੱਚ ਕੋਸ਼ਿਸ਼ ਕਰੋ। ਜੇ ਹੋਰ ਸਫ਼ੇ ਨਹੀਂ ਲੋਡ ਸਕਦੇ ਹਨ ਤਾਂ ਆਪਣੇ Wi-Fi ਜਾਂ ਡਾਟਾ ਕਨੈਕਸ਼ਨ ਦੀ ਜਾਂਚ ਕਰੋ। %@ ਇਸ ਸਫ਼ੇ ਦੇ ਪੁਰਾਣੇ ਵਰਜ਼ਨ ਵਾਸਤੇ ਵੇਬੈਕ ਮਸ਼ੀਨ ਨੂੰ ਵੀ ਵਰਤ ਸਕਦਾ ਹੈ।";
+
+/* Footer text below the wayback button/card, explaining that the app can look for an archived version of the page via the Internet Archive's Wayback Machine. %1$@ is the app name (e.g. Firefox). %2$@ is the link text (Wayback Machine), which is a tappable link that opens web.archive.org. */
+"NativeErrorPage.Wayback.Error.FooterDescription.v155" = "%1$@ ਇਸ ਸਫ਼ੇ ਦੇ ਪੁਰਾਣੇ ਵਰਜ਼ਨ ਨੂੰ ਇੰਟਰਨੈੱਟ ਪੁਰਾਲੇਖਾਂ ਦੇ %2$@ ਤੋਂ ਲੱਭ ਸਕਦਾ ਹੈ।";
+
+/* The tappable link text within the Wayback footer description, opens web.archive.org. */
+"NativeErrorPage.Wayback.Error.LinkText.v155" = "ਇਤਿਹਾਸ ਮਸ਼ੀਨ";
+
+/* Button label allowing the user to retry searching the Wayback Machine after a failed attempt. */
+"NativeErrorPage.Wayback.Error.Retry.v154" = "ਮੁੜ-ਕੋਸ਼ਿਸ਼";
+
+/* Button label displayed when there is no archived version of a webpage, allowing the user to search for the page URL using their default search engine. */
+"NativeErrorPage.Wayback.Error.Search.v155" = "ਵੈੱਬ ‘ਤੇ ਖੋਜੋ";
+
+/* Title of the error page when the app is unable to connect to the server and will show a wayback fallback. */
+"NativeErrorPage.Wayback.Error.Title.v154" = "ਕਨੈਕਟ ਕਰਨ ਲਈ ਅਸਮਰੱਥ";
+
+/* Accessibility hint read by VoiceOver describing what happens when the 'Check for earlier version' button is clicked. */
+"NativeErrorPage.Wayback.Error.WaybackButtonA11yHint.v154" = "ਇਸ ਸਫ਼ੇ ਦੇ ਅਕਾਇਵ ਬਣਾਏ ਵਰਜ਼ਨ ਵਾਸਤੇ ਵੇਬੈਕ ਮਸ਼ੀਨ ਨੂੰ ਲੱਭਦਾ ਹੈ।";
 

@@ -33,6 +33,8 @@ final class MenuInfoCell: UITableViewCell, ReusableCell, ThemeApplicable {
         )
     }
 
+    private lazy var novaSelectedBackgroundView: UIView = .build()
+
     private var horizontalMargin: CGFloat {
         if #available(iOS 26.0, *) {
             return UX.horizontalMargin
@@ -57,7 +59,7 @@ final class MenuInfoCell: UITableViewCell, ReusableCell, ThemeApplicable {
     // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupView(hasInfoTitle: model?.infoTitle != nil)
+        setupView()
     }
 
     required init?(coder: NSCoder) {
@@ -88,7 +90,7 @@ final class MenuInfoCell: UITableViewCell, ReusableCell, ThemeApplicable {
         self.separatorInset = .zero
     }
 
-    private func setupView(hasInfoTitle: Bool) {
+    private func setupView() {
         self.addSubview(titleLabel)
         self.addSubview(infoLabelView)
         NSLayoutConstraint.activate([
@@ -115,22 +117,34 @@ final class MenuInfoCell: UITableViewCell, ReusableCell, ThemeApplicable {
     func applyTheme(theme: Theme) {
         guard let model else { return }
         backgroundColor = theme.colors.layerSurfaceMedium.withAlphaComponent(mainMenuHelper?.backgroundAlpha() ?? 1.0)
+        if theme.isNova {
+            novaSelectedBackgroundView.backgroundColor = theme.colors.layer5Hover
+            selectedBackgroundView = novaSelectedBackgroundView
+        } else {
+            selectedBackgroundView = nil
+        }
+        let offBackground: UIColor
+        if theme.isNova, #unavailable(iOS 26.0) {
+            offBackground = theme.colors.layerSurfaceLow
+        } else {
+            offBackground = theme.colors.layer3
+        }
         if model.isActive {
             titleLabel.textColor = theme.colors.textAccent
             /* Ecosia: Tint the badge with the accent colour (white text on green) to match the toggle's active state
-            infoLabelView.textColor = theme.colors.textPrimary
-            infoLabelView.backgroundColor = theme.colors.layerInformation
+            infoLabelView.textColor = theme.isNova ? theme.colors.textInverted : theme.colors.textPrimary
+            infoLabelView.backgroundColor = theme.isNova ? theme.colors.actionPrimary : theme.colors.layerInformation
             */
             infoLabelView.textColor = theme.colors.textInverted
             infoLabelView.backgroundColor = theme.colors.textAccent
         } else if !model.isEnabled {
             titleLabel.textColor = theme.colors.textDisabled
             infoLabelView.textColor = theme.colors.textDisabled
-            infoLabelView.backgroundColor = theme.colors.layer3
+            infoLabelView.backgroundColor = offBackground
         } else {
             titleLabel.textColor = theme.colors.textPrimary
             infoLabelView.textColor = theme.colors.textPrimary
-            infoLabelView.backgroundColor = theme.colors.layer3
+            infoLabelView.backgroundColor = offBackground
         }
     }
 }

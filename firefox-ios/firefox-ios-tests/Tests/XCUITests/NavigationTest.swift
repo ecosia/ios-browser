@@ -15,17 +15,47 @@ let website_2 = [
     "label": "Example",
     "value": "example",
     "link": "More information...",
-    "moreLinkLongPressUrl": "http://www.iana.org/domains/example",
+    "moreLinkLongPressUrl": "iana.org",
     "moreLinkLongPressInfo": "iana"
 ]
 let popUpTestUrl = path(forTestPage: "test-popup-blocker.html")
 
-class NavigationTest: BaseTestCase {
+class NavigationTest: FeatureFlaggedTestSuite {
+    // There are multiple onboarding flows, so use a feature flag to test just against the newest flow.
+    let onboardingFlowType = OnboardingScreen.OnboardingFlowType.modernKit
+
+    override func setUpExperimentVariables() {
+        jsonFileName = onboardingFlowType.jsonFeatureOverrideFileName
+        featureName = onboardingFlowType.onboardingFeatureName
+    }
+
+    var contextMenuScreen: ContextMenuScreen!
+    var toolbarScreen: ToolbarScreen!
+    var settingsScreen: SettingScreen!
+    var browserScreen: BrowserScreen!
+    var sslScreen: SSLWarningScreen!
+    var mainMenuScreen: MainMenuScreen!
+
+    override func setUp() async throws {
+        try await super.setUp()
+
+        launchApp()
+    }
+
+    private func restartTheApp() {
+        app.terminate()
+        _ = app.wait(for: .notRunning, timeout: TIMEOUT)
+        launchApp()
+        setUpScreenGraph()
+        waitForTabsButton()
+    }
+
     // https://mozilla.testrail.io/index.php?/cases/view/2441488
     func testNavigation() {
         let urlPlaceholder = "Search or enter address"
-        mozWaitForElementToExist(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url])
-        let defaultValuePlaceholder = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].placeholderValue!
+        let searchTextField = AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField
+        mozWaitForElementToExist(app.textFields[searchTextField])
+        let defaultValuePlaceholder = app.textFields[searchTextField].placeholderValue!
 
         // Check the url placeholder text and that the back and forward buttons are disabled
         XCTAssert(urlPlaceholder == defaultValuePlaceholder)
@@ -33,38 +63,39 @@ class NavigationTest: BaseTestCase {
         XCTAssertFalse(app.buttons[AccessibilityIdentifiers.Toolbar.forwardButton].isEnabled)
 
         if iPad() {
-            app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].tap()
+            app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].waitAndTap()
             // Once an url has been open, the back button is enabled but not the forward button
             navigator.performAction(Action.CloseURLBarOpen)
             navigator.nowAt(NewTabScreen)
         }
-        navigator.openURL(path(forTestPage: "test-example.html"))
+        navigator.goto(URLBarOpen)
+        navigator.openURL(path(forTestPage: TestPages.exampleHTML))
         waitUntilPageLoad()
-        let url = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
-        mozWaitForValueContains(url, value: "test-example.html")
+        let url = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
+        mozWaitForValueContains(url, value: "localhost")
         XCTAssertTrue(app.buttons[AccessibilityIdentifiers.Toolbar.backButton].isEnabled)
         XCTAssertFalse(app.buttons[AccessibilityIdentifiers.Toolbar.forwardButton].isEnabled)
 
         // Once a second url is open, back button is enabled but not the forward one till we go back to url_1
-        navigator.openURL(path(forTestPage: "test-mozilla-org.html"))
+        navigator.openURL(path(forTestPage: TestPages.mozillaOrg))
         waitUntilPageLoad()
-        mozWaitForValueContains(url, value: "test-mozilla-org.html")
+        mozWaitForValueContains(url, value: "localhost")
         XCTAssertTrue(app.buttons[AccessibilityIdentifiers.Toolbar.backButton].isEnabled)
         XCTAssertFalse(app.buttons[AccessibilityIdentifiers.Toolbar.forwardButton].isEnabled)
         // Go back to previous visited web site
-        app.buttons[AccessibilityIdentifiers.Toolbar.backButton].tap()
+        app.buttons[AccessibilityIdentifiers.Toolbar.backButton].waitAndTap()
 
         waitUntilPageLoad()
-        mozWaitForValueContains(url, value: "test-example.html")
+        mozWaitForValueContains(url, value: "localhost")
 
         if iPad() {
-            app.buttons[AccessibilityIdentifiers.Toolbar.forwardButton].tap()
+            app.buttons[AccessibilityIdentifiers.Toolbar.forwardButton].waitAndTap()
         } else {
             // Go forward to next visited web site
             app.buttons[AccessibilityIdentifiers.Toolbar.forwardButton].waitAndTap()
         }
         waitUntilPageLoad()
-        mozWaitForValueContains(url, value: "test-mozilla-org")
+        mozWaitForValueContains(url, value: "localhost")
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441489
@@ -75,7 +106,9 @@ class NavigationTest: BaseTestCase {
         navigator.goto(Intro_FxASignin)
         navigator.performAction(Action.OpenEmailToSignIn)
         mozWaitForElementToExist(app.webViews.firstMatch, timeout: TIMEOUT_LONG)
-        mozWaitForElementToExist(app.webViews.staticTexts["Continue to your Mozilla account"])
+        if #available(iOS 17, *) {
+            mozWaitForElementToExist(app.webViews.staticTexts["Continue to your ⁨Mozilla account⁩"], timeout: TIMEOUT_LONG)
+        }
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441493
@@ -105,14 +138,28 @@ class NavigationTest: BaseTestCase {
             app.navigationBars[AccessibilityIdentifiers.Settings.FirefoxAccount.fxaNavigationBar],
             timeout: TIMEOUT_LONG
         )
-        app.buttons["EmailSignIn.button"].tap()
+        app.buttons["EmailSignIn.button"].waitAndTap()
         mozWaitForElementToExist(app.webViews.textFields.element(boundBy: 0), timeout: TIMEOUT_LONG)
 
         let email = app.webViews.textFields.element(boundBy: 0)
         // Verify the placeholdervalues here for the textFields
         let mailPlaceholder = "Enter your email"
-        let defaultMailPlaceholder = email.placeholderValue!
-        XCTAssertEqual(mailPlaceholder, defaultMailPlaceholder, "The mail placeholder does not show the correct value")
+        var defaultMailPlaceholder: String
+        if #available(iOS 17, *) {
+            defaultMailPlaceholder = email.label
+            XCTAssertEqual(mailPlaceholder, defaultMailPlaceholder, "The mail placeholder does not show the correct value")
+        } else if #available(iOS 16, *), ProcessInfo.processInfo.operatingSystemVersion.majorVersion == 16 {
+            if let value = app.staticTexts["Enter your email"].value as? String {
+                defaultMailPlaceholder = value
+                XCTAssertEqual(mailPlaceholder,
+                               defaultMailPlaceholder,
+                               "The mail placeholder does not show the correct value")
+            } else {
+                XCTFail("The mail placeholder value is not a String")
+            }
+        } else {
+            mozWaitForElementToExist(app.staticTexts[mailPlaceholder])
+        }
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441494
@@ -120,20 +167,25 @@ class NavigationTest: BaseTestCase {
         waitForTabsButton()
         navigator.nowAt(NewTabScreen)
         // Open FxAccount from remote tab panel and check the Sign in to Firefox screen
+        waitForTabsButton()
         navigator.goto(TabTray)
-        navigator.performAction(Action.ToggleSyncMode)
+        navigator.performAction(Action.ToggleExperimentSyncMode)
 
-        app.tables.buttons[AccessibilityIdentifiers.Settings.FirefoxAccount.fxaSettingsButton].tap()
-        mozWaitForElementToExist(app.navigationBars["Sync and Save Data"])
-        mozWaitForElementToExist(app.buttons["Use Email Instead"])
+        app.buttons[AccessibilityIdentifiers.Settings.FirefoxAccount.fxaSettingsButton].waitAndTap()
+        waitForElementsToExist(
+            [
+                app.navigationBars["Sync and Save Data"],
+                app.buttons["Use Email Instead"]
+            ]
+        )
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441495
-    func testScrollsToTopWithMultipleTabs() {
-        navigator.goto(TabTray)
+    func testScrollingBehaviorInAWebPage() {
+        navigator.nowAt(HomePanelsScreen)
         navigator.openURL(website_1["url"]!)
         waitUntilPageLoad()
-        let url = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
+        let url = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
         mozWaitForValueContains(url, value: website_1["value"]!)
         let topElement = app.links["Mozilla"].firstMatch
         let bottomElement = app.webViews.links.staticTexts["Legal"]
@@ -149,42 +201,40 @@ class NavigationTest: BaseTestCase {
     // https://mozilla.testrail.io/index.php?/cases/view/2306836
     // Smoketest
     func testLongPressLinkOptions() {
+        let contextMenuScreen = ContextMenuScreen(app: app)
+
         openContextMenuForArticleLink()
-        mozWaitForElementToExist(app.buttons["Open in New Tab"])
-        mozWaitForElementToExist(app.buttons["Open in New Private Tab"])
-        mozWaitForElementToExist(app.buttons["Copy Link"])
-        mozWaitForElementToExist(app.buttons["Download Link"])
-        mozWaitForElementToExist(app.buttons["Share Link"])
-        mozWaitForElementToExist(app.buttons["Bookmark Link"])
+        contextMenuScreen.waitForContextMenuOptions()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441496
+    // Regression
     func testCopyLink() {
         longPressLinkOptions(optionSelected: "Copy Link")
-        navigator.goto(NewTabScreen)
-        app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].press(forDuration: 2)
+        let searchBar = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
+        searchBar.pressWithRetry(duration: 2, element: app.tables["Context Menu"])
 
         mozWaitForElementToExist(app.tables["Context Menu"])
-        app.tables.otherElements[AccessibilityIdentifiers.Photon.pasteAction].tap()
-        app.buttons["Go"].tap()
+        app.tables.buttons[AccessibilityIdentifiers.Photon.pasteAction].waitAndTap()
+        app.buttons["Go"].waitAndTap()
         waitUntilPageLoad()
-        let url = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
+        let url = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
         mozWaitForValueContains(url, value: website_2["moreLinkLongPressInfo"]!)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441497
     func testCopyLinkPrivateMode() {
         navigator.nowAt(NewTabScreen)
-        navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
+        navigator.toggleOn(userState.isPrivate, withAction: Action.ToggleExperimentPrivateMode)
         longPressLinkOptions(optionSelected: "Copy Link")
-        navigator.goto(NewTabScreen)
-        mozWaitForElementToExist(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url])
-        app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].press(forDuration: 2)
+        navigator.nowAt(NewTabScreen)
+        mozWaitForElementToExist(app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField])
+        app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].press(forDuration: 2)
 
-        app.tables.otherElements[AccessibilityIdentifiers.Photon.pasteAction].tap()
+        app.tables.buttons[AccessibilityIdentifiers.Photon.pasteAction].waitAndTap()
         app.buttons["Go"].waitAndTap()
         waitUntilPageLoad()
-        let url = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
+        let url = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
         mozWaitForValueContains(url, value: website_2["moreLinkLongPressInfo"]!)
     }
 
@@ -193,6 +243,7 @@ class NavigationTest: BaseTestCase {
         // Long press on the URL requires copy & paste permission
         throw XCTSkip("Test needs to be updated")
         /*
+            app.launch()
             // This test is for populated clipboard only so we need to make sure there's something in Pasteboard
             urlBarAddress.typeText("www.google.com")
             // Tapping two times when the text is not selected will reveal the menu
@@ -225,15 +276,15 @@ class NavigationTest: BaseTestCase {
             waitUntilPageLoad()
             mozWaitForElementToNotExist(app.staticTexts["XCUITests-Runner pasted from Fennec"])
 
-            app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].press(forDuration: 3)
+            app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].press(forDuration: 3)
             app.tables.otherElements[StandardImageIdentifiers.Large.link].tap()
 
             sleep(2)
-            app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].tap()
+            app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].tap()
             // Since the textField value appears all selected first time is clicked
             // this workaround is necessary
             mozWaitForElementToNotExist(app.staticTexts["XCUITests-Runner pasted from Fennec"])
-            urlBarAddress.tap()
+            urlBarAddress.waitAndTap()
             mozWaitForElementToExist(app.menuItems["Copy"])
             if iPad() {
                 XCTAssertTrue(app.menuItems["Cut"].exists)
@@ -253,25 +304,25 @@ class NavigationTest: BaseTestCase {
     private func longPressLinkOptions(optionSelected: String) {
         navigator.nowAt(NewTabScreen)
         if app.buttons["Done"].exists {
-            app.buttons["Done"].tap()
+            app.buttons["Done"].waitAndTap()
         }
         navigator.goto(ClearPrivateDataSettings)
-        app.cells.switches["Downloaded Files"].tap()
+        app.cells.switches["Downloaded Files"].waitAndTap()
         navigator.performAction(Action.AcceptClearPrivateData)
 
         navigator.goto(HomePanelsScreen)
-        navigator.openURL(path(forTestPage: "test-example.html"))
+        navigator.openURL(path(forTestPage: TestPages.exampleHTML))
         waitUntilPageLoad()
         app.webViews.links[website_2["link"]!].press(forDuration: 2)
-        app.buttons[optionSelected].tap()
+        app.buttons[optionSelected].waitAndTap()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441498
+    // Regression
     func testDownloadLink() {
         longPressLinkOptions(optionSelected: "Download Link")
         mozWaitForElementToExist(app.tables["Context Menu"])
-        XCTAssertTrue(app.tables["Context Menu"].otherElements[StandardImageIdentifiers.Large.download].exists)
-        app.tables["Context Menu"].otherElements[StandardImageIdentifiers.Large.download].tap()
+        app.tables["Context Menu"].buttons[StandardImageIdentifiers.Large.download].waitAndTap()
         navigator.goto(BrowserTabMenu)
         navigator.goto(LibraryPanel_Downloads)
         mozWaitForElementToExist(app.tables["DownloadsTable"])
@@ -281,13 +332,14 @@ class NavigationTest: BaseTestCase {
         mozWaitForElementToExist(app.tables.cells.staticTexts["example-domains.html"])
 
         // Tap on the just downloaded link to check that the web page is loaded
-        app.tables.cells.staticTexts["example-domains.html"].tap()
+        app.tables.cells.staticTexts["example-domains.html"].waitAndTap()
         waitUntilPageLoad()
-        let url = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
+        let url = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
         mozWaitForValueContains(url, value: "example-domains.html")
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441499
+    // Regression
     func testShareLink() {
         longPressLinkOptions(optionSelected: "Share Link")
         if #available(iOS 16, *) {
@@ -310,7 +362,7 @@ class NavigationTest: BaseTestCase {
     // https://mozilla.testrail.io/index.php?/cases/view/2441500
     func testShareLinkPrivateMode() {
         navigator.nowAt(NewTabScreen)
-        navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
+        navigator.toggleOn(userState.isPrivate, withAction: Action.ToggleExperimentPrivateMode)
         longPressLinkOptions(optionSelected: "Share Link")
         if #available(iOS 16, *) {
             mozWaitForElementToExist(app.cells["Copy"])
@@ -332,152 +384,192 @@ class NavigationTest: BaseTestCase {
     // https://mozilla.testrail.io/index.php?/cases/view/2441776
     // Smoketest
     func testPopUpBlocker() throws {
-        throw XCTSkip("This test is flakey")
-//        // Check that it is enabled by default
-//        navigator.nowAt(BrowserTab)
-//        mozWaitForElementToExist(app.buttons["TabToolbar.menuButton"], timeout: TIMEOUT)
-//        navigator.goto(SettingsScreen)
-//        mozWaitForElementToExist(app.tables[AccessibilityIdentifiers.Settings.tableViewController])
-//        let switchBlockPopUps = app.tables.cells.switches["blockPopups"]
-//        let switchValue = switchBlockPopUps.value!
-//        XCTAssertEqual(switchValue as? String, "1")
-//
-//        // Check that there are no pop ups
-//        navigator.openURL(popUpTestUrl)
-//        mozWaitForValueContains(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url], value: "blocker.html")
-//        mozWaitForElementToExist(app.webViews.staticTexts["Blocked Element"])
-//
-//        let numTabs = app.buttons["Show Tabs"].value
-//        XCTAssertEqual("1", numTabs as? String, "There should be only on tab")
-//
-//        // Now disable the Block PopUps option
-//        navigator.goto(BrowserTabMenu)
-//        navigator.goto(SettingsScreen)
-//        mozWaitForElementToExist(switchBlockPopUps, timeout: TIMEOUT)
-//        switchBlockPopUps.tap()
-//        let switchValueAfter = switchBlockPopUps.value!
-//        XCTAssertEqual(switchValueAfter as? String, "0")
-//
-//        // Check that now pop ups are shown, two sites loaded
-//        navigator.openURL(popUpTestUrl)
-//        waitUntilPageLoad()
-//        mozWaitForValueContains(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url], value: "example.com")
-//        let numTabsAfter = app.buttons["Show Tabs"].value
-//        XCTAssertNotEqual("1", numTabsAfter as? String, "Several tabs are open")
+        let toolbarScreen = ToolbarScreen(app: app)
+        let settingsScreen = SettingScreen(app: app)
+        let browserScreen = BrowserScreen(app: app)
+
+        // Check that it is enabled by default
+        navigator.nowAt(BrowserTab)
+        toolbarScreen.assertTabToolbarMenuButtonExists()
+        navigator.goto(BrowsingSettings)
+        settingsScreen.waitForBrowsingLinksSection()
+        settingsScreen.assertBlockPopUpsSwitchIsOn()
+        // Navigate back to the homepage
+        navigator.goto(BrowserTab)
+        navigator.nowAt(NewTabScreen)
+
+        // Check that there are no pop ups
+        navigator.openURL(popUpTestUrl)
+        browserScreen.addressToolbarContainValue(value: "localhost")
+        mozWaitForElementToExist(app.webViews.staticTexts["Blocked Element"])
+
+        toolbarScreen.assertTabsButtonValue(expectedCount: "1")
+
+        // Now disable the Browsing -> Block PopUps option
+        navigator.goto(BrowserTabMenu)
+        // issue 28625: iOS 15 may not open the menu fully.
+        if #unavailable(iOS 16) {
+            app.swipeUp()
+        }
+        navigator.goto(BrowsingSettings)
+        settingsScreen.waitForBrowsingLinksSection()
+        settingsScreen.tapOnBlockPopupsSwitch()
+        settingsScreen.assertBlockPopUpsSwitchIsOff()
+        // Navigate back to the homepage
+        settingsScreen.navigateBackToHomePage()
+        navigator.nowAt(HomePanelsScreen)
+
+        // Check that now pop ups are shown, two sites loaded
+        navigator.goto(URLBarOpen)
+        navigator.openURL(popUpTestUrl)
+        waitUntilPageLoad()
+        browserScreen.addressToolbarContainValue(value: "example.com")
+        toolbarScreen.assertMultipleTabsOpen()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306858
     // Smoketest
     func testSSL() {
-        navigator.nowAt(NewTabScreen)
+        let sslScreen = SSLWarningScreen(app: app)
+        let toolbarScreen = ToolbarScreen(app: app)
+        let browserScreen = BrowserScreen(app: app)
 
-        navigator.openURL("https://expired.badssl.com/")
-        app.buttons["Advanced"].waitAndTap()
+        browserScreen.navigateToURL("https://expired.badssl.com/")
+        sslScreen.waitForWarning()
+        sslScreen.assertWarningVisible()
 
-        app.links["Visit site anyway"].waitAndTap()
-        mozWaitForElementToExist(app.webViews.otherElements["expired.badssl.com"], timeout: TIMEOUT_LONG)
+        sslScreen.tapGoBack()
+        sslScreen.waitForWarningToDisappear()
+
+        toolbarScreen.openNewTabFromTabTray()
+        browserScreen.navigateToURL("https://expired.badssl.com/")
+        sslScreen.waitForWarning()
+        sslScreen.assertWarningVisible()
+
+        sslScreen.tapAdvanced()
+        sslScreen.tapVisitSiteAnyway()
+        sslScreen.waitForPageToLoadAfterBypass()
+
+        restartTheApp()
+        browserScreen.navigateToURL("https://expired.badssl.com/")
+        sslScreen.waitForWarning()
+        sslScreen.assertWarningVisible()
+        sslScreen.tapAdvanced()
+        sslScreen.tapVisitSiteAnyway()
+        sslScreen.waitForPageToLoadAfterBypass()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307022
     // In this test, the parent window opens a child and in the child it creates a fake link 'link-created-by-parent'
-    func testWriteToChildPopupTab() {
+    func testValidatePopUpWindows() {
         waitForTabsButton()
         navigator.nowAt(NewTabScreen)
-        navigator.goto(SettingsScreen)
-        mozWaitForElementToExist(app.tables[AccessibilityIdentifiers.Settings.tableViewController])
-        let switchBlockPopUps = app.tables.cells.switches["blockPopups"]
-        switchBlockPopUps.tap()
+        navigator.goto(BrowsingSettings)
+        let switchBlockPopUps = app.tables.cells.switches[AccessibilityIdentifiers.Settings.Browsing.blockPopUps]
+        switchBlockPopUps.waitAndTap()
         let switchValueAfter = switchBlockPopUps.value!
         XCTAssertEqual(switchValueAfter as? String, "0")
         navigator.goto(HomePanelsScreen)
-        navigator.openURL(path(forTestPage: "test-mozilla-org.html"))
+        navigator.openURL(path(forTestPage: TestPages.mozillaOrg))
         waitUntilPageLoad()
         navigator.openURL(path(forTestPage: "test-window-opener.html"))
         mozWaitForElementToExist(app.links["link-created-by-parent"])
     }
 
-    // https://mozilla.testrail.io/index.php?/cases/view/2307020
-    // Smoketest
-    func testVerifyBrowserTabMenu() {
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton])
-        navigator.nowAt(NewTabScreen)
-        navigator.goto(BrowserTabMenu)
-        mozWaitForElementToExist(app.tables["Context Menu"])
+    // https://mozilla.testrail.io/index.php?/cases/view/3904118
+    // Regression
+    func testTapElementOpensDesignatedURLInNewTab() {
+        let browserScreen = BrowserScreen(app: app)
+        let toolbarScreen = ToolbarScreen(app: app)
 
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.bookmarkTrayFill])
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.history])
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.download])
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.readingList])
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.login])
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.sync])
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.nightMode])
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.whatsNew])
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.helpCircle])
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.edit])
-        mozWaitForElementToExist(app.tables.otherElements[StandardImageIdentifiers.Large.settings])
+        // The page holding the element that triggers the navigation loads properly
+        waitForTabsButton()
+        navigator.nowAt(NewTabScreen)
+        navigator.openURL(path(forTestPage: TestPages.windowOpenOnTap))
+        waitUntilPageLoad()
+        browserScreen.assertOpenDesignatedURLButtonExists()
+        toolbarScreen.assertTabsButtonValue(expectedCount: "1")
+
+        // Tapping it opens the designated URL in a new tab
+        browserScreen.tapOpenDesignatedURLButton()
+        waitUntilPageLoad()
+        toolbarScreen.assertTabsButtonValue(expectedCount: "2")
+        browserScreen.assertExampleDomainTextExists()
+        browserScreen.addressToolbarContainValue(value: "localhost")
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441775
     // Smoketest
     func testURLBar() {
-        let urlBar = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
-        urlBar.waitAndTap()
+        let browserScreen = BrowserScreen(app: app)
+        browserScreen.tapOnAddressBar()
 
-        XCTAssertTrue(urlBarAddress.value(forKey: "hasKeyboardFocus") as? Bool ?? false)
+        browserScreen.assertAddressBarHasKeyboardFocus()
 
         // These instances are false positives of the swiftlint configuration
         // swiftlint:disable empty_count
         XCTAssert(app.keyboards.count > 0, "The keyboard is not shown")
         app.typeText("example.com\n")
 
-        mozWaitForValueContains(urlBar, value: "example.com/")
+        browserScreen.assertAddressBarContains(value: "example.com")
         XCTAssertFalse(app.keyboards.count > 0, "The keyboard is shown")
         // swiftlint:enable empty_count
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441772
+    // Regression
     func testOpenInNewTab() {
         // Long-tap on an article link. Choose "Open in New Tab".
         openContextMenuForArticleLink()
         app.buttons["Open in New Tab"].waitAndTap()
         // A new tab loading the article page should open
+        waitForTabsButton()
         navigator.goto(TabTray)
-        mozWaitForElementToExist(app.otherElements["Tabs Tray"].cells.staticTexts["Example Domain"])
-        let numTabs = app.otherElements["Tabs Tray"].cells.count
+        mozWaitForElementToExist(app.cells.elementContainingText(TestLabels.exampleDomain))
+        let numTabs = app.otherElements[tabsTray].cells.count
         XCTAssertEqual(numTabs, 2, "Total number of opened tabs should be 2")
-        mozWaitForElementToExist(app.otherElements["Tabs Tray"].cells.elementContainingText("Example Domain."))
+        mozWaitForElementToExist(app.otherElements[tabsTray].cells.elementContainingText("Example Domain."))
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441773
+    // Regression
     func testOpenInNewPrivateTab() {
         // Long-tap on an article link. Choose "Open in New Private Tab".
         openContextMenuForArticleLink()
         app.buttons["Open in New Private Tab"].waitAndTap()
         // The article is loaded in a new private tab
+        waitForTabsButton()
         navigator.goto(TabTray)
-        var numTabs = app.otherElements["Tabs Tray"].cells.count
+        var numTabs = app.otherElements[tabsTray].cells.count
         XCTAssertEqual(numTabs, 1, "Total number of regulat opened tabs should be 1")
-        mozWaitForElementToExist(app.otherElements["Tabs Tray"].cells.elementContainingText("Example Domain."))
+        mozWaitForElementToExist(app.otherElements[tabsTray].cells.elementContainingText("Example Domain."))
         if iPad() {
-            app.buttons["Private"].tap()
+            app.buttons["Private"].waitAndTap()
         } else {
-            app.buttons["privateModeLarge"].tap()
+            mozWaitForElementToExist(app.otherElements["navBarTabTray"])
+            navigator.toggleOn(userState.isPrivate, withAction: Action.ToggleExperimentPrivateMode)
         }
-        numTabs = app.otherElements["Tabs Tray"].cells.count
+        numTabs = app.otherElements[tabsTray].cells.count
         XCTAssertEqual(numTabs, 1, "Total number of private opened tabs should be 1")
-        mozWaitForElementToExist(app.otherElements["Tabs Tray"].cells.staticTexts["Example Domains"])
+        let identifier = "TabDisplayView.tabCell_0_0"
+        XCTAssertEqual(app.cells.matching(identifier: identifier).element.label,
+                       "Example Domains")
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2441774
+    // Regression
     func testBookmarkLink() {
         // Long-tap on an article link. Choose "Bookmark Link".
         openContextMenuForArticleLink()
-        mozWaitForElementToExist(app.buttons["Bookmark Link"])
-        app.buttons["Bookmark Link"].tap()
+        app.buttons["Bookmark Link"].waitAndTap()
         // The link has been added to the Bookmarks panel in Library
         navigator.goto(LibraryPanel_Bookmarks)
-        mozWaitForElementToExist(app.tables["Bookmarks List"])
-        mozWaitForElementToExist(app.tables["Bookmarks List"].staticTexts[website_2["link"]!])
+        waitForElementsToExist(
+            [
+                app.tables["Bookmarks List"],
+                app.tables["Bookmarks List"].staticTexts[website_2["link"]!]
+            ]
+        )
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2695828
@@ -485,70 +577,175 @@ class NavigationTest: BaseTestCase {
         mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton])
         navigator.nowAt(NewTabScreen)
         closeFromAppSwitcherAndRelaunch()
-        navigator.openURL(path(forTestPage: "test-example.html"))
+        navigator.openURL(path(forTestPage: TestPages.exampleHTML))
         waitUntilPageLoad()
-        app.links[website_2["link"]!].tap()
+        app.links[website_2["link"]!].waitAndTap()
         waitUntilPageLoad()
         let backButton = app.buttons[AccessibilityIdentifiers.Toolbar.backButton]
         mozWaitForElementToExist(backButton)
-        XCTAssertTrue(backButton.isHittable, "Back button is not hittable")
+        mozWaitElementHittable(element: backButton, timeout: TIMEOUT)
         XCTAssertTrue(backButton.isEnabled, "Back button is disabled")
-        backButton.tap()
+        backButton.waitAndTap()
         waitUntilPageLoad()
         if #available(iOS 16, *) {
-            let url = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
-            mozWaitForValueContains(url, value: "test-example.html")
+            let url = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
+            mozWaitForValueContains(url, value: "localhost")
             XCTAssertTrue(backButton.isHittable, "Back button is not hittable")
             XCTAssertTrue(backButton.isEnabled, "Back button is disabled")
-            backButton.tap()
+            backButton.waitAndTap()
             waitUntilPageLoad()
-            mozWaitForElementToExist(app.cells[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
+            mozWaitForElementToExist(app.links[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
         }
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2721282
     func testOpenExternalLink() {
-        // Disable "Block external links" toggle
+        // Go to Settings -> Browsing and disable "Block external links" toggle
         navigator.nowAt(NewTabScreen)
-        navigator.goto(SettingsScreen)
-        let switchBlockLinks = app.tables.cells.switches["blockOpeningExternalApps"]
+        navigator.goto(BrowsingSettings)
+        mozWaitForElementToExist(app.tables.otherElements[AccessibilityIdentifiers.Settings.Browsing.links])
+        let switchBlockLinks = app.tables.cells.switches[AccessibilityIdentifiers.Settings.BlockExternal.title]
         scrollToElement(switchBlockLinks)
-        if let switchValue = switchBlockLinks.value as? String, switchValue == "1" {
-            switchBlockLinks.tap()
+        if let switchValue = switchBlockLinks.value as? String, switchValue == "0" {
+            switchBlockLinks.waitAndTap()
         }
         // Open website and tap on one of the external article links
+        navigator.nowAt(BrowsingSettings)
+        navigator.goto(NewTabScreen)
         validateExternalLink()
         navigator.nowAt(NewTabScreen)
-        navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
-        validateExternalLink(isPrivate: true)
+        navigator.toggleOn(userState.isPrivate, withAction: Action.ToggleExperimentPrivateMode)
+        navigator.performAction(Action.OpenNewTabFromTabTray)
+        navigator.nowAt(BrowserTab)
+        validateExternalLink()
     }
 
-    private func validateExternalLink(isPrivate: Bool = false) {
-        navigator.openURL("ultimateqa.com/dummy-automation-websites")
-        waitUntilPageLoad()
-
-        // If there are multiple matches for "SauceDemo.com", then both the normal tab and the private tab views may be
-        // in the view hierarchy simultaneously. This should not change unintentionally! Check the Debug View Hierarchy.
-        // Note: Additional matches may also appear if the external website updates.
-        XCTAssertEqual(app.links.matching(identifier: "SauceDemo.com").count, 1, "Too many matches")
-
-        scrollToElement(app.links["SauceDemo.com"].firstMatch)
-        app.links["SauceDemo.com"].firstMatch.tap(force: true)
-        waitUntilPageLoad()
-        // Sometimes first tap is not working on iPad
-        if iPad() {
-            if let urlTextField =  app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].value as? String,
-               urlTextField == "ultimateqa.com/dummy-automation-websites" {
-                app.links["SauceDemo.com"].firstMatch.tap(force: true)
-            }
+    // https://mozilla.testrail.io/index.php?/cases/view/2306833
+    // Regression
+    func testLongTapFirefoxIconNewTab() throws {
+        guard #available(iOS 18, *) else {
+            throw XCTSkip("Test requires iOS 18+ due to app icon springboard behavior after app.terminate()")
         }
+        let springBoardScreen = SpringboardScreen(springboard: springboard)
+        let browserScreen = BrowserScreen(app: app)
+        waitForTabsButton()
+        springBoardScreen.pressHomeButton()
+        if isFennec {
+            springBoardScreen.assertFennecIconExists()
+            springBoardScreen.longPressFennecIcon(at: 0, duration: 1.5)
+        } else {
+            springBoardScreen.assertFirefoxIconExists()
+            springBoardScreen.longPressFirefoxIcon(at: 0, duration: 1.5)
+        }
+        springBoardScreen.tapNewTabButton()
+        navigator.openURL(website_1["url"]!)
+        waitUntilPageLoad()
+        browserScreen.assertAddressBarContains(value: website_1["value"]!)
+        browserScreen.assertLinkExists(named: "Mozilla")
+        browserScreen.assertWebViewLinkTextExists(text: "Legal")
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/view/3408299
+    func testLongTapFirefoxIconNewPrivateTab() throws {
+        guard #available(iOS 18, *) else {
+            throw XCTSkip("Test requires iOS 18+ due to app icon springboard context menu behavior")
+        }
+        let springBoardScreen = SpringboardScreen(springboard: springboard)
+        let browserScreen = BrowserScreen(app: app)
+        waitForTabsButton()
+        // Background instead of terminate: a SpringBoard cold-launch crashes on the simulator (code-sign kill).
+        springBoardScreen.pressHomeButton()
+        if isFennec {
+            springBoardScreen.assertFennecIconExists()
+            springBoardScreen.longPressFennecIcon(at: 0, duration: 1.5)
+        } else {
+            springBoardScreen.assertFirefoxIconExists()
+            springBoardScreen.longPressFirefoxIcon(at: 0, duration: 1.5)
+        }
+        springBoardScreen.tapNewPrivateButton()
+        browserScreen.assertPrivateModeMessageCardExists()
+        navigator.openURL(website_1["url"]!)
+        waitUntilPageLoad()
+        browserScreen.assertAddressBarContains(value: website_1["value"]!)
+        browserScreen.assertLinkExists(named: "Mozilla")
+        browserScreen.assertWebViewLinkTextExists(text: "Legal")
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/view/4221455
+    func testLongTapFirefoxIconAppIcon() throws {
+        guard #available(iOS 18, *) else {
+            throw XCTSkip("Test requires iOS 18+ due to app icon springboard behavior after app.terminate()")
+        }
+        let springBoardScreen = SpringboardScreen(springboard: springboard)
+        waitForTabsButton()
+        springBoardScreen.pressHomeButton()
+        if isFennec {
+            springBoardScreen.assertFennecIconExists()
+            springBoardScreen.longPressFennecIcon(at: 0, duration: 1.5)
+        } else {
+            springBoardScreen.assertFirefoxIconExists()
+            springBoardScreen.longPressFirefoxIcon(at: 0, duration: 1.5)
+        }
+        springBoardScreen.assertAppIconButtonExists()
+        springBoardScreen.tapAppIconButton()
+        mozWaitForElementToExist(app.navigationBars["App Icon"])
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/edit/3408300
+    func testLongTapFirefoxIconOpenLastBookmark() throws {
+        guard #available(iOS 18, *) else {
+            throw XCTSkip("Test requires iOS 18+ due to app icon springboard context menu behavior")
+        }
+        let springBoardScreen = SpringboardScreen(springboard: springboard)
+        let browserScreen = BrowserScreen(app: app)
+
+        waitForTabsButton()
+        navigator.nowAt(NewTabScreen)
+
+        // Open and bookmark a page
+        navigator.openURL(website_1["url"]!)
+        waitUntilPageLoad()
+        bookmark(isLockIconOff: false)
+
+        // Background instead of terminate: a SpringBoard cold-launch crashes on the simulator (code-sign kill).
+        springBoardScreen.pressHomeButton()
+
+        if isFennec {
+            springBoardScreen.assertFennecIconExists()
+            springBoardScreen.longPressFennecIcon(at: 0, duration: 1.5)
+        } else {
+            springBoardScreen.assertFirefoxIconExists()
+            springBoardScreen.longPressFirefoxIcon(at: 0, duration: 1.5)
+        }
+
+        // Verify all context menu options are present
+        springBoardScreen.assertAllContextMenuOptionsExist()
+        springBoardScreen.tapOpenLastBookmarkButton()
+
+        // Verify the bookmarked page opens
+        waitUntilPageLoad()
+        browserScreen.assertAddressBarContains(value: website_1["value"]!)
+        browserScreen.assertLinkExists(named: "Mozilla")
+        browserScreen.assertWebViewLinkTextExists(text: "Legal")
+    }
+
+    private func validateExternalLink() {
+        navigator.openURL("https://www.apple.com/apple-news/")
+        waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["Apple News"])
+
+        // Validate the external app is blocked from opening
+        app.otherElements["Local, navigation"].staticTexts["Try it free * footnote, Apple News+"]
+            .firstMatch.waitAndTap()
+        mozWaitForElementToExist(app.webViews.staticTexts["Apple News"])
         let tabsButton = app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton]
         mozWaitForElementToExist(tabsButton)
-        XCTAssertEqual(tabsButton.value as? String, "2")
+        XCTAssertEqual(tabsButton.value as? String, "1", "Total number of opened tabs should be 1")
     }
 
     private func openContextMenuForArticleLink() {
-        navigator.openURL(path(forTestPage: "test-example.html"))
+        navigator.nowAt(BrowserTab)
+        navigator.openURL(path(forTestPage: TestPages.exampleHTML))
         mozWaitForElementToExist(app.webViews.links[website_2["link"]!], timeout: TIMEOUT_LONG)
         app.webViews.links[website_2["link"]!].press(forDuration: 2)
         mozWaitForElementToExist(app.otherElements.collectionViews.element(boundBy: 0))

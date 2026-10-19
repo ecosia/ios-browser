@@ -2,25 +2,44 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Glean
 import XCTest
 
 @testable import Client
 
-@MainActor
-class WallpaperSelectorViewModelTests: XCTestCase {
-    private var wallpaperManager: WallpaperManagerInterface!
+private class MockWallpaperTelemetryUtility: OnboardingTelemetryProtocol {
+    var wallpaperSelectorViewCalled = false
+    var wallpaperSelectorCloseCalled = false
+    var wallpaperSelectorSelectedName: String?
+    var wallpaperSelectorSelectedType: String?
 
-    override func setUp() {
-        super.setUp()
+    func sendGoToSettingsButtonTappedTelemetry() {}
+    func sendDismissButtonTappedTelemetry() {}
+
+    func sendWallpaperSelectorViewTelemetry() { wallpaperSelectorViewCalled = true }
+    func sendWallpaperSelectorCloseTelemetry() { wallpaperSelectorCloseCalled = true }
+    func sendWallpaperSelectorSelectedTelemetry(wallpaperName: String, wallpaperType: String) {
+        wallpaperSelectorSelectedName = wallpaperName
+        wallpaperSelectorSelectedType = wallpaperType
+    }
+}
+
+@MainActor
+final class WallpaperSelectorViewModelTests: XCTestCase {
+    private var wallpaperManager: WallpaperManagerInterface!
+    private var mockTelemetry: MockWallpaperTelemetryUtility!
+
+    override func setUp() async throws {
+        try await super.setUp()
 
         wallpaperManager = WallpaperManagerMock()
+        mockTelemetry = MockWallpaperTelemetryUtility()
         addWallpaperCollections()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         wallpaperManager = nil
-        super.tearDown()
+        mockTelemetry = nil
+        try await super.tearDown()
     }
 
     func testInit_hasCorrectNumberOfWallpapers() {
@@ -47,29 +66,24 @@ class WallpaperSelectorViewModelTests: XCTestCase {
         let subject = createSubject()
         let indexPath = IndexPath(item: 1, section: 0)
 
-        subject.downloadAndSetWallpaper(at: indexPath) { result in
+        subject.downloadAndSetWallpaper(at: indexPath) { [mockManager] result in
             XCTAssertEqual(subject.selectedIndexPath, indexPath)
             XCTAssertEqual(mockManager.setCurrentWallpaperCallCount, 1)
         }
     }
 
-    /* Ecosia: remove Glean dependency
     func testRecordsWallpaperSelectorView() {
-        wallpaperManager = WallpaperManager()
         let subject = createSubject()
         subject.sendImpressionTelemetry()
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.wallpaperSelectorView)
+        XCTAssertTrue(mockTelemetry.wallpaperSelectorViewCalled)
     }
 
     func testRecordsWallpaperSelectorClose() {
-        wallpaperManager = WallpaperManager()
         let subject = createSubject()
         subject.sendDismissImpressionTelemetry()
-
-        testEventMetricRecordingSuccess(metric: GleanMetrics.Onboarding.wallpaperSelectorClose)
+        XCTAssertTrue(mockTelemetry.wallpaperSelectorCloseCalled)
     }
-     */
+
 //    func testClickingCell_recordsWallpaperChange() {
 //        let subject = createSubject()
 //
@@ -83,7 +97,10 @@ class WallpaperSelectorViewModelTests: XCTestCase {
 //    }
 
     func createSubject() -> WallpaperSelectorViewModel {
-        let subject = WallpaperSelectorViewModel(wallpaperManager: wallpaperManager)
+        let subject = WallpaperSelectorViewModel(
+            wallpaperManager: wallpaperManager,
+            telemetryUtility: mockTelemetry
+        )
         trackForMemoryLeaks(subject)
         return subject
     }

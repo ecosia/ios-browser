@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "Uygulama simgesi";
+
 /* (No Comment) */
 "New Private Tab" = "Yeni gizli sekme";
 
@@ -5,7 +8,7 @@
 "New Tab" = "Yeni sekme";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia, QR kodlarını taramak, fotoğraf ve video çekmek için kameranızı kullanır.";
+"NSCameraUsageDescription" = "Ecosia, QR kodlarını taramak, fotoğraf ve video çekmek için kameranızı kullanabilir.";
 
 /* Privacy - Face ID Usage Description */
 "NSFaceIDUsageDescription" = "Ecosia, kayıtlı parolalarınıza ve ödeme yöntemlerinize erişmek için Face ID’ye ihtiyaç duyar.";
@@ -18,6 +21,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Fotoğraf kaydetmenize olanak sağlar.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Ecosia, sesli arama için sesinizi metne dönüştürmek amacıyla konuşma tanıma özelliğini kullanır.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR kodu tara";

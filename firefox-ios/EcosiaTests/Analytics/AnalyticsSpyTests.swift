@@ -317,13 +317,16 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
             isDefaultUserAgentDesktop: false,
             hasChangedUserAgent: false,
             zoomLevel: 1,
-            readerModeIsAvailable: false,
+            // Ecosia: 155.1 replaced `readerModeIsAvailable` with a `ReaderModeConfiguration` and
+            // added a required `translationConfiguration`.
+            readerModeConfiguration: ReaderModeConfiguration(isAvailable: false, isActive: false),
             summaryIsAvailable: false,
             summarizerConfig: SummarizerConfig(instructions: "Test", options: [:]),
             isBookmarked: false,
             isInReadingList: false,
             isPinned: false,
-            accountData: AccountData(title: "Test", subtitle: nil)
+            accountData: AccountData(title: "Test", subtitle: nil),
+            translationConfiguration: nil
         )
     }
 
@@ -847,7 +850,6 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     func testShowInstructionStepsTriggersAnalyticsEvent() throws {
         User.shared.showDefaultBrowserSettingNudgeCard()
         DependencyHelperMock().bootstrapDependencies()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: AppContainer.shared.resolve())
 
         let view = makeInstructionsViewSUT()
             .onAppear {
@@ -869,7 +871,6 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     func testDismissInstructionStepsTriggersAnalyticsEvent() throws {
         User.shared.showDefaultBrowserSettingNudgeCard()
         DependencyHelperMock().bootstrapDependencies()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: AppContainer.shared.resolve())
 
         let view = makeInstructionsViewSUT()
             .onDisappear {
@@ -884,7 +885,6 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     func testDefaultBrowserSettingsOpenNativeSettingsTracksLabelAndProperty() throws {
         User.shared.showDefaultBrowserSettingNudgeCard()
         DependencyHelperMock().bootstrapDependencies()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: AppContainer.shared.resolve())
 
         let view = makeInstructionsViewSUT(onButtonTap: {
             Analytics.shared.defaultBrowserSettingsOpenNativeSettingsVia(.settings)

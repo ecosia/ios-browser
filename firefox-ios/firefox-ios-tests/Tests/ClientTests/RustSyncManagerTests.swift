@@ -3,9 +3,9 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 @testable import Client
-import Sync
-import Storage
 import Shared
+import Sync
+import TestKit
 import XCTest
 
 class RustSyncManagerTests: XCTestCase {

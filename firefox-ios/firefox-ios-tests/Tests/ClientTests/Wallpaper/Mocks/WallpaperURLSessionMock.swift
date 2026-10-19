@@ -3,6 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+// Ecosia: 155.1 moved `URLSessionProtocol` / `URLSessionDataTaskProtocol` / `DataTaskResult` out of
+// `Client/Protocols/URLSession/` into `BrowserKit/Sources/Shared/URLSession/`, so this Ecosia-owned
+// mock needs the module import that used not to be required.
+import Shared
 
 @testable import Client
 

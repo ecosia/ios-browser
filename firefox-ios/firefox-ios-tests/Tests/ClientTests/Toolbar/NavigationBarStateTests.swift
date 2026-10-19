@@ -39,7 +39,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         let initialState = createSubject()
         let reducer = navigationBarReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             ToolbarAction(
                 toolbarPosition: .bottom,
@@ -47,8 +47,6 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
                 isTranslucent: true,
                 addressBorderPosition: .none,
                 displayNavBorder: true,
-                isNewTabFeatureEnabled: true,
-                canShowDataClearanceAction: false,
                 middleButton: .newTab,
                 windowUUID: windowUUID,
                 actionType: ToolbarActionType.didLoadToolbars
@@ -98,7 +96,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         let initialState = createSubject()
         let reducer = navigationBarReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             ToolbarAction(
                 numberOfTabs: 2,
@@ -131,7 +129,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         let reducer = navigationBarReducer()
 
         let urlDidChangeState = loadWebsiteAction(state: initialState, reducer: reducer)
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             urlDidChangeState,
             ToolbarAction(
                 canGoBack: true,
@@ -152,7 +150,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         let initialState = createSubject()
         let reducer = navigationBarReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             ToolbarAction(
                 showMenuWarningBadge: true,
@@ -178,7 +176,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         let initialState = createSubject()
         let reducer = navigationBarReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             ToolbarAction(
                 addressBorderPosition: .top,
@@ -196,7 +194,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         let initialState = createSubject()
         let reducer = navigationBarReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             ToolbarAction(
                 toolbarPosition: .top,
@@ -215,7 +213,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         let initialState = createSubject()
         let reducer = navigationBarReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             ToolbarAction(
                 middleButton: .home,
@@ -234,7 +232,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         let initialState = createSubject()
         let reducer = navigationBarReducer()
 
-        let navigationMiddleButtonDidChangeState = reducer(
+        let navigationMiddleButtonDidChangeState = reducer.legacyReducer(
             initialState,
             ToolbarAction(
                 middleButton: .home,
@@ -252,7 +250,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
         let initialState = createSubject()
         let reducer = navigationBarReducer()
 
-        let navigationMiddleButtonDidChangeState = reducer(
+        let navigationMiddleButtonDidChangeState = reducer.legacyReducer(
             initialState,
             ToolbarAction(
                 middleButton: .newTab,
@@ -276,7 +274,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
     }
 
     private func loadWebsiteAction(state: NavigationBarState, reducer: Reducer<NavigationBarState>) -> NavigationBarState {
-        return reducer(
+        return reducer.legacyReducer(
             state,
             ToolbarAction(
                 url: URL(string: "http://mozilla.com"),
@@ -284,7 +282,7 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
                 isShowingNavigationToolbar: true,
                 canGoBack: true,
                 canGoForward: false,
-                lockIconImageName: StandardImageIdentifiers.Large.lockFill,
+                lockIconImageName: StandardImageIdentifiers.Small.shieldCheckmarkFill,
                 safeListedURLImageName: nil,
                 windowUUID: windowUUID,
                 actionType: ToolbarActionType.urlDidChange
@@ -295,8 +293,8 @@ final class NavigationBarStateTests: XCTestCase, StoreTestUtility {
     // MARK: StoreTestUtility
     func setupAppState() -> AppState {
         return AppState(
-            activeScreens: ActiveScreensState(
-                screens: [
+            presentedComponents: PresentedComponentsState(
+                components: [
                     .browserViewController(
                         BrowserViewControllerState(
                             windowUUID: windowUUID

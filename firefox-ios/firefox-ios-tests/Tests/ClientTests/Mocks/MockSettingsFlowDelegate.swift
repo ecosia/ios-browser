@@ -6,15 +6,11 @@ import Foundation
 
 @testable import Client
 
-@MainActor
 class MockSettingsFlowDelegate: SettingsFlowDelegate,
                                 GeneralSettingsDelegate,
                                 PrivacySettingsDelegate,
                                 AccountSettingsDelegate,
                                 AboutSettingsDelegate,
-                                /* Ecosia: Fix "Mail App" button in settings (MOB-4892)
-                                SupportSettingsDelegate {
-                                */
                                 SupportSettingsDelegate,
                                 BrowsingSettingsDelegate {
     var showDevicePassCodeCalled = 0
@@ -55,17 +51,12 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
     func showQRCode(delegate: QRCodeViewControllerDelegate) {
         showQRCodeCalled += 1
     }
-    // Ecosia: BrowsingSettingsDelegate Fix protocol conformance
-    func pressedAutoPlay() {}
 
     // MARK: GeneralSettingsDelegate
 
     func pressedCustomizeAppIcon() {}
-    func pressedBrowsing() {}
-    func pressedSummarize() {}
-    func pressedHome() {}
 
-    func pressedMailApp() {}
+    func pressedHome() {}
 
     func pressedNewTab() {}
 
@@ -73,13 +64,27 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
 
     func pressedSiri() {}
 
+    func pressedAIControls() {}
+
     func pressedToolbar() {}
+
+    func pressedTheme() {}
+
+    func pressedBrowsing() {}
+
+    func pressedQuickAnswers() {}
+
+    func pressedSummarize() {}
 
     func pressedTranslation() {}
 
     func pressedAutoFillsPasswords() {}
 
-    func pressedTheme() {}
+    // MARK: BrowsingSettingsDelegate
+
+    func pressedMailApp() {}
+
+    func pressedAutoPlay() {}
 
     // MARK: PrivacySettingsDelegate
 
@@ -91,9 +96,10 @@ class MockSettingsFlowDelegate: SettingsFlowDelegate,
 
     func pressedPasswords() {}
 
+    func pressedRelayMask() {}
+
     func pressedNotifications() {}
 
-    func pressedRelayMask() {}
     func pressedAddressAutofill() {}
 
     func askedToOpen(url: URL?, withTitle title: NSAttributedString?) {}

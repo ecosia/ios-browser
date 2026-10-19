@@ -38,7 +38,7 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
             expectation.fulfill()
         }
 
-        subject.pocketSectionProvider(AppState(), action)
+        subject.pocketSectionProvider.legacyMiddleware(AppState(), action)
 
         wait(for: [expectation])
 
@@ -47,23 +47,23 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
 
         XCTAssertEqual(actionType, MerinoMiddlewareActionType.retrievedUpdatedHomepageStories)
         XCTAssertEqual(mockStore.dispatchedActions.count, 1)
-        XCTAssertEqual(actionCalled.merinoStories?.count, 3)
+        XCTAssertEqual(actionCalled.merinoResponse?.stories?.count, 3)
         XCTAssertEqual(merinoManager.getMerinoItemsCalled, 1)
     }
 
-    func test_enterForegroundAction_getPocketData() throws {
+    func test_didBecomeActiveAction_getPocketData() throws {
         let subject = createSubject(merinoManager: merinoManager)
         let action = HomepageAction(
             windowUUID: .XCTestDefaultUUID,
-            actionType: HomepageMiddlewareActionType.enteredForeground
+            actionType: HomepageMiddlewareActionType.didBecomeActive
         )
 
-        let expectation = XCTestExpectation(description: "Homepage action entered foreground dispatched")
+        let expectation = XCTestExpectation(description: "Homepage action did become active dispatched")
         mockStore.dispatchCalled = {
             expectation.fulfill()
         }
 
-        subject.pocketSectionProvider(AppState(), action)
+        subject.pocketSectionProvider.legacyMiddleware(AppState(), action)
 
         wait(for: [expectation])
 
@@ -73,7 +73,7 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
         XCTAssertEqual(actionType, MerinoMiddlewareActionType.retrievedUpdatedHomepageStories)
         XCTAssertEqual(mockStore.dispatchedActions.count, 1)
         XCTAssertTrue(mockStore.dispatchedActions.first is MerinoAction)
-        XCTAssertEqual(actionCalled.merinoStories?.count, 3)
+        XCTAssertEqual(actionCalled.merinoResponse?.stories?.count, 3)
         XCTAssertEqual(merinoManager.getMerinoItemsCalled, 1)
     }
 
@@ -89,7 +89,7 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
             expectation.fulfill()
         }
 
-        subject.pocketSectionProvider(AppState(), action)
+        subject.pocketSectionProvider.legacyMiddleware(AppState(), action)
 
         wait(for: [expectation])
 
@@ -99,33 +99,7 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
         XCTAssertEqual(actionType, MerinoMiddlewareActionType.retrievedUpdatedHomepageStories)
         XCTAssertEqual(mockStore.dispatchedActions.count, 1)
         XCTAssertTrue(mockStore.dispatchedActions.first is MerinoAction)
-        XCTAssertEqual(actionCalled.merinoStories?.count, 3)
-        XCTAssertEqual(merinoManager.getMerinoItemsCalled, 1)
-    }
-
-    func test_initializeStoriesFeed_getPocketData() throws {
-        let subject = createSubject(merinoManager: merinoManager)
-        let action = HomepageAction(
-            windowUUID: .XCTestDefaultUUID,
-            actionType: StoriesFeedActionType.initialize
-        )
-
-        let expectation = XCTestExpectation(description: "Stories feed action initialize dispatched")
-        mockStore.dispatchCalled = {
-            expectation.fulfill()
-        }
-
-        subject.pocketSectionProvider(AppState(), action)
-
-        wait(for: [expectation])
-
-        let actionCalled = try XCTUnwrap(mockStore.dispatchedActions.first as? MerinoAction)
-        let actionType = try XCTUnwrap(actionCalled.actionType as? MerinoMiddlewareActionType)
-
-        XCTAssertEqual(actionType, MerinoMiddlewareActionType.retrievedUpdatedStoriesFeedStories)
-        XCTAssertEqual(mockStore.dispatchedActions.count, 1)
-        XCTAssertTrue(mockStore.dispatchedActions.first is MerinoAction)
-        XCTAssertEqual(actionCalled.merinoStories?.count, 3)
+        XCTAssertEqual(actionCalled.merinoResponse?.stories?.count, 3)
         XCTAssertEqual(merinoManager.getMerinoItemsCalled, 1)
     }
 
@@ -137,30 +111,21 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
             windowUUID: .XCTestDefaultUUID,
             actionType: MerinoActionType.tapOnHomepageMerinoCell
         )
-        subject.pocketSectionProvider(AppState(), action)
+        subject.pocketSectionProvider.legacyMiddleware(AppState(), action)
 
+        let firstMetric = GleanMetrics.Pocket.openStoryOrigin
+        let secondMetric = GleanMetrics.Pocket.openStoryPosition
         let firstSavedMetric = try XCTUnwrap(
             mockGleanWrapper.savedEvents.first as? LabeledMetricType<CounterMetricType>
         )
-        let expectedFirstMetricType = type(of: GleanMetrics.Pocket.openStoryOrigin)
-        let firstResultMetricType = type(of: firstSavedMetric)
-        let debugMessage = TelemetryDebugMessage(
-            expectedMetric: expectedFirstMetricType,
-            resultMetric: firstResultMetricType
-        )
-
-        let secondSavedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? LabeledMetricType<CounterMetricType>)
-        let expectedSecondMetricType = type(of: GleanMetrics.Pocket.openStoryPosition)
-        let secondResultMetricType = type(of: secondSavedMetric)
-        let secondDebugMessage = TelemetryDebugMessage(
-            expectedMetric: expectedSecondMetricType,
-            resultMetric: secondResultMetricType
+        let secondSavedMetric = try XCTUnwrap(
+            mockGleanWrapper.savedEvents[safe: 1] as? LabeledMetricType<CounterMetricType>
         )
 
         XCTAssertEqual(mockGleanWrapper.savedEvents.count, 2)
         XCTAssertEqual(mockGleanWrapper.incrementLabeledCounterCalled, 2)
-        XCTAssert(firstResultMetricType == expectedFirstMetricType, debugMessage.text)
-        XCTAssert(secondResultMetricType == expectedSecondMetricType, secondDebugMessage.text)
+        XCTAssert(firstSavedMetric === firstMetric, "Received \(firstSavedMetric) instead of \(firstMetric)")
+        XCTAssert(secondSavedMetric === secondMetric, "Received \(secondSavedMetric) instead of \(secondMetric)")
     }
 
     func test_tapOnHomepagePocketCell_doesNotSendTelemetryData() throws {
@@ -169,32 +134,29 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
             windowUUID: .XCTestDefaultUUID,
             actionType: MerinoActionType.tapOnHomepageMerinoCell
         )
-        subject.pocketSectionProvider(AppState(), action)
+        subject.pocketSectionProvider.legacyMiddleware(AppState(), action)
 
         XCTAssertEqual(mockGleanWrapper.savedEvents.count, 0)
-        XCTAssertEqual(mockGleanWrapper.recordLabelCalled, 0)
     }
 
     func test_viewedSectionAction_sendTelemetryData() throws {
         let subject = createSubject(merinoManager: merinoManager)
         let action = MerinoAction(windowUUID: .XCTestDefaultUUID, actionType: MerinoActionType.viewedSection)
 
-        subject.pocketSectionProvider(AppState(), action)
+        subject.pocketSectionProvider.legacyMiddleware(AppState(), action)
 
         let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? CounterMetricType)
-        let expectedMetricType = type(of: GleanMetrics.Pocket.sectionImpressions)
-        let resultMetricType = type(of: savedMetric)
-        let debugMessage = TelemetryDebugMessage(expectedMetric: expectedMetricType, resultMetric: resultMetricType)
+        let metric = GleanMetrics.Pocket.sectionImpressions
 
         XCTAssertEqual(mockGleanWrapper.incrementCounterCalled, 1)
-        XCTAssert(resultMetricType == expectedMetricType, debugMessage.text)
+        XCTAssert(savedMetric === metric, "Received \(savedMetric) instead of \(metric)")
     }
 
     func test_tappedOnOpenNewPrivateTabAction_sendTelemetryData() throws {
         let subject = createSubject(merinoManager: merinoManager)
 
         let merinoItem = createMerinoItem()
-        guard case let .merino(state) = merinoItem else { return }
+        guard case let .merino(state, _) = merinoItem else { return }
         let action = ContextMenuAction(
             menuType: MenuType(homepageItem: merinoItem),
             site: Site.createBasicSite(url: state.url?.absoluteString ?? "", title: state.title),
@@ -202,15 +164,13 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
             actionType: ContextMenuActionType.tappedOnOpenNewPrivateTab
         )
 
-        subject.pocketSectionProvider(AppState(), action)
+        subject.pocketSectionProvider.legacyMiddleware(AppState(), action)
 
         let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<NoExtras>)
-        let expectedMetricType = type(of: GleanMetrics.Pocket.openInPrivateTab)
-        let resultMetricType = type(of: savedMetric)
-        let debugMessage = TelemetryDebugMessage(expectedMetric: expectedMetricType, resultMetric: resultMetricType)
+        let event = GleanMetrics.Pocket.openInPrivateTab
 
         XCTAssertEqual(mockGleanWrapper.recordEventNoExtraCalled, 1)
-        XCTAssert(resultMetricType == expectedMetricType, debugMessage.text)
+        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
     }
 
     func test_tappedOnOpenNewPrivateTabAction_doesNotSendTelemetryData() {
@@ -224,7 +184,7 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
             windowUUID: .XCTestDefaultUUID,
             actionType: ContextMenuActionType.tappedOnOpenNewPrivateTab
         )
-        subject.pocketSectionProvider(AppState(), action)
+        subject.pocketSectionProvider.legacyMiddleware(AppState(), action)
 
         XCTAssertEqual(mockGleanWrapper.savedEvents.count, 0)
         XCTAssertEqual(mockGleanWrapper.recordEventCalled, 0)
@@ -257,7 +217,8 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
                     tileId: 0,
                     receivedRank: 0
                 )
-            )
+            ),
+            nil
         )
     }
 
@@ -272,8 +233,8 @@ final class MerinoMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Send
     // MARK: StoreTestUtility
     func setupAppState() -> AppState {
         return AppState(
-            activeScreens: ActiveScreensState(
-                screens: [
+            presentedComponents: PresentedComponentsState(
+                components: [
                     .homepage(
                         HomepageState(
                             windowUUID: .XCTestDefaultUUID

@@ -68,6 +68,26 @@ struct TabTrayPanelSwipePalette: EcosiaThemeColourPalette {
         return partialOverrides.iconDisabled
     }
 
+    var layer2: UIColor {
+        return partialOverrides.layer2
+    }
+
+    var layerSurfaceLow: UIColor {
+        return partialOverrides.layerSurfaceLow
+    }
+
+    var layerGlassTintNova: UIColor {
+        return partialOverrides.layerGlassTintNova
+    }
+
+    var iconInverted: UIColor {
+        return partialOverrides.iconInverted
+    }
+
+    var actionPrimary: UIColor {
+        return partialOverrides.actionPrimary
+    }
+
     struct PartialOverrides {
         var layer1: UIColor
         var iconPrimary: UIColor
@@ -82,9 +102,13 @@ struct TabTrayPanelSwipePalette: EcosiaThemeColourPalette {
         var borderAccentPrivate: UIColor
         var shadowDefault: UIColor
         var iconDisabled: UIColor
+        var layer2: UIColor
+        var layerSurfaceLow: UIColor
+        var layerGlassTintNova: UIColor
+        var iconInverted: UIColor
+        var actionPrimary: UIColor
     }
 
-    var layer2: UIColor { base.layer2 }
     var layer4: UIColor { base.layer4 }
     var layer5: UIColor { base.layer5 }
     var layer5Hover: UIColor { base.layer5Hover }
@@ -103,12 +127,11 @@ struct TabTrayPanelSwipePalette: EcosiaThemeColourPalette {
     var layerSelectedText: UIColor { base.layerSelectedText }
     var layerAutofillText: UIColor { base.layerAutofillText }
     var layerGradientURL: Gradient { base.layerGradientURL }
-    var layerSurfaceLow: UIColor { base.layerSurfaceLow }
     var layerSurfaceMedium: UIColor { base.layerSurfaceMedium }
+    var layerSurfaceMediumAlpha: UIColor { base.layerSurfaceMediumAlpha }
     var layerSurfaceMediumAlt: UIColor { base.layerSurfaceMediumAlt }
     var layerGradientSummary: Gradient { base.layerGradientSummary }
 
-    var actionPrimary: UIColor { base.actionPrimary }
     var actionPrimaryHover: UIColor { base.actionPrimaryHover }
     var actionPrimaryDisabled: UIColor { base.actionPrimaryDisabled }
     var actionSecondaryDisabled: UIColor { base.actionSecondaryDisabled }
@@ -145,6 +168,7 @@ struct TabTrayPanelSwipePalette: EcosiaThemeColourPalette {
     var iconAccentYellow: UIColor { base.iconAccentYellow }
     var iconRatingNeutral: UIColor { base.iconRatingNeutral }
 
+    var borderSecondary: UIColor { base.borderSecondary }
     var borderAccentNonOpaque: UIColor { base.borderAccentNonOpaque }
     var borderInverted: UIColor { base.borderInverted }
     var borderToolbarDivider: UIColor { base.borderToolbarDivider }
@@ -157,6 +181,32 @@ struct TabTrayPanelSwipePalette: EcosiaThemeColourPalette {
     var gradientOnboardingStop2: UIColor { base.gradientOnboardingStop2 }
     var gradientOnboardingStop3: UIColor { base.gradientOnboardingStop3 }
     var gradientOnboardingStop4: UIColor { base.gradientOnboardingStop4 }
+    var gradientAIStrongStop1: UIColor { base.gradientAIStrongStop1 }
+    var gradientAIStrongStop2: UIColor { base.gradientAIStrongStop2 }
+    var gradientAIStrongStop3: UIColor { base.gradientAIStrongStop3 }
+
+    var faviconLetterColorSet: FaviconLetterColorSet { base.faviconLetterColorSet }
+
+    // MARK: - Nova only tokens
+    var layerAccentSubtle: UIColor { base.layerAccentSubtle }
+    var layerInverse: UIColor { base.layerInverse }
+    var layerGlassSelectedFill: UIColor { base.layerGlassSelectedFill }
+    var textToast: UIColor { base.textToast }
+    var iconOnColorDisabled: UIColor { base.iconOnColorDisabled }
+    var iconPrivate: UIColor { base.iconPrivate }
+    var borderStrong: UIColor { base.borderStrong }
+    var borderAccentToast: UIColor { base.borderAccentToast }
+    var borderRadioButtonDefault: UIColor { base.borderRadioButtonDefault }
+    var gradient: Gradient { base.gradient }
+    var gradientAccent: Gradient { base.gradientAccent }
+    var gradientAccentSubtle: Gradient { base.gradientAccentSubtle }
+    var gradientAIStrong: Gradient { base.gradientAIStrong }
+    var gradientBorder: Gradient { base.gradientBorder }
+    var gradientPrivacy: Gradient { base.gradientPrivacy }
+    var gradientPrivacyMask: Gradient { base.gradientPrivacyMask }
+    var gradientWidgetSurface: Gradient { base.gradientWidgetSurface }
+    var gradientWidgetSurfaceStandard: Gradient { base.gradientWidgetSurfaceStandard }
+    var gradientWidgetSurfacePrivate: Gradient { base.gradientWidgetSurfacePrivate }
 
     /* Ecosia: Base must be EcosiaThemeColourPalette to forward ecosia
     init(base: ThemeColourPalette, overrides: PartialOverrides) {

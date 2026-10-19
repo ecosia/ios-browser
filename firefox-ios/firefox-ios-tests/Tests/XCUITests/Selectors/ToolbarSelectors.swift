@@ -13,9 +13,11 @@ protocol ToolbarSelectorsSet {
     var TABTOOLBAR_MENUBUTTON: Selector { get }
     var RELOAD_BUTTON: Selector { get }
     var SHARE_BUTTON: Selector { get }
+    var HOME_BUTTON: Selector { get }
     var TRANSLATE_BUTTON: Selector { get }
     var TRANSLATE_LOADING_BUTTON: Selector { get }
     var TRANSLATE_ACTIVE_BUTTON: Selector { get }
+    var TRANSLATE_LANGUAGE_ENGLISH_OPTION: Selector { get }
     var all: [Selector] { get }
 }
 
@@ -29,9 +31,11 @@ struct ToolbarSelectors: ToolbarSelectorsSet {
         static let tabToolbar_MenuButton = "TabToolbar.menuButton"
         static let reloadButton = AccessibilityIdentifiers.Toolbar.reloadButton
         static let shareButton = AccessibilityIdentifiers.Toolbar.shareButton
+        static let homeButton = AccessibilityIdentifiers.Toolbar.addNewTabButton
         static let translateButton = AccessibilityIdentifiers.Toolbar.translateButton
         static let translateLoadingButton = AccessibilityIdentifiers.Toolbar.translateLoadingButton
         static let translateActiveButton = AccessibilityIdentifiers.Toolbar.translateActiveButton
+        static let translateLanguageEnglishOption = "English"
     }
 
     let SETTINGS_MENU_BUTTON = Selector.buttonId(
@@ -82,6 +86,12 @@ struct ToolbarSelectors: ToolbarSelectorsSet {
         groups: ["browser", "toolbar"]
     )
 
+    let HOME_BUTTON = Selector.buttonId(
+        IDs.homeButton,
+        description: "Home button in the toolbar",
+        groups: ["browser", "toolbar"]
+    )
+
     let TRANSLATE_BUTTON = Selector.buttonId(
         IDs.translateButton,
         description: "Translate button on browser toolbar",
@@ -100,6 +110,13 @@ struct ToolbarSelectors: ToolbarSelectorsSet {
         groups: ["browser", "toolbar", "translation"]
     )
 
+    // Language option in the translation language picker action sheet, matched by its title.
+    let TRANSLATE_LANGUAGE_ENGLISH_OPTION = Selector.buttonId(
+        IDs.translateLanguageEnglishOption,
+        description: "English option in the translation language picker",
+        groups: ["translation"]
+    )
+
     var all: [Selector] { [
         SETTINGS_MENU_BUTTON,
         TABS_BUTTON,
@@ -109,8 +126,10 @@ struct ToolbarSelectors: ToolbarSelectorsSet {
         TABTOOLBAR_MENUBUTTON,
         RELOAD_BUTTON,
         SHARE_BUTTON,
+        HOME_BUTTON,
         TRANSLATE_BUTTON,
         TRANSLATE_LOADING_BUTTON,
-        TRANSLATE_ACTIVE_BUTTON
+        TRANSLATE_ACTIVE_BUTTON,
+        TRANSLATE_LANGUAGE_ENGLISH_OPTION
     ] }
 }

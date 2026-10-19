@@ -11,9 +11,9 @@ struct ToolbarAction: Action {
     let actionType: ActionType
     let toolbarPosition: SearchBarPosition?
     let toolbarLayout: ToolbarLayoutStyle?
+    let tabTrayButtonStyle: TabTrayButtonStyle?
     let isTranslucent: Bool?
     let numberOfTabs: Int?
-    let scrollAlpha: Float?
     let url: URL?
     let searchTerm: String?
     let isPrivate: Bool?
@@ -26,22 +26,24 @@ struct ToolbarAction: Action {
     let readerModeState: ReaderModeState?
     let addressBorderPosition: AddressToolbarBorderPosition?
     let displayNavBorder: Bool?
+    let lockIconButtonA11yId: String?
     let lockIconImageName: String?
     let lockIconNeedsTheming: Bool?
     let safeListedURLImageName: String?
     let isLoading: Bool?
-    let isNewTabFeatureEnabled: Bool?
-    let canShowDataClearanceAction: Bool?
-    let shouldShowKeyboard: Bool?
     let shouldAnimate: Bool?
     let middleButton: NavigationBarMiddleButtonType?
+    let isTranslationsEnabled: Bool?
     let translationConfiguration: TranslationConfiguration?
+    let previousTabScreenshot: UIImage?
+    let nextTabScreenshot: UIImage?
+    let isNovaDesignEnabled: Bool?
 
     init(toolbarPosition: SearchBarPosition? = nil,
          toolbarLayout: ToolbarLayoutStyle? = nil,
+         tabTrayButtonStyle: TabTrayButtonStyle? = nil,
          isTranslucent: Bool? = nil,
          numberOfTabs: Int? = nil,
-         scrollAlpha: Float? = nil,
          url: URL? = nil,
          searchTerm: String? = nil,
          isPrivate: Bool? = nil,
@@ -54,25 +56,28 @@ struct ToolbarAction: Action {
          readerModeState: ReaderModeState? = nil,
          addressBorderPosition: AddressToolbarBorderPosition = .none,
          displayNavBorder: Bool? = nil,
+         lockIconButtonA11yId: String? = nil,
          lockIconImageName: String? = nil,
          lockIconNeedsTheming: Bool? = nil,
          safeListedURLImageName: String? = nil,
          isLoading: Bool? = nil,
-         isNewTabFeatureEnabled: Bool? = nil,
-         canShowDataClearanceAction: Bool? = nil,
          shouldShowKeyboard: Bool? = nil,
          shouldAnimate: Bool? = nil,
          middleButton: NavigationBarMiddleButtonType? = nil,
+         isTranslationsEnabled: Bool? = nil,
          translationConfiguration: TranslationConfiguration? = nil,
+         previousTabScreenshot: UIImage? = nil,
+         nextTabScreenshot: UIImage? = nil,
+         isNovaDesignEnabled: Bool? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
         self.windowUUID = windowUUID
         self.actionType = actionType
         self.toolbarPosition = toolbarPosition
         self.toolbarLayout = toolbarLayout
+        self.tabTrayButtonStyle = tabTrayButtonStyle
         self.isTranslucent = isTranslucent
         self.numberOfTabs = numberOfTabs
-        self.scrollAlpha = scrollAlpha
         self.url = url
         self.searchTerm = searchTerm
         self.isPrivate = isPrivate
@@ -84,25 +89,43 @@ struct ToolbarAction: Action {
         self.readerModeState = readerModeState
         self.addressBorderPosition = addressBorderPosition
         self.displayNavBorder = displayNavBorder
+        self.lockIconButtonA11yId = lockIconButtonA11yId
         self.lockIconImageName = lockIconImageName
         self.lockIconNeedsTheming = lockIconNeedsTheming
         self.safeListedURLImageName = safeListedURLImageName
         self.isLoading = isLoading
-        self.isNewTabFeatureEnabled = isNewTabFeatureEnabled
-        self.canShowDataClearanceAction = canShowDataClearanceAction
-        self.shouldShowKeyboard = shouldShowKeyboard
         self.shouldAnimate = shouldAnimate
         self.canSummarize = canSummarize
         self.middleButton = middleButton
+        self.isTranslationsEnabled = isTranslationsEnabled
         self.translationConfiguration = translationConfiguration
+        self.previousTabScreenshot = previousTabScreenshot
+        self.nextTabScreenshot = nextTabScreenshot
+        self.isNovaDesignEnabled = isNovaDesignEnabled
     }
+}
+
+enum ToolbarModernAction: ModernAction {
+    /// The user scrolled the page. `true` collapses the toolbar to the pill as the page
+    /// scrolls down; `false` restores it when scrolling back up.
+    case userDidScroll(minimizeAddressBar: Bool)
+
+    /// A web form's keyboard accessory view's visibility changed. Becoming visible also minimizes
+    /// the address bar. Restore address bar remains in `keyboardDidHide` so a scroll-minimized bar isn't force-reopened.
+    case accessoryViewVisibilityChanged(isVisible: Bool)
+
+    /// The keyboard was dismissed. Dispatched to restore the address bar after it was minimized by
+    /// `accessoryViewVisibilityChanged`.
+    case keyboardDidHide
+
+    case didCancelKeyboardRequest
 }
 
 enum ToolbarActionType: ActionType {
     case didLoadToolbars
     case numberOfTabsChanged
     case urlDidChange
-    case scrollAlphaNeedsUpdate
+    case lockIconChanged
     case didSetTextInLocationView
     case borderPositionChanged
     case toolbarPositionChanged
@@ -111,31 +134,26 @@ enum ToolbarActionType: ActionType {
     case didStartEditingUrl
     case cancelEditOnHomepage
     case cancelEdit
-    case keyboardStateDidChange
     case animationStateChanged
     case readerModeStateChanged
     case backForwardButtonStateChanged
     case traitCollectionDidChange
     case websiteLoadingStateDidChange
     case searchEngineDidChange
+    case googleLensSettingDidChange
     case navigationButtonDoubleTapped
     case navigationHintFinishedPresenting
     case clearSearch
     case didDeleteSearchTerm
     case didEnterSearchTerm
+    case didSummarizeSettingsChange
+    case didSetTabScreenshot
     // User submitted a search term to load the search request
     case didSubmitSearchTerm
     case didSetSearchTerm
     case didStartTyping
     case translucencyDidChange
     case navigationMiddleButtonDidChange
-    // Translations related actions that are needed to associate with the toolbar
-    // due to how our leadingPageActions are tied to ToolbarActions
-    case didStartTranslatingPage
-    case translationCompleted
-    case receivedTranslationLanguage
-    case didReceiveErrorTranslating
-    case didTranslationSettingsChange
 }
 
 struct ToolbarMiddlewareAction: Action {
@@ -146,12 +164,14 @@ struct ToolbarMiddlewareAction: Action {
     let gestureType: ToolbarButtonGesture?
     let scrollOffset: CGPoint?
     let readerModeState: ReaderModeState?
+    let isGoogleLensEnabled: Bool?
 
     init(buttonType: ToolbarActionConfiguration.ActionType? = nil,
          buttonTapped: UIButton? = nil,
          gestureType: ToolbarButtonGesture? = nil,
          scrollOffset: CGPoint? = nil,
          readerModeState: ReaderModeState? = nil,
+         isGoogleLensEnabled: Bool? = nil,
          windowUUID: WindowUUID,
          actionType: ActionType) {
         self.windowUUID = windowUUID
@@ -161,6 +181,7 @@ struct ToolbarMiddlewareAction: Action {
         self.readerModeState = readerModeState
         self.gestureType = gestureType
         self.scrollOffset = scrollOffset
+        self.isGoogleLensEnabled = isGoogleLensEnabled
     }
 }
 
@@ -168,7 +189,9 @@ enum ToolbarMiddlewareActionType: ActionType {
     case didTapButton
     case customA11yAction
     case urlDidChange
+    case googleLensAvailabilityDidChange
     case didClearSearch
     case didStartDragInteraction
+    case didSwipeToOpenTabTray
     case loadSummaryState
 }

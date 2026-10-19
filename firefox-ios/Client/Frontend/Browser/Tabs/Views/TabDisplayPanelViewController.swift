@@ -17,7 +17,6 @@ final class TabDisplayPanelViewController: UIViewController,
                                      Themeable,
                                      EmptyPrivateTabsViewDelegate,
                                      StoreSubscriber,
-                                     FeatureFlaggable,
                                      TabTrayThemeable {
     typealias SubscriberStateType = TabsPanelState
 
@@ -29,11 +28,15 @@ final class TabDisplayPanelViewController: UIViewController,
     private let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
     private var viewHasAppeared = false
+    private var tabTrayUtils: TabTrayUtils
 
-    private var isTabTrayUIExperimentsEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.tabTrayUIExperiments, checking: .buildOnly)
-        && UIDevice.current.userInterfaceIdiom != .pad
-    }
+    /// Latest subscription generation per window. The `.tabsPanel` component is shared by window, so
+    /// only the current owner should remove it: each `subscribeToRedux()` bumps the generation, and a
+    /// stale panel whose `subscriptionGeneration` no longer matches skips `removeComponent`.
+    /// Fixes FXIOS-15973: https://mozilla-hub.atlassian.net/browse/FXIOS-15973
+    @MainActor
+    private static var latestSubscriptionGeneration = [WindowUUID: Int]()
+    private var subscriptionGeneration = 0
 
     private lazy var layout: TabTrayLayoutType = {
         return shouldUseiPadSetup() ? .regular : .compact
@@ -41,6 +44,10 @@ final class TabDisplayPanelViewController: UIViewController,
 
     var isCompactLayout: Bool {
         return layout == .compact
+    }
+
+    var isTabTrayUIExperimentsEnabled: Bool {
+        return tabTrayUtils.shouldDisplayExperimentUI()
     }
 
     // MARK: UI elements
@@ -75,12 +82,14 @@ final class TabDisplayPanelViewController: UIViewController,
          windowUUID: WindowUUID,
          notificationCenter: NotificationProtocol = NotificationCenter.default,
          themeManager: ThemeManager = AppContainer.shared.resolve(),
-         dragAndDropDelegate: TabDisplayViewDragAndDropInteraction) {
+         dragAndDropDelegate: TabDisplayViewDragAndDropInteraction,
+         tabTrayUtils: TabTrayUtils = DefaultTabTrayUtils()) {
         self.panelType = isPrivateMode ? .privateTabs : .tabs
         self.tabsState = TabsPanelState(windowUUID: windowUUID, isPrivateMode: isPrivateMode)
         self.notificationCenter = notificationCenter
         self.themeManager = themeManager
         self.windowUUID = windowUUID
+        self.tabTrayUtils = tabTrayUtils
         super.init(nibName: nil, bundle: nil)
         tabDisplayView.dragAndDropDelegate = dragAndDropDelegate
     }
@@ -206,11 +215,11 @@ final class TabDisplayPanelViewController: UIViewController,
     }
 
     var shouldUsePrivateOverride: Bool {
-        return featureFlags.isFeatureEnabled(.feltPrivacySimplifiedUI, checking: .buildOnly)
+        return true
     }
 
     var shouldBeInPrivateTheme: Bool {
-        let tabTrayState = store.state.screenState(TabTrayState.self, for: .tabsTray, window: windowUUID)
+        let tabTrayState = store.state.componentState(TabTrayState.self, for: .tabsTray, window: windowUUID)
         return tabTrayState?.isPrivateMode ?? false
     }
 
@@ -247,15 +256,16 @@ final class TabDisplayPanelViewController: UIViewController,
             if statusBarView.superview == nil {
                 view.addSubview(statusBarView)
             }
-            statusBarView.backgroundColor = theme.colors.layer3
+            statusBarView.backgroundColor = theme.isNova ? theme.colors.layer1 : theme.colors.layer3
             adjustStatusBarFrameIfNeeded()
         } else {
             gradientLayer.isHidden = false
             statusBarView.removeFromSuperview()
             gradientLayer.locations = [0.0, 0.12]
+            let fadeColor = theme.isNova ? theme.colors.layer1 : theme.colors.layer3
             gradientLayer.colors = [
-                theme.colors.layer3.cgColor,
-                theme.colors.layer3.withAlphaComponent(0.0).cgColor
+                fadeColor.cgColor,
+                fadeColor.withAlphaComponent(0.0).cgColor
             ]
         }
     }
@@ -311,15 +321,19 @@ final class TabDisplayPanelViewController: UIViewController,
     // MARK: - Redux
 
     func subscribeToRedux() {
-        let screenAction = ScreenAction(windowUUID: windowUUID,
-                                        actionType: ScreenActionType.showScreen,
-                                        screen: .tabsPanel)
+        let screenAction = ComponentAction(windowUUID: windowUUID,
+                                           actionType: ComponentActionType.addComponent,
+                                           component: .tabsPanel)
         store.dispatch(screenAction)
 
         let didLoadAction = TabPanelViewAction(panelType: panelType,
                                                windowUUID: windowUUID,
                                                actionType: TabPanelViewActionType.tabPanelDidLoad)
         store.dispatch(didLoadAction)
+
+        let generation = (Self.latestSubscriptionGeneration[windowUUID] ?? 0) + 1
+        Self.latestSubscriptionGeneration[windowUUID] = generation
+        subscriptionGeneration = generation
 
         let uuid = windowUUID
         store.subscribe(self, transform: {
@@ -330,9 +344,14 @@ final class TabDisplayPanelViewController: UIViewController,
     }
 
     func unsubscribeFromRedux() {
-        let action = ScreenAction(windowUUID: windowUUID,
-                                  actionType: ScreenActionType.closeScreen,
-                                  screen: .tabsPanel)
+        // Skip if a newer panel has already re-subscribed for this window: removing the shared
+        // `.tabsPanel` component here would wipe the state the newly-opened tab tray depends on.
+        guard Self.latestSubscriptionGeneration[windowUUID] == subscriptionGeneration else { return }
+        Self.latestSubscriptionGeneration[windowUUID] = nil
+
+        let action = ComponentAction(windowUUID: windowUUID,
+                                     actionType: ComponentActionType.removeComponent,
+                                     component: .tabsPanel)
         store.dispatch(action)
     }
 

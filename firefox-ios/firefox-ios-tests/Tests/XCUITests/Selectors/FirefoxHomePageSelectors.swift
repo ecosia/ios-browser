@@ -7,7 +7,7 @@ import XCTest
 protocol FirefoxHomePageSelectorsSet {
     var TOPSITES_ITEMCELL: Selector { get }
     var BOOKMARKS_ITEMCELL: Selector { get }
-    var CUSTOMIZE_HOMEPAGE: Selector { get }
+    var BOOKMARKS_SHOW_ALL_BUTTON: Selector { get }
     var all: [Selector] { get }
 }
 
@@ -15,7 +15,7 @@ struct FirefoxHomePageSelectors: FirefoxHomePageSelectorsSet {
     private enum IDs {
         static let topSites_ItemCell = AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell
         static let bookmarks_ItemCell = AccessibilityIdentifiers.FirefoxHomepage.Bookmarks.itemCell
-        static let customize_homepage = AccessibilityIdentifiers.FirefoxHomepage.MoreButtons.customizeHomePage
+        static let bookmarks_ShowAllButton = AccessibilityIdentifiers.FirefoxHomepage.MoreButtons.bookmarks
     }
 
     let TOPSITES_ITEMCELL = Selector.linkById(
@@ -30,11 +30,12 @@ struct FirefoxHomePageSelectors: FirefoxHomePageSelectorsSet {
         groups: ["FxHomepage"]
     )
 
-    let CUSTOMIZE_HOMEPAGE = Selector.buttonId(
-        IDs.customize_homepage,
-        description: "Customize Home Page button",
+    // The header button is titled "Show All"; matched by identifier so the title can change freely.
+    let BOOKMARKS_SHOW_ALL_BUTTON = Selector.buttonId(
+        IDs.bookmarks_ShowAllButton,
+        description: "Show All button in the homepage Bookmarks section header",
         groups: ["FxHomepage"]
     )
 
-    var all: [Selector] { [TOPSITES_ITEMCELL, BOOKMARKS_ITEMCELL, CUSTOMIZE_HOMEPAGE] }
+    var all: [Selector] { [TOPSITES_ITEMCELL, BOOKMARKS_ITEMCELL, BOOKMARKS_SHOW_ALL_BUTTON] }
 }

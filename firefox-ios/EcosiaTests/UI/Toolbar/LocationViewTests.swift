@@ -215,4 +215,6 @@ private final class MockLocationViewDelegate: LocationViewDelegate {
     func locationViewDidTapSearchEngine<T: SearchEngineView>(_ searchEngine: T) {}
     func locationViewAccessibilityActions() -> [UIAccessibilityCustomAction]? { nil }
     func locationTextFieldNeedsSearchReset() {}
+    // Ecosia: new `LocationViewDelegate` requirement in 155.1.
+    func locationViewDidDisplayEditingAccessoryButton(_ button: UIButton, contextualHintType: String) {}
 }

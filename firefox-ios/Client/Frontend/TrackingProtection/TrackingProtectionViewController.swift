@@ -8,6 +8,8 @@ import Common
 import ComponentLibrary
 import SiteImageView
 import Redux
+import X509
+import Storage
 
 struct TPMenuUX {
     struct UX {
@@ -17,6 +19,7 @@ struct TPMenuUX {
         static let headerLabelDistance: CGFloat = 2.0
         static let iconSize: CGFloat = 24
         static let connectionDetailsHeaderMargins: CGFloat = 8
+        static let connectionDetailsFooterMargins: CGFloat = 16
         static let faviconCornerRadius: CGFloat = 16
         static let clearDataButtonTopDistance: CGFloat = 32
         static let clearDataButtonBorderWidth: CGFloat = 0
@@ -28,6 +31,7 @@ struct TPMenuUX {
             viewCornerRadius
         }
         static let backgroundAlpha: CGFloat = 0.80
+        static let novaBackgroundAlpha: CGFloat = 0.95
         struct Line {
             static let height: CGFloat = 0.5
         }
@@ -55,7 +59,7 @@ class TrackingProtectionViewController: UIViewController,
     var currentWindowUUID: UUID? { windowUUID }
     private let logger: Logger
 
-    weak var enhancedTrackingProtectionMenuDelegate: TrackingProtectionMenuDelegate?
+    weak var trackingProtectionMenuDelegate: TrackingProtectionMenuDelegate?
 
     private var foxImageHeightConstraint: NSLayoutConstraint?
 
@@ -194,15 +198,41 @@ class TrackingProtectionViewController: UIViewController,
         }
     }
 
+    private func getCertificates(from serverTrust: SecTrust) -> [Certificate] {
+        guard let certificateChain = SecTrustCopyCertificateChain(serverTrust) as? [SecCertificate] else {
+            return []
+        }
+        var certificates = [Certificate]()
+        certificates.reserveCapacity(certificateChain.count)
+        for certificate in certificateChain {
+            let certificateData = SecCertificateCopyData(certificate) as Data
+            do {
+                let certificate = try Certificate(derEncoded: Array(certificateData))
+                certificates.append(certificate)
+            } catch {
+                DefaultLogger.shared.log("\(error)",
+                                         level: .warning,
+                                         category: .certificate)
+            }
+        }
+        return certificates
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateBlockedTrackersCount()
         updateConnectionStatus()
         applyTheme()
-        getCertificates(for: model.url) { certificates in
-            if let certificates {
-                ensureMainThread { [weak self] in
-                    self?.model.certificates = certificates
+
+        if let serverTrust = model.selectedTab?.webView?.serverTrust {
+            model.certificates = getCertificates(from: serverTrust)
+        } else if let url = model.selectedTab?.webView?.url,
+                  let internalURL = InternalURL(url),
+                  internalURL.isCertificateErrorURL,
+                  let originalURL = internalURL.originalURLFromErrorPage {
+            CertificatesFetcher().getCertificates(for: originalURL) { certificates in
+                Task { @MainActor in
+                    self.model.certificates = certificates ?? []
                 }
             }
         }
@@ -235,7 +265,7 @@ class TrackingProtectionViewController: UIViewController,
             case .back:
                 navigationController?.popViewController(animated: true)
             case .close:
-                enhancedTrackingProtectionMenuDelegate?.didFinish()
+                trackingProtectionMenuDelegate?.didFinish()
             case .settings:
                 showSettings()
             }
@@ -262,9 +292,9 @@ class TrackingProtectionViewController: UIViewController,
     }
 
     func subscribeToRedux() {
-        let action = ScreenAction(windowUUID: windowUUID,
-                                  actionType: ScreenActionType.showScreen,
-                                  screen: .trackingProtection)
+        let action = ComponentAction(windowUUID: windowUUID,
+                                     actionType: ComponentActionType.addComponent,
+                                     component: .trackingProtection)
         store.dispatch(action)
         let uuid = windowUUID
         store.subscribe(self, transform: {
@@ -275,9 +305,9 @@ class TrackingProtectionViewController: UIViewController,
     }
 
     func unsubscribeFromRedux() {
-        let action = ScreenAction(windowUUID: self.windowUUID,
-                                  actionType: ScreenActionType.closeScreen,
-                                  screen: .trackingProtection)
+        let action = ComponentAction(windowUUID: self.windowUUID,
+                                     actionType: ComponentActionType.removeComponent,
+                                     component: .trackingProtection)
         store.dispatch(action)
     }
 
@@ -319,12 +349,8 @@ class TrackingProtectionViewController: UIViewController,
         ]
         constraints.append(contentsOf: headerConstraints)
         headerContainer.closeButtonCallback = { [weak self] in
-            self?.enhancedTrackingProtectionMenuDelegate?.didFinish()
+            self?.trackingProtectionMenuDelegate?.didFinish()
         }
-        headerContainer.setupAccessibility(
-            closeButtonA11yLabel: model.closeButtonA11yLabel,
-            closeButtonA11yId: model.closeButtonA11yId
-        )
         headerContainer.updateHeaderLineView(isHidden: true)
     }
 
@@ -354,8 +380,11 @@ class TrackingProtectionViewController: UIViewController,
 
     // MARK: Trackers Connection Setup
     private func setupTrackersConnectionView() {
-        // Ecosia: Add top corner rounding since connection details header is removed
-        trackersConnectionContainer.layer.cornerRadius = TPMenuUX.UX.viewCornerRadius
+        // Ecosia: Add top corner rounding since connection details header is removed. Use
+        // `newStyleCornerRadius` (24 on iOS 26, `viewCornerRadius` below it) because this container is
+        // now the panel's top card, and that is the radius upstream gives the card it replaced — and
+        // the sibling `toggleView` — on iOS 26.
+        trackersConnectionContainer.layer.cornerRadius = TPMenuUX.UX.newStyleCornerRadius
         trackersConnectionContainer.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         trackersConnectionContainer.layer.masksToBounds = true
         baseView.addSubview(trackersConnectionContainer)
@@ -387,7 +416,11 @@ class TrackingProtectionViewController: UIViewController,
         ]
         constraints.append(contentsOf: trackersConnectionConstraints)
         trackersView.trackersButtonCallback = { [weak self] in
-            guard let self else { return }
+            guard let self,
+                  let trackersBlocked = model.contentBlockerStats?.total,
+                  trackersBlocked > 0 else {
+                return
+            }
             store.dispatch(
                 TrackingProtectionAction(
                     windowUUID: self.windowUUID,
@@ -396,7 +429,13 @@ class TrackingProtectionViewController: UIViewController,
             )
         }
         connectionStatusView.connectionStatusButtonCallback = { [weak self] in
-            guard let self, model.connectionSecure else { return }
+            guard let self else { return }
+
+            let isCertificateErrorPage = InternalURL(model.url)?.isCertificateErrorURL ?? false
+
+            guard InternalURL(model.url) == nil || isCertificateErrorPage else {
+                return
+            }
 
             store.dispatch(
                 TrackingProtectionAction(
@@ -512,11 +551,16 @@ class TrackingProtectionViewController: UIViewController,
     }
 
     private func updateConnectionStatus() {
+        let isInternalCertErrorURL = InternalURL(model.url)?.isCertificateErrorURL ?? false
+        let origin = CertStore.origin(for: model.url) ?? ""
+        let isManuallyTrusted = profile?.certStore.hasCertificate(forOrigin: origin) ?? false
         model.connectionSecure = model.selectedTab?.webView?.hasOnlySecureContent ?? false
         connectionStatusView.setConnectionStatus(image: model.getConnectionStatusImage(themeType: currentTheme().type),
                                                  text: model.connectionStatusString,
                                                  isConnectionSecure: model.connectionSecure,
-                                                 theme: currentTheme())
+                                                 theme: currentTheme(),
+                                                 isInternalCertErrorURL: isInternalCertErrorURL,
+                                                 isManuallyTrusted: isManuallyTrusted)
         /* Ecosia: Remove "Firefox is on Guard" connection details header
         connectionDetailsHeaderView.setupDetails(title: model.connectionDetailsTitle,
                                                  status: model.connectionDetailsHeader,
@@ -560,19 +604,42 @@ class TrackingProtectionViewController: UIViewController,
 
     // MARK: - Accessibility
     private func setupAccessibilityIdentifiers() {
-        // Ecosia: Remove "Firefox is on Guard" connection details header
-        // connectionDetailsHeaderView.setupAccessibilityIdentifiers(foxImageA11yId: model.foxImageA11yId)
+        scrollView.accessibilityIdentifier = model.scrollViewA11yId
+        baseView.accessibilityIdentifier = model.baseViewA11yId
+        headerContainer.setupAccessibility(
+            faviconA11yId: model.faviconA11yId,
+            titleLabelA11yId: model.titleLabelA11yId,
+            subtitleLabelA11yId: model.subtitleLabelA11yId,
+            closeButtonA11yLabel: model.closeButtonA11yLabel,
+            closeButtonA11yId: model.closeButtonA11yId
+        )
+        /* Ecosia: Remove "Firefox is on Guard" connection details header
+        connectionDetailsHeaderView.setupAccessibilityIdentifiers(
+            connectionDetailsContentViewA11yId: model.connectionDetailsContentViewA11yId,
+            foxImageA11yId: model.foxImageA11yId,
+            connectionDetailsLabelsContainerA11yId: model.connectionDetailsLabelsContainerA11yId,
+            connectionDetailsTitleLabelA11yId: model.connectionDetailsTitleLabelA11yId,
+            connectionDetailsStatusLabelA11yId: model.connectionDetailsStatusLabelA11yId,
+        )
+         */
         trackersView.setupAccessibilityIdentifiers(
             arrowImageA11yId: model.arrowImageA11yId,
             trackersBlockedButtonA11yId: model.trackersBlockedButtonA11yId,
-            shieldImageA11yId: model.settingsA11yId)
+            shieldImageA11yId: model.shieldImageA11yId,
+            trackersLabelA11yId: model.trackersLabelA11yId,
+            trackersHorizontalLineA11yId: model.trackersHorizontalLineA11yId)
+        trackersConnectionContainer.accessibilityIdentifier = model.trackersConnectionContainerA11yId
         connectionStatusView.setupAccessibilityIdentifiers(
+            connectionStatusImageA11yId: model.connectionStatusImageA11yId,
+            connectionStatusLabelA11yId: model.connectionStatusLabelA11yId,
             arrowImageA11yId: model.arrowImageA11yId,
             securityStatusButtonA11yId: model.securityStatusButtonA11yId)
+        connectionHorizontalLine.accessibilityIdentifier = model.connectionHorizontalLineA11yId
         toggleView.setupAccessibilityIdentifiers(
-            toggleViewLabelsContainerA11yId: model.toggleViewContainerA11yId)
-        headerContainer.setupAccessibility(closeButtonA11yLabel: model.closeButtonA11yLabel,
-                                           closeButtonA11yId: model.closeButtonA11yId)
+            toggleViewLabelsContainerA11yId: model.toggleViewContainerA11yId,
+            toggleLabelA11yId: model.toggleLabelA11yId,
+            toggleSwitchA11yId: model.toggleSwitchA11yId,
+            toggleStatusLabelA11yId: model.toggleStatusLabelA11yId)
         clearCookiesButton.accessibilityIdentifier = model.clearCookiesButtonA11yId
         settingsLinkButton.accessibilityIdentifier = model.settingsA11yId
     }
@@ -683,12 +750,12 @@ class TrackingProtectionViewController: UIViewController,
         // Setting x based on window calculation because we don't want
         // users to move the frame side ways, only straight up or down
         view.frame.origin = CGPoint(x: originalXPosition,
-                                    y: self.pointOrigin!.y + translation.y)
+                                    y: (self.pointOrigin?.y ?? originalYPosition) + translation.y)
 
         if sender.state == .ended {
             let dragVelocity = sender.velocity(in: view)
             if dragVelocity.y >= 1300 {
-                enhancedTrackingProtectionMenuDelegate?.didFinish()
+                trackingProtectionMenuDelegate?.didFinish()
             } else {
                 // Set back to original position of the view controller
                 UIView.animate(withDuration: 0.3) {
@@ -730,7 +797,8 @@ class TrackingProtectionViewController: UIViewController,
     func applyTheme() {
         let theme = currentTheme()
         overrideUserInterfaceStyle = theme.type.getInterfaceStyle()
-        view.backgroundColor = theme.colors.layer3.withAlphaComponent(backgroundAlpha)
+        let panelBackground = theme.isNova ? theme.colors.layer1 : theme.colors.layer3
+        view.backgroundColor = panelBackground.withAlphaComponent(backgroundAlpha(isNova: theme.isNova))
         headerContainer.applyTheme(theme: theme)
         // Ecosia: Remove "Firefox is on Guard" connection details header
         // connectionDetailsHeaderView.applyTheme(theme: theme)
@@ -743,13 +811,17 @@ class TrackingProtectionViewController: UIViewController,
         setNeedsStatusBarAppearanceUpdate()
     }
 
-    private var backgroundAlpha: CGFloat {
+    private func backgroundAlpha(isNova: Bool) -> CGFloat {
         guard !UIAccessibility.isReduceTransparencyEnabled else {
             return 1.0
         }
 
         if #available(iOS 26.0, *) {
             return TPMenuUX.UX.backgroundAlpha
+        }
+
+        if isNova {
+            return TPMenuUX.UX.novaBackgroundAlpha
         }
 
         return 1.0

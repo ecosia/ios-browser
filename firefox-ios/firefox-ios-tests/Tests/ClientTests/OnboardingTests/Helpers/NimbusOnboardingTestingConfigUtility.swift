@@ -2,10 +2,11 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Common
 import MozillaAppServices
-import Shared
-
+// Ecosia: Upstream compiles this helper into the Client target, where the Nimbus-generated
+// types (`OnboardingVariant`, `NimbusOnboardingCardData`, `FxNimbus`, ...) are in scope.
+// Ecosia's Tuist globs `firefox-ios-tests/Tests/ClientTests/**` into ClientTests instead, so
+// the file needs an explicit `@testable import Client`.
 @testable import Client
 
 struct NimbusOnboardingTestingConfigUtility {
@@ -19,7 +20,6 @@ struct NimbusOnboardingTestingConfigUtility {
         static let popupSecondInstruction = "second instruction"
         static let popupThirdInstruction = "third instruction"
         static let a11yIDOnboarding = "onboarding."
-        static let a11yIDUpgrade = "upgrade."
         static let linkTitle = "MacRumors"
         static let linkURL = "https://www.mozilla.org/en-US/privacy/firefox/"
         static let primaryButtonTitle = "Primary Button"
@@ -32,20 +32,18 @@ struct NimbusOnboardingTestingConfigUtility {
         case welcome
         case notifications = "notificationPermissions"
         case sync = "signToSync"
-        case updateWelcome = "update.welcome"
-        case updateSync = "update.signToSync"
 
-        static let allCards: [CardOrder] = [.welcome, .notifications, .sync, .updateWelcome, .updateSync]
+        static let allCards: [CardOrder] = [.welcome, .notifications, .sync]
         static let welcomeNotificationSync: [CardOrder] = [.welcome, .notifications, .sync]
         static let welcomeSync: [CardOrder] = [.welcome, .sync]
     }
 
     // MARK: - Order-based setups
-    func setupNimbus(withOrder order: [CardOrder]) {
+    func setupNimbus(withOrder order: [CardOrder], uiVariant: OnboardingVariant? = nil) {
         var dictionary = [String: NimbusOnboardingCardData]()
 
         for (index, item) in order.enumerated() {
-            dictionary[item.rawValue] = createCard(withID: item, andOrder: index)
+            dictionary[item.rawValue] = createCard(withID: item, andOrder: index, uiVariant: uiVariant)
         }
 
         FxNimbus.shared.features.onboardingFrameworkFeature.with(initializer: { _, _ in
@@ -98,7 +96,7 @@ struct NimbusOnboardingTestingConfigUtility {
         primaryButtonAction: [OnboardingActions],
         prerequisites: [String],
         disqualifiers: [String],
-        uiVariant: OnboardingVariant? = nil
+        uiVariant: OnboardingVariant?
     ) -> [String: NimbusOnboardingCardData] {
         var dictionary = [String: NimbusOnboardingCardData]()
 
@@ -125,15 +123,15 @@ struct NimbusOnboardingTestingConfigUtility {
 
     private func createCard(
         withID id: CardOrder,
-        andOrder order: Int
+        andOrder order: Int,
+        uiVariant: OnboardingVariant? = nil
     ) -> NimbusOnboardingCardData {
-        let shouldAddLink: [CardOrder] = [.welcome, .updateWelcome]
-        let isUpdate: [CardOrder] = [.updateWelcome, .updateSync]
+        let shouldAddLink: [CardOrder] = [.welcome]
         let image: NimbusOnboardingHeaderImage = {
             switch id {
             case .notifications: return .notifications
-            case .welcome, .updateWelcome: return .welcomeGlobe
-            case .sync, .updateSync: return .syncDevices
+            case .welcome: return .welcomeGlobe
+            case .sync: return .syncDevices
             }
         }()
 
@@ -145,10 +143,11 @@ struct NimbusOnboardingTestingConfigUtility {
             image: image,
             instructionsPopup: buildInfoPopup(),
             link: shouldAddLink.contains(where: { $0 == id }) ? buildLink() : nil,
-            onboardingType: isUpdate.contains(where: { $0 == id }) ? .upgrade : .freshInstall,
+            onboardingType: .freshInstall,
             order: order,
             prerequisites: ["ALWAYS"],
-            title: "title text")
+            title: "title text",
+            uiVariant: uiVariant)
     }
 
     private func createButtons(
@@ -176,7 +175,7 @@ struct NimbusOnboardingTestingConfigUtility {
 
     private func createButtons(for id: CardOrder) -> NimbusOnboardingButtons {
         switch id {
-        case .welcome, .updateWelcome:
+        case .welcome:
             return NimbusOnboardingButtons(
                 primary: NimbusOnboardingButton(
                     action: .forwardOneCard,
@@ -189,7 +188,7 @@ struct NimbusOnboardingTestingConfigUtility {
                 secondary: NimbusOnboardingButton(
                     action: .forwardOneCard,
                     title: "\(CardElementNames.secondaryButtonTitle)"))
-        case .sync, .updateSync:
+        case .sync:
             return NimbusOnboardingButtons(
                 primary: NimbusOnboardingButton(
                     action: .syncSignIn,

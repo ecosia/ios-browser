@@ -605,7 +605,7 @@
 "LibraryPanel.History.ClearGroupedTabsDelete.v100" = "Удалить";
 
 /* Within the History Panel, users can delete search group sites history. %@ represents the search group name. */
-"LibraryPanel.History.ClearGroupedTabsTitle.v100" = "Удалить все сайты в %@?";
+"LibraryPanel.History.ClearGroupedTabsTitle.v100" = "Удалить все сайты в «%@»?";
 
 /* Within the History Panel, users can open an action menu to clear recent history. */
 "LibraryPanel.History.ClearHistoryMenuTitle.v100" = "Удаляет историю (включая историю с других устройств), куки и другие данные просмотра.";
@@ -1076,7 +1076,7 @@
 "SendTo.NavBar.Title" = "Отправить вкладку";
 
 /* Error message shown in the remote tabs panel */
-"SendTo.NoDevicesFound.Message" = "У вас нет ни одного устройства, подключенного к этому Аккаунту Ecosia и доступного для синхронизации.";
+"SendTo.NoDevicesFound.Message" = "У вас нет ни одного устройства, подключённого к этому аккаунту Ecosia и доступного для синхронизации.";
 
 /* See http://mzl.la/1ISlXnU */
 "SendTo.NotSignedIn.Message" = "Пожалуйста, откройте Ecosia, перейдите в «Настройки» и войдите для продолжения.";
@@ -1391,7 +1391,7 @@
 "Settings.LoginsAndPasswordsTitle" = "Логины и пароли";
 
 /* Label used to set a custom url as the new tab option (homepage). */
-"Settings.NewTab.CustomURL" = "Пользовательский URL";
+"Settings.NewTab.CustomURL" = "Свой URL";
 
 /* Option in settings to show a blank page when you open a new tab */
 "Settings.NewTab.Option.BlankPage" = "Пустая страница";
@@ -1500,6 +1500,9 @@
 
 /* Button label that appears in the settings to prompt the user to sign in to Firefox for iOS sync service to sync and save data. */
 "Settings.Sync.ButtonTitle.v103" = "Синхронизация и сохранение данных";
+
+/* In the settings account row, shown transiently while the user is being signed out of their account. */
+"Settings.Sync.SigningOut.Title.v154" = "Выход…";
 
 /* Title for the page where the user sign in to their Firefox Sync account. */
 "Settings.Sync.SignInView.Title.v103" = "Синхронизация и сохранение данных";
@@ -1739,7 +1742,7 @@
 "Toolbar.Menu.CloseAllTabs" = "Закрыть все вкладки";
 
 /* Button shown in editing mode to remove this site from the top sites panel. %@ is the title of the site. */
-"TopSites.RemovePage.Button" = "Удалить страницу - %@";
+"TopSites.RemovePage.Button" = "Удалить страницу – %@";
 
 /* Button to disallow the page to be translated to the user locale language */
 "TranslationToastHandler.PromptTranslate.Cancel" = "Нет";

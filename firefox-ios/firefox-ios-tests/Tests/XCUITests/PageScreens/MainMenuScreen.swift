@@ -29,8 +29,73 @@ final class MainMenuScreen {
         BaseTestCase().waitForElementsToExist(elements)
     }
 
+	func assertMenuOptionsExist() {
+		let elements = [
+			sel.SETTINGS_CELL.element(in: app),
+			sel.BOOKMARKS_BUTTON.element(in: app),
+			sel.HISTORY_BUTTON.element(in: app),
+			sel.DOWNLOADS_BUTTON.element(in: app),
+			sel.PASSWORDS_BUTTON.element(in: app),
+			sel.SIGN_IN_CELL.element(in: app)
+		]
+		BaseTestCase().waitForElementsToExist(elements)
+	}
+
+	func dismissMenu() {
+		app.otherElements["PopoverDismissRegion"].firstMatch.tap()
+	}
+
+	func assertMenuIsDismissed(timeout: TimeInterval = TIMEOUT) {
+		let settings = sel.SETTINGS_CELL.element(in: app)
+		BaseTestCase().mozWaitForElementToNotExist(settings, timeout: timeout)
+	}
+
     func assertMainMenuSettingsExist() {
         let settings = sel.SETTINGS_CELL.element(in: app)
         BaseTestCase().mozWaitForElementToExist(settings)
+    }
+
+    func tapSettings() {
+        let settings = sel.SETTINGS_CELL.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(settings)
+        settings.waitAndTap()
+    }
+
+    func tapBookmarks() {
+        let bookmarks = sel.BOOKMARKS_BUTTON.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(bookmarks)
+        bookmarks.waitAndTap()
+    }
+
+    func tapBookmarkPage() {
+        let bookmarkPage = sel.BOOKMARK_PAGE.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(bookmarkPage)
+        bookmarkPage.waitAndTap()
+    }
+
+    func tapSiteProtections() {
+        sel.SITE_PROTECTIONS.element(in: app).waitAndTap()
+    }
+
+    func tapHistory() {
+        let history = sel.HISTORY_BUTTON.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(history)
+        history.waitAndTap()
+    }
+
+    func assertTranslatePageItemDoesNotExist() {
+        assertMenuItemDoesNotExist(AccessibilityIdentifiers.MainMenu.translatePage)
+    }
+
+    func assertSummarizePageItemDoesNotExist() {
+        assertMenuItemDoesNotExist(AccessibilityIdentifiers.MainMenu.summarizePage)
+    }
+
+    private func assertMenuItemDoesNotExist(_ identifier: String) {
+        // Wait for a stable Main Menu element to render first, otherwise the absence
+        // check can pass simply because the menu hasn't finished loading yet.
+        BaseTestCase().mozWaitForElementToExist(sel.SETTINGS_CELL.element(in: app))
+        let item = app.descendants(matching: .any).matching(identifier: identifier).firstMatch
+        BaseTestCase().mozWaitForElementToNotExist(item)
     }
 }

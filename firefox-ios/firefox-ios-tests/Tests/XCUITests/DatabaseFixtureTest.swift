@@ -2,15 +2,19 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Common
 import XCTest
 
 class DatabaseFixtureTest: BaseTestCase {
+    private var toolbarScreen: ToolbarScreen!
+    private var mainMenuScreen: MainMenuScreen!
+
     let fixtures = [
         "testBookmarksDatabaseFixture": "testBookmarksDatabase1000-places.db",
         "testHistoryDatabaseFixture": "testHistoryDatabase100-places.db"
     ]
 
-    override func setUp() {
+    override func setUp() async throws {
         // Test name looks like: "[Class testFunc]", parse out the function name
         let parts = name.replacingOccurrences(of: "]", with: "").split(separator: " ")
         let key = String(parts[1])
@@ -20,16 +24,16 @@ class DatabaseFixtureTest: BaseTestCase {
                            LaunchArguments.LoadDatabasePrefix + fixtures[key]!,
                            LaunchArguments.SkipContextualHints,
                            LaunchArguments.DisableAnimations]
-        super.setUp()
+        try await super.setUp()
+        toolbarScreen = ToolbarScreen(app: app)
+        mainMenuScreen = MainMenuScreen(app: app)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2458579
     func testBookmarksDatabaseFixture() {
-        // Warning: Avoid using mozWaitForElementToExist as it is up to 25x less performant
-        let tabsButton = app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton]
-        mozWaitForElementToExist(tabsButton)
-
-        navigator.goto(LibraryPanel_Bookmarks)
+        toolbarScreen.assertTabsButtonExists()
+        toolbarScreen.tapSettingsMenuButton()
+        mainMenuScreen.tapBookmarks()
 
         // Ensure 'Bookmarks List' exists before taking a snapshot to avoid expensive retries.
         // Return firstMatch to avoid traversing the entire { Window, Window } element tree.
@@ -38,12 +42,10 @@ class DatabaseFixtureTest: BaseTestCase {
 
         do {
             // Take a custom snapshot to avoid unnecessary snapshots by xctrunner (~9s each).
-            // Filter out 'Other' elements and drop the 'Desktop Bookmarks' cell for a true bookmark count.
             let bookmarksListSnapshot = try bookmarksList.snapshot()
             let bookmarksListCells = bookmarksListSnapshot.children.filter { $0.elementType == .cell }
-            let filteredBookmarksList = bookmarksListCells.dropFirst()
 
-            XCTAssertEqual(filteredBookmarksList.count, 1000, "There should be 1000 entries in the bookmarks list")
+            XCTAssertEqual(bookmarksListCells.count, 1000, "There should be 1000 entries in the bookmarks list")
         } catch {
             XCTFail("Failed to take snapshot: \(error)")
         }
@@ -52,11 +54,11 @@ class DatabaseFixtureTest: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2459133
+   // Regression
    func testHistoryDatabaseFixture() throws {
-       let tabsButton = app.buttons[AccessibilityIdentifiers.Toolbar.tabsButton]
-       mozWaitForElementToExist(tabsButton)
-
-       navigator.goto(LibraryPanel_History)
+       toolbarScreen.assertTabsButtonExists()
+       toolbarScreen.tapSettingsMenuButton()
+       mainMenuScreen.tapHistory()
 
        let historyList = app.tables["History List"].firstMatch
        mozWaitForElementToExist(historyList)

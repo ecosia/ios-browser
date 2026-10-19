@@ -30,13 +30,17 @@ class PageActionsShortcutsHeader: UITableViewHeaderFooterView, ThemeApplicable {
     let home = Panel(title: .localized(.home),
                      image: UIImage(named: StandardImageIdentifiers.Large.home),
                      tag: 0)
-    let newTab = Panel(title: .LegacyAppMenu.NewTab,
+    // Ecosia: 155.1 removed `LegacyAppMenu.NewTab`, `.Share` and `.AppMenuSettingsTitleString`
+    // along with `StandardImageIdentifiers.Large.share`. Re-pointed at the 155.1 strings carrying
+    // the same values ("New Tab", "Share", "Settings") and at `shareApple`, the share icon that
+    // still ships.
+    let newTab = Panel(title: .Toolbars.NewTabButton,
                        image: UIImage(named: StandardImageIdentifiers.Large.plus),
                        tag: 1)
-    let share = Panel(title: .LegacyAppMenu.Share,
-                      image: UIImage(named: StandardImageIdentifiers.Large.share),
+    let share = Panel(title: .MainMenu.Submenus.Tools.Share,
+                      image: UIImage(named: StandardImageIdentifiers.Large.shareApple),
                       tag: 2)
-    let settings = Panel(title: .LegacyAppMenu.AppMenuSettingsTitleString,
+    let settings = Panel(title: .MainMenu.OtherToolsSection.Settings,
                          image: UIImage(named: StandardImageIdentifiers.Large.settings),
                          tag: 3)
 

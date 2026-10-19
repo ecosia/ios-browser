@@ -5,10 +5,13 @@
 "New Tab" = "Llingüeta nueva";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia usa la cámara pa escaniar códigos QR y facer semeyes y vídeos.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Ecosia rique Face ID p'acceder a les contraseñes ya a los métodos de pagu guardaos.";
 
 /* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Los sitios web que visites puen solicitate l'allugamientu.";
+"NSLocationWhenInUseUsageDescription" = "Los sitios web que visites puen solicitate la llocalización.";
 
 /* Privacy - Microphone Usage Description */
 "NSMicrophoneUsageDescription" = "Ecosia usa'l micrófonu pa grabar y xubir audiu.";

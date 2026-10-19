@@ -1,20 +1,20 @@
-/* This is the title of the Pocket section on Firefox Homepage. */
-"FirefoxHome.Pocket.SectionTitle.v140" = "ເລື່ອງລາວ";
+/* Body label for the Privacy Notice card showed at the top of the homepage notifying users that the Privacy Notice has been updated. The %1$@ placeholder is for the string “Privacy Notice” which will contain a link to the updated privacy notice. The %2$@ placeholder is for the app name (e.g. Firefox). The %3$@ placeholder is for the string “Learn More” which will contain a link to specifically what has changed in the updated Privacy Notice */
+"FirefoxHome.PrivacyNotice.Body.v148" = "ພວກເຮົາໄດ້ອັບເດດ %1$@ ຂອງພວກເຮົາເພື່ອສະທ້ອນຄຸນສົມບັດລ່າສຸດໃນ %2$@. %3$@";
+
+/* Label for the “Learn More” link inserted into the second placeholder of the Privacy Notice body label. This text will appear as a tappable link directing users to detailed information about what has changed in the updated Privacy Notice. */
+"FirefoxHome.PrivacyNotice.LearnMoreLink.v148" = "ຮຽນຮູ້ເພີ່ມເຕີມ";
+
+/* Label for the “Privacy Notice” link inserted into the first placeholder of the Privacy Notice body label. This text will appear as a tappable link that opens the updated Firefox Privacy Notice. */
+"FirefoxHome.PrivacyNotice.PrivacyNoticeLink.v148" = "ແຈ້ງການຄວາມເປັນສ່ວນຕົວ";
 
 /* The title for the Firefox homepage, only used to denote the name of the destination screen in the system back navigation button long-press menu */
 "FirefoxHome.ScreenTitle.v144" = "ຫນ້າທຳອິດ";
 
-/* This is the title for the button next to the stories section title on Firefox Homepage that, when tapped, transitions you to the Top Stories view which displays a collection of trending news articles. */
-"FirefoxHome.Stories.AllStoriesButtonTitle.v145" = "ເລື່ອງທັງໝົດ";
-
-/* This is the title that appears in the navigation bar for the All Stories view, a screen that displays a collection of trending news articles */
-"FirefoxHome.Stories.AllStoriesViewTitle.v145" = "ເລື່ອງທັງໝົດ";
+/* This is the label, combined with a newspaper icon and a ^ chevron, used to show affordance that scrolling the homepage up reveals the News section containing a collection of trending news articles */
+"FirefoxHome.Stories.NewsAffordanceLabel.v149" = "ຂ່າວ";
 
 /* This is the title of the stories section on Firefox Homepage, which displays a collection of trending news articles */
-"FirefoxHome.Stories.PopularTodaySectionTitle.v145" = "ເປັນທີ່ນິຍົມໃນມື້ນີ້";
-
-/* This is the title of the Stories section on Firefox Homepage. */
-"FirefoxHome.Stories.SectionTitle.v140" = "ເລື່ອງລາວ";
+"FirefoxHome.Stories.NewsSectionTitle.v149" = "ຂ່າວ";
 
 /* When the user ends their private session, they are returned to the private mode homepage, and a toastbar popups confirming that their data has been erased. This is the label for that toast. */
 "FirefoxHomepage.FeltDeletion.Link.v122" = "ລຶບຂໍ້ມູນການຄົ້ນຫາສ່ວນຕົວແລ້ວ";

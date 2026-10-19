@@ -6,7 +6,9 @@ import Foundation
 import Shared
 import Ecosia
 
-struct EcosiaSearchBarLocationSaver: SearchBarLocationProvider, FeatureFlaggable, SearchBarLocationSaverProtocol {
+struct EcosiaSearchBarLocationSaver: SearchBarLocationProvider,
+                                     UserFeaturePreferenceProvider,
+                                     SearchBarLocationSaverProtocol {
     /// One-shot upgrade migration introduced with the AI-ready Omnibox (MOB-4304).
     /// Existing users who had the address bar pinned to the top are moved to the
     /// bottom on next launch, so the Omnibox can replace the URL bar on the NTP
@@ -19,7 +21,7 @@ struct EcosiaSearchBarLocationSaver: SearchBarLocationProvider, FeatureFlaggable
         let hasSearchBarPosition = profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition) != nil
 
         if !hasSearchBarPosition, User.shared.firstTime {
-            featureFlags.set(feature: .searchBarPosition, to: SearchBarPosition.bottom)
+            userPreferences.setSearchBarPosition(.bottom)
             UserDefaults.standard.set(true, forKey: Self.didMigrateToBottomToolbarKey)
             return
         }
@@ -33,6 +35,22 @@ struct EcosiaSearchBarLocationSaver: SearchBarLocationProvider, FeatureFlaggable
         defer { UserDefaults.standard.set(true, forKey: Self.didMigrateToBottomToolbarKey) }
 
         guard isBottomSearchBar == false else { return }
-        featureFlags.set(feature: .searchBarPosition, to: SearchBarPosition.bottom)
+        userPreferences.setSearchBarPosition(.bottom)
+    }
+
+    /// Ecosia: `SearchBarLocationSaverProtocol` gained this member in Firefox 155.1. Ecosia does not
+    /// call it (see `AppLaunchUtil.setUpPreLaunchDependencies`) because the MOB-4304 migration above
+    /// deliberately puts every device on the bottom Omnibox; both `isBottomSearchBar` and
+    /// `UserFeaturePreferenceManager.searchBarPosition` already clamp iPad to `.top`, so the stored
+    /// value is not observable there. Delegating keeps upstream's semantics for any other caller.
+    @MainActor
+    func migrateBottomBarPositionToTopOnIPad(
+        profile: Profile,
+        userInterfaceIdiom: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom
+    ) {
+        SearchBarLocationSaver().migrateBottomBarPositionToTopOnIPad(
+            profile: profile,
+            userInterfaceIdiom: userInterfaceIdiom
+        )
     }
 }

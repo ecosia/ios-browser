@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "Қолданба таңбашасы";
+
 /* (No Comment) */
 "New Private Tab" = "Жаңа жекелік беті";
 
@@ -5,7 +8,7 @@
 "New Tab" = "Жаңа бет";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Бұл арқылы фотоларды түсіріп, жүктеуге болады.";
+"NSCameraUsageDescription" = "Ecosia сіздің камераңызды QR кодтарын сканерлеу немесе фотосуреттер мен видеоларды түсіру үшін пайдалана алады.";
 
 /* Privacy - Face ID Usage Description */
 "NSFaceIDUsageDescription" = "Сақталған парольдер мен төлем әдістеріне қол жеткізу үшін Ecosia Face ID қажет етеді.";
@@ -18,6 +21,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Бұл көмегімен фотоларды сақтауға болады.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Ecosia дауыстық іздеу үшін дауысыңызды мәтінге түрлендіру үшін сөйлеуді тануды пайдаланады.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR кодын сканерлеу";

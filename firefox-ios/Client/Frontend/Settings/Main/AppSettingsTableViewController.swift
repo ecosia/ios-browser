@@ -282,12 +282,10 @@ class AppSettingsTableViewController: SettingsTableViewController,
             settingsDelegate: parentCoordinator
         )
 
-        sendTechnicalDataSettings.settingDidChange = { [weak self] value in
-            guard let self else { return }
+        sendTechnicalDataSettings.settingDidChange = { value in
             DefaultGleanWrapper().setUpload(isEnabled: value)
             Experiments.setTelemetrySetting(value)
             studiesSetting.updateSetting(for: value)
-            self.tableView.reloadData()
         }
         sendTechnicalDataSetting = sendTechnicalDataSettings
 
@@ -420,7 +418,8 @@ class AppSettingsTableViewController: SettingsTableViewController,
             ThemeSetting(settings: self, settingsDelegate: parentCoordinator)
         ]
 
-        if isSearchBarLocationFeatureEnabled, let profile {
+        // Toolbar position cannot be changed on iPad
+        if let profile, UIDevice.current.userInterfaceIdiom != .pad {
             generalSettings.append(
                 SearchBarSetting(settings: self, profile: profile, settingsDelegate: parentCoordinator)
             )
@@ -440,8 +439,16 @@ class AppSettingsTableViewController: SettingsTableViewController,
             generalSettings.append(SummarizeSetting(settings: self, settingsDelegate: parentCoordinator))
         }
 
-        if featureFlags.isFeatureEnabled(.translation, checking: .buildOnly) {
+        if featureFlagsProvider.isEnabled(.quickAnswers) {
+            generalSettings.append(QuickAnswersSetting(settings: self, settingsDelegate: parentCoordinator))
+        }
+
+        if featureFlagsProvider.isEnabled(.translation) {
             generalSettings.append(TranslationSetting(settings: self, settingsDelegate: parentCoordinator))
+        }
+
+        if featureFlagsProvider.isEnabled(.aiKillSwitch) {
+            generalSettings.append(AIControlsSetting(settings: self, settingsDelegate: parentCoordinator))
         }
 
         generalSettings += [
@@ -504,7 +511,8 @@ class AppSettingsTableViewController: SettingsTableViewController,
                     defaultValue: true,
                     titleText: .AppSettingsClosePrivateTabsTitle,
                     statusText: .AppSettingsClosePrivateTabsDescription
-                ) { _ in
+                ) { [weak self] _ in
+                    guard let self else { return }
                     let action = TabTrayAction(windowUUID: self.windowUUID,
                                                actionType: TabTrayActionType.closePrivateTabsSettingToggled)
                     store.dispatch(action)
@@ -565,7 +573,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         ]
 
         // Only add this toggle to the Settings if Sent from Firefox feature flag is enabled from Nimbus
-        if featureFlags.isFeatureEnabled(.sentFromFirefox, checking: .buildOnly), let profile {
+        if featureFlagsProvider.isEnabled(.sentFromFirefox), let profile {
             supportSettings.append(
                 SentFromFirefoxSetting(
                     prefs: profile.prefs,
@@ -657,8 +665,10 @@ class AppSettingsTableViewController: SettingsTableViewController,
             SentryIDSetting(settings: self, settingsDelegate: self),
             TermsOfUseTimeout(settings: self, settingsDelegate: self),
             OpenFiftyTabsDebugOption(settings: self, settingsDelegate: self),
+            OffloadBackgroundWebViewsSetting(settings: self, settingsDelegate: self),
             FirefoxSuggestSettings(settings: self, settingsDelegate: self),
             ScreenshotSetting(settings: self),
+            LaunchPairingFromURLSetting(settings: self),
             DeleteLoginsKeysSetting(settings: self),
             DeleteAutofillKeysSetting(settings: self),
             ChangeRSServerSetting(settings: self),
@@ -668,6 +678,9 @@ class AppSettingsTableViewController: SettingsTableViewController,
         ]
 
         #if MOZ_CHANNEL_beta || MOZ_CHANNEL_developer
+        hiddenDebugOptions.append(ResetTipsSetting(settings: self))
+        hiddenDebugOptions.append(ChangeMLPAEndpointSetting(settings: self))
+        hiddenDebugOptions.append(DeleteAppAttestKeySetting(settings: self))
         hiddenDebugOptions.append(PrivacyNoticeUpdate(settings: self))
         hiddenDebugOptions.append(FeatureFlagsSettings(settings: self, settingsDelegate: self))
         #endif
@@ -705,6 +718,12 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
     func pressedOpenFiftyTabs() {
         parentCoordinator?.openDebugTestTabs(count: 50)
+    }
+
+    func pressedOffloadBackgroundWebViews() {
+        Task {
+            await tabManager?.offloadBackgroundWebViews()
+        }
     }
 
     /// Adds 20 random shortcuts to the top sites / shortcuts library
@@ -755,7 +774,9 @@ class AppSettingsTableViewController: SettingsTableViewController,
         super.applyTheme()
         if #available(iOS 26.0, *) {
             let theme = themeManager.getCurrentTheme(for: windowUUID)
-            navigationItem.rightBarButtonItem?.tintColor = theme.colors.textPrimary
+            navigationItem.rightBarButtonItem?.tintColor = theme.isNova
+                ? theme.colors.actionPrimary
+                : theme.colors.textPrimary
         }
     }
 
@@ -780,9 +801,10 @@ class AppSettingsTableViewController: SettingsTableViewController,
             tableView,
             viewForHeaderInSection: section
         ) as? ThemedTableSectionHeaderFooterView else {
-            logger.log("Failed to cast or retrieve ThemedTableSectionHeaderFooterView for section: \(section)",
+            logger.log("Failed to cast or retrieve ThemedTableSectionHeaderFooterView",
                        level: .fatal,
-                       category: .lifecycle)
+                       category: .lifecycle,
+                       extra: ["section": "\(section)"])
             return UIView()
         }
         return headerView

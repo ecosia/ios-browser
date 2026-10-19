@@ -5,7 +5,7 @@
 "New Tab" = "Nueva pestanya";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia usa a tuya camara ta escanear QRs y fer fotos y video.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Face ID Usage Description */
 "NSFaceIDUsageDescription" = "Ecosia necesita Face ID pa acceder a os tuyos logins guardaus.";

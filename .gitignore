@@ -69,6 +69,9 @@ buildServer.json
 # IDEA
 .idea
 
+# Zed
+.zed
+
 # Required for Glean
 firefox-ios/Client/Generated
 firefox-ios/Sync/Generated
@@ -136,6 +139,16 @@ ContentBlockingLists/disconnect-*
 focus-ios/shavar-*
 firefox-ios/shavar-*
 shavar-*
+
+# Licenses.html generation
+LicensePlistTemp
+
+# Pinned developer tools installed by scripts/install-swiftlint.sh
+.tools/
+
+# Claude Code
+.claude/settings.local.json
+.mcp.json
 
 # bundler
 vendor/bundle

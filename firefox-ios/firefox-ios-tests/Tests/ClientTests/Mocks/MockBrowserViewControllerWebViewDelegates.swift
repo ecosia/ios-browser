@@ -8,17 +8,6 @@ import WebKit
 
 @testable import Client
 
-// MARK: - WKFrameInfo
-final class MockFrameInfo: WKFrameInfo {
-    private let main: Bool
-
-    init(isMainFrame: Bool) {
-        self.main = isMainFrame
-        super.init()
-    }
-    override var isMainFrame: Bool { main }
-}
-
 // MARK: - MockNavigationAction
 class MockNavigationAction: WKNavigationAction {
     private var type: WKNavigationType?
@@ -36,6 +25,15 @@ class MockNavigationAction: WKNavigationAction {
         self.type = type
         self.urlRequest = URLRequest(url: url)
     }
+}
+
+// MARK: - MockURLAuthenticationChallengeSender
+final class MockURLAuthenticationChallengeSender: NSObject, URLAuthenticationChallengeSender {
+    func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {}
+
+    func continueWithoutCredential(for challenge: URLAuthenticationChallenge) {}
+
+    func cancel(_ challenge: URLAuthenticationChallenge) {}
 }
 
 // MARK: - MockFileManager

@@ -9,34 +9,35 @@ import Common
 @MainActor
 class AppSettingsTableViewControllerTests: XCTestCase {
     private var profile: Profile!
-    private var tabManager: TabManager!
+    private var tabManager: MockTabManager!
     private var appAuthenticator: MockAppAuthenticator!
     private var delegate: MockSettingsFlowDelegate!
     private var applicationHelper: MockApplicationHelper!
-    private var settingsDelegate: MockSettingsDelegate!
+    private var mockSettingsDelegate: MockSettingsDelegate!
+    private var mockParentCoordinator: MockSettingsFlowDelegate!
+    private var mockGleanUsageReportingMetricsService: MockGleanUsageReportingMetricsService!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         self.profile = MockProfile()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
-        self.tabManager = TabManagerImplementation(profile: profile,
-                                                   uuid: ReservedWindowUUID(uuid: .XCTestDefaultUUID, isNew: false))
+        self.tabManager = MockTabManager()
         self.appAuthenticator = MockAppAuthenticator()
         self.delegate = MockSettingsFlowDelegate()
         self.applicationHelper = MockApplicationHelper()
-        self.settingsDelegate = MockSettingsDelegate()
+        self.mockSettingsDelegate = MockSettingsDelegate()
+        self.mockParentCoordinator = MockSettingsFlowDelegate()
+        self.mockGleanUsageReportingMetricsService = MockGleanUsageReportingMetricsService(profile: MockProfile())
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         DependencyHelperMock().reset()
         self.profile = nil
         self.tabManager = nil
         self.appAuthenticator = nil
         self.delegate = nil
         self.applicationHelper = nil
-        self.settingsDelegate = nil
+        try await super.tearDown()
     }
 
     func testRouteNotHandled_delegatesArentCalled() {
@@ -125,15 +126,34 @@ class AppSettingsTableViewControllerTests: XCTestCase {
         XCTAssertEqual(delegate.showExperimentsCalled, 1)
     }
 
+    func testDelegatesAreSet() {
+        let subject = createSubject()
+
+        // NOTE: The subject holds a weak reference to these delegates, so we have to store them for the length of the test
+        // duration, or else they will deallocate before the following assertion checks.
+        XCTAssertNotNil(subject.settingsDelegate)
+        XCTAssertNotNil(subject.parentCoordinator)
+    }
+
+    func testGenerateSettings_whenRetainedBySubject_subjectDeallocates() {
+        let subject = createSubject()
+
+        subject.settings = subject.generateSettings()
+
+        XCTAssertFalse(subject.settings.isEmpty)
+    }
+
     // MARK: - Helper
     private func createSubject() -> AppSettingsTableViewController {
-        let subject = AppSettingsTableViewController(with: profile,
-                                                     and: tabManager,
-                                                     settingsDelegate: settingsDelegate,
-                                                     parentCoordinator: delegate,
-                                                     gleanUsageReportingMetricsService: GleanUsageReportingMetricsService(profile: profile),
-                                                     appAuthenticator: appAuthenticator,
-                                                     applicationHelper: applicationHelper)
+        let subject = AppSettingsTableViewController(
+            with: profile,
+            and: tabManager,
+            settingsDelegate: mockSettingsDelegate,
+            parentCoordinator: mockParentCoordinator,
+            gleanUsageReportingMetricsService: mockGleanUsageReportingMetricsService,
+            appAuthenticator: appAuthenticator,
+            applicationHelper: applicationHelper
+        )
         trackForMemoryLeaks(subject)
         return subject
     }

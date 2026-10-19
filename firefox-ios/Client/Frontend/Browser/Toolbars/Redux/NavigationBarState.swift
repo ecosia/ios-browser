@@ -4,6 +4,7 @@
 
 import Common
 import Ecosia
+import ModifiedCopy
 import Redux
 
 enum NavigationBarMiddleButtonType: String, Equatable, CaseIterable {
@@ -29,11 +30,13 @@ enum NavigationBarMiddleButtonType: String, Equatable, CaseIterable {
     }
 }
 
+@Copyable
 struct NavigationBarState: StateType, Equatable {
     var windowUUID: WindowUUID
     var actions: [ToolbarActionConfiguration]
     var displayBorder: Bool
     var middleButton: NavigationBarMiddleButtonType
+    var isNovaDesignEnabled: Bool
 
     private static let searchAction = ToolbarActionConfiguration(
         actionType: .search,
@@ -48,14 +51,6 @@ struct NavigationBarState: StateType, Equatable {
         isEnabled: true,
         a11yLabel: .TabToolbarHomeAccessibilityLabel,
         a11yId: AccessibilityIdentifiers.Toolbar.homeButton)
-
-    private static let dataClearanceAction = ToolbarActionConfiguration(
-        actionType: .dataClearance,
-        iconName: StandardImageIdentifiers.Large.dataClearance,
-        isEnabled: true,
-        contextualHintType: ContextualHintType.dataClearance.rawValue,
-        a11yLabel: .TabToolbarDataClearanceAccessibilityLabel,
-        a11yId: AccessibilityIdentifiers.Toolbar.fireButton)
 
     /* Ecosia: Use Ecosia-owned nav-add icon instead of Firefox plusLarge
     private static let newTabAction = ToolbarActionConfiguration(
@@ -85,20 +80,30 @@ struct NavigationBarState: StateType, Equatable {
         self.init(windowUUID: windowUUID,
                   actions: [],
                   displayBorder: false,
-                  middleButton: .newTab)
+                  middleButton: .newTab,
+                  isNovaDesignEnabled: false)
     }
 
     init(windowUUID: WindowUUID,
          actions: [ToolbarActionConfiguration],
          displayBorder: Bool,
-         middleButton: NavigationBarMiddleButtonType) {
+         middleButton: NavigationBarMiddleButtonType,
+         isNovaDesignEnabled: Bool) {
         self.windowUUID = windowUUID
         self.actions = actions
         self.displayBorder = displayBorder
         self.middleButton = middleButton
+        self.isNovaDesignEnabled = isNovaDesignEnabled
     }
 
-    static let reducer: Reducer<Self> = { state, action in
+    static let reducer: Reducer<Self> = (legacyReducer, modernReducer)
+
+    static let modernReducer: ReducerMethod<Self> = { state, action, actionWindowUUID in
+        // Does not handle any modern actions
+        return defaultState(from: state)
+    }
+
+    static let legacyReducer: LegacyReducerMethod<Self> = { state, action in
         guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID
         else {
             return defaultState(from: state)
@@ -113,6 +118,9 @@ struct NavigationBarState: StateType, Equatable {
 
         case ToolbarActionType.numberOfTabsChanged:
             return handleNumberOfTabsChangedAction(state: state, action: action)
+
+        case ToolbarActionType.didSetTabScreenshot:
+            return handleDidSetTabScreenshotAction(state: state, action: action)
 
         case ToolbarActionType.backForwardButtonStateChanged:
             return handleBackForwardButtonStateChangedAction(state: state, action: action)
@@ -141,60 +149,47 @@ struct NavigationBarState: StateType, Equatable {
             return defaultState(from: state)
         }
 
-        return NavigationBarState(
-            windowUUID: state.windowUUID,
-            actions: navigationActions(action: toolbarAction, navigationBarState: state),
-            displayBorder: displayBorder,
-            middleButton: middleButton
-        )
+        let updatedState = state
+            .copy(displayBorder: displayBorder)
+            .copy(middleButton: middleButton)
+            .copy(isNovaDesignEnabled: toolbarAction.isNovaDesignEnabled ?? state.isNovaDesignEnabled)
+
+        return updatedState.copy(actions: navigationActions(action: toolbarAction, navigationBarState: updatedState))
     }
 
     @MainActor
     private static func handleUrlDidChangeAction(state: Self, action: Action) -> Self {
         guard let toolbarAction = action as? ToolbarAction else { return defaultState(from: state) }
 
-        return NavigationBarState(
-            windowUUID: state.windowUUID,
-            actions: navigationActions(action: toolbarAction, navigationBarState: state),
-            displayBorder: state.displayBorder,
-            middleButton: state.middleButton
-        )
+        return state.copy(actions: navigationActions(action: toolbarAction, navigationBarState: state))
     }
 
     @MainActor
     private static func handleNumberOfTabsChangedAction(state: Self, action: Action) -> Self {
         guard let toolbarAction = action as? ToolbarAction else { return defaultState(from: state) }
 
-        return NavigationBarState(
-            windowUUID: state.windowUUID,
-            actions: navigationActions(action: toolbarAction, navigationBarState: state),
-            displayBorder: state.displayBorder,
-            middleButton: state.middleButton
-        )
+        return state.copy(actions: navigationActions(action: toolbarAction, navigationBarState: state))
+    }
+
+    @MainActor
+    private static func handleDidSetTabScreenshotAction(state: Self, action: Action) -> Self {
+        guard let toolbarAction = action as? ToolbarAction else { return defaultState(from: state) }
+
+        return state.copy(actions: navigationActions(action: toolbarAction, navigationBarState: state))
     }
 
     @MainActor
     private static func handleBackForwardButtonStateChangedAction(state: Self, action: Action) -> Self {
         guard let toolbarAction = action as? ToolbarAction else { return defaultState(from: state) }
 
-        return NavigationBarState(
-            windowUUID: state.windowUUID,
-            actions: navigationActions(action: toolbarAction, navigationBarState: state),
-            displayBorder: state.displayBorder,
-            middleButton: state.middleButton
-        )
+        return state.copy(actions: navigationActions(action: toolbarAction, navigationBarState: state))
     }
 
     @MainActor
     private static func handleShowMenuWarningBadgeAction(state: Self, action: Action) -> Self {
         guard let toolbarAction = action as? ToolbarAction else { return defaultState(from: state) }
 
-        return NavigationBarState(
-            windowUUID: state.windowUUID,
-            actions: navigationActions(action: toolbarAction, navigationBarState: state),
-            displayBorder: state.displayBorder,
-            middleButton: state.middleButton
-        )
+        return state.copy(actions: navigationActions(action: toolbarAction, navigationBarState: state))
     }
 
     private static func handlePositionChangedAction(state: Self, action: Action) -> Self {
@@ -203,12 +198,7 @@ struct NavigationBarState: StateType, Equatable {
             return defaultState(from: state)
         }
 
-        return NavigationBarState(
-            windowUUID: state.windowUUID,
-            actions: state.actions,
-            displayBorder: displayBorder,
-            middleButton: state.middleButton
-        )
+        return state.copy(displayBorder: displayBorder)
     }
 
     @MainActor
@@ -217,12 +207,9 @@ struct NavigationBarState: StateType, Equatable {
               let middleButton = toolbarAction.middleButton
         else { return defaultState(from: state) }
 
-        return NavigationBarState(
-            windowUUID: state.windowUUID,
-            actions: navigationActions(action: toolbarAction, navigationBarState: state),
-            displayBorder: state.displayBorder,
-            middleButton: middleButton
-        )
+        return state
+            .copy(actions: navigationActions(action: toolbarAction, navigationBarState: state))
+            .copy(middleButton: middleButton)
     }
 
     static func defaultState(from state: NavigationBarState) -> NavigationBarState {
@@ -230,7 +217,8 @@ struct NavigationBarState: StateType, Equatable {
             windowUUID: state.windowUUID,
             actions: state.actions,
             displayBorder: state.displayBorder,
-            middleButton: state.middleButton
+            middleButton: state.middleButton,
+            isNovaDesignEnabled: state.isNovaDesignEnabled
         )
     }
 
@@ -242,11 +230,12 @@ struct NavigationBarState: StateType, Equatable {
     -> [ToolbarActionConfiguration] {
         var actions = [ToolbarActionConfiguration]()
 
-        guard let toolbarState = store.state.screenState(ToolbarState.self, for: .toolbar, window: action.windowUUID)
+        guard let toolbarState = store.state.componentState(ToolbarState.self, for: .toolbar, window: action.windowUUID)
         else { return actions }
 
         let isLoadAction = action.actionType as? ToolbarActionType == .didLoadToolbars
         let layout = isLoadAction ? action.toolbarLayout : toolbarState.toolbarLayout
+        let tabTrayButtonStyle = isLoadAction ? action.tabTrayButtonStyle : toolbarState.tabTrayButtonStyle
 
         let isUrlChangeAction = action.actionType as? ToolbarActionType == .urlDidChange
         let url = isUrlChangeAction ? action.url : toolbarState.addressToolbar.url
@@ -256,8 +245,6 @@ struct NavigationBarState: StateType, Equatable {
 
         let middleAction = getMiddleButtonAction(url: url,
                                                  isPrivateMode: toolbarState.isPrivateMode,
-                                                 canShowDataClearanceAction: toolbarState.canShowDataClearanceAction,
-                                                 isNewTabFeatureEnabled: toolbarState.isNewTabFeatureEnabled,
                                                  middleButton: middleButton)
 
         let canGoBack = action.canGoBack ?? toolbarState.canGoBack
@@ -268,10 +255,19 @@ struct NavigationBarState: StateType, Equatable {
         let showActionWarningBadge = action.showMenuWarningBadge ?? toolbarState.showMenuWarningBadge
         let showWarningBadge = isShowMenuWarningAction ? showActionWarningBadge : toolbarState.showMenuWarningBadge
 
+        let isTabScreenshotAction = action.actionType as? ToolbarActionType == .didSetTabScreenshot
+        let previousTabScreenshot = isTabScreenshotAction ? action.previousTabScreenshot : toolbarState.previousTabScreenshot
+        let nextTabScreenshot = isTabScreenshotAction ? action.nextTabScreenshot : toolbarState.nextTabScreenshot
+
         actions = [
             backAction(enabled: canGoBack),
             forwardAction(enabled: canGoForward)
         ]
+
+        let iconName: String? = switch tabTrayButtonStyle {
+        case .number, .none: StandardImageIdentifiers.Large.tab
+        case .screenshot: nil
+        }
 
         /* Ecosia: Always use version2 order (back, forward, middle, tabs, menu) with custom ellipsis icon
         switch layout {
@@ -279,16 +275,34 @@ struct NavigationBarState: StateType, Equatable {
             actions.append(middleAction)
             actions.append(menuAction(iconName: StandardImageIdentifiers.Large.moreHorizontalRound,
                                       showWarningBadge: showWarningBadge))
-            actions.append(tabsAction(numberOfTabs: numberOfTabs, isPrivateMode: toolbarState.isPrivateMode))
+            actions.append(tabsAction(iconName: iconName,
+                                      numberOfTabs: numberOfTabs,
+                                      isPrivateMode: toolbarState.isPrivateMode,
+                                      isNovaDesignEnabled: navigationBarState.isNovaDesignEnabled,
+                                      previousTabScreenshot: previousTabScreenshot,
+                                      nextTabScreenshot: nextTabScreenshot)
+            )
         case .version2:
             actions.append(middleAction)
-            actions.append(tabsAction(numberOfTabs: numberOfTabs, isPrivateMode: toolbarState.isPrivateMode))
+            actions.append(tabsAction(iconName: iconName,
+                                      numberOfTabs: numberOfTabs,
+                                      isPrivateMode: toolbarState.isPrivateMode,
+                                      isNovaDesignEnabled: navigationBarState.isNovaDesignEnabled,
+                                      previousTabScreenshot: previousTabScreenshot,
+                                      nextTabScreenshot: nextTabScreenshot)
+            )
             actions.append(menuAction(iconName: StandardImageIdentifiers.Large.moreHorizontalRound,
                                       showWarningBadge: showWarningBadge))
         }
         */
         actions.append(middleAction)
-        actions.append(tabsAction(numberOfTabs: numberOfTabs, isPrivateMode: toolbarState.isPrivateMode))
+        actions.append(tabsAction(iconName: iconName,
+                                  numberOfTabs: numberOfTabs,
+                                  isPrivateMode: toolbarState.isPrivateMode,
+                                  isNovaDesignEnabled: navigationBarState.isNovaDesignEnabled,
+                                  previousTabScreenshot: previousTabScreenshot,
+                                  nextTabScreenshot: nextTabScreenshot)
+        )
         actions.append(menuAction(iconName: "elipsis", showWarningBadge: showWarningBadge))
 
         return actions
@@ -296,16 +310,13 @@ struct NavigationBarState: StateType, Equatable {
 
     private static func getMiddleButtonAction(url: URL?,
                                               isPrivateMode: Bool,
-                                              canShowDataClearanceAction: Bool,
-                                              isNewTabFeatureEnabled: Bool,
                                               middleButton: NavigationBarMiddleButtonType)
     -> ToolbarActionConfiguration {
         let customizedMiddleButton = switch middleButton {
         case .home: homeAction
         case .newTab: newTabAction
         }
-        let canShowDataClearanceAction = canShowDataClearanceAction && isPrivateMode
-        let middleActionForWebpage = canShowDataClearanceAction ? dataClearanceAction : customizedMiddleButton
+        let middleActionForWebpage = customizedMiddleButton
         /* Ecosia: Show history on NTP, new tab on SERP/webpage
         let middleActionForHomepage = searchAction
         let middleAction = url == nil ? middleActionForHomepage : middleActionForWebpage
@@ -337,18 +348,31 @@ struct NavigationBarState: StateType, Equatable {
             a11yId: AccessibilityIdentifiers.Toolbar.forwardButton)
     }
 
-    private static func tabsAction(numberOfTabs: Int = 1,
-                                   isPrivateMode: Bool = false) -> ToolbarActionConfiguration {
+    private static func tabsAction(iconName: String?,
+                                   numberOfTabs: Int = 1,
+                                   isPrivateMode: Bool = false,
+                                   isNovaDesignEnabled: Bool = false,
+                                   previousTabScreenshot: UIImage? = nil,
+                                   nextTabScreenshot: UIImage? = nil) -> ToolbarActionConfiguration {
         let largeContentTitle = numberOfTabs > 99 ?
             .Toolbars.TabsButtonOverflowLargeContentTitle :
             String(format: .Toolbars.TabsButtonLargeContentTitle, NSNumber(value: numberOfTabs))
 
+        /* Ecosia: Replace the purple/Nova private-mode badge with the Ecosia incognito icon,
+           which comes from the Ecosia bundle and needs its own size and offsets. The mask goes
+           with it — the incognito glyph is tinted via `foregroundColorNormal` instead.
+        let isNovaPrivate = isPrivateMode && isNovaDesignEnabled
+        let badgeImageName = isNovaPrivate
+            ? StandardImageIdentifiers.Medium.privateModeCircleFillStrokeMulticolor
+            : StandardImageIdentifiers.Medium.privateModeCircleFillPurple
+         */
+
         return ToolbarActionConfiguration(
             actionType: .tabs,
-            iconName: StandardImageIdentifiers.Large.tab,
-            /* Ecosia: Replace purple private-mode badge with the Ecosia incognito icon
-            badgeImageName: isPrivateMode ? StandardImageIdentifiers.Medium.privateModeCircleFillPurple : nil,
-            maskImageName: isPrivateMode ? ImageIdentifiers.badgeMask : nil,
+            iconName: iconName,
+            /* Ecosia: see above.
+            badgeImageName: isPrivateMode ? badgeImageName : nil,
+            maskImageName: (isPrivateMode && iconName != nil) ? ImageIdentifiers.badgeMask : nil,
              */
             badgeImageName: isPrivateMode ? "incognito" : nil,
             badgeBundle: isPrivateMode ? .ecosia : nil,
@@ -359,6 +383,8 @@ struct NavigationBarState: StateType, Equatable {
             numberOfTabs: numberOfTabs,
             isEnabled: true,
             largeContentTitle: largeContentTitle,
+            previousTabScreenshot: previousTabScreenshot,
+            nextTabScreenshot: nextTabScreenshot,
             a11yLabel: .Toolbars.TabsButtonAccessibilityLabel,
             a11yId: AccessibilityIdentifiers.Toolbar.tabsButton)
     }

@@ -50,11 +50,12 @@ public struct WKWebViewParameters {
 @MainActor
 public protocol WKEngineConfigurationProvider {
     func createConfiguration(parameters: WKWebViewParameters) -> WKEngineConfiguration
+    func endPrivateBrowsingSession()
 }
 
 /// FXIOS-11986 - This will be internal when the WebEngine is fully integrated in Firefox iOS
 public struct DefaultWKEngineConfigurationProvider: WKEngineConfigurationProvider {
-    private static let nonPersistentStore = WKWebsiteDataStore.nonPersistent()
+    private static var nonPersistentStore = WKWebsiteDataStore.nonPersistent()
     private static let defaultStore = WKWebsiteDataStore.default()
     private static let defaultDataDetectorTypes: WKDataDetectorTypes = [.phoneNumber]
     private let configuration: WKWebViewConfiguration
@@ -73,11 +74,7 @@ public struct DefaultWKEngineConfigurationProvider: WKEngineConfigurationProvide
         // TODO: FXIOS-8086 - Evaluate if ignoresViewportScaleLimits is still needed
         // We do this to go against the configuration of the <meta name="viewport">
         // tag to behave the same way as Safari :-(
-        // TODO: FXIOS-12158 Add back after investigating why video player is broken
         configuration.ignoresViewportScaleLimits = true
-//        if #available(iOS 15.4, *) {
-//            configuration.preferences.isElementFullscreenEnabled = true
-//        }
 
         // Since our app creates multiple web views, we assign the same WKWebsiteDataStore object to web views that
         // may safely share cookies.
@@ -94,5 +91,9 @@ public struct DefaultWKEngineConfigurationProvider: WKEngineConfigurationProvide
         }
 
         return DefaultEngineConfiguration(webViewConfiguration: configuration)
+    }
+
+    public func endPrivateBrowsingSession() {
+        Self.nonPersistentStore = .nonPersistent()
     }
 }

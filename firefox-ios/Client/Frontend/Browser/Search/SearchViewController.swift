@@ -40,6 +40,7 @@ class SearchViewController: SiteTableViewController,
                             KeyboardHelperDelegate,
                             SearchViewDelegate,
                             FeatureFlaggable,
+                            UserFeaturePreferenceProvider,
                             Notifiable {
     typealias ExtraKey = TelemetryWrapper.EventExtraKey
 
@@ -87,7 +88,7 @@ class SearchViewController: SiteTableViewController,
     }
 
     private lazy var bookmarkedBadge: UIImage = {
-        return UIImage(named: StandardImageIdentifiers.Medium.bookmarkBadgeFillBlue50)!
+        return UIImage(named: StandardImageIdentifiers.Medium.bookmarkBadgeFillViolet50)!
     }()
 
     /* Ecosia: Replaced by openTabBadgeImage(for:) using the branded switchTab asset.
@@ -124,6 +125,10 @@ class SearchViewController: SiteTableViewController,
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Override keyboardDismissMode to `.none` to avoid bug where the address bar is behind the raise keyboard
+        // when dismissed by scrolling the search results because the keyboard reports stale keyboard frame
+        // This change matches Safari behaviour where keyboard doesn't dismissed when scrolling in results page
+        tableView.keyboardDismissMode = .none
         getCachedTabs()
         KeyboardHelper.defaultHelper.addDelegate(self)
 
@@ -145,6 +150,7 @@ class SearchViewController: SiteTableViewController,
         searchEngineScrollView.addSubview(searchEngineStackView)
 
         layoutTable()
+        setupSearchEngineScrollViewConstraints()
         layoutSearchEngineScrollView()
         layoutSearchEngineScrollViewContent()
 
@@ -187,14 +193,16 @@ class SearchViewController: SiteTableViewController,
         super.viewWillDisappear(animated)
     }
 
-    private func layoutSearchEngineScrollView() {
-        let keyboardHeight = KeyboardHelper.defaultHelper.currentState?.intersectionHeightForView(self.view) ?? 0
-
+    private func setupSearchEngineScrollViewConstraints() {
         NSLayoutConstraint.activate([
             searchEngineScrollView.leadingAnchor.constraint(equalTo: searchEngineContainerView.leadingAnchor),
             searchEngineScrollView.trailingAnchor.constraint(equalTo: searchEngineContainerView.trailingAnchor),
             searchEngineScrollView.topAnchor.constraint(equalTo: searchEngineContainerView.topAnchor)
         ])
+    }
+
+    private func layoutSearchEngineScrollView() {
+        let keyboardHeight = KeyboardHelper.defaultHelper.currentState?.intersectionHeightForView(self.view) ?? 0
 
         // Remove existing keyboard-related bottom constraints (if any)
         bottomConstraintWithKeyboard?.isActive = false
@@ -392,20 +400,14 @@ class SearchViewController: SiteTableViewController,
         layoutSearchEngineScrollView()
     }
 
-    func keyboardHelper(
-        _ keyboardHelper: KeyboardHelper,
-        keyboardWillChangeWithState state: KeyboardState
-    ) {
-        layoutSearchEngineScrollView()
-    }
-
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         // The height of the suggestions row may change, so call reloadData() to recalculate cell heights.
         coordinator.animate(alongsideTransition: { [self] _ in
-            tableView.reloadData()
             layoutSearchEngineScrollViewContent()
-        }, completion: nil)
+        }, completion: { [weak self] _ in
+            self?.tableView.reloadData()
+        })
     }
 
     private func getCachedTabs() {
@@ -618,18 +620,20 @@ class SearchViewController: SiteTableViewController,
             withIdentifier: TwoLineImageOverlayCell.cellIdentifier,
             for: indexPath
         ) as? TwoLineImageOverlayCell else {
-            logger.log("Failed to dequeue TwoLineImageOverlayCell at indexPath: \(indexPath)",
+            logger.log("Failed to dequeue TwoLineImageOverlayCell",
                        level: .fatal,
-                       category: .lifecycle)
+                       category: .lifecycle,
+                       extra: ["indexPath": "\(indexPath)"])
             return UITableViewCell()
         }
         guard let oneLineTableViewCell = tableView.dequeueReusableCell(
             withIdentifier: OneLineTableViewCell.cellIdentifier,
             for: indexPath
         ) as? OneLineTableViewCell else {
-            logger.log("Failed to dequeue OneLineTableViewCell at indexPath: \(indexPath)",
+            logger.log("Failed to dequeue OneLineTableViewCell",
                        level: .fatal,
-                       category: .lifecycle)
+                       category: .lifecycle,
+                       extra: ["indexPath": "\(indexPath)"])
             return UITableViewCell()
         }
         /* Ecosia: Avoid force-unwrap and capture the cell to stamp accessibility identifiers.
@@ -712,7 +716,8 @@ class SearchViewController: SiteTableViewController,
                     }
                 }
             case .firefoxSuggestions:
-                if featureFlags.isFeatureEnabled(.firefoxSuggestFeature, checking: .buildAndUser) {
+                if featureFlagsProvider.isEnabled(.firefoxSuggestFeature)
+                    && userPreferences.getPreferenceFor(.firefoxSuggestFeature) {
                     let firefoxSuggestion = viewModel.firefoxSuggestions[indexPath.row]
                     if searchTelemetry?.visibleFirefoxSuggestions
                         .contains(where: { $0.url == firefoxSuggestion.url }) == false {
@@ -824,6 +829,10 @@ class SearchViewController: SiteTableViewController,
         return attributedString
     }
 
+    // Ecosia: Ecosia's per-section cell substitutions (AI Chat row, branded icons, single-line
+    // truncation) push upstream's switch past the 108-line limit. Same escape hatch the repo
+    // already uses in SettingsCoordinator and FeatureFlagsDebugViewController.
+    // swiftlint:disable:next function_body_length
     private func getCellForSection(_ twoLineCell: TwoLineImageOverlayCell,
                                    oneLineCell: OneLineTableViewCell,
                                    for section: SearchListSection,
@@ -1015,15 +1024,12 @@ class SearchViewController: SiteTableViewController,
     }
 
     private var searchAppendImage: UIImage? {
-        var searchAppendImage = UIImage(named: StandardImageIdentifiers.Large.appendUpLeft)
-        if viewModel.isBottomSearchBar, let image = searchAppendImage, let cgImage = image.cgImage {
-            searchAppendImage = UIImage(
-                cgImage: cgImage,
-                scale: image.scale,
-                orientation: .downMirrored
-            )
+        let searchAppendImage = if viewModel.isBottomSearchBar {
+            UIImage(named: StandardImageIdentifiers.Large.appendDownLeft)
+        } else {
+            UIImage(named: StandardImageIdentifiers.Large.appendUpLeft)
         }
-        return searchAppendImage
+        return searchAppendImage?.imageFlippedForRightToLeftLayoutDirection()
     }
 
     // MARK: - Notifiable

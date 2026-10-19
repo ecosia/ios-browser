@@ -6,6 +6,7 @@ import Common
 import Foundation
 import Shared
 import Kingfisher
+import WebKit
 
 import class MozillaAppServices.HardcodedNimbusFeatures
 
@@ -96,16 +97,21 @@ class UITestAppDelegate: AppDelegate {
             profile.prefs.setInt(1, forKey: PrefsKeys.UseStageServer)
         }
 
+        // Point the FxA account manager at a custom content server (e.g. a local
+        // FxA stack) so pairing/sign-in can run against it. Set before the
+        // account manager initializes. Used by the pairing E2E test.
+        if let customFxA = ProcessInfo.processInfo.environment["CUSTOM_FXA_SERVER"],
+           !customFxA.isEmpty {
+            profile.prefs.setBool(true, forKey: PrefsKeys.KeyUseCustomFxAContentServer)
+            profile.prefs.setString(customFxA, forKey: PrefsKeys.KeyCustomFxAContentServer)
+        }
+
         if launchArguments.contains(LaunchArguments.FxAChinaServer) {
             profile.prefs.setInt(1, forKey: PrefsKeys.KeyEnableChinaSyncService)
         }
 
         if launchArguments.contains(LaunchArguments.DisableAnimations) {
             UIView.setAnimationsEnabled(false)
-        }
-
-        if launchArguments.contains(LaunchArguments.SkipSplashScreenExperiment) {
-            profile.prefs.setBool(true, forKey: PrefsKeys.splashScreenShownKey)
         }
 
         if launchArguments.contains(LaunchArguments.ResetMicrosurveyExpirationCount) {
@@ -168,7 +174,7 @@ class UITestAppDelegate: AppDelegate {
             fatalError("Could not copy items from \(input) to \(output): \(error)")
         }
 
-        // Tests currently load a browserdb history, we make sure we migrate it everytime
+        // Tests currently load a browserdb history, we make sure we migrate it every time
         UserDefaults.standard.setValue(false, forKey: PrefsKeys.PlacesHistoryMigrationSucceeded)
     }
 
@@ -229,6 +235,21 @@ class UITestAppDelegate: AppDelegate {
             resetApplication()
         }
 
+        // ClearProfile does not reset UserDefaults.standard, so the default-browser flag leaks across
+        // tests on a shared simulator. Force it false here so the default-browser onboarding card renders.
+        if ProcessInfo.processInfo.arguments.contains(LaunchArguments.ResetDefaultBrowserStatus) {
+            UserDefaults.standard.set(false, forKey: DefaultBrowserUtility.UserDefaultsKey.isBrowserDefault)
+        }
+
+        // Opt-in: WKWebView cookies/site data live in WKWebsiteDataStore, which ClearProfile does not
+        // clear. Only cleared when this argument is present so it doesn't reset web state for every test.
+        if ProcessInfo.processInfo.arguments.contains(LaunchArguments.ClearWebData) {
+            WKWebsiteDataStore.default().removeData(
+                ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(),
+                modifiedSince: .distantPast
+            ) {}
+        }
+
         Tab.ChangeUserAgent.clear()
 
         return super.application(application, willFinishLaunchingWithOptions: launchOptions)
@@ -241,7 +262,9 @@ class UITestAppDelegate: AppDelegate {
         KingfisherManager.shared.cache.clearDiskCache()
 
         // Clear the cookie/url cache
-        URLCache.shared.removeAllCachedResponses()
+        // removeAllCachedResponses() crashes on iOS 17 simulators from Xcode 26
+        // https://github.com/mozilla-mobile/firefox-ios/issues/30947
+        // URLCache.shared.removeAllCachedResponses()
         let storage = HTTPCookieStorage.shared
         if let cookies = storage.cookies {
             for cookie in cookies {

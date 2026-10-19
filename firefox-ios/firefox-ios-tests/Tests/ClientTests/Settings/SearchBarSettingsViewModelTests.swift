@@ -13,26 +13,27 @@ class SearchBarSettingsViewModelTests: XCTestCase {
     var prefs: Prefs!
     var mockNotificationCenter: MockNotificationCenter!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         let profile = MockProfile(databasePrefix: "SearchBarSettingsTests")
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         prefs = profile.prefs
         prefs.clearAll()
         mockNotificationCenter = MockNotificationCenter()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         prefs.clearAll()
         prefs = nil
         mockNotificationCenter = nil
+        DependencyHelperMock().reset()
+        try await super.tearDown()
     }
 
     // MARK: Default
     func testDefaultSearchPosition() {
         let viewModel = createViewModel()
-        XCTAssertEqual(viewModel.searchBarPosition, .top)
+        XCTAssertEqual(viewModel.searchBarPosition, .bottom)
     }
 
     // MARK: Saved
@@ -99,7 +100,7 @@ class SearchBarSettingsViewModelTests: XCTestCase {
         let viewModel = createViewModel()
         let searchBarPosition = viewModel.searchBarPosition
 
-        XCTAssertEqual(searchBarPosition, .top)
+        XCTAssertEqual(searchBarPosition, .bottom)
         XCTAssertEqual(mockNotificationCenter.postCallCount, 0)
     }
 
@@ -142,7 +143,7 @@ class SearchBarSettingsViewModelTests: XCTestCase {
 
 // MARK: - Helper methods
 private extension SearchBarSettingsViewModelTests {
-    func createViewModel(file: StaticString = #file,
+    func createViewModel(file: StaticString = #filePath,
                          line: UInt = #line) -> SearchBarSettingsViewModel {
         let viewModel = SearchBarSettingsViewModel(prefs: prefs, notificationCenter: mockNotificationCenter)
         trackForMemoryLeaks(viewModel, file: file, line: line)

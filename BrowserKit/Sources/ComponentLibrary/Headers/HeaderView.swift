@@ -177,19 +177,27 @@ public final class HeaderView: UIView, ThemeApplicable {
         NSLayoutConstraint.activate(viewConstraints)
     }
 
-    public func setupAccessibility(closeButtonA11yLabel: String,
-                                   closeButtonA11yId: String,
-                                   mainButtonA11yLabel: String? = nil,
-                                   mainButtonA11yId: String? = nil) {
+    public func setupAccessibility(
+        faviconA11yId: String,
+        titleLabelA11yId: String,
+        subtitleLabelA11yId: String,
+        closeButtonA11yLabel: String,
+        closeButtonA11yId: String,
+        mainButtonA11yLabel: String? = nil,
+        mainButtonA11yId: String? = nil
+    ) {
         let closeButtonViewModel = CloseButtonViewModel(a11yLabel: closeButtonA11yLabel,
                                                         a11yIdentifier: closeButtonA11yId)
         closeButton.configure(viewModel: closeButtonViewModel)
+        favicon.accessibilityIdentifier = faviconA11yId
         if let mainButtonA11yLabel, let mainButtonA11yId {
             titleLabel.isAccessibilityElement = false
             subtitleLabel.isAccessibilityElement = false
             mainButton.accessibilityIdentifier = mainButtonA11yId
             mainButton.accessibilityLabel = mainButtonA11yLabel
         } else {
+            titleLabel.accessibilityIdentifier = titleLabelA11yId
+            subtitleLabel.accessibilityIdentifier = subtitleLabelA11yId
             mainButton.isAccessibilityElement = false
         }
     }
@@ -256,13 +264,19 @@ public final class HeaderView: UIView, ThemeApplicable {
     }
 
     public func applyTheme(theme: Theme) {
+        let closeButtonTint = theme.isNova ? theme.colors.iconPrimary : theme.colors.iconSecondary
         let buttonImage = UIImage(named: StandardImageIdentifiers.Medium.cross)?
-            .withTintColor(theme.colors.iconSecondary)
+            .withTintColor(closeButtonTint)
         subtitleLabel.textColor = theme.colors.textSecondary
         titleLabel.textColor = theme.colors.textPrimary
         self.tintColor = theme.colors.layer2
         closeButton.setImage(buttonImage, for: .normal)
-        closeButton.backgroundColor = theme.colors.layer2
+        if #available(iOS 26.0, *), theme.isNova {
+            closeButton.applyProminentClearGlassConfiguration(backgroundColor: theme.colors.layer2,
+                                                              foregroundColor: closeButtonTint)
+        } else {
+            closeButton.backgroundColor = theme.colors.layer2
+        }
         horizontalLine.backgroundColor = theme.colors.borderPrimary
     }
 }

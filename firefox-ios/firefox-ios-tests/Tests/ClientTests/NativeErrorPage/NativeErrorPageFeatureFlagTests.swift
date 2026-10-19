@@ -9,54 +9,123 @@ import XCTest
 class NativeErrorPageFeatureFlagTests: XCTestCase {
     var subject: NativeErrorPageFeatureFlag!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         let profile = MockProfile()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
+        await DependencyHelperMock().bootstrapDependencies(injectedProfile: profile)
         subject = NativeErrorPageFeatureFlag()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         subject = nil
-        super.tearDown()
+        DependencyHelperMock().reset()
+        try await super.tearDown()
     }
 
     func testFeatureFlag_WhenNativeErrorPageEnabled_ThenFeatureIsEnabled() {
-        setupNimbusNativeErrorPageTesting(isEnabled: true,
-                                          noInternetConnectionErrorIsEnabled: true,
-                                          otherErrorPagesIsEnabled: false)
+        setupNimbusNativeErrorPageTesting(isEnabled: true)
+
         XCTAssertTrue(subject.isNativeErrorPageEnabled)
     }
 
     func testFeatureFlag_WhenNativeErrorPageDisabled_ThenFeatureIsDisabled() {
-        setupNimbusNativeErrorPageTesting(isEnabled: false,
-                                          noInternetConnectionErrorIsEnabled: false,
-                                          otherErrorPagesIsEnabled: false)
+        setupNimbusNativeErrorPageTesting(isEnabled: false)
+
         XCTAssertFalse(subject.isNativeErrorPageEnabled)
     }
 
-    func testFeatureFlag_WhenOtherErrorPagesEnabled_ThenFeatureIsEnabled() {
-        setupNimbusNativeErrorPageTesting(isEnabled: true,
-                                          noInternetConnectionErrorIsEnabled: true,
-                                          otherErrorPagesIsEnabled: true)
-        XCTAssertTrue(subject.isOtherErrorPagesEnabled)
+    func testFeatureFlag_WhenNICEnabledAndNativeErrorPageEnabled_ThenFeatureIsEnabled() {
+        setupNimbusNativeErrorPageTesting(
+            isEnabled: true,
+            noInternetConnectionErrorIsEnabled: true
+        )
+
+        XCTAssertTrue(subject.isNICErrorPageEnabled)
     }
 
-    func testFeatureFlag_WhenOtherErrorPagesDisabled_ThenFeatureIsDisabled() {
-        setupNimbusNativeErrorPageTesting(isEnabled: true,
-                                          noInternetConnectionErrorIsEnabled: true,
-                                          otherErrorPagesIsEnabled: false)
-        XCTAssertFalse(subject.isOtherErrorPagesEnabled)
+    func testFeatureFlag_WhenNICEnabledAndNativeErrorPageDisabled_ThenFeatureIsDisabled() {
+        setupNimbusNativeErrorPageTesting(
+            isEnabled: false,
+            noInternetConnectionErrorIsEnabled: true
+        )
+
+        XCTAssertFalse(subject.isNICErrorPageEnabled)
     }
 
-    // Helper
-    private func setupNimbusNativeErrorPageTesting(isEnabled: Bool,
-                                                   noInternetConnectionErrorIsEnabled: Bool,
-                                                   otherErrorPagesIsEnabled: Bool = false) {
+    func testFeatureFlag_WhenNICDisabledAndNativeErrorPageEnabled_ThenFeatureIsDisabled() {
+        setupNimbusNativeErrorPageTesting(
+            isEnabled: true,
+            noInternetConnectionErrorIsEnabled: false
+        )
+
+        XCTAssertFalse(subject.isNICErrorPageEnabled)
+    }
+
+    func testFeatureFlag_WhenBadCertDomainErrorPageEnabledAndNativeErrorPageEnabled_ThenFeatureIsEnabled() {
+        setupNimbusNativeErrorPageTesting(
+            isEnabled: true,
+            badCertDomainErrorPageIsEnabled: true
+        )
+
+        XCTAssertTrue(subject.isBadCertDomainErrorPageEnabled)
+    }
+
+    func testFeatureFlag_WhenBadCertDomainErrorPageEnabledAndNativeErrorPageDisabled_ThenFeatureIsDisabled() {
+        setupNimbusNativeErrorPageTesting(
+            isEnabled: false,
+            badCertDomainErrorPageIsEnabled: true
+        )
+
+        XCTAssertFalse(subject.isBadCertDomainErrorPageEnabled)
+    }
+
+    func testFeatureFlag_WhenBadCertDomainErrorPageDisabledAndNativeErrorPageEnabled_ThenFeatureIsDisabled() {
+        setupNimbusNativeErrorPageTesting(
+            isEnabled: true,
+            badCertDomainErrorPageIsEnabled: false
+        )
+
+        XCTAssertFalse(subject.isBadCertDomainErrorPageEnabled)
+    }
+
+    func testFeatureFlag_WhenWaybackEnabledAndNativeErrorPageEnabled_ThenFeatureIsEnabled() {
+        setupNimbusNativeErrorPageTesting(isEnabled: true)
+        setupNimbusWaybackTesting(isEnabled: true)
+
+        XCTAssertTrue(subject.isWaybackEnabled)
+    }
+
+    func testFeatureFlag_WhenWaybackEnabledAndNativeErrorPageDisabled_ThenFeatureIsDisabled() {
+        setupNimbusNativeErrorPageTesting(isEnabled: false)
+        setupNimbusWaybackTesting(isEnabled: true)
+
+        XCTAssertFalse(subject.isWaybackEnabled)
+    }
+
+    func testFeatureFlag_WhenWaybackDisabledAndNativeErrorPageEnabled_ThenFeatureIsDisabled() {
+        setupNimbusNativeErrorPageTesting(isEnabled: true)
+        setupNimbusWaybackTesting(isEnabled: false)
+
+        XCTAssertFalse(subject.isWaybackEnabled)
+    }
+
+    private func setupNimbusNativeErrorPageTesting(
+        isEnabled: Bool,
+        noInternetConnectionErrorIsEnabled: Bool = false,
+        badCertDomainErrorPageIsEnabled: Bool = false
+    ) {
         FxNimbus.shared.features.nativeErrorPageFeature.with { _, _ in
-                return NativeErrorPageFeature(enabled: isEnabled,
-                                              noInternetConnectionError: noInternetConnectionErrorIsEnabled,
-                                              otherErrorPages: otherErrorPagesIsEnabled)
+            NativeErrorPageFeature(
+                badCertDomainErrorPage: badCertDomainErrorPageIsEnabled,
+                enabled: isEnabled,
+                noInternetConnectionError: noInternetConnectionErrorIsEnabled
+            )
+        }
+    }
+
+    private func setupNimbusWaybackTesting(isEnabled: Bool) {
+        FxNimbus.shared.features.waybackMachineFeature.with { _, _ in
+            WaybackMachineFeature(enabled: isEnabled)
         }
     }
 }

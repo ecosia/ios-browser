@@ -36,7 +36,7 @@ final class MessageCardMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked
             expectation.fulfill()
         }
 
-        subject.messageCardProvider(AppState(), action)
+        subject.messageCardProvider.legacyMiddleware(AppState(), action)
 
         wait(for: [expectation])
 
@@ -65,7 +65,7 @@ final class MessageCardMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked
             expectation.fulfill()
         }
 
-        subject.messageCardProvider(AppState(), action)
+        subject.messageCardProvider.legacyMiddleware(AppState(), action)
 
         wait(for: [expectation], timeout: 1.0)
 
@@ -81,14 +81,14 @@ final class MessageCardMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked
 
         let action = HomepageAction(windowUUID: .XCTestDefaultUUID, actionType: HomepageActionType.initialize)
 
-        subject.messageCardProvider(AppState(), action)
+        subject.messageCardProvider.legacyMiddleware(AppState(), action)
 
         let secondaryAction = MessageCardAction(
             windowUUID: .XCTestDefaultUUID,
             actionType: MessageCardActionType.tappedOnActionButton
         )
 
-        subject.messageCardProvider(AppState(), secondaryAction)
+        subject.messageCardProvider.legacyMiddleware(AppState(), secondaryAction)
 
         XCTAssertEqual(messagingManager.onMessagePressedCalled, 1)
     }
@@ -101,14 +101,14 @@ final class MessageCardMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked
 
         let action = HomepageAction(windowUUID: .XCTestDefaultUUID, actionType: HomepageActionType.initialize)
 
-        subject.messageCardProvider(AppState(), action)
+        subject.messageCardProvider.legacyMiddleware(AppState(), action)
 
         let secondaryAction = MessageCardAction(
             windowUUID: .XCTestDefaultUUID,
             actionType: MessageCardActionType.tappedOnCloseButton
         )
 
-        subject.messageCardProvider(AppState(), secondaryAction)
+        subject.messageCardProvider.legacyMiddleware(AppState(), secondaryAction)
 
         XCTAssertEqual(messagingManager.onMessageDismissedCalled, 1)
     }
@@ -136,8 +136,8 @@ final class MessageCardMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked
     // MARK: StoreTestUtility
     func setupAppState() -> AppState {
         return AppState(
-            activeScreens: ActiveScreensState(
-                screens: [
+            presentedComponents: PresentedComponentsState(
+                components: [
                     .homepage(
                         HomepageState(
                             windowUUID: .XCTestDefaultUUID

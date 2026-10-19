@@ -33,6 +33,7 @@ class HistoryPanel: UIViewController,
     weak var historyCoordinatorDelegate: HistoryCoordinatorDelegate?
     var recentlyClosedTabsDelegate: RecentlyClosedPanelDelegate?
     var state: LibraryPanelMainState
+    var isTransitioning = false
 
     let profile: Profile
     let windowUUID: WindowUUID
@@ -107,7 +108,7 @@ class HistoryPanel: UIViewController,
         searchbar.showsCancelButton = true
     }
 
-    private lazy var tableView: UITableView = .build { [weak self] tableView in
+    private lazy var tableView: UITableView = .build({ [weak self] tableView in
         guard let self = self else { return }
         tableView.dataSource = self.diffableDataSource
         tableView.addGestureRecognizer(self.longPressRecognizer)
@@ -124,6 +125,19 @@ class HistoryPanel: UIViewController,
                            forHeaderFooterViewReuseIdentifier: SiteTableViewHeader.cellIdentifier)
 
         tableView.sectionHeaderTopPadding = 0
+    }, {
+        UITableView(frame: .zero, style: self.tableViewStyle)
+    })
+
+    private var isNovaDesignEnabled: Bool {
+        (AppContainer.shared.resolve() as FeatureFlagProviding).isEnabled(.novaDesign)
+    }
+
+    private var tableViewStyle: UITableView.Style {
+        if #available(iOS 26.0, *), isNovaDesignEnabled {
+            return .insetGrouped
+        }
+        return .plain
     }
 
     lazy var longPressRecognizer: UILongPressGestureRecognizer = {
@@ -252,8 +266,15 @@ class HistoryPanel: UIViewController,
 
         let spacerHeight = keyboardHeight - UIConstants.BottomToolbarHeight
         bottomStackView.addKeyboardSpacer(spacerHeight: spacerHeight)
-        bottomStackView.isHidden = false
     }
+
+	func updateBottomSearchBarLayout(isHidden: Bool) {
+		bottomStackView.isHidden = isHidden
+
+		let bottomInset = isHidden ? 0 : searchbar.bounds.height
+		tableView.contentInset.bottom = bottomInset
+		tableView.verticalScrollIndicatorInsets.bottom = bottomInset
+	}
 
     func shouldDismissOnDone() -> Bool {
         guard state != .history(state: .search) else { return false }
@@ -293,7 +314,10 @@ class HistoryPanel: UIViewController,
     }
 
     func showClearRecentHistory() {
-        clearHistoryHelper.showClearRecentHistory(onViewController: self) { [weak self] dateOption in
+        clearHistoryHelper.showClearRecentHistory(
+            onViewController: self,
+            theme: themeManager.getCurrentTheme(for: windowUUID)
+        ) { [weak self] dateOption in
             // Delete groupings that belong to THAT section.
             switch dateOption {
             case .lastHour, .lastTwentyFourHours, .lastSevenDays, .lastFourWeeks:
@@ -597,6 +621,9 @@ class HistoryPanel: UIViewController,
 
         let theme = currentTheme()
         tableView.backgroundColor = theme.colors.layer1
+        if #available(iOS 26.0, *), isNovaDesignEnabled {
+            tableView.separatorColor = theme.colors.borderPrimary
+        }
         emptyStateOverlayView.backgroundColor = theme.colors.layer1
 
         searchbar.backgroundColor = theme.colors.layer3
@@ -754,6 +781,11 @@ extension HistoryPanel: UITableViewDelegate {
         header.configure(headerViewModel)
         header.applyTheme(theme: currentTheme())
 
+        if #available(iOS 26.0, *), isNovaDesignEnabled {
+            header.showBorder(for: .top, false)
+            header.showBorder(for: .bottom, false)
+        }
+
         // Configure tap to collapse/expand section
         header.tag = section
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(sectionHeaderTapped(sender:)))
@@ -814,12 +846,13 @@ extension HistoryPanel {
 extension HistoryPanel {
     func handleLeftTopButton() {
         updatePanelState(newState: .history(state: .mainView))
+        let userInfo: [String: Any] = ["state": state]
+        NotificationCenter.default.post(name: .LibraryPanelStateDidChange, object: nil, userInfo: userInfo)
     }
 
     func handleRightTopButton() {
         if state == .history(state: .search) {
             exitSearchState()
-            updatePanelState(newState: .history(state: .mainView))
         }
     }
 
@@ -845,9 +878,7 @@ extension HistoryPanel {
                 // FXIOS-13228 It should be safe to assumeIsolated here because of `.main` queue above
                 MainActor.assumeIsolated {
                     if result.isSuccess {
-                        SimpleToast().showAlertWithText(.LegacyAppMenu.AddPinToShortcutsConfirmMessage,
-                                                        bottomContainer: self.view,
-                                                        theme: self.currentTheme())
+                        self.libraryPanelDelegate?.showToast(message: .LegacyAppMenu.AddPinToShortcutsConfirmMessage)
                     }
                 }
             }

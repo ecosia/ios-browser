@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "Icona da l’app";
+
 /* (No Comment) */
 "New Private Tab" = "Nov tab privat";
 
@@ -5,7 +8,7 @@
 "New Tab" = "Nov tab";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia utilisescha tia camera per scannar codes QR e far fotos e videos.";
+"NSCameraUsageDescription" = "Ecosia po utilisar tia camera per scannar codes QR u per far fotos e videos.";
 
 /* Privacy - Face ID Usage Description */
 "NSFaceIDUsageDescription" = "Ecosia pretenda Face ID per acceder a tes pleds-clav memorisads e tias metodas da pajament.";
@@ -18,6 +21,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Uschia pos ti memorisar fotografias.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Ecosia utilisescha la reconuschientscha vocala per convertir tia vusch en text en connex cun la tschertga vocala.";
 
 /* (No Comment) */
 "Scan QR Code" = "Scannar in code QR";

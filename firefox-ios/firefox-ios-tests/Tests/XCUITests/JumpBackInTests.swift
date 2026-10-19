@@ -5,167 +5,178 @@
 import XCTest
 import Common
 
-class JumpBackInTests: BaseTestCase {
-    func closeKeyboard() {
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Browser.UrlBar.cancelButton])
-        navigator.performAction(Action.CloseURLBarOpen)
-        navigator.nowAt(NewTabScreen)
+class JumpBackInTests: FeatureFlaggedTestBase {
+    private var jumpBackInScreen: JumpBackInScreen!
+    private var browserScreen: BrowserScreen!
+    private var toolbarScreen: ToolbarScreen!
+    private var tabTrayScreen: TabTrayScreen!
+    private var contextMenuScreen: ContextMenuScreen!
+    private var firefoxHomePageScreen: FirefoxHomePageScreen!
+    private var homepageSettingsScreen: HomepageSettingsScreen!
+
+    override func setUp() async throws {
+        try await super.setUp()
+        jumpBackInScreen = JumpBackInScreen(app: app)
+        browserScreen = BrowserScreen(app: app)
+        toolbarScreen = ToolbarScreen(app: app)
+        tabTrayScreen = TabTrayScreen(app: app)
+        contextMenuScreen = ContextMenuScreen(app: app)
+        firefoxHomePageScreen = FirefoxHomePageScreen(app: app)
+        homepageSettingsScreen = HomepageSettingsScreen(app: app)
+    }
+
+    func prepareTest() {
+        // "Jump Back In" is off by default, so it has to be turned on. See Settings -> Homepage
+        addLaunchArgument(jsonFileName: "homepageRedesignOff", featureName: "homepage-redesign-feature")
+        app.launch()
+        enableJumpBackInInSettings()
+    }
+
+    private func openNewTabFromTabTray() {
         waitForTabsButton()
+        toolbarScreen.tapOnTabsButton()
+        tabTrayScreen.assertNewTabButtonExist()
+        tabTrayScreen.tapOnNewTabButton()
     }
 
-    func scrollDown() {
-        if !isTablet {
-            while app.staticTexts["Switch Your Default Browser"].exists || app.buttons["Learn How"].exists {
-                app.collectionViews["FxCollectionView"].swipeUp()
-            }
-        }
-    }
+    // https://mozilla.testrail.io/index.php?/cases/view/3254197
+    // Regression
+    func testJumpBackInIsOffByDefaultAndAvailableInSettings() {
+        app.launch()
 
-    override func setUp() {
-        super.setUp()
-
-        // "Jump Back In" is enabled by default. See Settings -> Homepage
-        navigator.goto(HomeSettings)
-        mozWaitForElementToExist(app.switches["Jump Back In"])
-        XCTAssertEqual(app.switches["Jump Back In"].value as! String, "1")
-
-        navigator.goto(NewTabScreen)
-    }
-
-    // https://mozilla.testrail.io/index.php?/cases/view/2306922
-    func testJumpBackInSection() {
-        // Open a tab and visit a page
-        navigator.openURL("https://www.example.com")
+        // Access some webpages, so the section would have tabs to show if it were enabled
+        browserScreen.navigateToURL(path(forTestPage: TestPages.exampleHTML))
+        waitUntilPageLoad()
+        browserScreen.navigateToURL(path(forTestPage: TestPages.mozillaOrg))
         waitUntilPageLoad()
 
-        // Open a new tab
-        navigator.goto(TabTray)
-        navigator.performAction(Action.OpenNewTabFromTabTray)
-        closeKeyboard()
+        // Back on the homepage the section is not displayed. Top Sites is awaited first so the
+        // absence check runs against a settled homepage instead of one that is still loading.
+        openNewTabFromTabTray()
+        waitForTabsButton()
+        firefoxHomePageScreen.assertTopSitesItemCellExist()
+        jumpBackInScreen.assertSectionNotExists()
 
-        // "Jump Back In" section is displayed
-        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
-        // The contextual hint box is not displayed consistently, so
-        // I don't test for its existence.
+        // The toggle is still offered in Settings, switched off
+        navigator.nowAt(NewTabScreen)
+        navigator.goto(HomeSettings)
+        homepageSettingsScreen.assertJumpBackInToggleExists()
+        homepageSettingsScreen.assertJumpBackInToggleIsDisabled()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306920
-    // Smoketest
     func testPrivateTab() throws {
-        throw XCTSkip("This test is flaky")
-//        // Visit https://www.twitter.com
-//        navigator.openURL("https://www.twitter.com")
-//        waitUntilPageLoad()
-//
-//        // Open a new tab and check the "Jump Back In" section
-//        navigator.goto(TabTray)
-//        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
-//        navigator.performAction(Action.OpenNewTabFromTabTray)
-//        closeKeyboard()
-//
-//        // Twitter tab is visible in the "Jump Back In" section
-//        scrollDown()
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Twitter"])
-//
-//        // Open private browsing
-//        navigator.goto(TabTray)
-//        navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
-//
-//        // Visit YouTube in private browsing
-//        navigator.performAction(Action.OpenNewTabFromTabTray)
-//        navigator.openURL("https://www.youtube.com")
-//        waitUntilPageLoad()
-//
-//        // Open a new tab in normal browsing and check the "Jump Back In" section
-//        navigator.toggleOff(userState.isPrivate, withAction: Action.ToggleRegularMode)
-//        navigator.goto(NewTabScreen)
-//        closeKeyboard()
-//
-//        // Twitter should be in "Jump Back In"
-//        scrollDown()
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Twitter"])
-//        mozWaitForElementToNotExist(app.cells["JumpBackInCell"].staticTexts["YouTube"])
-//
-//        // Visit "amazon.com" and check the "Jump Back In" section
-//        navigator.openURL("https://www.amazon.com")
-//        waitUntilPageLoad()
-//
-//        navigator.goto(TabTray)
-//        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
-//        navigator.performAction(Action.OpenNewTabFromTabTray)
-//        closeKeyboard()
-//
-//        // Amazon and Twitter are visible in the "Jump Back In" section
-//        scrollDown()
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Amazon"])
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Twitter"])
-//        mozWaitForElementToNotExist(app.cells["JumpBackInCell"].staticTexts["YouTube"])
-//
-//        // Tap on Twitter from "Jump Back In"
-//        app.cells["JumpBackInCell"].staticTexts["Twitter"].tap()
-//
-//        // The view is switched to the twitter tab
-//        let url = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].value as! String
-//        XCTAssertEqual(url, "twitter.com/i/flow/login")
-//
-//        // Open a new tab in normal browsing
-//        navigator.goto(TabTray)
-//        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
-//        navigator.performAction(Action.OpenNewTabFromTabTray)
-//        closeKeyboard()
-//
-//        // Check the "Jump Back In Section"
-//        scrollDown()
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
-//
-//        // Amazon is visible in "Jump Back In"
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Amazon"])
-//
-//        // Close the amazon tab
-//        navigator.goto(TabTray)
-//        if isTablet {
-//            mozWaitForElementToExist(app.navigationBars.segmentedControls["navBarTabTray"])
-//        } else {
-//            mozWaitForElementToExist(app.navigationBars.staticTexts["Open Tabs"])
-//        }
-//        app.cells["Amazon.com. Spend less. Smile more."].buttons[StandardImageIdentifiers.Large.cross].tap()
-//
-//        // Revisit the "Jump Back In" section
-//        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.TabTray.newTabButton], timeout: TIMEOUT)
-//        navigator.performAction(Action.OpenNewTabFromTabTray)
-//        closeKeyboard()
-//
-//        // The "Jump Back In" section is still here with twitter listed
-//        scrollDown()
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
-//        // FXIOS-5448 - Amazon should not be listed because we've closed the Amazon tab
-//        // mozWaitForElementToNotExist(app.cells["JumpBackInCell"].staticTexts["Amazon"])
-//        mozWaitForElementToExist(app.cells["JumpBackInCell"].staticTexts["Twitter"])
-//        mozWaitForElementToNotExist(app.cells["JumpBackInCell"].staticTexts["YouTube"])
+        prepareTest()
+        // Visit https://www.wikipedia.org
+        browserScreen.navigateToURL("https://www.wikipedia.org")
+        waitUntilPageLoad()
+
+        // Open a new tab and check the "Jump Back In" section
+        openNewTabFromTabTray()
+        // The experiment is not opening the keyboard on a new tab
+        waitForTabsButton()
+
+        // Twitter tab is visible in the "Jump Back In" section
+        jumpBackInScreen.scrollToJumpBackInSection()
+        jumpBackInScreen.assertSectionExists()
+        jumpBackInScreen.assertItemExists(title: "Wikipedia")
+
+        // Open private browsing
+        waitForTabsButton()
+        toolbarScreen.tapOnTabsButton()
+        tabTrayScreen.switchToPrivateBrowsing()
+
+        // Visit YouTube in private browsing
+        tabTrayScreen.assertNewTabButtonExist()
+        tabTrayScreen.tapOnNewTabButton()
+        browserScreen.navigateToURL("https://www.youtube.com")
+        waitUntilPageLoad()
+
+        // Open a new tab in normal browsing and check the "Jump Back In" section
+        waitForTabsButton()
+        toolbarScreen.tapOnTabsButton()
+        tabTrayScreen.switchToRegularBrowsing()
+        tabTrayScreen.assertNewTabButtonExist()
+        tabTrayScreen.tapOnNewTabButton()
+        // The experiment is not opening the keyboard on a new tab
+        waitForTabsButton()
+
+        // Twitter should be in "Jump Back In"
+        jumpBackInScreen.scrollToJumpBackInSection()
+        jumpBackInScreen.assertSectionExists()
+        jumpBackInScreen.assertItemExists(title: "Wikipedia")
+        jumpBackInScreen.assertItemNotExists(title: "YouTube")
+
+        // Visit "mozilla.org" and check the "Jump Back In" section
+        browserScreen.navigateToURL("http://localhost:\(serverPort)/test-fixture/test-example.html")
+        waitUntilPageLoad()
+
+        openNewTabFromTabTray()
+        // The experiment is not opening the keyboard on a new tab
+        waitForTabsButton()
+        browserScreen.tapCancelButtonIfExist()
+
+        // Amazon and Twitter are visible in the "Jump Back In" section
+        jumpBackInScreen.scrollToJumpBackInSection()
+        jumpBackInScreen.assertSectionExists()
+        jumpBackInScreen.assertItemExists(title: TestLabels.exampleDomain)
+        jumpBackInScreen.assertItemExists(title: "Wikipedia")
+        jumpBackInScreen.assertItemNotExists(title: "YouTube")
+
+        // Tap on Twitter from "Jump Back In"
+        jumpBackInScreen.tapItem(title: "Wikipedia")
+
+        // The view is switched to the twitter tab
+        browserScreen.assertAddressBarContains(value: "wikipedia.org")
+
+        // Open a new tab in normal browsing
+        openNewTabFromTabTray()
+        // The experiment is not opening the keyboard on a new tab
+        waitForTabsButton()
+
+        // Check the "Jump Back In Section"
+        jumpBackInScreen.scrollToJumpBackInSection()
+        jumpBackInScreen.assertSectionExists()
+
+        // Amazon is visible in "Jump Back In"
+        jumpBackInScreen.assertItemExists(title: TestLabels.exampleDomain)
+
+        // Close the amazon tab
+        waitForTabsButton()
+        toolbarScreen.tapOnTabsButton()
+        tabTrayScreen.closeTab(title: TestLabels.exampleDomain)
+
+        // Revisit the "Jump Back In" section
+        tabTrayScreen.assertNewTabButtonExist()
+        tabTrayScreen.tapOnNewTabButton()
+        // The experiment is not opening the keyboard on a new tab
+        waitForTabsButton()
+
+        // The "Jump Back In" section is still here with twitter listed
+        jumpBackInScreen.scrollToJumpBackInSection()
+        jumpBackInScreen.assertSectionExists()
+        // FXIOS-5448 - Amazon should not be listed because we've closed the Amazon tab
+        // mozWaitForElementToNotExist(app.cells["JumpBackInCell"].staticTexts["Example Domain"])
+        jumpBackInScreen.assertItemExists(title: "Wikipedia")
+        jumpBackInScreen.assertItemNotExists(title: "YouTube")
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2445811
     func testLongTapOnJumpBackInLink() {
+        prepareTest()
         // On homepage, go to the "Jump back in" section and long tap on one of the links
-        navigator.openURL(path(forTestPage: "test-example.html"))
-        mozWaitForElementToExist(app.webViews.links[website_2["link"]!], timeout: TIMEOUT_LONG)
-        app.webViews.links[website_2["link"]!].press(forDuration: 2)
+        browserScreen.navigateToURL(path(forTestPage: TestPages.exampleHTML))
+        browserScreen.longPressLink(named: website_2["link"]!, duration: 2)
         mozWaitForElementToExist(app.otherElements.collectionViews.element(boundBy: 0))
-        app.buttons["Open in New Tab"].waitAndTap()
+        contextMenuScreen.tapOpenInNewTab()
         waitUntilPageLoad()
-        navigator.nowAt(BrowserTab)
-        navigator.performAction(Action.GoToHomePage)
-        mozWaitForElementToExist(app.cells["JumpBackInCell"].firstMatch)
-        app.cells["JumpBackInCell"].firstMatch.press(forDuration: 2)
+        openNewTabFromTabTray()
+        waitForTabsButton()
+        browserScreen.tapCancelButtonIfExist()
+
+        jumpBackInScreen.assertSectionExists()
+        jumpBackInScreen.longPressFirstItem()
         // The context menu opens, having the correct options
-        let ContextMenuTable = app.tables["Context Menu"]
-        mozWaitForElementToExist(ContextMenuTable)
-        mozWaitForElementToExist(ContextMenuTable.cells.otherElements[StandardImageIdentifiers.Large.plus])
-        mozWaitForElementToExist(ContextMenuTable.cells.otherElements[StandardImageIdentifiers.Large.privateMode])
-        mozWaitForElementToExist(ContextMenuTable.cells.otherElements[StandardImageIdentifiers.Large.bookmark])
-        mozWaitForElementToExist(ContextMenuTable.cells.otherElements[StandardImageIdentifiers.Large.share])
+        jumpBackInScreen.assertContextMenuExists()
     }
 }

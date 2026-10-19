@@ -6,6 +6,17 @@ import Foundation
 import Glean
 
 struct ToolbarTelemetry {
+    enum GoogleLensContextMenuOption: String {
+        case photoPicker
+        case camera
+    }
+
+    enum PanGestureOutcomes: String {
+        case tabTrayOpened
+        case tabClosed
+        case cancelled
+    }
+
     private let gleanWrapper: GleanWrapper
 
     init(gleanWrapper: GleanWrapper = DefaultGleanWrapper()) {
@@ -32,9 +43,10 @@ struct ToolbarTelemetry {
         gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.refreshButtonTapped, extras: isPrivateExtra)
     }
 
-    func readerModeButtonTapped(isPrivate: Bool, isEnabled: Bool) {
-        let readerModeExtra = GleanMetrics.Toolbar.ReaderModeButtonTappedExtra(enabled: isPrivate,
-                                                                               isPrivate: isEnabled)
+    func readerModeButtonTapped(isPrivate: Bool, isEnabled: Bool, hasSummarizer: Bool) {
+        let readerModeExtra = GleanMetrics.Toolbar.ReaderModeButtonTappedExtra(enabled: isEnabled,
+                                                                               hasSummarizer: hasSummarizer,
+                                                                               isPrivate: isPrivate)
         gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.readerModeButtonTapped, extras: readerModeExtra)
     }
 
@@ -69,6 +81,16 @@ struct ToolbarTelemetry {
         gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.searchButtonTapped, extras: isPrivateExtra)
     }
 
+    func googleLensButtonTapped() {
+        gleanWrapper.recordEvent(for: GleanMetrics.ToolbarGoogleLensButton.tapped)
+    }
+
+    func googleLensContextMenuOptionSelected(option: GoogleLensContextMenuOption) {
+        let optionExtra = GleanMetrics.ToolbarGoogleLensButtonContextMenu.OptionSelectedExtra(option: option.rawValue)
+        gleanWrapper.recordEvent(for: GleanMetrics.ToolbarGoogleLensButtonContextMenu.optionSelected,
+                                 extras: optionExtra)
+    }
+
     func tabTrayButtonTapped(isPrivate: Bool) {
         let isPrivateExtra = GleanMetrics.Toolbar.TabTrayButtonTappedExtra(isPrivate: isPrivate)
         gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.tabTrayButtonTapped, extras: isPrivateExtra)
@@ -77,11 +99,6 @@ struct ToolbarTelemetry {
     func menuButtonTapped(isPrivate: Bool) {
         let isPrivateExtra = GleanMetrics.Toolbar.AppMenuButtonTappedExtra(isPrivate: isPrivate)
         gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.appMenuButtonTapped, extras: isPrivateExtra)
-    }
-
-    func dataClearanceButtonTapped(isPrivate: Bool) {
-        let isPrivateExtra = GleanMetrics.Toolbar.DataClearanceButtonTappedExtra(isPrivate: isPrivate)
-        gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.dataClearanceButtonTapped, extras: isPrivateExtra)
     }
 
     // Long Press
@@ -103,6 +120,15 @@ struct ToolbarTelemetry {
     func tabTrayButtonLongPressed(isPrivate: Bool) {
         let isPrivateExtra = GleanMetrics.Toolbar.TabTrayLongPressExtra(isPrivate: isPrivate)
         gleanWrapper.recordEvent(for: GleanMetrics.Toolbar.tabTrayLongPress, extras: isPrivateExtra)
+    }
+
+    func addressBarSwiped() {
+        gleanWrapper.recordEvent(for: GleanMetrics.ToolbarAddressBar.swiped)
+    }
+
+    func addressBarDragged(outcome: PanGestureOutcomes) {
+        let outcome = GleanMetrics.ToolbarAddressBar.DraggedExtra(outcome: outcome.rawValue)
+        gleanWrapper.recordEvent(for: GleanMetrics.ToolbarAddressBar.dragged, extras: outcome)
     }
 
     // Other

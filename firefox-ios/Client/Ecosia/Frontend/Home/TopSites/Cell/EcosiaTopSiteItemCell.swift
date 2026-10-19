@@ -50,7 +50,9 @@ class TopSiteItemCell: UICollectionViewCell, ReusableCell {
     lazy var imageView: FaviconImageView = .build { _ in }
 
     private lazy var pinImageView: UIImageView = .build { imageView in
-        imageView.image = UIImage.templateImageNamed(StandardImageIdentifiers.Small.pinBadgeFill)
+        // Ecosia: 155.1 removed `StandardImageIdentifiers.Small.pinBadgeFill` and its
+        // `pinBadgeFillSmall` imageset; upstream's own TopSiteCell moved to `ExtraSmall.pin`.
+        imageView.image = UIImage.templateImageNamed(StandardImageIdentifiers.ExtraSmall.pin)
         imageView.isHidden = true
     }
 

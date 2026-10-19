@@ -11,19 +11,21 @@ import WebKit
 class TabConfigurationProvider {
     // A WKWebViewConfiguration used for normal tabs
     var configuration: WKEngineConfiguration {
-        configuration(from: prefs, isPrivate: false)
+        configuration(from: profile, isPrivate: false)
     }
 
     // A WKWebViewConfiguration used for private mode tabs
     var privateConfiguration: WKEngineConfiguration {
-        configuration(from: prefs, isPrivate: true)
+        configuration(from: profile, isPrivate: true)
     }
 
     private let configurationProvider = DefaultWKEngineConfigurationProvider()
-    private let prefs: Prefs
+    private let profile: Profile
+    private weak let tabManager: TabManager?
 
-    init(prefs: Prefs) {
-        self.prefs = prefs
+    init(profile: Profile, tabManager: TabManager) {
+        self.profile = profile
+        self.tabManager = tabManager
     }
 
     func configuration(isPrivate: Bool) -> WKEngineConfiguration {
@@ -44,22 +46,35 @@ class TabConfigurationProvider {
         privateConfiguration.webViewConfiguration.mediaTypesRequiringUserActionForPlayback = mediaType
     }
 
-    private func configuration(from prefs: Prefs, isPrivate: Bool) -> WKEngineConfiguration {
-        let blockPopups = prefs.boolForKey(PrefsKeys.KeyBlockPopups) ?? true
-        let autoPlay = AutoplayAccessors.getMediaTypesRequiringUserActionForPlayback(prefs)
+    func endPrivateBrowsingSession() {
+        configurationProvider.endPrivateBrowsingSession()
+    }
+
+    private func configuration(from profile: Profile, isPrivate: Bool) -> WKEngineConfiguration {
+        let blockPopups = profile.prefs.boolForKey(PrefsKeys.KeyBlockPopups) ?? true
+        let autoPlay = AutoplayAccessors.getMediaTypesRequiringUserActionForPlayback(profile.prefs)
         let parameters = WKWebViewParameters(
             blockPopups: blockPopups,
             isPrivate: isPrivate,
             autoPlay: autoPlay,
             schemeHandler: InternalSchemeHandler()
         )
-        /* Ecosia: inject all required cookies when config is created to make sure they are present
-        return configurationProvider.createConfiguration(parameters: parameters)
-        */
-        let result = configurationProvider.createConfiguration(parameters: parameters)
-        Cookie.makeRequiredCookies(isPrivate: isPrivate).forEach { cookie in
-            result.webViewConfiguration.websiteDataStore.httpCookieStore.setCookie(cookie)
+        let engineConfiguration = configurationProvider.createConfiguration(parameters: parameters)
+
+        // Register the reader mode scheme handler alongside the `internal://` one
+        if ReaderModeSchemeHandler.isCustomSchemeEnabled {
+            let webViewConfig = engineConfiguration.webViewConfiguration
+            if webViewConfig.urlSchemeHandler(forURLScheme: ReaderModeSchemeHandler.scheme) == nil {
+                webViewConfig.setURLSchemeHandler(
+                    ReaderModeSchemeHandler(profile: profile, tabManager: tabManager ?? nil),
+                    forURLScheme: ReaderModeSchemeHandler.scheme
+                )
+            }
         }
-        return result
+        // Ecosia: inject all required cookies when config is created to make sure they are present
+        Cookie.makeRequiredCookies(isPrivate: isPrivate).forEach { cookie in
+            engineConfiguration.webViewConfiguration.websiteDataStore.httpCookieStore.setCookie(cookie)
+        }
+        return engineConfiguration
     }
 }

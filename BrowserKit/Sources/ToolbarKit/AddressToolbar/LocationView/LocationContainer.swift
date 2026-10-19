@@ -14,10 +14,10 @@ final class LocationContainer: UIView, ThemeApplicable {
         static let borderWidthEditing: CGFloat = 2
     }
 
-    // Ecosia: cached so the border can be refreshed when only the scroll
-    // alpha changes (e.g. address bar shrinking into its compact pill).
+    // Ecosia: cached so the border can be refreshed when only the minimized
+    // state changes (e.g. address bar shrinking into its compact pill).
     private var isEditing = false
-    private var scrollAlpha: CGFloat = 1
+    private var isAddressBarMinimized = false
     private var borderTheme: Theme?
 
     init() {
@@ -41,9 +41,9 @@ final class LocationContainer: UIView, ThemeApplicable {
         layer.masksToBounds = false
     }
 
-    func updateShadowOpacityBasedOn(scrollAlpha: CGFloat) {
-        self.scrollAlpha = scrollAlpha
-        let targetOpacity = scrollAlpha.isZero ? 0 : UX.shadowOpacity
+    func updateShadowOpacityBasedOn(isAddressBarMinimized: Bool) {
+        self.isAddressBarMinimized = isAddressBarMinimized
+        let targetOpacity = isAddressBarMinimized ? 0 : UX.shadowOpacity
         if layer.shadowOpacity != targetOpacity {
             layer.shadowOpacity = targetOpacity
         }
@@ -62,7 +62,7 @@ final class LocationContainer: UIView, ThemeApplicable {
     }
 
     private func refreshEditingBorder() {
-        let shouldShowBorder = isEditing && !scrollAlpha.isZero
+        let shouldShowBorder = isEditing && !isAddressBarMinimized
         if shouldShowBorder, let theme = borderTheme {
             layer.borderWidth = UX.borderWidthEditing
             layer.borderColor = theme.colors.ecosia.buttonBackgroundPrimary.cgColor

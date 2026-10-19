@@ -30,8 +30,6 @@ final class ThemeableMockThemeManager: ThemeManager {
         return currentTheme
     }
 
-    var isNewAppearanceMenuOn: Bool { return false }
-
     func setAutomaticBrightness(isOn: Bool) {}
     func setAutomaticBrightnessValue(_ value: Float) {}
     func applyThemeUpdatesToWindows() {}

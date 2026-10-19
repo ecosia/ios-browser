@@ -28,6 +28,25 @@ enum BlocklistCategory: CaseIterable {
             return .fingerprinting
         }
     }
+
+    /// A stable string identifier used to persist per-category stats. Unlike the
+    /// enum case order, this value is guaranteed not to change, so serialized
+    /// stats remain readable even if the enum is reordered or extended.
+    var storageKey: String {
+        switch self {
+        case .advertising: return "advertising"
+        case .analytics: return "analytics"
+        case .social: return "social"
+        case .cryptomining: return "cryptomining"
+        case .fingerprinting: return "fingerprinting"
+        }
+    }
+
+    init?(storageKey: String) {
+        guard let match = BlocklistCategory.allCases.first(where: { $0.storageKey == storageKey })
+        else { return nil }
+        self = match
+    }
 }
 
 enum BlocklistFileName: String, CaseIterable {
@@ -112,12 +131,13 @@ struct NoImageModeDefaults {
 }
 
 @MainActor
-class ContentBlocker {
+class ContentBlocker: Notifiable {
     var safelistedDomains = SafelistedDomains()
     let ruleStore = WKContentRuleListStore.default()
     var blockImagesRule: WKContentRuleList?
     var setupCompleted = false
     let logger: Logger
+    var adBlockerListFetcher: AdBlockerListFetcherProtocol = ASAdBlockerListFetcher()
 
     static let shared = ContentBlocker()
 
@@ -144,6 +164,28 @@ class ContentBlocker {
                     NotificationCenter.default.post(name: .contentBlockerTabSetupRequired, object: nil)
                 }
             }
+        }
+
+        startObservingNotifications(
+            withNotificationCenter: NotificationCenter.default,
+            forObserver: self,
+            observing: [.remoteSettingsDidSync]
+        )
+    }
+
+    nonisolated func handleNotifications(_ notification: Notification) {
+        switch notification.name {
+        case .remoteSettingsDidSync:
+            guard let collections = notification.userInfo?["updatedCollections"] as? [String],
+                  collections.contains(ASRemoteSettingsCollection.trackingProtectionLists.rawValue) else {
+                return
+            }
+            Task { @MainActor [weak self] in
+                await self?.reloadAdBlockerList()
+                self?.prefsChanged()
+            }
+        default:
+            break
         }
     }
 
@@ -280,6 +322,8 @@ extension ContentBlocker {
     }
 
     func removeAllRulesInStore(completion: @escaping () -> Void) {
+        // Drop the ad-blocker list's cached hash so `reloadAdBlockerList` recompiles it after a wipe.
+        UserDefaults.standard.removeObject(forKey: ASAdBlockerListFetcher.adBlockerRecordID)
         let dispatchGroup = DispatchGroup()
         let logger = self.logger
         ruleStore?.getAvailableContentRuleListIdentifiers { [weak self] available in
@@ -374,11 +418,6 @@ extension ContentBlocker {
         let blocklists = BlocklistFileName.allBlocklistFileNames
         let dispatchGroup = DispatchGroup()
         let totalListCount = blocklists.count
-        /* Ecosia: Mark counters nonisolated(unsafe) so @Sendable closures can safely capture them;
-           all access is on the main thread via ensureMainThread and dispatchGroup.notify
-        var listsCompiledCount = 0
-        var errorCount = 0
-        */
         nonisolated(unsafe) var listsCompiledCount = 0
         nonisolated(unsafe) var errorCount = 0
         blocklists.forEach { filename in
@@ -393,7 +432,10 @@ extension ContentBlocker {
                 self?.logger.log("Will compile list: \(filename)", level: .info, category: .adblock)
                 self?.loadJsonFromBundle(forResource: filename) { jsonString in
                     ensureMainThread {
-                        var str = jsonString
+                        // Ensure JSON is lowercase only. WebKit rules expect lowercase
+                        // domains (and no other part of the JSON should be uppercase).
+                        // Introduced with FXIOS-16380.
+                        var str = jsonString.lowercased()
 
                         // Here we find the closing array bracket in the JSON string
                         // and append our safelist as a rule to the end of the JSON.
@@ -405,10 +447,16 @@ extension ContentBlocker {
                         self.ruleStore?.compileContentRuleList(
                             forIdentifier: filename,
                             encodedContentRuleList: str
-                        ) { rule, error in
-                            listsCompiledCount += 1
-                            errorCount += (error == nil ? 0 : 1)
-                            self.compileContentRuleListCompletion(dispatchGroup: dispatchGroup, rule: rule, error: error)
+                        ) { [weak self] rule, error in
+                            DispatchQueue.main.async {
+                                listsCompiledCount += 1
+                                errorCount += (error == nil ? 0 : 1)
+                                self?.compileContentRuleListCompletion(
+                                    dispatchGroup: dispatchGroup,
+                                    rule: rule,
+                                    error: error
+                                )
+                            }
                         }
                     }
                 }
@@ -438,6 +486,46 @@ extension ContentBlocker {
             logger.log("Nil rule set for BlockList.", level: .warning, category: .adblock)
             assertionFailure()
             return
+        }
+    }
+
+    func reloadAdBlockerList() async {
+        guard let encoded = await fetchAdBlockerRuleJSON() else {
+            logger.log("Skipping ad-blocker list, none available.", level: .info, category: .adblock)
+            return
+        }
+        await compileAdBlockerList(encoded)
+    }
+
+    private func fetchAdBlockerRuleJSON() async -> String? {
+        guard let json = await adBlockerListFetcher.fetchAdBlockerListJSON(),
+              let range = json.range(of: "]", options: .backwards) else {
+            return nil
+        }
+        return json.replacingCharacters(in: range, with: safelistAsJSON() + "]")
+    }
+
+    private func compileAdBlockerList(_ encoded: String) async {
+        let identifier = ASAdBlockerListFetcher.adBlockerRecordID
+        // If the hash of the encoded list matches the cached hash, we can skip compilation and setup.
+        let hash = calculateHash(for: Data(encoded.utf8))
+        if let hash, hash == UserDefaults.standard.string(forKey: identifier) {
+            return
+        }
+
+        guard let ruleStore else { return }
+        do {
+            let rule = try await ruleStore.compileContentRuleList(
+                forIdentifier: identifier,
+                encodedContentRuleList: encoded
+            )
+            if rule != nil {
+                UserDefaults.standard.set(hash, forKey: identifier)
+            }
+        } catch {
+            logger.log("Ad-blocker list compile failed: \(error.localizedDescription)",
+                       level: .warning,
+                       category: .adblock)
         }
     }
 }

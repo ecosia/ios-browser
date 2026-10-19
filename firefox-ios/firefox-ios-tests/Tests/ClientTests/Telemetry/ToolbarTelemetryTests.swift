@@ -41,7 +41,8 @@ final class ToolbarTelemetryTests: XCTestCase {
     }
 
     func testRecordToolbarWhenReaderModeTappedThenGleanIsCalled() throws {
-        subject?.readerModeButtonTapped(isPrivate: true, isEnabled: true)
+        // Ecosia: 155.1 added the `hasSummarizer` argument to `readerModeButtonTapped`.
+        subject?.readerModeButtonTapped(isPrivate: true, isEnabled: true, hasSummarizer: false)
         testEventMetricRecordingSuccess(metric: GleanMetrics.Toolbar.readerModeButtonTapped)
 
         let resultValue = try XCTUnwrap(GleanMetrics.Toolbar.readerModeButtonTapped.testGetValue())
@@ -145,6 +146,9 @@ final class ToolbarTelemetryTests: XCTestCase {
         XCTAssertEqual(resultValue[0].extra?["is_private"], "true")
     }
 
+    /* Ecosia: 155.1 removed the data-clearance ("Forget browsing data") toolbar button along with
+       `ToolbarTelemetry.dataClearanceButtonTapped` and its `toolbar.data_clearance_button_tapped`
+       Glean metric, so there is nothing left for this test to exercise.
     func testRecordToolbarWhenDataClearanceTappedThenGleanIsCalled() throws {
         subject?.dataClearanceButtonTapped(isPrivate: true)
         testEventMetricRecordingSuccess(metric: GleanMetrics.Toolbar.dataClearanceButtonTapped)
@@ -152,6 +156,7 @@ final class ToolbarTelemetryTests: XCTestCase {
         let resultValue = try XCTUnwrap(GleanMetrics.Toolbar.dataClearanceButtonTapped.testGetValue())
         XCTAssertEqual(resultValue[0].extra?["is_private"], "true")
     }
+     */
 
     func testRecordToolbarWhenLocationDraggedThenGleanIsCalled() throws {
         subject?.dragInteractionStarted()

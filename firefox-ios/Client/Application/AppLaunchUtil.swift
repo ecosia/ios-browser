@@ -5,14 +5,14 @@
 import Common
 import Foundation
 import Shared
-import Account
 import Glean
 import MozillaAppServices
 import Ecosia
 
-final class AppLaunchUtil: Sendable {
+import class Account.RustFirefoxAccounts
+
+final class AppLaunchUtil: FeatureFlaggable, Sendable {
     private let logger: Logger
-//    private var adjustHelper: AdjustHelper
     private let profile: Profile
     private let introScreenManager: IntroScreenManager
     private let termsOfServiceManager: TermsOfServiceManager
@@ -23,7 +23,6 @@ final class AppLaunchUtil: Sendable {
     ) {
         self.logger = logger
         self.profile = profile
-//        self.adjustHelper = AdjustHelper(profile: profile)
         self.introScreenManager = IntroScreenManager(prefs: profile.prefs)
         self.termsOfServiceManager = TermsOfServiceManager(prefs: profile.prefs)
     }
@@ -36,22 +35,20 @@ final class AppLaunchUtil: Sendable {
             logger.copyLogsToDocuments()
         }
 
-        DefaultBrowserUtility().processUserDefaultState(isFirstRun: introScreenManager.shouldShowIntroScreen)
+        // Tests can force a deterministic default-browser state; skip the system API so it isn't overwritten.
+        if !ProcessInfo.processInfo.arguments.contains(LaunchArguments.ResetDefaultBrowserStatus) {
+            DefaultBrowserUtility().processUserDefaultState(isFirstRun: introScreenManager.shouldShowIntroScreen)
+        }
         DefaultBrowserUtility().migrateDefaultBrowserStatusIfNeeded(isFirstRun: introScreenManager.shouldShowIntroScreen)
+
+        SummarizerPrefsMigration(prefs: profile.prefs).migrateSelectedLanguage()
+
         if #available(iOS 26, *) {
-            #if canImport(FoundationModels)
-                AppleIntelligenceUtil().processAvailabilityState()
-            #endif
+            AppleIntelligenceUtil().processAvailabilityState()
         }
 
         // Need to get "settings.sendCrashReports" this way so that Sentry can be initialized before getting the Profile.
         let sendCrashReports = NSUserDefaultsPrefs(prefix: "profile").boolForKey(AppConstants.prefSendCrashReports) ?? true
-
-        if termsOfServiceManager.isAffectedUser {
-            logger.setup(sendCrashReports: sendCrashReports)
-            TelemetryWrapper.shared.setup(profile: profile)
-            TelemetryWrapper.shared.recordStartUpTelemetry()
-        }
 
         if termsOfServiceManager.isFeatureEnabled {
             // Two cases:
@@ -79,13 +76,26 @@ final class AppLaunchUtil: Sendable {
 
         setMenuItems()
 
-        // Initialize conversion value by specifying fineValue and coarseValue.
-        // Call update postback conversion value for install event.
-        let conversionValue = ConversionValueUtil(fineValue: 0, coarseValue: .low, logger: logger)
-        conversionValue.adNetworkAttributionUpdateConversionEvent()
+        // Logs conversion activity and records any conversion events
+        let conversionActivityLogger = ConversionActivityLogger()
+        conversionActivityLogger.recordFirstDayAfterInstallTimestampIfNeeded()
+        conversionActivityLogger.recordActiveToday()
+        ConversionEventTracker().recordActivityEvents()
 
         // Initialize app services ( including NSS ). Must be called before any other calls to rust components.
         MozillaAppServices.initialize()
+
+        AdsClientDocumentsDirectoryMigration().removeLegacyDatabaseFiles()
+
+        /// Migrate TermsOfService prefs to TermsOfUse prefs
+        /// before Nimbus is initialized (should be available for experiments)
+        /// and backfill accept date/version if needed - after telemetry set up
+        TermsOfUseMigration(prefs: profile.prefs).migrateTermsOfService()
+
+        // Enable cache_not_ready_for_feature metric (disabled by default in application-services)
+        Glean.shared.applyServerKnobsConfig(
+            "{\"metrics_enabled\":{\"nimbus_health.cache_not_ready_for_feature\":true}}"
+        )
 
         // Start initializing the Nimbus SDK. This should be done after Glean
         // has been started.
@@ -100,8 +110,12 @@ final class AppLaunchUtil: Sendable {
         }
 
         // Save toolbar position to user prefs
-        /* Ecosia: Use Ecosia's search bar location saver
-        SearchBarLocationSaver().saveUserSearchBarLocation(profile: profile)
+        /* Ecosia: Use Ecosia's search bar location saver. `migrateBottomBarPositionToTopOnIPad` is
+           upstream's new one-shot iPad migration (FXIOS-15668); it is deliberately not called because
+           Ecosia's own MOB-4304 migration puts every device on the bottom Omnibox.
+        let searchBarLocationSaver = SearchBarLocationSaver()
+        searchBarLocationSaver.migrateBottomBarPositionToTopOnIPad(profile: profile)
+        searchBarLocationSaver.saveUserSearchBarLocation(profile: profile)
         */
         EcosiaSearchBarLocationSaver().saveUserSearchBarLocation(profile: profile)
         let deviceName = UIDevice.current.name
@@ -140,16 +154,10 @@ final class AppLaunchUtil: Sendable {
                    level: .debug,
                    category: .setup)
 
-        // Migrate legacy ToS users who don't have date/version preferences saved
-        // This must be done after telemetry is set up
-        termsOfServiceManager.migrateLegacyToSAcceptance()
-
         AppEventQueue.signal(event: .preLaunchDependenciesComplete)
 
         if #available(iOS 26, *) {
-            #if canImport(FoundationModels)
-                AppleIntelligenceUtil().processAvailabilityState()
-            #endif
+            AppleIntelligenceUtil().processAvailabilityState()
         }
     }
 
@@ -193,7 +201,6 @@ final class AppLaunchUtil: Sendable {
         }
 
         updateSessionCount()
-//        adjustHelper.setupAdjust()
         AppEventQueue.signal(event: .postLaunchDependenciesComplete)
     }
 
@@ -222,8 +229,7 @@ final class AppLaunchUtil: Sendable {
     /// enabled from greater than two to 2. See FXIOS-12704
     @MainActor
     private func migrateTopSitesRowNumbers() {
-        if LegacyFeatureFlagsManager.shared
-            .isFeatureEnabled(.homepageSearchBar, checking: .buildOnly) {
+        if featureFlagsProvider.isEnabled(.homepageSearchBar) {
             let defaultNumber = TopSitesRowCountSettingsController.defaultNumberOfRows
             let userNumberOfTopSiteRows = profile.prefs.intForKey(
                 PrefsKeys.NumberOfTopSiteRows
@@ -258,10 +264,9 @@ final class AppLaunchUtil: Sendable {
 
             browserProfile?.migrateHistoryToPlaces(
                 callback: { result in
-                    self.logger.log("Successfully migrated history",
+                    self.logger.log("Successfully migrated history in \(result.totalDuration / 1000) seconds",
                                     level: .info,
-                                    category: .sync,
-                                    extra: ["durationSeconds": "\(result.totalDuration / 1000)"])
+                                    category: .sync)
 
                     UserDefaults.standard.setValue(true, forKey: PrefsKeys.PlacesHistoryMigrationSucceeded)
                     NotificationCenter.default.post(name: .TopSitesUpdated, object: nil)

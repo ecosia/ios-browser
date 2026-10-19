@@ -20,7 +20,6 @@ final class AppSettingsTableViewControllerEcosiaTests: XCTestCase {
         Unleash.clearInstanceModel()
         await DependencyHelperMock().bootstrapDependencies()
         profile = MockProfile()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         tabManager = await TabManagerImplementation(profile: profile,
                                                     uuid: ReservedWindowUUID(uuid: .XCTestDefaultUUID, isNew: false))
         delegate = MockSettingsFlowDelegate()

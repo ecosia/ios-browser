@@ -2,10 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-/// We need these compile time checks so the app can be built with pre‑iOS 26 SDKs.
-/// Once our BR workflow switches to 26, we can remove them,
-/// as the runtime @available checks will be enough.
-#if canImport(FoundationModels)
 import FoundationModels
 import Foundation
 
@@ -18,8 +14,11 @@ import Foundation
 final class LanguageModelSessionAdapter: LanguageModelSessionProtocol {
     private let realSession: LanguageModelSession
 
-    init(instructions: String) {
-        self.realSession = LanguageModelSession(instructions: instructions)
+    init(instructions: String, usesPermissiveGuardrails: Bool = false) {
+        let model: SystemLanguageModel = usesPermissiveGuardrails
+            ? SystemLanguageModel(guardrails: .permissiveContentTransformations)
+            : .default
+        self.realSession = LanguageModelSession(model: model, instructions: instructions)
     }
 
     func respond(
@@ -39,5 +38,3 @@ final class LanguageModelSessionAdapter: LanguageModelSessionProtocol {
         return realSession.streamResponse(to: prompt, options: options)
     }
 }
-
-#endif

@@ -34,6 +34,7 @@ public protocol ThemeColourPalette {
     var layerGradientURL: Gradient { get }
     var layerSurfaceLow: UIColor { get }
     var layerSurfaceMedium: UIColor { get }
+    var layerSurfaceMediumAlpha: UIColor { get }
     var layerSurfaceMediumAlt: UIColor { get }
     var layerGradientSummary: Gradient { get }
 
@@ -84,6 +85,7 @@ public protocol ThemeColourPalette {
 
     // MARK: - Border
     var borderPrimary: UIColor { get }
+    var borderSecondary: UIColor { get }
     var borderAccent: UIColor { get }
     var borderAccentNonOpaque: UIColor { get }
     var borderAccentPrivate: UIColor { get }
@@ -101,4 +103,32 @@ public protocol ThemeColourPalette {
     var gradientOnboardingStop2: UIColor { get }
     var gradientOnboardingStop3: UIColor { get }
     var gradientOnboardingStop4: UIColor { get }
+    var gradientAIStrongStop1: UIColor { get }
+    var gradientAIStrongStop2: UIColor { get }
+    var gradientAIStrongStop3: UIColor { get }
+
+    var faviconLetterColorSet: FaviconLetterColorSet { get }
+
+    // MARK: - Nova tokens
+    var layerAccentSubtle: UIColor { get }
+    var layerInverse: UIColor { get }
+    var layerGlassTintNova: UIColor { get }
+    var layerGlassSelectedFill: UIColor { get }
+    var textToast: UIColor { get }
+    var iconInverted: UIColor { get }
+    var iconOnColorDisabled: UIColor { get }
+    var iconPrivate: UIColor { get }
+    var borderStrong: UIColor { get }
+    var borderAccentToast: UIColor { get }
+    var borderRadioButtonDefault: UIColor { get }
+    var gradient: Gradient { get }
+    var gradientAccent: Gradient { get }
+    var gradientAccentSubtle: Gradient { get }
+    var gradientAIStrong: Gradient { get }
+    var gradientBorder: Gradient { get }
+    var gradientPrivacy: Gradient { get }
+    var gradientPrivacyMask: Gradient { get }
+    var gradientWidgetSurface: Gradient { get }
+    var gradientWidgetSurfaceStandard: Gradient { get }
+    var gradientWidgetSurfacePrivate: Gradient { get }
 }

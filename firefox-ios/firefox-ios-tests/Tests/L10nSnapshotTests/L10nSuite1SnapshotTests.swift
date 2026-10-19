@@ -3,6 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import Shared
+import Common
 
 class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
     var noSkipIntroTest = ["testIntro"]
@@ -13,7 +15,7 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
     }
 
     @MainActor
-    override func setUp() {
+    override func setUp() async throws {
         // Test name looks like: "[Class testFunc]", parse out the function name
         let parts = name.replacingOccurrences(of: "]", with: "").split(separator: " ")
                 let key = String(parts[1])
@@ -24,54 +26,45 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
                     LaunchArguments.SkipContextualHints]
         }
         currentScreen = 0
-        super.setUp()
+        try await super.setUp()
     }
 
     @MainActor
     func testIntro() {
+        mozWaitForElementToExist(app.scrollViews.staticTexts["TermsOfService.OnboardingTitleLabel"])
+        mozWaitForElementToExist(app.scrollViews.staticTexts["TermsOfService.OnboardingDescriptionLabel"])
+        snapshot("Onboarding-0")
+
+        // Agree to the terms of service
+        app.buttons["TermsOfService.OnboardingPrimaryButton"].waitAndTap()
         mozWaitForElementToExist(app.scrollViews.staticTexts["\(rootA11yId)TitleLabel"], timeout: 15)
         mozWaitForElementToExist(app.scrollViews.staticTexts["\(rootA11yId)DescriptionLabel"], timeout: 15)
         snapshot("Onboarding-1")
 
         // Swipe to the second screen
-        app.buttons["\(rootA11yId)SecondaryButton"].tap()
+        app.buttons["\(rootA11yId)SecondaryButton"].waitAndTap()
         currentScreen += 1
         mozWaitForElementToExist(app.scrollViews.staticTexts["\(rootA11yId)TitleLabel"], timeout: 15)
         mozWaitForElementToExist(app.scrollViews.staticTexts["\(rootA11yId)DescriptionLabel"], timeout: 15)
         mozWaitForElementToExist(app.buttons["\(rootA11yId)PrimaryButton"])
-        mozWaitForElementToExist(app.buttons["\(rootA11yId)SecondaryButton"])
         snapshot("Onboarding-2")
 
         // Swipe to the third screen
-        app.buttons["\(rootA11yId)SecondaryButton"].tap()
+        app.buttons["\(rootA11yId)PrimaryButton"].waitAndTap()
         currentScreen += 1
         mozWaitForElementToExist(app.scrollViews.staticTexts["\(rootA11yId)TitleLabel"], timeout: 15)
         mozWaitForElementToExist(app.scrollViews.staticTexts["\(rootA11yId)DescriptionLabel"], timeout: 15)
-        mozWaitForElementToExist(app.buttons["\(rootA11yId)PrimaryButton"])
-        mozWaitForElementToExist(app.buttons["\(rootA11yId)SecondaryButton"])
         snapshot("Onboarding-3")
 
         // Swipe to the Homescreen
-        app.buttons["\(rootA11yId)SecondaryButton"].tap()
+        app.buttons["\(rootA11yId)PrimaryButton"].waitAndTap()
         currentScreen += 1
         mozWaitForElementToExist(app.scrollViews.staticTexts["\(rootA11yId)TitleLabel"])
         mozWaitForElementToExist(app.scrollViews.staticTexts["\(rootA11yId)DescriptionLabel"])
-        mozWaitForElementToExist(app.buttons["\(rootA11yId)PrimaryButton"])
-        mozWaitForElementToExist(app.buttons["\(rootA11yId)SecondaryButton"])
         snapshot("Onboarding-4")
 
-        app.buttons["\(rootA11yId)PrimaryButton"].tap()
-        currentScreen += 1
-        mozWaitForElementToExist(app.scrollViews.staticTexts["\(rootA11yId)TitleLabel"])
-        mozWaitForElementToExist(app.scrollViews.staticTexts["\(rootA11yId)DescriptionLabel"])
-        mozWaitForElementToExist(app.buttons["\(rootA11yId)PrimaryButton"])
-        mozWaitForElementToExist(app.buttons["\(rootA11yId)SecondaryButton"])
-        snapshot("Onboarding-5")
-
-        app.buttons["\(rootA11yId)PrimaryButton"].tap()
-        currentScreen += 1
-        mozWaitForElementToExist(app.textFields["url"])
-        mozWaitForElementToExist(app.webViews["contentView"])
+        app.buttons["\(rootA11yId)SecondaryButton"].waitAndTap()
+        mozWaitForElementToExist(app.collectionViews["FxCollectionView"])
         snapshot("Homescreen-first-visit")
     }
 
@@ -106,8 +99,11 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
 
     @MainActor
     func testWebViewAuthenticationDialog() {
-        navigator.openURL("https://jigsaw.w3.org/HTTP/Basic/", waitForLoading: false)
+        navigator.openURL("https://httpbin.org/basic-auth/user/passwd")
         mozWaitForElementToNotExist(app.staticTexts["XCUITests-Runner pasted from Fennec"])
+        // The auth dialog no longer shown in debugDescription.
+        // The presence of the keyboard is a good indicator that the user/pass window appears.
+        mozWaitForElementToExist(app.keyboards.firstMatch.keys.firstMatch)
         navigator.nowAt(BasicAuthDialog)
         snapshot("WebViewAuthenticationDialog-01", waitForLoadingIndicator: false)
     }
@@ -132,7 +128,7 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
         waitForTabsButton()
         // mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 15)
         navigator.nowAt(NewTabScreen)
-        app.collectionViews.cells[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell].firstMatch.swipeUp()
+        app.collectionViews.links[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell].firstMatch.swipeUp()
         snapshot("TopSitesMenu-00")
 
         // Workaround since in some locales Top Sites are not shown right away
@@ -147,12 +143,10 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
     @MainActor
     func testHistoryTableContextMenu() {
         navigator.openURL(loremIpsumURL)
+        waitUntilPageLoad()
         mozWaitForElementToNotExist(app.staticTexts["XCUITests-Runner pasted from Fennec"], timeout: 5)
         mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 10)
-        navigator.performAction(Action.OpenNewTabFromTabTray)
-        navigator.performAction(Action.CloseURLBarOpen)
-        navigator.nowAt(NewTabScreen)
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 10)
+        waitForTabsButton()
         navigator.goto(LibraryPanel_History)
         mozWaitForElementToExist(app.tables["History List"])
         app.tables["History List"].cells.element(boundBy: 1).staticTexts.element(boundBy: 1).press(forDuration: 2)
@@ -161,18 +155,15 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
 
     @MainActor
     func testBookmarksTableContextMenu() {
-        sleep(3)
         navigator.openURL(loremIpsumURL)
+        waitUntilPageLoad()
         // There is no other way the test work with the new Copied.. snackbar ahow on iOS14
         mozWaitForElementToNotExist(app.staticTexts["XCUITests-Runner pasted from Fennec"])
         mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 15)
         navigator.performAction(Action.Bookmark)
-        navigator.createNewTab()
-        // Disable due to issue #7521
-        // navigator.goto(BookmarksPanelContextMenu)
-        navigator.performAction(Action.CloseURLBarOpen)
-        navigator.nowAt(NewTabScreen)
+        navigator.goto(BrowserTabMenu)
         navigator.goto(LibraryPanel_Bookmarks)
+        navigator.goto(BookmarksPanelContextMenu)
         snapshot("BookmarksTableContextMenu-01")
     }
 
@@ -187,32 +178,33 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
     }*/
 
     @MainActor
-    func testETPperSite() {
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 10)
+    func testETPperSite_menuRefactorFeatureOff() {
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton])
         navigator.nowAt(NewTabScreen)
         // Enable Strict ETP
         navigator.goto(TrackingProtectionSettings)
         // Check the warning alert
-        app.cells["Settings.TrackingProtectionOption.BlockListStrict"].tap()
+        app.cells["Settings.TrackingProtectionOption.BlockListStrict"].waitAndTap()
 
         snapshot("TrackingProtectionStrictWarning-01")
 
+        // "Tracking Protection" is no longer in the menu after the menu refactor
+        // experiment.
         // Website without blocked elements
-        navigator.openURL(loremIpsumURL)
-        mozWaitForElementToNotExist(app.staticTexts["XCUITests-Runner pasted from Fennec"])
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.trackingProtection], timeout: 5)
-        navigator.goto(TrackingProtectionContextMenuDetails)
-        snapshot("TrackingProtectionEnabledPerSite-01")
+        // navigator.openURL(loremIpsumURL)
+        // mozWaitForElementToNotExist(app.staticTexts["XCUITests-Runner pasted from Fennec"])
+        // navigator.goto(TrackingProtectionContextMenuDetails)
+        // snapshot("TrackingProtectionEnabledPerSite-01")
 
         // Disable the toggle so that TP is off
-        snapshot("TrackingProtectionDisabledPerSite-02")
-        app.switches.firstMatch.tap()
-        snapshot("TrackingProtectionDisabledPerSite-03")
+        // snapshot("TrackingProtectionDisabledPerSite-02")
+        // app.switches.firstMatch.tap()
+        // snapshot("TrackingProtectionDisabledPerSite-03")
     }
 
     @MainActor
     func testSettingsETP() {
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 10)
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton])
         navigator.nowAt(NewTabScreen)
         navigator.goto(TrackingProtectionSettings)
 
@@ -232,7 +224,7 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
     func testMenuOnTopSites() {
         typealias homeTabBannerA11y = AccessibilityIdentifiers.FirefoxHomepage.HomeTabBanner
 
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 10)
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton])
         navigator.nowAt(NewTabScreen)
         navigator.goto(BrowserTabMenu)
         snapshot("MenuOnTopSites-01")
@@ -245,10 +237,48 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
         // snapshot("HomeDefaultBrowserLearnMore")
     }
 
+    // Maps screen graph node names to the Settings cell identifier MappaMundi will tap.
+    // For multi-hop paths (e.g. MailAppSettings via BrowsingSettings), use the first-hop cell.
+    private static let settingsCellId: [String: String] = [
+        SearchSettings: AccessibilityIdentifiers.Settings.Search.searchNavigationBar,
+        NewTabSettings: "NewTab",
+        MailAppSettings: AccessibilityIdentifiers.Settings.Browsing.title,
+        DisplaySettings: "DisplayThemeOption",
+        ClearPrivateDataSettings: AccessibilityIdentifiers.Settings.ClearData.title,
+        TrackingProtectionSettings: AccessibilityIdentifiers.Settings.ContentBlocker.title,
+        NotificationsSettings: AccessibilityIdentifiers.Settings.Notifications.title,
+        BrowsingSettings: AccessibilityIdentifiers.Settings.Browsing.title,
+        SummarizeSettings: AccessibilityIdentifiers.Settings.Summarize.title,
+        SiriSettings: "SiriSettings",
+        AutofillPasswordSettings: AccessibilityIdentifiers.Settings.AutofillsPasswords.title,
+        AppIconSettings: AccessibilityIdentifiers.Settings.AppIconSelection.settingsRowTitle,
+        ToolbarSettings: AccessibilityIdentifiers.Settings.SearchBar.searchBarSetting,
+        HomeSettings: AccessibilityIdentifiers.Settings.Homepage.homeSettings,
+        AddCustomSearchSettings: AccessibilityIdentifiers.Settings.Search.searchNavigationBar,
+    ]
+
+    private func scrollCellIntoView(_ cell: XCUIElement, in scrollView: XCUIElement) {
+        if cell.isHittable { return }
+        for _ in 0..<8 {
+            scrollView.swipeUp()
+            if cell.isHittable { return }
+        }
+        for _ in 0..<16 {
+            scrollView.swipeDown()
+            if cell.isHittable { return }
+        }
+    }
+
     @MainActor
     func testSettings() {
+        // Allow failures on individual settings nodes without aborting the entire test.
+        // A single unreachable node previously wiped all remaining screenshots.
+        let savedContinueAfterFailure = continueAfterFailure
+        continueAfterFailure = true
+        defer { continueAfterFailure = savedContinueAfterFailure }
+
         let table = app.tables.element(boundBy: 0)
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 10)
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton])
         navigator.nowAt(NewTabScreen)
         navigator.goto(SettingsScreen)
         table.forEachScreen { i in
@@ -256,24 +286,55 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
         }
 
         allSettingsScreens.forEach { nodeName in
-            self.navigator.goto(nodeName)
-            table.forEachScreen { i in
-                snapshot("Settings-\(nodeName)-\(i)")
+            // Scroll to top before each node so the target cell is reachable
+            self.navigator.goto(SettingsScreen)
+            scrollToTop(table)
+            if let cellId = Self.settingsCellId[nodeName] {
+                scrollCellIntoView(table.cells[cellId], in: table)
             }
+            self.navigator.goto(nodeName)
+            if nodeName == "DisplaySettings" {
+                snapshot("Settings-\(nodeName)")
+            } else if nodeName == "ToolbarSettings" {
+                snapshot("Settings-\(nodeName)")
+            } else if nodeName == "AppIconSettings" {
+                // forEachScreen may not work with collectionView
+                snapshot("Settings-\(nodeName)")
+            } else {
+                table.forEachScreen { i in
+                    snapshot("Settings-\(nodeName)-\(i)")
+                }
+            }
+        }
+    }
+
+    private func scrollToTop(_ table: XCUIElement) {
+        // Swipe down repeatedly to scroll back to the top of the settings list
+        for _ in 0..<10 {
+            guard table.exists else { return }
+            let firstCell = table.cells.element(boundBy: 0)
+            if firstCell.exists && firstCell.isHittable {
+                return
+            }
+            table.swipeDown()
         }
     }
 
     @MainActor
     func testPrivateBrowsingTabsEmptyState() {
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 10)
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton])
         navigator.nowAt(NewTabScreen)
-        navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
+        navigator.toggleOn(userState.isPrivate, withAction: Action.ToggleExperimentPrivateMode)
         snapshot("PrivateBrowsingTabsEmptyState-01")
+        navigator.performAction(Action.OpenNewTabFromTabTray)
+        snapshot("PrivateBrowsingTabsNewTab-01")
     }
 
     @MainActor
     func testTakeMarketingScreenshots() {
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], timeout: 10)
+        let addNewTabButton = app.buttons[AccessibilityIdentifiers.Toolbar.addNewTabButton]
+
+        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton])
         snapshot("00TopSites")
 
         // go to synced tabs home screen
@@ -281,19 +342,27 @@ class L10nSuite1SnapshotTests: L10nBaseSnapshotTests {
         snapshot("03SyncedTabs")
 
         // load some web pages in some new tabs
-        navigator.openNewURL(urlString: "https://www.mozilla.org")
+        navigator.goto(NewTabScreen)
+        navigator.openURL("https://www.mozilla.org")
         waitUntilPageLoad()
-        navigator.openNewURL(urlString: "https://mozilla.org/firefox/desktop")
+        waitForTabsButton()
+        navigator.goto(TabTray)
+        navigator.goto(NewTabScreen)
+        navigator.openURL("https://mozilla.org/firefox/desktop")
         waitUntilPageLoad()
-        navigator.openNewURL(urlString: "https://mozilla.org/firefox/new")
+        waitForTabsButton()
+        navigator.goto(TabTray)
+        navigator.goto(NewTabScreen)
+        navigator.openURL("https://mozilla.org/firefox/new")
         waitUntilPageLoad()
+        mozWaitForElementToExist(addNewTabButton)
         navigator.goto(TabTray)
         snapshot("02TabTray")
 
         // perform a search but don't complete (we're testing autocomplete here)
         navigator.createNewTab()
-        mozWaitForElementToExist(app.textFields["url"], timeout: 10)
-        app.typeText("firef")
+        app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].waitAndTap()
+        app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].typeText("firef")
         sleep(2)
         snapshot("01SearchResults")
     }

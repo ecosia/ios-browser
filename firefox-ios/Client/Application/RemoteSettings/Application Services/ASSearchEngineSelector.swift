@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import MozillaAppServices
-import Account
 import Common
 import Shared
 
@@ -68,7 +67,7 @@ final class ASSearchEngineSelector: ASSearchEngineSelectorProtocol {
 
             var searchResultsConfig = try engineSelector.filterEngineConfiguration(userEnvironment: env)
 
-            let serverName = remoteSettingsEnv == .stage ? "STAGE" : "PROD"
+            let serverName: String = remoteSettingsEnv.rawValue.uppercased()
             let engineLogList = searchResultsConfig.engines.map {
                 let isOptional = $0.optional ? " (OPTIONAL)" : ""
                 return $0.name + isOptional

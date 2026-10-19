@@ -12,7 +12,6 @@ class DownloadsPanelTests: XCTestCase {
     let windowUUID: WindowUUID = .XCTestDefaultUUID
     override func setUp() {
         super.setUp()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: MockProfile())
         DependencyHelperMock().bootstrapDependencies()
     }
 

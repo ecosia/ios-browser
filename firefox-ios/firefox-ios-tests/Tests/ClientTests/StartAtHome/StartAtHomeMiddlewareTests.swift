@@ -18,7 +18,6 @@ final class StartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
 
     override func setUp() async throws {
         try await super.setUp()
-        DependencyHelperMock().bootstrapDependencies()
         mockProfile = MockProfile()
         mockTabManager = MockTabManager()
         mockTabManager.tabRestoreHasFinished = true
@@ -26,13 +25,18 @@ final class StartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
             wrappedManager: WindowManagerImplementation(),
             tabManager: mockTabManager
         )
+        mockWindowManager.overrideWindows = true
+        // Inject the mock profile so that `UserFeaturePreferring` resolved from the
+        // AppContainer reads from `mockProfile.prefs` (which the tests configure).
         // Ecosia: pass the mock tab manager too — otherwise bootstrapDependencies creates a DEFAULT
         // TabManagerImplementation and registers it under the window UUID, overwriting our mock (whose
         // tabRestoreHasFinished=true). With the default (tabRestoreHasFinished=false), the middleware's
         // isRestoringTabs becomes true and Start-at-Home is always skipped. (MOB-4384)
-        DependencyHelperMock().bootstrapDependencies(injectedTabManager: mockTabManager,
-                                                     injectedWindowManager: mockWindowManager)
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
+        DependencyHelperMock().bootstrapDependencies(
+            injectedProfile: mockProfile,
+            injectedWindowManager: mockWindowManager,
+            injectedTabManager: mockTabManager,
+        )
         setupStore()
         appState = setupAppState()
     }
@@ -59,7 +63,7 @@ final class StartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
             expectation.fulfill()
         }
 
-        subject.startAtHomeProvider(appState, action)
+        subject.startAtHomeProvider.legacyMiddleware(appState, action)
 
         wait(for: [expectation])
 
@@ -85,7 +89,7 @@ final class StartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
             expectation.fulfill()
         }
 
-        subject.startAtHomeProvider(appState, action)
+        subject.startAtHomeProvider.legacyMiddleware(appState, action)
 
         wait(for: [expectation])
 
@@ -111,7 +115,7 @@ final class StartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
             expectation.fulfill()
         }
 
-        subject.startAtHomeProvider(appState, action)
+        subject.startAtHomeProvider.legacyMiddleware(appState, action)
 
         wait(for: [expectation])
 
@@ -142,8 +146,8 @@ final class StartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility {
     // MARK: StoreTestUtility
     func setupAppState() -> Client.AppState {
         let appState = AppState(
-            activeScreens: ActiveScreensState(
-                screens: [
+            presentedComponents: PresentedComponentsState(
+                components: [
                     .browserViewController(
                         BrowserViewControllerState(
                             windowUUID: .XCTestDefaultUUID

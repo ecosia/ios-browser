@@ -5,9 +5,10 @@
 import Foundation
 import Common
 
-protocol LocaleProvider {
+protocol LocaleProvider: Sendable {
     var current: Locale { get }
     var preferredLanguages: [String] { get }
+    func languageCode() -> String?
     func regionCode(fallback: String?) -> String
 }
 
@@ -16,6 +17,16 @@ extension LocaleProvider {
     // we explicitly want to set a specific fallback (rare cases).
     func regionCode() -> String {
         return regionCode(fallback: nil)
+    }
+
+    /// Returns the language name localized in the current locale (e.g. "French" for "fr" when current locale is "en").
+    func localizedLanguageName(for code: String) -> String {
+        return current.localizedString(forIdentifier: code)?.localizedCapitalized ?? code
+    }
+
+    /// Returns the language name in its own language (e.g. "Français" for "fr").
+    func nativeLanguageName(for code: String) -> String {
+        return Locale(identifier: code).localizedString(forIdentifier: code)?.localizedCapitalized ?? code
     }
 }
 
@@ -74,5 +85,13 @@ struct SystemLocaleProvider: LocaleProvider {
         }
 
         return systemRegion
+    }
+
+    func languageCode() -> String? {
+        if #available(iOS 16, *) {
+            return current.language.languageCode?.identifier
+        } else {
+            return current.languageCode
+        }
     }
 }

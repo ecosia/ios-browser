@@ -6,8 +6,6 @@
 import { Readability, isProbablyReaderable} from "@mozilla/readability";
 import { findRecipeJSONLD } from "./JSONLD";
 
-const ALLOWED_LANGS = ["en"];
-
 /* Ecosia: Hostnames whose search-results pages pass isProbablyReaderable() as a
    false positive. Summarising a SERP is not useful and should be suppressed. */
 /* Ecosia: Suppress the summarizer on all Ecosia SERP pages (all verticals) — mirrors
@@ -19,18 +17,6 @@ const isEcosiaSERP = () =>
   ECOSIA_SERP_PATHS.some(p => document.location.pathname.startsWith(p));
 
 const CONTENT_TYPES = {generic: "generic", recipe: "recipe"};
-
-const isPageLanguageSupported = () => {
-  // Attempt to use the <html> lang attribute. 
-  // When the lang attribute is not set we get "". In that case, default to "en".
-  const rawLang = document.documentElement.lang?.trim() || "en";
-  try {
-    const locale = new Intl.Locale(rawLang);
-    return ALLOWED_LANGS.includes(locale.language);
-  } catch {
-    return true;
-  }
-}
 
 const extractContent = () => {
   /* Ecosia: Readability 0.6.0 changed the constructor from new Readability(uri, doc)
@@ -109,15 +95,6 @@ const countWords = (text) => {
 const checkSummarization = async (maxWords) => {
   // 0. Document should be ready before we do anything.
   await documentReady();
-
-  // 1. Check if the page language is supported.
-  if (!isPageLanguageSupported()) {
-    return {
-      canSummarize: false,
-      reason: "documentLanguageUnsupported",
-      wordCount: 0,
-    };
-  }
 
   // 1. Readerable check
   if (!isProbablyReaderable(document)) {

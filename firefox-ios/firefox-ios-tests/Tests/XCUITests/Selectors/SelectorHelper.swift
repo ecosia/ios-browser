@@ -8,6 +8,7 @@ enum SelectorStrategy {
     case buttonById(String)
     case staticTextById(String)
     case anyById(String)                 // button or label
+    case anyElementById(String)          // any element type, matched by identifier
     case staticTextLabelContains(String) // text that contains a fragment
     case predicate(NSPredicate)          // escape hatch
     case linkById(String)
@@ -17,6 +18,18 @@ enum SelectorStrategy {
     case imageById(String)
     case otherInTablesById(String)
     case tableCellById(String)
+    case staticTextInTablesByLabel(String)
+    case tableCellButtonById(String)
+    case navigationBarByIdOrLabel(String)
+    case linkStaticTextById(String)
+    case pageIndicatorById(String)
+    case buttonStaticTextByLabel(String)
+    case otherElementsButtonStaticTextByLabel(String)
+    case collectionViewLinkById(String)
+    case cellButtonById(String)
+    case navigationBarButtonById(String)
+    case collectionViewButtonByLabel(String)
+    case otherElementsButtonByLabel(String)
 }
 
 // Selector model (with metadata)
@@ -52,6 +65,8 @@ extension Selector {
             let button = app.buttons[value]
             if button.exists { return button }
             return app.staticTexts[value]
+        case .anyElementById(let id):
+            return app.descendants(matching: .any).matching(identifier: id).firstMatch
         case .staticTextLabelContains:
             return app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", value)).element(boundBy: 0)
         case .predicate(let p):
@@ -70,6 +85,30 @@ extension Selector {
             return app.tables.otherElements[id]
         case .tableCellById(let id):
             return app.tables.cells[id]
+        case .staticTextInTablesByLabel(let label):
+            return app.tables.staticTexts[label]
+        case .tableCellButtonById(let id):
+            return app.tables.cells.buttons[id]
+        case .navigationBarByIdOrLabel(let value):
+            return app.navigationBars[value]
+        case .linkStaticTextById(let id):
+            return app.links.staticTexts[id]
+        case .pageIndicatorById:
+            return app.pageIndicators[value]
+        case .buttonStaticTextByLabel(let label):
+            return app.buttons.staticTexts[label]
+        case .otherElementsButtonStaticTextByLabel(let label):
+            return app.otherElements.buttons.staticTexts[label]
+        case .collectionViewLinkById(let id):
+            return app.collectionViews.links[id]
+        case .cellButtonById(let id):
+            return app.cells.buttons[id]
+        case .navigationBarButtonById(let id):
+            return app.navigationBars.buttons[id]
+        case .collectionViewButtonByLabel:
+            return app.collectionViews.buttons[value]
+        case .otherElementsButtonByLabel:
+            return app.otherElements.buttons[value]
         }
     }
 
@@ -84,6 +123,8 @@ extension Selector {
             // Return the .any with the identifier to use exists/firstMatch
             let pred = NSPredicate(format: "identifier == %@", value)
             return app.descendants(matching: .any).matching(pred)
+        case .anyElementById(let id):
+            return app.descendants(matching: .any).matching(identifier: id)
         case .staticTextLabelContains:
             let pred = NSPredicate(format: "label CONTAINS %@", value)
             return app.staticTexts.containing(pred)
@@ -103,6 +144,30 @@ extension Selector {
             return app.tables.otherElements.matching(identifier: id)
         case .tableCellById(let id):
             return app.tables.cells.matching(identifier: id)
+        case .staticTextInTablesByLabel(let label):
+            return app.tables.staticTexts.matching(NSPredicate(format: "label == %@", label))
+        case .tableCellButtonById(let id):
+            return app.tables.cells.buttons.matching(identifier: id)
+        case .navigationBarByIdOrLabel(let value):
+            return app.navigationBars.matching(identifier: value)
+        case .linkStaticTextById(let id):
+            return app.links.staticTexts.matching(identifier: id)
+        case .pageIndicatorById:
+            return app.pageIndicators.matching(identifier: value)
+        case .buttonStaticTextByLabel(let label):
+            return app.buttons.staticTexts.matching(NSPredicate(format: "label == %@", label))
+        case .otherElementsButtonStaticTextByLabel(let label):
+            return app.otherElements.buttons.staticTexts.matching(NSPredicate(format: "label == %@", label))
+        case .collectionViewLinkById(let id):
+            return app.collectionViews.links.matching(identifier: id)
+        case .cellButtonById(let id):
+            return app.cells.buttons.matching(identifier: id)
+        case .navigationBarButtonById(let id):
+            return app.navigationBars.buttons.matching(identifier: id)
+        case .collectionViewButtonByLabel:
+            return app.collectionViews.buttons.matching(NSPredicate(format: "label == %@", value))
+        case .otherElementsButtonByLabel:
+            return app.otherElements.buttons.matching(NSPredicate(format: "label == %@", value))
         }
     }
 
@@ -118,6 +183,13 @@ extension Selector {
 
     static func linkByLabel(_ label: String, description: String, groups: [String] = []) -> Selector {
         let p = NSPredicate(format: "elementType == %d AND label == %@", XCUIElement.ElementType.link.rawValue, label)
+        return Selector(strategy: .predicate(p), value: label, description: description, groups: groups)
+    }
+
+    /// Matches a `link` element whose label contains the fragment. The embedded onboarding links are
+    /// discrete link elements, so this targets the link glyphs (not the surrounding sentence text).
+    static func linkContainingLabel(_ label: String, description: String, groups: [String] = []) -> Selector {
+        let p = NSPredicate(format: "elementType == %d AND label CONTAINS %@", XCUIElement.ElementType.link.rawValue, label)
         return Selector(strategy: .predicate(p), value: label, description: description, groups: groups)
     }
 }

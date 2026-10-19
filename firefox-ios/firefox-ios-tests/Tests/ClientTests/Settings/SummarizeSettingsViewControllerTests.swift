@@ -1,6 +1,7 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
+
 import Shared
 import XCTest
 
@@ -13,38 +14,40 @@ final class SummarizeSettingsViewControllerTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         DependencyHelperMock().bootstrapDependencies()
-        self.profile = MockProfile()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
+        profile = MockProfile()
     }
 
     override func tearDown() async throws {
         DependencyHelperMock().reset()
-        self.profile = nil
+        profile = nil
         try await super.tearDown()
     }
 
-    func test_generateSettings_withShakeFeature_hasExpectedSections() throws {
-        // Ecosia: the Gestures section requires the shake-gesture flag, which in Ecosia is driven solely by the
-        // Apple Intelligence summarizer (the hosted summarizer is disabled — SummarizerNimbusUtils
-        // .isHostedSummarizerEnabled() returns false). Apple Intelligence is unavailable in the test simulator,
-        // so the shake-gesture section can't be produced here.
-        throw XCTSkip("Shake-gesture (Gestures) section needs Apple Intelligence, unavailable in tests; Ecosia disables the hosted summarizer.")
-        /* Ecosia:
-        setupNimbusHostedSummarizerTesting(isEnabled: true)
-        let subject = createSubject()
+    func test_generateSettings_withShakeFeature_hasExpectedSections() {
+        let mockSummarizeNimbusUtils = MockSummarizerNimbusUtils()
+        mockSummarizeNimbusUtils.shakeGestureFeatureFlagEnabled = true
+        mockSummarizeNimbusUtils.isLanguageExpansionEnabled = false
+
+        let subject = createSubject(with: mockSummarizeNimbusUtils)
         let sections = subject.generateSettings()
+
+        XCTAssertEqual(mockSummarizeNimbusUtils.isShakeGestureFeatureFlagEnabledCallCount, 1)
         XCTAssertEqual(sections.count, 2)
         XCTAssertNil(sections.first?.title)
         XCTAssertEqual(sections.first?.children.count, 1)
         XCTAssertEqual(sections.last?.title?.string, "Gestures")
         XCTAssertEqual(sections.last?.children.count, 1)
-         */
     }
 
     func test_generateSettings_withoutShakeFeature_hasExpectedSections() {
-        setupNimbusHostedSummarizerTesting(isEnabled: false)
-        let subject = createSubject()
+        let mockSummarizeNimbusUtils = MockSummarizerNimbusUtils()
+        mockSummarizeNimbusUtils.shakeGestureFeatureFlagEnabled = false
+        mockSummarizeNimbusUtils.isLanguageExpansionEnabled = false
+
+        let subject = createSubject(with: mockSummarizeNimbusUtils)
         let sections = subject.generateSettings()
+
+        XCTAssertEqual(mockSummarizeNimbusUtils.isShakeGestureFeatureFlagEnabledCallCount, 1)
         XCTAssertEqual(sections.count, 1)
         XCTAssertNil(sections.first?.title)
         XCTAssertEqual(sections.first?.children.count, 1)
@@ -52,16 +55,46 @@ final class SummarizeSettingsViewControllerTests: XCTestCase {
         XCTAssertEqual(sections.last?.children.count, 1)
     }
 
-    // MARK: - Helper
-    private func createSubject() -> SummarizeSettingsViewController {
-        let subject = SummarizeSettingsViewController(prefs: profile.prefs, windowUUID: .XCTestDefaultUUID)
-        trackForMemoryLeaks(subject)
-        return subject
+    func test_generateSettings_withLanguageExpansion_hasExpectedSections() {
+        let mockSummarizeNimbusUtils = MockSummarizerNimbusUtils()
+        mockSummarizeNimbusUtils.shakeGestureFeatureFlagEnabled = false
+        mockSummarizeNimbusUtils.isLanguageExpansionEnabled = true
+
+        let subject = createSubject(with: mockSummarizeNimbusUtils)
+        let sections = subject.generateSettings()
+
+        XCTAssertEqual(sections.count, 2)
+        XCTAssertNil(sections.first?.title)
+        XCTAssertEqual(sections.first?.children.count, 1)
+        XCTAssertEqual(sections.last?.title?.string, "Language")
+        XCTAssertEqual(sections.last?.children.count, 1)
     }
 
-    private func setupNimbusHostedSummarizerTesting(isEnabled: Bool) {
-        FxNimbus.shared.features.hostedSummarizerFeature.with { _, _ in
-            return HostedSummarizerFeature(enabled: isEnabled, shakeGesture: isEnabled)
-        }
+    func test_generateSettings_withBothShakeAndLanguageExpansion_hasExpectedSections() {
+        let mockSummarizeNimbusUtils = MockSummarizerNimbusUtils()
+        mockSummarizeNimbusUtils.shakeGestureFeatureFlagEnabled = true
+        mockSummarizeNimbusUtils.isLanguageExpansionEnabled = true
+
+        let subject = createSubject(with: mockSummarizeNimbusUtils)
+        let sections = subject.generateSettings()
+
+        XCTAssertEqual(sections.count, 3)
+        XCTAssertNil(sections.first?.title)
+        XCTAssertEqual(sections.first?.children.count, 1)
+        XCTAssertEqual(sections[1].title?.string, "Gestures")
+        XCTAssertEqual(sections[1].children.count, 1)
+        XCTAssertEqual(sections.last?.title?.string, "Language")
+        XCTAssertEqual(sections.last?.children.count, 1)
+    }
+
+    // MARK: - Helper
+    private func createSubject(with summarizeNimbusUtils: MockSummarizerNimbusUtils) -> SummarizeSettingsViewController {
+        let subject = SummarizeSettingsViewController(
+            prefs: profile.prefs,
+            summarizeNimbusUtils: summarizeNimbusUtils,
+            windowUUID: .XCTestDefaultUUID
+        )
+        trackForMemoryLeaks(subject)
+        return subject
     }
 }

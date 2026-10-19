@@ -15,12 +15,21 @@ final class BrowserScreen {
     }
 
     private var addressBar: XCUIElement { sel.ADDRESS_BAR.element(in: app) }
+	private var searchEngineLogo: XCUIElement { sel.SEARCH_ENGINE_LOGO.element(in: app) }
     private var cancelButton: XCUIElement { sel.CANCEL_BUTTON_URL_BAR.element(in: app) }
     private var bookText: XCUIElement { sel.BOOK_OF_MOZILLA_TEXT.element(in: app) }
+    private var bookTextInTable: XCUIElement { sel.BOOK_OF_MOZILLA_TEXT_IN_TABLE.element(in: app) }
+    private var clearButton: XCUIElement { sel.CLEAR_TEXT_BUTTON.element(in: app) }
+    private var openDesignatedURLButton: XCUIElement { sel.OPEN_DESIGNATED_URL_BUTTON.element(in: app) }
 
     func assertAddressBarContains(value: String, timeout: TimeInterval = TIMEOUT) {
         let addressBar = sel.ADDRESS_BAR.element(in: app)
         BaseTestCase().mozWaitForValueContains(addressBar, value: value, timeout: timeout)
+    }
+
+    func assertSearchEngineLogoExists(timeout: TimeInterval = TIMEOUT) {
+        BaseTestCase().mozWaitForElementToExist(searchEngineLogo, timeout: timeout)
+        XCTAssertTrue(searchEngineLogo.isLeftOf(rightElement: addressBar))
     }
 
     func handleHumanVerification() {
@@ -28,6 +37,21 @@ final class BrowserScreen {
         if checkboxValidation.exists {
             checkboxValidation.waitAndTap()
         }
+    }
+
+    // Reads the adblock-tester.com score banner (e.g. "38 points out of 100 (11 services, 22
+    // checks)") and returns the leading number.
+    func adblockTesterScore(timeout: TimeInterval = TIMEOUT) -> Int {
+        let scoreElement = app.webViews.otherElements.matching(
+            NSPredicate(format: "label CONTAINS[c] 'points out of 100'")
+        ).firstMatch
+        BaseTestCase().mozWaitForElementToExist(scoreElement, timeout: timeout)
+
+        guard let match = scoreElement.label.range(of: #"^\d+"#, options: .regularExpression) else {
+            XCTFail("Could not parse a leading score number from label: \(scoreElement.label)")
+            return 0
+        }
+        return Int(scoreElement.label[match]) ?? 0
     }
 
     func tapBackButton() {
@@ -73,11 +97,30 @@ final class BrowserScreen {
         assertUserAgentTextExists("MOBILE_UA", timeout: timeout)
     }
 
-    func handleIos15ToastIfNecessary() {
-        if #unavailable(iOS 16) {
-            // iOS 15 displays a toast that covers the reload button
-            sleep(2)
+    enum SiteLayoutMode {
+        case desktop
+        case mobile
+    }
+
+    // No one magic heuristic to determine desktop vs mobile layout, so we hardcode some
+    // known characteristics of the test websites.
+    func assertLayout(_ mode: SiteLayoutMode, timeout: TimeInterval = TIMEOUT) {
+        let currentURL = (addressBar.value as? String) ?? ""
+        let element: XCUIElement
+
+        if mode == .desktop, currentURL.contains("google.com"), !currentURL.contains("news.google.com") {
+            element = app.webViews.buttons["I'm Feeling Lucky"]
+        } else if mode == .mobile, currentURL.contains("amazon.com") {
+            element = app.webViews.buttons["Open All Categories Menu"]
+        } else if mode == .desktop {
+            let pred = NSPredicate(format: "label BEGINSWITH 'Horizontal scroll bar,' AND NOT (label CONTAINS '1 page')")
+            element = app.webViews.descendants(matching: .any).matching(pred).firstMatch
+        } else {
+            element = app.webViews.descendants(matching: .any)
+                .matching(NSPredicate(format: "label == 'Horizontal scroll bar, 1 page'")).firstMatch
         }
+
+        BaseTestCase().mozWaitForElementToExist(element, timeout: timeout)
     }
 
     func tapDownloadsToastButton() {
@@ -96,10 +139,41 @@ final class BrowserScreen {
         BaseTestCase().mozWaitForValueContains(urlField, value: "example.com")
     }
 
+    func exampleDomainTextExists(timeout: TimeInterval = TIMEOUT) -> Bool {
+        webViewShowsText(containing: sel.STATIC_TEXT_EXAMPLE_DOMAIN.value, timeout: timeout)
+    }
+
+    func bookOfMozillaPageContentExists(timeout: TimeInterval = TIMEOUT) -> Bool {
+        webViewShowsText(containing: sel.BOOK_OF_MOZILLA_VERSE_TEXT.value, timeout: timeout)
+    }
+
+    /// Scoped to the web view: an app-wide text search is also satisfied by a homepage tile or a tab
+    /// label carrying the same page title, which cannot tell which page is on screen.
+    private func webViewShowsText(containing text: String, timeout: TimeInterval) -> Bool {
+        let predicate = NSPredicate(format: "label CONTAINS %@", text)
+        let webViewText = app.webViews.staticTexts.containing(predicate).element(boundBy: 0)
+        return BaseTestCase().mozWaitForElementToExist(webViewText, timeout: timeout, failOnTimeout: false)
+    }
+
+    func assertExampleDomainTextExists(timeout: TimeInterval = TIMEOUT) {
+        BaseTestCase().mozWaitForElementToExist(sel.STATIC_TEXT_EXAMPLE_DOMAIN.element(in: app), timeout: timeout)
+    }
+
+    func assertOpenDesignatedURLButtonExists(timeout: TimeInterval = TIMEOUT) {
+        BaseTestCase().mozWaitForElementToExist(openDesignatedURLButton, timeout: timeout)
+    }
+
+    func tapOpenDesignatedURLButton() {
+        openDesignatedURLButton.waitAndTap()
+    }
+
     func clearURL() {
-        let clearButton = sel.CLEAR_TEXT_BUTTON.element(in: app)
         BaseTestCase().mozWaitForElementToExist(clearButton)
         clearButton.waitAndTap()
+    }
+
+    func tapClearButtonIfExists() {
+        clearButton.tapIfExists()
     }
 
     func assertFirefoxHomepageElementsCached() {
@@ -171,8 +245,50 @@ final class BrowserScreen {
         urlElement.waitAndTap()
     }
 
+    // Pastes the clipboard contents into the (already focused) address bar and asserts the resulting
+    // value. Used to verify clipboard content in-app, avoiding the iOS 16+ cross-process paste prompt.
+    func pasteAndAssertAddressBarContains(_ value: String) {
+        let pasteButton = sel.PASTE_BUTTON.element(in: app)
+        if BaseTestCase().iPad() {
+            addressBar.waitAndTap()
+        } else {
+            addressBar.press(forDuration: 1)
+        }
+        if !pasteButton.exists {
+            addressBar.press(forDuration: 1)
+        }
+        pasteButton.waitAndTap()
+        BaseTestCase().mozWaitForValueContains(addressBar, value: value)
+    }
+
     func typeOnSearchBar(text: String) {
         addressBar.typeText(text)
+    }
+
+    func navigateToURL(_ url: String) {
+        tapOnAddressBar()
+        addressBar.typeText(url)
+        addressBar.typeText("\r")
+    }
+
+    func typeOnWebFormTextField(_ text: String, submit: Bool = true) {
+        let textField = webFormTextField()
+        textField.waitAndTap()
+        textField.typeText(submit ? "\(text)\r" : text)
+    }
+
+    // The web form's container identifier varies across iOS versions,
+    // so look for the text field under either container.
+    private func webFormTextField(containers: [String] = ["form", "body"]) -> XCUIElement {
+        let candidates = containers.map { app.otherElements[$0].textFields.firstMatch }
+        let deadline = Date().addingTimeInterval(TIMEOUT_LONG)
+        while Date() < deadline {
+            if let field = candidates.first(where: { $0.exists }) {
+                return field
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+        }
+        return candidates.last ?? app.textFields.firstMatch
     }
 
     func assertCancelButtonOnUrlBarExists() {
@@ -189,7 +305,7 @@ final class BrowserScreen {
     }
 
     func tapCancelButtonIfExist() {
-        sel.CANCEL_BUTTON.element(in: app).tapIfExists()
+        sel.CANCEL_BUTTON_URL_BAR.element(in: app).tapIfExists()
     }
 
     func assertRFCLinkExist(timeout: TimeInterval = TIMEOUT) {
@@ -205,11 +321,23 @@ final class BrowserScreen {
     }
 
     func waitForBookOfMozillaToDisappear(timeout: TimeInterval = TIMEOUT) {
-        BaseTestCase().mozWaitForElementToNotExist(bookText, timeout: timeout)
+        BaseTestCase().mozWaitForElementToNotExist(bookTextInTable, timeout: timeout)
     }
 
     func assertAddressBar_LockIconExist(timeout: TimeInterval = TIMEOUT) {
         BaseTestCase().mozWaitForElementToExist(sel.ADDRESSTOOLBAR_LOCKICON.element(in: app))
+    }
+
+    func tapAddressBarLockIcon() {
+        sel.ADDRESSTOOLBAR_LOCKICON.element(in: app).waitAndTap()
+    }
+
+    func assertAddressBar_LockIconOffExist(timeout: TimeInterval = TIMEOUT_LONG) {
+        BaseTestCase().mozWaitForElementToExist(sel.ADDRESSTOOLBAR_LOCKICON_OFF.element(in: app))
+    }
+
+    func isAddressBarLockIconOffPresent() -> Bool {
+        return sel.ADDRESSTOOLBAR_LOCKICON_OFF.element(in: app).exists
     }
 
     func assertAddressBarHasKeyboardFocus() {
@@ -227,7 +355,9 @@ final class BrowserScreen {
     }
 
     func waitForLinkPreview(named preview: String) {
-        let previewLabel = sel.linkPreview(named: preview).element(in: app)
+        // iOS wraps URL preview labels with LRI/PDI bidi isolates.
+        let isolated = "\u{2066}\(preview)\u{2069}"
+        let previewLabel = sel.linkPreview(named: isolated).element(in: app)
         BaseTestCase().mozWaitForElementToExist(previewLabel)
     }
 
@@ -264,4 +394,146 @@ final class BrowserScreen {
         let text = sel.webPageElement(with: text).element(in: app)
         BaseTestCase().mozWaitForElementToExist(text)
     }
-}
+
+    func assertWebPageTextDoesNotExist(with text: String) {
+        let text = sel.webPageElement(with: text).element(in: app)
+        BaseTestCase().mozWaitForElementToNotExist(text)
+    }
+
+    func tapWebViewTextIfExists(text: String) {
+        app.webViews.staticTexts[text].tapIfExists()
+    }
+
+    func dismissMicrosurveyIfExists() {
+        let microsurveyCloseButton = sel.MICROSURVEY_CLOSE_BUTTON.element(in: app)
+        microsurveyCloseButton.tapIfExists()
+    }
+
+    func assertWebViewLoaded(timeout: TimeInterval = TIMEOUT) {
+        BaseTestCase().mozWaitForElementToExist(app.webViews.firstMatch, timeout: timeout)
+    }
+
+    func assertWebViewHasContent(timeout: TimeInterval = TIMEOUT) {
+        let firstText = app.webViews.firstMatch.staticTexts.firstMatch
+        BaseTestCase().mozWaitForElementToExist(firstText, timeout: timeout)
+    }
+
+    func tapWebViewButton(buttonText: String) {
+        app.webViews.buttons[buttonText].waitAndTap()
+    }
+
+    func assertWebElements(shouldExist: Bool = true, _ elements: XCUIElement..., timeout: TimeInterval = TIMEOUT_LONG) {
+        let base = BaseTestCase()
+        for element in elements {
+            if shouldExist {
+                base.mozWaitForElementToExist(element, timeout: timeout)
+            } else {
+                base.mozWaitForElementToNotExist(element, timeout: timeout)
+            }
+        }
+    }
+
+    func assertSponsoredResult(title: String, shouldExist: Bool = true, timeout: TimeInterval = TIMEOUT_LONG) {
+        assertWebElements(
+            shouldExist: shouldExist,
+            sel.SEARCH_SETTINGS_BUTTON.element(in: app),
+            app.staticTexts[title],
+            sel.SPONSORED_LABEL.element(in: app),
+            timeout: timeout
+        )
+    }
+
+    func assertSuggestedLinesNotEmpty() {
+        let suggestedLines = app.tables.firstMatch.cells
+        XCTAssertNotEqual(suggestedLines.count, 0, "Expected suggestions to appear")
+    }
+
+    func tapSaveButtonIfExist() {
+        let saveButton = sel.SAVE_BUTTON.element(in: app)
+        saveButton.tapIfExists()
+    }
+
+    func swipeToAndValidateAddressBarValue(swipeRight: Bool,
+                                           _ value: String,
+                                           durations: [TimeInterval] = [0.06, 0.02],
+                                           maxAttempts: Int = 2,
+                                           checkTimeout: TimeInterval = 2.0) {
+        // Ensure address bar exists and is hittable
+        BaseTestCase().mozWaitForElementToExist(addressBar)
+        let waitUntil = Date().addingTimeInterval(2)
+        while !addressBar.isHittable && Date() < waitUntil {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+        }
+        guard addressBar.isHittable else {
+            XCTFail("Address bar not hittable, cannot perform swipe")
+            return
+        }
+
+        // Coordinates with margins to avoid edge gestures
+        let leftPoint = addressBar.coordinate(withNormalizedOffset: CGVector(dx: 0.12, dy: 0.5))
+        let rightPoint = addressBar.coordinate(withNormalizedOffset: CGVector(dx: 2, dy: 0.5))
+        let startPoint = swipeRight ? leftPoint : rightPoint
+        let endPoint = swipeRight ? rightPoint : leftPoint
+
+        for attempt in 0..<maxAttempts {
+            let duration = durations[min(attempt, durations.count - 1)]
+            // Press-and-drag; varying `duration` changes the feel/velocity of the gesture
+            startPoint.press(forDuration: duration, thenDragTo: endPoint)
+
+            // Let UI settle briefly
+            RunLoop.current.run(until: Date().addingTimeInterval(0.35))
+
+            // Poll address bar value for the expected substring
+            let deadline = Date().addingTimeInterval(checkTimeout)
+            var success = false
+            while Date() < deadline {
+                if let val = (addressBar.value as? String), val.contains(value) {
+                    success = true
+                    break
+                }
+                RunLoop.current.run(until: Date().addingTimeInterval(0.1))
+            }
+            assertAddressBarContains(value: value)
+            if success { return }
+        }
+
+        XCTFail("Failed to achieve expected address bar value '\(value)' after \(maxAttempts) attempts")
+    }
+
+    func waitForClipboardToastToDisappear(timeout: TimeInterval = TIMEOUT) {
+        let clipboardToast = sel.CLIPBOARD_TOAST.element(in: app)
+        BaseTestCase().mozWaitForElementToNotExist(clipboardToast, timeout: timeout)
+    }
+
+    func bookmarkSavedToastExists(timeout: TimeInterval = TIMEOUT) -> Bool {
+        let bookmarkToast = sel.BOOKMARK_SAVED_TOAST.element(in: app)
+        return BaseTestCase().mozWaitForElementToExist(bookmarkToast, timeout: timeout, failOnTimeout: false)
+    }
+
+    func assertLinkExists(named name: String, timeout: TimeInterval = TIMEOUT) {
+        let link = app.links[name].firstMatch
+        BaseTestCase().mozWaitForElementToExist(link, timeout: timeout)
+    }
+
+    func assertWebViewLinkTextExists(text: String, timeout: TimeInterval = TIMEOUT) {
+        let linkText = app.webViews.links.staticTexts[text]
+        BaseTestCase().mozWaitForElementToExist(linkText, timeout: timeout)
+    }
+
+    func assertPrivateModeMessageCardExists(timeout: TimeInterval = TIMEOUT) {
+        let privateMessage = sel.PRIVATE_MODE_HOMEPAGE_TITLE.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(privateMessage, timeout: timeout)
+    }
+
+    func tapPrivateModeActivityLink() {
+        sel.PRIVATE_MODE_HOMEPAGE_LINK.element(in: app).waitAndTap()
+    }
+
+    func assertCookiePageLoaded() {
+        let webview = app.webViews.firstMatch
+        BaseTestCase().mozWaitForElementToExist(webview.staticTexts["Cookie Test Page"])
+        BaseTestCase().mozWaitForElementToExist(webview.textFields.firstMatch)
+        BaseTestCase().mozWaitForElementToExist(webview.buttons["Login"])
+        BaseTestCase().mozWaitForElementToExist(webview.buttons["Logout"])
+    }
+ }

@@ -4,6 +4,7 @@
 
 import UIKit
 import Common
+import Shared
 
 private struct UX {
     // The amount of pixels the toggle button will expand over the normal size.
@@ -123,6 +124,7 @@ class ToggleButton: UIButton, ThemeApplicable {
     }
 
     func applyTheme(theme: Theme) {
-        backgroundLayer.backgroundColor = theme.colors.layerAccentPrivate.cgColor
+        let background = theme.isNova ? theme.colors.actionPrimary : theme.colors.layerAccentPrivate
+        backgroundLayer.backgroundColor = background.cgColor
     }
 }

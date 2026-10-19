@@ -11,10 +11,7 @@ final class NativeErrorPageStateTests: XCTestCase {
     func testInitialState() {
         let initialState = createSubject()
 
-        XCTAssertEqual(initialState.title, "")
-        XCTAssertEqual(initialState.description, "")
-        XCTAssertEqual(initialState.foxImage, "")
-        XCTAssertNil(initialState.url)
+        XCTAssertNil(initialState.model)
     }
 
     @MainActor
@@ -22,24 +19,80 @@ final class NativeErrorPageStateTests: XCTestCase {
         let initialState = createSubject()
         let reducer = nativeErrorPageReducer()
 
-        let mockModel = ErrorPageModel(
-            errorTitle: "NoInternetConnection",
-            errorDescription: "There’s a problem with your internet connection.",
-            foxImageName: "foxLogo",
-            url: URL(
-                string: "url.com"
-            ),
-            advancedSection: nil,
-            showGoBackButton: false
+        let model = ErrorPageModel.internetConnection
+
+        let action = getAction(model: model, for: .initialize)
+        let newState = reducer.legacyReducer(initialState, action)
+
+        XCTAssertEqual(newState.model, model)
+    }
+
+    @MainActor
+    func testLoadCertificateErrorWithAdvancedSection() {
+        let initialState = createSubject()
+        let reducer = nativeErrorPageReducer()
+
+        let advancedSection = ErrorPageModel.AdvancedSectionConfig(
+            buttonText: "Advanced",
+            infoText: "Firefox doesn’t trust this site because the certificate provided isn’t valid for example.com.",
+            warningText: """
+You might need to sign in through your network, or check your settings.
+If you’re on a corporate network, your support team might have more info.
+""",
+            certificateErrorCode: "SSL_ERROR_BAD_CERT_DOMAIN",
+            showProceedButton: true
         )
 
-        let action = getAction(model: mockModel, for: .initialize)
-        let newState = reducer(initialState, action)
+        let model = ErrorPageModel.badCertDomain(BadCertDomainModel(
+            url: URL(string: "https://example.com")!,
+            advancedSection: advancedSection
+        ))
 
-        XCTAssertEqual(newState.title, mockModel.errorTitle)
-        XCTAssertEqual(newState.description, mockModel.errorDescription)
-        XCTAssertEqual(newState.foxImage, mockModel.foxImageName)
-        XCTAssertEqual(newState.url, mockModel.url)
+        let action = getAction(model: model, for: .initialize)
+        let newState = reducer.legacyReducer(initialState, action)
+
+        XCTAssertEqual(newState.model, model)
+    }
+
+    @MainActor
+    func testStateModel_withGenericModelWithURL() {
+        let initialState = createSubject()
+        let reducer = nativeErrorPageReducer()
+
+        let testURL = URL(string: "https://example.com/page")!
+        let model = ErrorPageModel.generic(GenericErrorModel(url: testURL))
+
+        let action = getAction(model: model, for: .initialize)
+        let newState = reducer.legacyReducer(initialState, action)
+
+        XCTAssertEqual(newState.model, model)
+    }
+
+    @MainActor
+    func testStateModel_withGenericModelWithoutURL() {
+        let initialState = createSubject()
+        let reducer = nativeErrorPageReducer()
+
+        let model = ErrorPageModel.generic(GenericErrorModel(url: nil))
+
+        let action = getAction(model: model, for: .initialize)
+        let newState = reducer.legacyReducer(initialState, action)
+
+        XCTAssertEqual(newState.model, model)
+    }
+
+    @MainActor
+    func testStateDefaultStatePreservesModel() {
+        let initialState = createSubject()
+        let reducer = nativeErrorPageReducer()
+
+        let model = ErrorPageModel.generic(GenericErrorModel(url: URL(string: "https://example.com")!))
+        let action = getAction(model: model, for: .initialize)
+        let state = reducer.legacyReducer(initialState, action)
+
+        let defaultState = NativeErrorPageState.defaultState(from: state)
+
+        XCTAssertEqual(defaultState.model, state.model)
     }
 
     // MARK: - Private

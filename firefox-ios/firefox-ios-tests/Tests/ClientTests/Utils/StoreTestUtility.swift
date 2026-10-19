@@ -26,6 +26,20 @@ class StoreTestUtilityHelper {
         store = mockStore
     }
 
+    // Replace the global store with a real store over `appState` and the given middlewares.
+    // Ecosia: 155.1 turned this into a `static` again (it was an instance method in the revision this
+    // fork carried) and wrapped every body in this file in `#if TESTING`. Ecosia's Tuist targets do
+    // not define a `TESTING` compilation condition, so those guards would compile the bodies away and
+    // silently leave the production store in place — the overload is restored here unguarded.
+    @MainActor
+    static func setupStore(with appState: AppState, middlewares: [Middleware<AppState>]) {
+        store = Store(
+            state: appState,
+            reducer: AppState.reducer,
+            middlewares: middlewares
+        )
+    }
+
     /// Reset the global store back to a default production-like state.
     @MainActor
     static func resetStore() {

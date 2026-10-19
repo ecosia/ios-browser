@@ -11,6 +11,11 @@ protocol WebServerProtocol {
     var server: GCDWebServer { get }
     @discardableResult
     func start() throws -> Bool
+    /// Starts the server on the serial lifecycle queue if it isn't already running.
+    func startIfNeeded()
+    /// Stops the server on the serial lifecycle queue, off the main thread. `completion`,
+    /// if provided, runs on the main queue once the server has stopped.
+    func stop(completion: (@Sendable () -> Void)?)
 }
 
 /// FIXME: FXIOS-13989 Make truly thread safe
@@ -34,6 +39,12 @@ final class WebServer: WebServerProtocol, @unchecked Sendable {
     /// so this prevents them from accessing any resources.
     fileprivate let sessionToken = UUID().uuidString
 
+    /// Serializes all GCDWebServer start/stop calls. GCDWebServer is not thread-safe,
+    /// so funneling lifecycle operations through one serial queue (off the main thread)
+    /// guarantees a start and a stop can never run concurrently, which would otherwise
+    /// race during a background-to-foreground transition.
+    private let lifecycleQueue = DispatchQueue(label: "org.mozilla.ios.WebServer.lifecycle")
+
     init(logger: Logger = DefaultLogger.shared) {
         credentials = URLCredential(user: sessionToken, password: "", persistence: .forSession)
         self.logger = logger
@@ -42,13 +53,45 @@ final class WebServer: WebServerProtocol, @unchecked Sendable {
     @discardableResult
     func start() throws -> Bool {
         if !server.isRunning {
-            try server.start(options: [
+            var options: [String: Any] = [
                 GCDWebServerOption_Port: AppInfo.webserverPort,
                 GCDWebServerOption_BindToLocalhost: true,
                 GCDWebServerOption_AutomaticallySuspendInBackground: false, // done by the app in AppDelegate
-            ])
+                GCDWebServerOption_AuthenticationMethod: GCDWebServerAuthenticationMethod_Basic,
+                GCDWebServerOption_AuthenticationAccounts: [sessionToken: ""]
+            ]
+            // UI tests serve fixtures via loopback aliases (e.g. *.localtest.me) to exercise
+            // per-eTLD+1 behavior. The app only auto-authenticates the internal server for the
+            // "localhost" host, so drop Basic auth under UI tests to let those hosts load.
+            // The server still binds to localhost only, so it stays unreachable off-device.
+            if AppConstants.isRunningUITests {
+                options.removeValue(forKey: GCDWebServerOption_AuthenticationMethod)
+                options.removeValue(forKey: GCDWebServerOption_AuthenticationAccounts)
+            }
+            try server.start(options: options)
         }
         return server.isRunning
+    }
+
+    func startIfNeeded() {
+        lifecycleQueue.async { [weak self] in
+            guard let self, !self.server.isRunning else { return }
+            do {
+                try self.start()
+            } catch {
+                self.logger.log("Failed to start web server: \(error)",
+                                level: .warning,
+                                category: .webview)
+            }
+        }
+    }
+
+    func stop(completion: (@Sendable () -> Void)? = nil) {
+        lifecycleQueue.async { [server] in
+            server.stop()
+            guard let completion else { return }
+            DispatchQueue.main.async(execute: completion)
+        }
     }
 
     /// Convenience method to register a dynamic handler. Will be mounted at $base/$module/$resource

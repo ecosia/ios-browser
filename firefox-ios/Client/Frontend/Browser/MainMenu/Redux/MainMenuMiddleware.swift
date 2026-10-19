@@ -4,44 +4,60 @@
 
 import Common
 import Redux
-import Account
 import Shared
 
+import class Account.RustFirefoxAccounts
+
 @MainActor
-final class MainMenuMiddleware: FeatureFlaggable {
+final class MainMenuMiddleware {
     private enum TelemetryAction {
-        static let findInPage = "find_in_page"
+        static let addToShortcuts = "add_to_shortcuts"
         static let bookmarks = "bookmarks"
-        static let history = "history"
+        static let adBlocker = "ad_blocker"
+        static let bookmarkThisPage = "bookmark_this_page"
+        static let defaultBrowserSettings = "default_browser_settings"
         static let downloads = "downloads"
+        static let editBookmark = "edit_bookmark"
+        static let findInPage = "find_in_page"
+        static let history = "history"
+        static let nightModeTurnOff = "night_mode_turn_off"
+        static let nightModeTurnOn = "night_mode_turn_on"
         static let passwords = "passwords"
-        static let settings = "settings"
+        static let readerView = "reader_view"
         static let print = "print"
-        static let share = "share"
+        static let removeFromShortcuts = "remove_from_shortcuts"
+        static let reportBrokenSite = "report_broken_site"
         static let saveAsPDF = "save_as_PDF"
+        static let settings = "settings"
+        static let share = "share"
+        static let signInAccount = "sign_in_account"
+        static let siteProtections = "site_protections"
         static let switchToDesktopSite = "switch_to_desktop_site"
         static let switchToMobileSite = "switch_to_mobile_site"
-        static let signInAccount = "sign_in_account"
+        static let translatePage = "translate_page"
+        static let webpageSummary = "webpage_summary"
         static let zoom = "zoom"
-        static let bookmarkThisPage = "bookmark_this_page"
-        static let editBookmark = "edit_bookmark"
-        static let addToShortcuts = "add_to_shortcuts"
-        static let removeFromShortcuts = "remove_from_shortcuts"
-        static let nightModeTurnOn = "night_mode_turn_on"
-        static let nightModeTurnOff = "night_mode_turn_off"
-        static let siteProtections = "site_protections"
-        static let defaultBrowserSettings = "default_browser_settings"
     }
 
     private let logger: Logger
     private let telemetry: MainMenuTelemetry
+    private let webCompatTelemetry: WebCompatReporterTelemetry
 
-    init(telemetry: MainMenuTelemetry = MainMenuTelemetry(), logger: Logger = DefaultLogger.shared) {
+    init(telemetry: MainMenuTelemetry = MainMenuTelemetry(),
+         webCompatTelemetry: WebCompatReporterTelemetry = WebCompatReporterTelemetry(),
+         logger: Logger = DefaultLogger.shared) {
         self.telemetry = telemetry
+        self.webCompatTelemetry = webCompatTelemetry
         self.logger = logger
     }
 
-    lazy var mainMenuProvider: Middleware<AppState> = { state, action in
+    lazy var mainMenuProvider: Middleware<AppState> = (legacyProvider, modernProvider)
+
+    lazy var modernProvider: MiddlewareClosure<AppState> = { [self] state, action, windowUUID in
+        // Does not test any modern actions
+    }
+
+    lazy var legacyProvider: LegacyMiddlewareClosure<AppState> = { [self] state, action in
         guard let action = action as? MainMenuAction else { return }
         let isHomepage = action.telemetryInfo?.isHomepage ?? false
         self.handleMainMenuActions(action: action, isHomepage: isHomepage)
@@ -156,32 +172,6 @@ final class MainMenuMiddleware: FeatureFlaggable {
         telemetry.mainMenuOptionTapped(with: isHomepage, and: option)
     }
 
-    private func getAccountData() -> AccountData? {
-        let rustAccount = RustFirefoxAccounts.shared
-        let needsReAuth = rustAccount.accountNeedsReauth()
-
-        guard let userProfile = rustAccount.userProfile else { return nil }
-
-        let title: String = {
-            if needsReAuth { return .MainMenu.Account.SyncErrorTitle }
-            return userProfile.displayName ?? userProfile.email
-        }()
-
-        let subtitle: String? = needsReAuth ? .MainMenu.Account.SyncErrorDescription : nil
-        let warningIcon: String? = needsReAuth ? StandardImageIdentifiers.Large.warningFill : nil
-
-        var iconURL: URL?
-        if let str = rustAccount.userProfile?.avatarUrl,
-           let url = URL(string: str) {
-            iconURL = url
-        }
-
-        return AccountData(title: title,
-                           subtitle: subtitle,
-                           warningIcon: warningIcon,
-                           iconURL: iconURL)
-    }
-
     private func handleTelemetryFor(for navigationDestination: MainMenuNavigationDestination,
                                     isHomepage: Bool,
                                     and urlToVisit: URL?) {
@@ -201,6 +191,9 @@ final class MainMenuMiddleware: FeatureFlaggable {
         case .passwords:
             telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.passwords)
 
+        case .readerView:
+            telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.readerView)
+
         // Ecosia: Reading List, Help, and Report Issue telemetry — no-op for now
         case .readingList, .help, .reportIssue: break
 
@@ -209,6 +202,10 @@ final class MainMenuMiddleware: FeatureFlaggable {
 
         case .printSheet:
             telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.print)
+
+        case .reportBrokenSite:
+            telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.reportBrokenSite)
+            webCompatTelemetry.opened(source: .hamburgerMenu)
 
         case .shareSheet:
             telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.share)
@@ -228,11 +225,17 @@ final class MainMenuMiddleware: FeatureFlaggable {
         case .siteProtections:
             self.telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.siteProtections)
 
+        case .adBlocker:
+            self.telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.adBlocker)
+
         case .defaultBrowser:
             self.telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.defaultBrowserSettings)
 
-        case .webpageSummary: break
-            // TODO(FXIOS-12761): Add telemetry for summarizer MVP
+        case .webpageSummary:
+            self.telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.webpageSummary)
+
+        case .translatePage:
+            self.telemetry.mainMenuOptionTapped(with: isHomepage, and: TelemetryAction.translatePage)
         }
     }
 }

@@ -52,18 +52,16 @@ struct TabPanelViewAction: Action {
 enum TabPanelViewActionType: ActionType {
     case tabPanelDidLoad
     case tabPanelWillAppear
-    case tabPanelDidAppear
     case addNewTab
     case closeTab
-    case undoClose
     case closeAllTabs
     case cancelCloseAllTabs
     case confirmCloseAllTabs
     case deleteTabsOlderThan
-    case undoCloseAllTabs
     case moveTab
     case learnMorePrivateMode
     case selectTab
+    case prefetchScreenshots
 }
 
 struct TabPanelMiddlewareAction: Action {
@@ -91,7 +89,6 @@ enum TabPanelMiddlewareActionType: ActionType {
     case willAppearTabPanel
     case didChangeTabPanel
     case refreshTabs
-    case showToast
     case scrollToTab
 }
 
@@ -109,4 +106,5 @@ struct ScreenshotAction: Action {
 
 enum ScreenshotActionType: ActionType {
     case screenshotTaken
+    case screenshotRestored
 }

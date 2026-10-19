@@ -64,8 +64,20 @@ extension BlockingStrength {
 
 /// Firefox-specific implementation of tab content blocking.
 @MainActor
-final class FirefoxTabContentBlocker: TabContentBlocker, TabContentScript {
+final class FirefoxTabContentBlocker: TabContentBlocker, TabContentScript, FeatureFlaggable {
     let userPrefs: Prefs
+
+    private var isAdBlockingEnabled: Bool {
+        return featureFlagsProvider.isEnabled(.adBlocker) && (userPrefs.boolForKey(PrefsKeys.BlockAds) ?? false)
+    }
+
+    private func currentRules() -> [String] {
+        var rules = isEnabled ? BlocklistFileName.listsForMode(strict: blockingStrengthPref == .strict) : []
+        if isAdBlockingEnabled {
+            rules.append(ASAdBlockerListFetcher.adBlockerRecordID)
+        }
+        return rules
+    }
 
     class func name() -> String {
         return "TrackingProtectionStats"
@@ -96,19 +108,24 @@ final class FirefoxTabContentBlocker: TabContentBlocker, TabContentScript {
         return userPrefs.stringForKey(ContentBlockingConfig.Prefs.StrengthKey).flatMap(BlockingStrength.init) ?? .basic
     }
 
-    init(tab: ContentBlockerTab, prefs: Prefs) {
+    init(
+        tab: ContentBlockerTab,
+        prefs: Prefs,
+        statsRecorder: TrackerBlockStatsStore? = nil
+    ) {
         userPrefs = prefs
         super.init(tab: tab)
+        self.statsRecorder = statsRecorder ?? DefaultTrackerBlockStatsStoreUtility(prefs: prefs)
         setupForTab()
     }
 
     func setupForTab(completion: (() -> Void)? = nil) {
         guard let tab = tab else { return }
-        let rules = BlocklistFileName.listsForMode(strict: blockingStrengthPref == .strict)
+        let rules = currentRules()
         logger.log("Setup tracking protection for tab: \(tab)", level: .info, category: .adblock)
         ContentBlocker.shared.setupTrackingProtection(
             forTab: tab,
-            isEnabled: isEnabled,
+            isEnabled: isEnabled || isAdBlockingEnabled,
             rules: rules,
             completion: completion
         )
@@ -117,12 +134,12 @@ final class FirefoxTabContentBlocker: TabContentBlocker, TabContentScript {
     override func notifiedTabSetupRequired() {
         guard let tab = self.tab as? Tab else { return }
         self.logger.log("Notified tab setup required", level: .info, category: .adblock)
-        self.setupForTab(completion: { tab.reloadPage() })
+        self.setupForTab(completion: { tab.reload() })
         TabEvent.post(.didChangeContentBlocking, for: tab)
     }
 
     override func currentlyEnabledLists() -> [String] {
-        return BlocklistFileName.listsForMode(strict: blockingStrengthPref == .strict)
+        return currentRules()
     }
 
     override func notifyContentBlockingChanged() {

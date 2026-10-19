@@ -152,6 +152,7 @@ class MockNotificationMessageDataProtocol: MessageDataProtocol {
     var title: String? = "title label test"
     var text: String = "text label test"
     var buttonLabel: String? = "button label test"
+    var shouldRandomizeOptions = false
     var experiment: String?
     var actionParams: [String: String] = [:]
     var microsurveyConfig: MicrosurveyConfig?

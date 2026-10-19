@@ -13,7 +13,7 @@ import Shared
 final class LegacyTabScrollControllerTests: XCTestCase {
     var tab: Tab!
     var mockProfile: MockProfile!
-    var mockGesture: UIPanGestureRecognizerMock!
+    var mockGesture: MockUIPanGestureRecognizer!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
     var header: BaseAlphaStackView = .build()
@@ -25,15 +25,15 @@ final class LegacyTabScrollControllerTests: XCTestCase {
 
         DependencyHelperMock().bootstrapDependencies()
         mockProfile = MockProfile()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
         tab = Tab(profile: mockProfile, windowUUID: windowUUID)
-        mockGesture = UIPanGestureRecognizerMock()
+        mockGesture = MockUIPanGestureRecognizer()
     }
 
     override func tearDown() async throws {
         mockProfile?.shutdown()
         mockProfile = nil
         tab = nil
+        DependencyHelperMock().reset()
         try await super.tearDown()
     }
 
@@ -44,7 +44,7 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         mockGesture.gestureTranslation = CGPoint(x: 0, y: 100)
         subject.handlePan(mockGesture)
 
-        XCTAssertEqual(subject.toolbarState, LegacyTabScrollController.ToolbarState.collapsed)
+        XCTAssertTrue(subject.isToolbarStateCollapsed)
     }
 
     func testHandlePan_ScrollingDown() {
@@ -54,7 +54,7 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         mockGesture.gestureTranslation = CGPoint(x: 0, y: -100)
         subject.handlePan(mockGesture)
 
-        XCTAssertEqual(subject.toolbarState, LegacyTabScrollController.ToolbarState.visible)
+        XCTAssertFalse(subject.isToolbarStateCollapsed)
     }
 
     func testShowToolbar_AfterHidingWithScroll() {
@@ -67,7 +67,20 @@ final class LegacyTabScrollControllerTests: XCTestCase {
 
         // Force call to showToolbars like clicking on top bar area
         subject.showToolbars(animated: true)
-        XCTAssertEqual(subject.toolbarState, LegacyTabScrollController.ToolbarState.visible)
+        XCTAssertFalse(subject.isToolbarStateCollapsed)
+    }
+
+    func testIsToolbarStateCollapsed_reflectsHideAndShowToolbars() {
+        let subject = createSubject()
+        setupTabScroll(with: subject)
+
+        XCTAssertFalse(subject.isToolbarStateCollapsed)
+
+        subject.hideToolbars(animated: false)
+        XCTAssertTrue(subject.isToolbarStateCollapsed)
+
+        subject.showToolbars(animated: false)
+        XCTAssertFalse(subject.isToolbarStateCollapsed)
     }
 
     func testScrollDidEndDragging_ScrollingUp() {
@@ -79,7 +92,7 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         subject.handlePan(mockGesture)
         subject.scrollViewDidEndDragging(tab.webView!.scrollView, willDecelerate: true)
 
-        XCTAssertEqual(subject.toolbarState, LegacyTabScrollController.ToolbarState.visible)
+        XCTAssertFalse(subject.isToolbarStateCollapsed)
     }
 
     func testScrollDidEndDragging_ScrollingDown() {
@@ -91,7 +104,7 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         subject.handlePan(mockGesture)
         subject.scrollViewDidEndDragging(tab.webView!.scrollView, willDecelerate: true)
 
-        XCTAssertEqual(subject.toolbarState, LegacyTabScrollController.ToolbarState.collapsed)
+        XCTAssertTrue(subject.isToolbarStateCollapsed)
     }
 
     func testDidSetTab_addsPullRefreshViewToScrollView() {
@@ -136,24 +149,38 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         XCTAssertNotNil(pullRefresh)
     }
 
-    // MARK: - overKeyboardScrollHeight Helper Method Tests
-    func testOverKeyboardScrollHeight_whenMinimalAddressBarDisabled_returnsContainerHeight() {
+    func testContentSizeChange_WhenCollapsedAndContentBecomesNonScrollable_ShowsToolbar() throws {
         let subject = createSubject()
         setupTabScroll(with: subject)
 
-        let containerHeight: CGFloat = 100
-        overKeyboardContainer.frame = CGRect(x: 0, y: 0, width: 200, height: containerHeight)
+        let scrollView = try XCTUnwrap(tab.webView?.scrollView)
+        // Collapse while the content is still scrollable, as only a scroll gesture can.
+        subject.hideToolbars(animated: false)
+        XCTAssertTrue(subject.isToolbarStateCollapsed)
 
-        let safeAreaInsets = UIEdgeInsets(top: 44, left: 0, bottom: 34, right: 0)
-        let result = subject.calculateOverKeyboardScrollHeight(
-            with: safeAreaInsets,
-            isMinimalAddressBarEnabled: false,
-            isBottomSearchBar: true
-        )
+        // Simulate an overlay shrinking the document so it can no longer be scrolled.
+        scrollView.contentSize = CGSize(width: 200, height: 10)
+        subject.observeValue(forKeyPath: "contentSize", of: scrollView, change: nil, context: nil)
 
-        XCTAssertEqual(result, containerHeight)
+        XCTAssertFalse(subject.isToolbarStateCollapsed)
     }
 
+    func testContentSizeChange_WhenCollapsedAndContentStaysScrollable_KeepsToolbarCollapsed() throws {
+        let subject = createSubject()
+        setupTabScroll(with: subject)
+
+        let scrollView = try XCTUnwrap(tab.webView?.scrollView)
+        subject.hideToolbars(animated: false)
+        XCTAssertTrue(subject.isToolbarStateCollapsed)
+
+        // Content grows but is still taller than the viewport, so the toolbar must stay collapsed.
+        scrollView.contentSize = CGSize(width: 200, height: 3000)
+        subject.observeValue(forKeyPath: "contentSize", of: scrollView, change: nil, context: nil)
+
+        XCTAssertTrue(subject.isToolbarStateCollapsed)
+    }
+
+    // MARK: - overKeyboardScrollHeight Helper Method Tests
     func testOverKeyboardScrollHeight_minimalEnabledWithHomeIndicator_returnsZero() {
         let subject = createSubject()
         setupTabScroll(with: subject)
@@ -161,7 +188,6 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         let safeAreaInsets = UIEdgeInsets(top: 44, left: 0, bottom: 34, right: 0)
         let result = subject.calculateOverKeyboardScrollHeight(
             with: safeAreaInsets,
-            isMinimalAddressBarEnabled: true,
             isBottomSearchBar: true
         )
 
@@ -178,7 +204,6 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         let safeAreaInsets = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
         let result = subject.calculateOverKeyboardScrollHeight(
             with: safeAreaInsets,
-            isMinimalAddressBarEnabled: true,
             isBottomSearchBar: true
         )
 
@@ -194,7 +219,6 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         let safeAreaInsets = UIEdgeInsets(top: 44, left: 0, bottom: 0, right: 0)
         let result = subject.calculateOverKeyboardScrollHeight(
             with: safeAreaInsets,
-            isMinimalAddressBarEnabled: true,
             isBottomSearchBar: true
         )
 
@@ -209,7 +233,6 @@ final class LegacyTabScrollControllerTests: XCTestCase {
 
         let result = subject.calculateOverKeyboardScrollHeight(
             with: nil,
-            isMinimalAddressBarEnabled: true,
             isBottomSearchBar: true
         )
 
@@ -224,7 +247,6 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         let containerHeight: CGFloat = 100
         let result = subject.calculateOverKeyboardScrollHeight(
             with: UIEdgeInsets.zero,
-            isMinimalAddressBarEnabled: true,
             isBottomSearchBar: true
         )
 
@@ -242,7 +264,6 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         let safeAreaInsets = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
         let result = subject.calculateOverKeyboardScrollHeight(
             with: safeAreaInsets,
-            isMinimalAddressBarEnabled: true,
             isBottomSearchBar: false
         )
 
@@ -263,7 +284,6 @@ final class LegacyTabScrollControllerTests: XCTestCase {
         let safeAreaInsets = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
         let result = subject.calculateOverKeyboardScrollHeight(
             with: safeAreaInsets,
-            isMinimalAddressBarEnabled: true,
             isBottomSearchBar: true
         )
 
@@ -280,7 +300,6 @@ final class LegacyTabScrollControllerTests: XCTestCase {
 
         let result = subject.calculateOverKeyboardScrollHeight(
             with: safeAreaInsets,
-            isMinimalAddressBarEnabled: true,
             isBottomSearchBar: true
         )
 
@@ -295,7 +314,6 @@ final class LegacyTabScrollControllerTests: XCTestCase {
 
         let result = subject.calculateOverKeyboardScrollHeight(
             with: safeAreaInsets,
-            isMinimalAddressBarEnabled: true,
             isBottomSearchBar: true
         )
 
@@ -305,24 +323,23 @@ final class LegacyTabScrollControllerTests: XCTestCase {
     func testToolbarTapHandler_WhenMinimalAddressBarEnabledAndCollapsed_ShowsToolbar() {
         let subject = createSubject()
         setupTabScroll(with: subject)
-        subject.toolbarState = .collapsed
+        subject.hideToolbars(animated: false)
 
         let handler = subject.createToolbarTapHandler()
         handler()
 
-        XCTAssertEqual(subject.toolbarState, .visible)
+        XCTAssertFalse(subject.isToolbarStateCollapsed)
     }
 
     func testToolbarTapHandler_WhenToolbarVisible_DoesNothing() {
         let subject = createSubject()
         setupTabScroll(with: subject)
-
-        subject.toolbarState = .visible
+        subject.showToolbars(animated: false)
 
         let handler = subject.createToolbarTapHandler()
         handler()
 
-        XCTAssertEqual(subject.toolbarState, .visible)
+        XCTAssertFalse(subject.isToolbarStateCollapsed)
     }
 
     // MARK: - Setup

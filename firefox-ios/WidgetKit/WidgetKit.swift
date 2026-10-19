@@ -3,8 +3,8 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 #if canImport(WidgetKit)
-import WidgetKit
 import SwiftUI
+import WidgetKit
 
 @main
 /* Ecosia: Rename widget bundle to match Ecosia branding

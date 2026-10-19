@@ -4,9 +4,9 @@
 
 import Common
 import Redux
-import Storage
 
 import struct MozillaAppServices.Device
+import struct Storage.ClientAndTabs
 
 /// Defines actions sent to Redux for Sync tab in tab tray
 struct RemoteTabsPanelAction: Action, Sendable {
@@ -40,12 +40,11 @@ enum RemoteTabsPanelActionType: ActionType {
     case refreshTabs
     case refreshTabsWithCache
     case refreshDidBegin
+    case syncDidBegin
     case refreshDidFail
     case refreshDidSucceed
-    case closeTabCompatible
     case openSelectedURL
     case closeSelectedRemoteURL
-    case undoCloseSelectedRemoteURL
     case flushTabCommands
     case remoteDevicesChanged
 }

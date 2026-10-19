@@ -105,7 +105,7 @@ struct HomepageDimensionCalculator {
         let minCardsConstant = TopSitesSectionLayoutProvider.UX.minCards
         let tilesPerRowCount = numberOfTiles < minCardsConstant ? minCardsConstant : numberOfTiles
         /* Ecosia: Cap at 4 tiles per row — NTP design shows exactly 1 row × 4 shortcuts.
-        return min(tilesPerRowCount, TopSitesSectionLayoutProvider.UX.maxCards)
+        return tilesPerRowCount
         */
         return min(tilesPerRowCount, 4)
     }
@@ -130,5 +130,23 @@ struct HomepageDimensionCalculator {
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel
         ).height
+    }
+
+    // Calculates the number of cells that fit given a container's width, including spacing between items
+    static func numberOfCellsThatFit(in containerWidth: CGFloat, horizontalInset: CGFloat) -> Int {
+        let minimumCellWidth = HomepageSectionLayoutProvider.UX.PocketConstants.minimumCellWidth
+        // Portion of the container not occupied by insets
+        let sectionHorizontalInsets = horizontalInset * 2
+        let availableContainerWidth = containerWidth - sectionHorizontalInsets
+        // # of cells that would fit in container
+        let cellsPerRow = floor(availableContainerWidth / minimumCellWidth)
+        // Amount of space used by inter-item spacing
+        let spacingAdjustment = (cellsPerRow > 1 ?
+                                 (cellsPerRow - 1) * HomepageSectionLayoutProvider.UX.PocketConstants.interItemSpacing : 0)
+        // Available container width for cells
+        let adjustedContainerWidth = availableContainerWidth - spacingAdjustment
+        // Number of cells that will fit in a row, considering inter-item spacing
+        let adjustedCellsPerRow = Int(adjustedContainerWidth / minimumCellWidth)
+        return max(HomepageSectionLayoutProvider.UX.PocketConstants.minimumCellsPerRow, adjustedCellsPerRow)
     }
 }

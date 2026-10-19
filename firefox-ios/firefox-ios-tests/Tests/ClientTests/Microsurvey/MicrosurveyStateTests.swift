@@ -7,18 +7,18 @@ import XCTest
 
 @testable import Client
 
-@MainActor
 final class MicrosurveyStateTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-        DependencyHelperMock().bootstrapDependencies()
+    override func setUp() async throws {
+        try await super.setUp()
+        await DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         DependencyHelperMock().reset()
-        super.tearDown()
+        try await super.tearDown()
     }
 
+    @MainActor
     func testDismissSurveyAction() {
         let initialState = createSubject()
         let reducer = microsurveyReducer()
@@ -26,12 +26,13 @@ final class MicrosurveyStateTests: XCTestCase {
         XCTAssertEqual(initialState.shouldDismiss, false)
 
         let action = getAction(for: .closeSurvey)
-        let newState = reducer(initialState, action)
+        let newState = reducer.legacyReducer(initialState, action)
 
         XCTAssertEqual(newState.shouldDismiss, true)
         XCTAssertEqual(newState.showPrivacy, false)
     }
 
+    @MainActor
     func testSubmitSurveyAction() {
         let initialState = createSubject()
         let reducer = microsurveyReducer()
@@ -39,7 +40,7 @@ final class MicrosurveyStateTests: XCTestCase {
         XCTAssertEqual(initialState.showPrivacy, false)
 
         let action = getAction(for: .tapPrivacyNotice)
-        let newState = reducer(initialState, action)
+        let newState = reducer.legacyReducer(initialState, action)
 
         XCTAssertEqual(newState.showPrivacy, true)
         XCTAssertEqual(newState.shouldDismiss, false)

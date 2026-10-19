@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "ئەپ سىنبەلگىسى";
+
 /* (No Comment) */
 "New Private Tab" = "يېڭى شەخسىي بەتكۈچ";
 
@@ -18,6 +21,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "بۇ ئارقىلىق سۈرەتلەرنى ساقلىغىلى بولىدۇ.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "ئاۋازلىق ئىزدەش ئۈچۈن Ecosia ئاۋاز پەرقلەندۈرۈش ئىقتىدارىنى ئىشلىتىپ ئاۋازىڭىزنى تېكىستكە ئايلاندۇرىدۇ.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR كودىنى تارا";

@@ -5,7 +5,10 @@
 "New Tab" = "Uus kaart";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia kasutab sinu kaamerat QR-koodide skannimiseks ning fotode ja videote tegemiseks.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
+
+/* Privacy - Face ID Usage Description */
+"NSFaceIDUsageDescription" = "Ecosia vajab salvestatud paroolidele ja makseviisidele ligipääsuks Face-ID'd.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Külastatavad saidid võivad küsida sinu asukohta.";

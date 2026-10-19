@@ -7,14 +7,43 @@ import Common
 
 let PDF_website = [
     "url": "https://storage.googleapis.com/mobile_test_assets/public/pdf-test.pdf",
-    "pdfValue": "storage.googleapis.com/mobile_test_assets/public/pdf-test.pdf",
-    "urlValue": "www.education.gov.yk.ca/",
+    "urlValue": "education.gov.yk.ca",
+    "pdfValue": "storage.googleapis.com",
     "bookmarkLabel": "https://storage.googleapis.com/mobile_test_assets/public/pdf-test.pdf",
-    "longUrlValue": "http://www.education.gov.yk.ca/"
+    "longUrlValue": "http://www.education.gov.yk.ca/",
+    "secondUrl": "https://storage.googleapis.com/mobile_test_assets/public/lorem_ipsum.pdf",
+    "tabTitle": "pdf-test.pdf",
+    "secondTabTitle": "lorem_ipsum.pdf"
+]
+
+let largePDF1 = [
+    "url": "https://storage.googleapis.com/mobile_test_assets/public/50MB-TESTFILE.ORG.pdf",
+    "pdfValue": "storage.googleapis.com"
+]
+let largePDF2 = [
+    "url": "https://storage.googleapis.com/mobile_test_assets/public/20MB-TESTFILE.ORG.pdf",
+    "pdfValue": "storage.googleapis.com"
 ]
 
 class BrowsingPDFTests: BaseTestCase {
-    let url = XCUIApplication().textFields[AccessibilityIdentifiers.Browser.UrlBar.url]
+    let url = XCUIApplication().textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField]
+    private var topSites: TopSitesScreen!
+    private var browser: BrowserScreen!
+    private var pdf: PDFScreen!
+    private var contextMenu: ContextMenuScreen!
+    private var library: LibraryScreen!
+    private var tabTrayScreen: TabTrayScreen!
+
+    override func setUp() async throws {
+        // Test name looks like: "[Class testFunc]", parse out the function name
+        try await super.setUp()
+        topSites = TopSitesScreen(app: app)
+        contextMenu = ContextMenuScreen(app: app)
+        pdf = PDFScreen(app: app)
+        browser = BrowserScreen(app: app)
+        library = LibraryScreen(app: app)
+        tabTrayScreen = TabTrayScreen(app: app)
+    }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307116
     func testOpenPDFViewer() {
@@ -29,28 +58,29 @@ class BrowsingPDFTests: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307117
-    // Smoketest
     func testOpenLinkFromPDF() {
-        // Sometimes the test fails before opening the URL
-        // Let's make sure the homepage is ready
-        mozWaitForElementToExist(app.collectionViews[AccessibilityIdentifiers.FirefoxHomepage.collectionView])
+        // Sometimes the test fails before opening the URL. Let's make sure the homepage is ready
+        topSites.assertVisible()
+
+        // Open the PDF URL and wait for the page to load
         navigator.openURL(PDF_website["url"]!)
         waitUntilPageLoad()
 
-        // Click on a link on the pdf and check that the website is shown
-        app.links.element(boundBy: 0).tapOnApp()
+        // Tap on a link within the PDF and check that the website is shown
+        pdf.tapOnLinkInPdf(atIndex: 0)
         waitUntilPageLoad()
-        let checkboxValidation = app.webViews["Web content"].staticTexts["Verify you are human"]
-        if checkboxValidation.exists {
-            checkboxValidation.tap()
-        }
-        mozWaitForValueContains(url, value: PDF_website["urlValue"]!)
-        // Let's comment the next line until that fails intermittently due to the page re-direction
-        // mozWaitForElementToExist(app.staticTexts["Education and schools"])
 
-        // Go back to pdf view
-        app.buttons[AccessibilityIdentifiers.Toolbar.backButton].tap()
-        mozWaitForValueContains(url, value: PDF_website["pdfValue"]!)
+        // Handle potential human verification step
+        browser.handleHumanVerification()
+
+        // Assert that the browser is at the correct URL
+        browser.assertAddressBarContains(value: PDF_website["urlValue"]!)
+
+        // Go back to the PDF view
+        browser.tapBackButton()
+
+        // Assert that the browser is back at the PDF URL
+        browser.assertAddressBarContains(value: PDF_website["pdfValue"]!)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307118
@@ -58,17 +88,29 @@ class BrowsingPDFTests: BaseTestCase {
         navigator.openURL(PDF_website["url"]!)
         waitUntilPageLoad()
         // Long press on a link on the pdf and check the options shown
-        app.webViews.links.element(boundBy: 0).pressAtPoint(CGPoint(x: 10, y: 0), forDuration: 3)
+        longPressOnPdfLink()
 
-        mozWaitForElementToExist(app.staticTexts[PDF_website["longUrlValue"]!])
-        mozWaitForElementToExist(app.buttons["Open"])
-        mozWaitForElementToExist(app.buttons["Add to Reading List"])
-        if #available(iOS 16, *) {
+        if #unavailable(iOS 26) {
+            waitForElementsToExist(
+                [
+                    app.staticTexts[PDF_website["longUrlValue"]!],
+                    app.buttons["Open"],
+                    app.buttons["Add to Reading List"]
+                ]
+            )
+        }
+        if #available(iOS 26, *) {
+            mozWaitForElementToExist(app.menuItems["Copy"])
+        } else if #available(iOS 16, *) {
             mozWaitForElementToExist(app.buttons["Copy Link"])
         } else {
             mozWaitForElementToExist(app.buttons["Copy"])
         }
-        mozWaitForElementToExist(app.buttons["Share…"])
+        if #available(iOS 26, *) {
+            mozWaitForElementToExist(app.menuItems["Share…"])
+        } else {
+            mozWaitForElementToExist(app.buttons["Share…"])
+        }
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307119
@@ -76,59 +118,128 @@ class BrowsingPDFTests: BaseTestCase {
         navigator.openURL(PDF_website["url"]!)
         waitUntilPageLoad()
         // Long press on a link on the pdf and check the options shown
-        app.webViews.links.element(boundBy: 0).pressAtPoint(CGPoint(x: 10, y: 0), forDuration: 3)
+        longPressOnPdfLink()
 
-        mozWaitForElementToExist(app.staticTexts[PDF_website["longUrlValue"]!])
-        app.buttons["Add to Reading List"].tap()
-        navigator.nowAt(BrowserTab)
+        if #unavailable(iOS 26) {
+            mozWaitForElementToExist(app.staticTexts[PDF_website["longUrlValue"]!])
+            app.buttons["Add to Reading List"].waitAndTap()
+            navigator.nowAt(BrowserTab)
 
-        // Go to reading list and check that the item is there
-        navigator.goto(LibraryPanel_ReadingList)
-        let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts[PDF_website["longUrlValue"]!]
-        mozWaitForElementToExist(savedToReadingList)
+            // Go to reading list and check that the item is there
+            navigator.goto(LibraryPanel_ReadingList)
+            let savedToReadingList = app.tables["ReadingTable"].cells.staticTexts[PDF_website["longUrlValue"]!]
+            mozWaitForElementToExist(savedToReadingList)
+        }
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307120
     // Smoketest
     func testPinPDFtoTopSites() {
+        // 1. Open a PDF and pin it to Top Sites.
         navigator.openURL(PDF_website["url"]!)
         waitUntilPageLoad()
+
+        // Assumes BrowserTabMenuMore and PinToTopSitesPAM are custom navigator actions
+        navigator.goto(BrowserTabMenuMore)
         navigator.performAction(Action.PinToTopSitesPAM)
-        navigator.performAction(Action.OpenNewTabFromTabTray)
-        mozWaitForElementToExist(app.cells[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
-        mozWaitForElementToExist(app.collectionViews.cells.staticTexts[PDF_website["bookmarkLabel"]!])
 
-        // Open pdf from pinned site
-        let pdfTopSite = app
-            .collectionViews[AccessibilityIdentifiers.FirefoxHomepage.collectionView]
-            .cells[PDF_website["bookmarkLabel"]!]
-            .children(matching: .other)
-            .element
-            .children(matching: .other)
-            .element(boundBy: 0)
-        pdfTopSite.tap()
+        // 2. Go to the homepage and verify the PDF is pinned.
+        navigator.performAction(Action.OpenNewTabFromTabTray)
+
+        // Wait for the pinned item to exist on the Top Sites screen.
+        let bookmarkLabel = PDF_website["bookmarkLabel"]!
+        topSites.assertTopSiteExists(named: bookmarkLabel)
+
+        // 3. Open the PDF from the pinned site and verify the URL.
+        // Tap on the pinned PDF item.
+        topSites.tapOnPinnedSite(named: bookmarkLabel)
         waitUntilPageLoad()
-        mozWaitForValueContains(url, value: PDF_website["pdfValue"]!)
 
-        // Remove pdf pinned site
+        // Assert the browser is showing the correct PDF URL.
+        browser.assertAddressBarContains(value: PDF_website["pdfValue"]!)
+
+        // 4. Go back to the homepage and unpin the item.
         navigator.performAction(Action.OpenNewTabFromTabTray)
-        mozWaitForElementToExist(app.collectionViews.cells.staticTexts[PDF_website["bookmarkLabel"]!])
-        pdfTopSite.press(forDuration: 1)
-        mozWaitForElementToExist(app.tables.cells.otherElements[StandardImageIdentifiers.Large.pinSlash])
-        app.tables.cells.otherElements[StandardImageIdentifiers.Large.pinSlash].tap()
-        mozWaitForElementToExist(app.cells[AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell])
-        mozWaitForElementToExist(app.collectionViews.cells.staticTexts[PDF_website["bookmarkLabel"]!])
+        topSites.assertTopSiteExists(named: bookmarkLabel)
+
+        // Long-press the pinned site to open the context menu.
+        topSites.longPressOnPinnedSite(named: bookmarkLabel)
+
+        // Remove the pinned site via the context menu.
+        contextMenu.unpinFromTopSites()
+
+        // 5. Verify the item has been unpinned.
+        topSites.assertTopSiteDoesNotExist(named: bookmarkLabel)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307121
     // Smoketest
     func testBookmarkPDF() {
+        library = LibraryScreen(app: app)
+        // Open the PDF URL and wait for the page to load
         navigator.openURL(PDF_website["url"]!)
         waitUntilPageLoad()
-        navigator.performAction(Action.BookmarkThreeDots)
+        waitForTabsButton()
+
+        // Navigate to the browser menu and perform the bookmark action
+        navigator.goto(BrowserTabMenu)
+        navigator.performAction(Action.Bookmark)
+        waitForTabsButton()
+
+        // Navigate to the bookmarks section
         navigator.goto(BrowserTabMenu)
         navigator.goto(LibraryPanel_Bookmarks)
-        mozWaitForElementToExist(app.tables["Bookmarks List"])
-        mozWaitForElementToExist(app.tables["Bookmarks List"].staticTexts[PDF_website["bookmarkLabel"]!])
+
+        // Assert that the bookmarked item exists
+        library.assertBookmarkExists(named: PDF_website["bookmarkLabel"]!)
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/view/3168443
+    // Regression
+    func testSwitchTabsWhileDownloadingPDF() {
+        // Step 1: Open a large PDF in a tab. The PDF starts downloading.
+        navigator.openURL(largePDF1["url"]!)
+        waitUntilDownloadStarts()
+
+        // Step 2: Switch to another tab and open another large PDF. All PDF files load properly.
+        navigator.openNewURL(urlString: largePDF2["url"]!)
+        waitUntilPageLoad(timeout: TIMEOUT_LONG)
+        browser.assertAddressBarContains(value: largePDF2["pdfValue"]!, timeout: PDF_TIMEOUT)
+
+        // Step 3: Return to the first PDF tab. It should be loading or loaded.
+        navigator.goto(TabTray)
+        tabTrayScreen.tapTabAtIndex(index: 0)
+        waitUntilPageLoad(timeout: TIMEOUT_LONG)
+        browser.assertAddressBarContains(value: largePDF1["pdfValue"]!, timeout: PDF_TIMEOUT)
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/view/3168439
+    // Regression
+    func testTabNameForPDFIsTheFileName() {
+        // 1. Open a PDF and check the tab is named after the file, not after the file URL
+        navigator.openURL(PDF_website["url"]!)
+        waitUntilPageLoad()
+        waitForTabsButton()
+        navigator.goto(TabTray)
+        tabTrayScreen.assertSomeTabTitleContains(PDF_website["tabTitle"]!)
+        tabTrayScreen.assertNoTabTitleContains("file://")
+
+        // 2. Open a second PDF in a new tab, each tab keeps the name of its own file
+        navigator.performAction(Action.OpenNewTabFromTabTray)
+        navigator.openURL(PDF_website["secondUrl"]!)
+        waitUntilPageLoad()
+        waitForTabsButton()
+        navigator.goto(TabTray)
+        tabTrayScreen.assertSomeTabTitleContains(PDF_website["secondTabTitle"]!)
+        tabTrayScreen.assertSomeTabTitleContains(PDF_website["tabTitle"]!)
+        tabTrayScreen.assertNoTabTitleContains("file://")
+    }
+
+    private func longPressOnPdfLink() {
+        let link = app.webViews.links.element(boundBy: 0)
+        mozWaitForElementToExist(link)
+        let startCoordinate = link.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+        let endCoordinate = link.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+        startCoordinate.press(forDuration: 3, thenDragTo: endCoordinate)
     }
 }

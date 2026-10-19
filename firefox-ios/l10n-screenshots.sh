@@ -36,9 +36,9 @@ for lang in $LOCALES; do
     fastlane snapshot --project firefox-ios/Client.xcodeproj --scheme L10nSnapshotTests \
         --number_of_retries 0 \
         --skip_open_summary \
-        --xcargs "-maximum-parallel-testing-workers 2" \
+        --xcargs "-maximum-parallel-testing-workers 2 -skipMacroValidation" \
         --derived_data_path l10n-screenshots-dd \
-        --ios_version "17.5" \
+        --ios_version "26.5" \
         --erase_simulator --localize_simulator \
         --devices "iPhone 15" --languages "$lang" \
         --output_directory "l10n-screenshots/$lang" \

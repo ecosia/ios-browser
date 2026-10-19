@@ -173,6 +173,7 @@ class ReadingListPanel: UITableViewController,
     weak var navigationHandler: ReadingListNavigationHandler?
     let profile: Profile
     var state: LibraryPanelMainState
+    var isTransitioning = false
     var bottomToolbarItems = [UIBarButtonItem]()
     var themeManager: ThemeManager
     var themeListenerCancellable: Any?
@@ -334,7 +335,7 @@ class ReadingListPanel: UITableViewController,
     }()
 
     /* Ecosia: Use Ecosia-themed empty reading list view
-    private lazy var emptyStateView: UIView = {
+    private lazy var emptyStateView: ReaderPanelEmptyStateView = {
         return ReaderPanelEmptyStateView(windowUUID: self.windowUUID)
     }()
     */
@@ -363,9 +364,10 @@ class ReadingListPanel: UITableViewController,
             withIdentifier: "ReadingListTableViewCell",
             for: indexPath
         ) as? ReadingListTableViewCell else {
-            logger.log("Failed to dequeue ReadingListTableViewCell at indexPath: \(indexPath)",
+            logger.log("Failed to dequeue ReadingListTableViewCell",
                        level: .fatal,
-                       category: .library)
+                       category: .library,
+                       extra: ["indexPath": "\(indexPath)"])
             return UITableViewCell()
         }
         if let record = records?[indexPath.row] {
@@ -415,7 +417,7 @@ class ReadingListPanel: UITableViewController,
         tableView.deselectRow(at: indexPath, animated: false)
         if let record = records?[indexPath.row],
             let url = URL(string: record.url),
-            let encodedURL = url.encodeReaderModeURL(WebServer.sharedInstance.baseReaderModeURL()) {
+            let encodedURL = url.encodeReaderModeURL(ReaderModeSchemeHandler.currentBaseURL) {
             // Mark the item as read
             profile.readingList.updateRecord(record, unread: false)
             // Reading list items are closest in concept to bookmarks.
@@ -474,6 +476,12 @@ class ReadingListPanel: UITableViewController,
         tableView.separatorColor = currentTheme().colors.borderPrimary
         view.backgroundColor = currentTheme().colors.layer1
         tableView.backgroundColor = currentTheme().colors.layer1
+        /* Ecosia: New in 155.1, for upstream's `ReaderPanelEmptyStateView` (a `ThemeApplicable`).
+           Ecosia substitutes `EmptyReadingListView`, which is `Themeable` — it calls `applyTheme()`
+           in its own init and registers via `listenForThemeChanges`, so it re-themes itself and has
+           no `applyTheme(theme:)` to call here.
+        emptyStateView.applyTheme(theme: currentTheme())
+         */
         refreshReadingList()
     }
 

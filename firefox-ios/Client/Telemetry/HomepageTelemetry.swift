@@ -19,7 +19,7 @@ struct HomepageTelemetry {
         case bookmark = "bookmark"
         case bookmarkShowAll = "bookmarks_show_all_button"
         case story = "story"
-        case customizeHomepage = "customize_homepage_button"
+        case quickAnswersEntryPoint = "quick_answers_entry_point"
 
         var sectionName: String {
             switch self {
@@ -31,10 +31,21 @@ struct HomepageTelemetry {
                 return "bookmarks"
             case .story:
                 return "stories"
-            case .customizeHomepage:
-                return "customize_homepage"
+            case .quickAnswersEntryPoint:
+                return "header"
             }
         }
+    }
+
+    enum TopSitesShortcutPinnedSource: String {
+        case homescreenButton = "homescreen_button"
+        case contextMenu = "context_menu"
+        case appMenu = "app_menu"
+    }
+
+    enum TopSitesShortcutUnpinnedSource: String {
+        case contextMenu = "context_menu"
+        case appMenu = "app_menu"
     }
 
     private enum EventValue: String {
@@ -89,6 +100,20 @@ struct HomepageTelemetry {
         )
     }
 
+    func sendTopSitesShortcutPinnedEvent(source: TopSitesShortcutPinnedSource) {
+        gleanWrapper.recordEvent(
+            for: GleanMetrics.TopSites.shortcutPinned,
+            extras: GleanMetrics.TopSites.ShortcutPinnedExtra(source: source.rawValue)
+        )
+    }
+
+    func sendTopSitesShortcutUnpinnedEvent(source: TopSitesShortcutUnpinnedSource) {
+        gleanWrapper.recordEvent(
+            for: GleanMetrics.TopSites.shortcutUnpinned,
+            extras: GleanMetrics.TopSites.ShortcutUnpinnedExtra(source: source.rawValue)
+        )
+    }
+
     // MARK: - Pocket
     func sendTapOnPocketStoryCounter(position: Int, isZeroSearch: Bool) {
         let originExtra: EventValue = isZeroSearch ? .fxHomepageOriginZeroSearch : .fxHomepageOriginOther
@@ -102,5 +127,9 @@ struct HomepageTelemetry {
 
     func sendOpenInPrivateTabEventForPocket() {
         gleanWrapper.recordEvent(for: GleanMetrics.Pocket.openInPrivateTab)
+    }
+
+    func sendQuickAnswersButtonViewedEvent() {
+        gleanWrapper.recordEvent(for: GleanMetrics.AiQuickAnswers.buttonViewed)
     }
 }

@@ -13,12 +13,12 @@ import WebKit
 final class EcosiaWebViewModalTests: XCTestCase, @unchecked Sendable {
 
     private var coordinator: EcosiaWebViewMockCoordinator!
-    private var mockWebView: MockWKWebView!
+    private var mockWebView: MockEcosiaWKWebView!
     private var mockParent: MockWebViewRepresentable!
 
     override func setUp() {
         super.setUp()
-        mockWebView = MockWKWebView()
+        mockWebView = MockEcosiaWKWebView()
         mockParent = MockWebViewRepresentable()
         coordinator = EcosiaWebViewMockCoordinator(parent: mockParent)
     }
@@ -367,7 +367,11 @@ private class MockWebViewRepresentable {
 }
 
 @available(iOS 16.0, *)
-private class MockWKWebView: WKWebView {
+// Ecosia: Renamed from `MockWKWebView`. Ecosia had deleted upstream's same-named mock from
+// ClientTests/Mocks/MockWebKit.swift; 155.1 restored it, and EcosiaTests compiles that file, so the
+// two names now collide. Renaming the local one is safer than re-deleting upstream's, which
+// ClientTests genuinely uses (FormAutofillHelperTests, SummarizerMiddlewareTests).
+private class MockEcosiaWKWebView: WKWebView {
     var mockURL: URL?
     var mockCanGoBack = true
     var loadedRequests: [URLRequest] = []

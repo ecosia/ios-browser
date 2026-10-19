@@ -1,0 +1,50 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Foundation
+import Redux
+import Common
+import ModifiedCopy
+
+@Copyable
+struct AutoTranslatePromptState: StateType, Equatable {
+    var windowUUID: WindowUUID
+    var showPrompt: Bool
+
+    init(windowUUID: WindowUUID) {
+        self.init(windowUUID: windowUUID, showPrompt: false)
+    }
+
+    init(windowUUID: WindowUUID, showPrompt: Bool) {
+        self.windowUUID = windowUUID
+        self.showPrompt = showPrompt
+    }
+
+    static let reducer: Reducer<Self> = (legacyReducer, modernReducer)
+
+    static let modernReducer: ReducerMethod<Self> = { state, action, actionWindowUUID in
+        // Does not handle any modern actions
+        return defaultState(from: state)
+    }
+
+    static let legacyReducer: LegacyReducerMethod<Self> = { state, action in
+        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else {
+            return defaultState(from: state)
+        }
+
+        switch action.actionType {
+        case TranslationsActionType.showAutoTranslatePrompt:
+            return state.copy(showPrompt: true)
+        case TranslationsActionType.didTapEnableAutoTranslate,
+             TranslationsActionType.didDismissAutoTranslatePrompt:
+            return state.copy(showPrompt: false)
+        default:
+            return defaultState(from: state)
+        }
+    }
+
+    static func defaultState(from state: AutoTranslatePromptState) -> AutoTranslatePromptState {
+        return AutoTranslatePromptState(windowUUID: state.windowUUID, showPrompt: state.showPrompt)
+    }
+}

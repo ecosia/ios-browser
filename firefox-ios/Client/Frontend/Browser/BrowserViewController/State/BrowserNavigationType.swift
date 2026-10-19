@@ -4,6 +4,7 @@
 
 import Foundation
 import enum MozillaAppServices.VisitType
+import QuickAnswersKit
 import SummarizeKit
 
 /// View types that the browser coordinator can navigate to
@@ -12,19 +13,23 @@ enum BrowserNavigationDestination: Equatable {
     case contextMenu
     case settings(Route.SettingsSection)
     case trackingProtectionSettings
+    case trackerBlockerSheet
     case tabTray(TabTrayPanelType)
     case bookmarksPanel
     case homepageZeroSearch
     case zeroSearch
     case shortcutsLibrary
-    case storiesFeed
-    case storiesWebView
+    case quickAnswers(transitionType: QuickAnswersTransitionType)
     case privacyNoticeLink(URL)
-    case summarizer(config: SummarizerConfig)
+    case summarizer(config: SummarizerConfig, trigger: SummarizerTrigger)
+    case certificatesFromErrorPage
+    case nativeErrorPageLearnMore
+    case readerMode
 
     // Webpage views
     case link
     case newTab
+    case searchQuery(String)
 
     // System views
     case shareSheet(ShareSheetConfiguration)
@@ -48,6 +53,8 @@ struct NavigationDestination: Equatable {
     let isGoogleTopSite: Bool?
     let visitType: VisitType?
     let contextMenuConfiguration: ContextMenuConfiguration?
+    let errorPageURL: URL?
+    let certificateTitle: String?
 
     init(
         _ destination: BrowserNavigationDestination,
@@ -56,7 +63,9 @@ struct NavigationDestination: Equatable {
         selectNewTab: Bool? = nil,
         isGoogleTopSite: Bool? = nil,
         visitType: VisitType? = nil,
-        contextMenuConfiguration: ContextMenuConfiguration? = nil
+        contextMenuConfiguration: ContextMenuConfiguration? = nil,
+        errorPageURL: URL? = nil,
+        certificateTitle: String? = nil
     ) {
         self.destination = destination
         self.url = url
@@ -65,5 +74,7 @@ struct NavigationDestination: Equatable {
         self.isGoogleTopSite = isGoogleTopSite
         self.visitType = visitType
         self.contextMenuConfiguration = contextMenuConfiguration
+        self.errorPageURL = errorPageURL
+        self.certificateTitle = certificateTitle
     }
 }

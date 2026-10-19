@@ -20,6 +20,8 @@ final class TopSiteNativeContextMenuTests: XCTestCase {
         DependencyHelperMock().bootstrapDependencies()
         subject = HomepageViewController(
             windowUUID: .XCTestDefaultUUID,
+            // Ecosia: `tabManager` became a required parameter of `HomepageViewController.init` in 155.1.
+            tabManager: MockTabManager(),
             overlayManager: DefaultOverlayModeManager(),
             toastContainer: UIView()
         )

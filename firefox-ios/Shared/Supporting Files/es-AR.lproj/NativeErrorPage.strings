@@ -8,10 +8,10 @@
 "NativeErrorPage.BadCertDomain.AdvancedSecurityInfo.v149" = "Este sitio no permite conexiones que no sean seguras.";
 
 /* On certificate error page, this is the first warning message in the advanced section suggesting possible solutions. */
-"NativeErrorPage.BadCertDomain.AdvancedWarning1.v149" = "Es posible que debas iniciar sesión en tu red Wi-Fi o verificar la configuración de tu VPN.";
+"NativeErrorPage.BadCertDomain.AdvancedWarning1.v149" = "Es posible que tengas que iniciar sesión en tu red de Wi-Fi o verificar la configuración de tu VPN.";
 
 /* On certificate error page, this is the second warning message in the advanced section for users on corporate networks. */
-"NativeErrorPage.BadCertDomain.AdvancedWarning2.v149" = "Si estás en una red corporativa, tu equipo de soporte puede tener más información.";
+"NativeErrorPage.BadCertDomain.AdvancedWarning2.v149" = "Si estás en una red corporativa, tu equipo de ayuda puede tener más información.";
 
 /* On certificate error page, this is the description explaining the security risk. */
 "NativeErrorPage.BadCertDomain.Description.v149" = "Alguien que se haga pasar por el sitio podría intentar robar tu información personal. La configuración de tu conexión también podría estar mal configurada.";
@@ -26,7 +26,7 @@
 "NativeErrorPage.BadCertDomain.LearnMoreLink.v149" = "Conocer más";
 
 /* On certificate error page, this is the text on a button that will proceed to the site despite the certificate error. %@ is the site URL. This is a risky action. */
-"NativeErrorPage.BadCertDomain.ProceedButton.v149" = "Continuar a %@ (Riesgoso)";
+"NativeErrorPage.BadCertDomain.ProceedButton.v149" = "Continuar a %@ (arriesgado)";
 
 /* On certificate error page, this is the title warning the user about a potential security issue. */
 "NativeErrorPage.BadCertDomain.TitleLabel.v149" = "Cuidado. Algo no parece estar bien.";
@@ -36,6 +36,9 @@
 
 /* On error page, this is the text on a button that will try to load the page again. */
 "NativeErrorPage.ButtonLabel.v131" = "Recargar";
+
+/* On error page, this is the text on a button that will try to load the page again. */
+"NativeErrorPage.ButtonLabel.v155" = "Intentar nuevamente";
 
 /* On error page, this is the description for a generic error. %@ is the site url. */
 "NativeErrorPage.GenericError.Description.v134" = "El propietario de %@ no lo configuró correctamente y no se pudo crear una conexión segura.";
@@ -51,4 +54,34 @@
 
 /* On error page, this is the title for no internet connection */
 "NativeErrorPage.NoInternetConnection.TitleLabel.v131" = "Parece que hay un problema con la conexión a Internet.";
+
+/* Label of the button on the connection error page - displayed if the user clicks on the button to requested an earlier version of the page and the search is in progress. */
+"NativeErrorPage.Wayback.Error.Checking.v155" = "Revisando el archivo…";
+
+/* Label shown when the app fails to reach the Wayback Machine while searching for an earlier version of a page. */
+"NativeErrorPage.Wayback.Error.CouldNotReach.v155" = "No pudimos conectarnos con el servicio de archivo.";
+
+/* Description of the error page when the app is unable to connect to the server and will show a wayback fallback. %@ is the app name (e.g. Firefox). */
+"NativeErrorPage.Wayback.Error.Description.v154" = "El sitio puede estar ocupado o no disponible. Probá de nuevo más tarde. Si otras páginas no se cargan, verificá tu conexión de datos o Wi-Fi. %@ también puede buscar en Wayback Machine una versión anterior de esta página.";
+
+/* Footer text below the wayback button/card, explaining that the app can look for an archived version of the page via the Internet Archive's Wayback Machine. %1$@ is the app name (e.g. Firefox). %2$@ is the link text (Wayback Machine), which is a tappable link that opens web.archive.org. */
+"NativeErrorPage.Wayback.Error.FooterDescription.v155" = "%1$@ puede buscar una versión anterior de esta página en %2$@ de Internet Archive.";
+
+/* The tappable link text within the Wayback footer description, opens web.archive.org. */
+"NativeErrorPage.Wayback.Error.LinkText.v155" = "Wayback Machine";
+
+/* Label shown when wayback responds and says no snapshot was found. */
+"NativeErrorPage.Wayback.Error.NotFound.v155" = "No se encontró una versión archivada.";
+
+/* Button label allowing the user to retry searching the Wayback Machine after a failed attempt. */
+"NativeErrorPage.Wayback.Error.Retry.v154" = "Reintentar";
+
+/* Button label displayed when there is no archived version of a webpage, allowing the user to search for the page URL using their default search engine. */
+"NativeErrorPage.Wayback.Error.Search.v155" = "Buscar en la web";
+
+/* Title of the error page when the app is unable to connect to the server and will show a wayback fallback. */
+"NativeErrorPage.Wayback.Error.Title.v154" = "No se puede conectar";
+
+/* Accessibility hint read by VoiceOver describing what happens when the 'Check for earlier version' button is clicked. */
+"NativeErrorPage.Wayback.Error.WaybackButtonA11yHint.v154" = "Busca en Wayback Machine una versión archivada de esta página.";
 

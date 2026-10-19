@@ -10,3 +10,4 @@ MOZ_BUNDLE_ID = org.mozilla.ios.FirefoxBeta
 CODE_SIGN_ENTITLEMENTS = Client/Entitlements/FirefoxBetaApplication.entitlements
 OTHER_SWIFT_FLAGS = $(OTHER_SWIFT_FLAGS_common) -DMOZ_CHANNEL_BETA
 MOZ_INTERNAL_URL_SCHEME = firefox-beta
+SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES

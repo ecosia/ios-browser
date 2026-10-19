@@ -17,11 +17,13 @@ final class DefaultThemeManagerTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         super.setUp()
         userDefaults = MockUserDefaults()
+        DependencyHelperMock().bootstrapDependencies()
     }
 
     override func tearDown() {
         super.tearDown()
         userDefaults = nil
+        DependencyHelperMock().reset()
     }
 
     // MARK: - Initialization tests
@@ -241,14 +243,48 @@ final class DefaultThemeManagerTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(sut.getCurrentTheme(for: windowUUID).type, expectedThemeInSystemMode)
     }
 
+    func testDTM_novaDesignOn_returnsNovaLightThemeForLightMode() {
+        let sut = createSubject(with: userDefaults, isNovaDesignOn: true)
+
+        XCTAssertTrue(sut.getCurrentTheme(for: windowUUID) is NovaLightTheme)
+        XCTAssertEqual(sut.getCurrentTheme(for: windowUUID).colors.layer1, NovaColors.Gray5)
+    }
+
+    func testDTM_novaDesignOn_returnsNovaDarkThemeForDarkMode() {
+        let sut = createSubject(with: userDefaults, isNovaDesignOn: true)
+        sut.setSystemTheme(isOn: false)
+        sut.setManualTheme(to: .dark)
+
+        XCTAssertTrue(sut.getCurrentTheme(for: windowUUID) is NovaDarkTheme)
+        XCTAssertEqual(sut.getCurrentTheme(for: windowUUID).colors.layer1, NovaColors.Gray75)
+    }
+
+    func testDTM_novaDesignOn_returnsNovaPrivateThemeForPrivateMode() {
+        let sut = createSubject(with: userDefaults, isNovaDesignOn: true)
+        sut.setPrivateTheme(isOn: true, for: windowUUID)
+
+        XCTAssertTrue(sut.getCurrentTheme(for: windowUUID) is NovaPrivateTheme)
+        XCTAssertEqual(sut.getCurrentTheme(for: windowUUID).colors.layer1, NovaColors.VioletDesaturated90)
+    }
+
+    func testDTM_novaDesignOff_returnsLegacyLightThemeForLightMode() {
+        let sut = createSubject(with: userDefaults, isNovaDesignOn: false)
+
+        XCTAssertTrue(sut.getCurrentTheme(for: windowUUID) is LightTheme)
+        XCTAssertEqual(sut.getCurrentTheme(for: windowUUID).colors.layer1, LightTheme().colors.layer1)
+    }
+
     // MARK: - Helper methods
 
     private func createSubject(with userDefaults: UserDefaultsInterface,
-                               file: StaticString = #file,
+                               isNovaDesignOn: Bool = false,
+                               file: StaticString = #filePath,
                                line: UInt = #line) -> DefaultThemeManager {
         let subject = DefaultThemeManager(
             userDefaults: userDefaults,
-            sharedContainerIdentifier: "")
+            sharedContainerIdentifier: "",
+            isNovaDesignOnClosure: { isNovaDesignOn }
+        )
         subject.setWindow(UIWindow(frame: .zero), for: windowUUID)
         trackForMemoryLeaks(subject, file: file, line: line)
 

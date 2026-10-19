@@ -23,12 +23,11 @@ protocol LaunchFinishedLoadingDelegate: AnyObject {
 }
 
 /// ViewModel responsible for determining which launch screens to display at app startup
-/// Manages the sequence of onboarding screens (terms of service, intro, update, survey)
+/// Manages the sequence of onboarding screens (terms of service, intro, survey)
 @MainActor
 class LaunchScreenViewModel {
     private let termsOfServiceManager: TermsOfServiceManager
     private let introScreenManager: IntroScreenManagerProtocol
-    private let updateViewModel: UpdateViewModel
     private let surveySurfaceManager: SurveySurfaceManager
     private let profile: Profile
 
@@ -45,41 +44,22 @@ class LaunchScreenViewModel {
     ///   - windowUUID: The unique identifier for the window
     ///   - profile: User profile for accessing preferences (defaults to shared instance)
     ///   - messageManager: Manager for GleanPlumb messages (defaults to experiments messaging)
-    ///   - onboardingModel: Onboarding model configuration (defaults to upgrade model)
     ///   - introScreenManager: Manager for intro screen logic (defaults to new instance)
     init(
         windowUUID: WindowUUID,
         profile: Profile = AppContainer.shared.resolve(),
         messageManager: GleanPlumbMessageManagerProtocol = Experiments.messaging,
-        onboardingModel: OnboardingKitViewModel = NimbusOnboardingFeatureLayer().getOnboardingModel(for: .upgrade),
         introScreenManager: IntroScreenManagerProtocol? = nil
     ) {
         self.profile = profile
         self.termsOfServiceManager = TermsOfServiceManager(prefs: profile.prefs)
         self.introScreenManager = introScreenManager ?? IntroScreenManager(prefs: profile.prefs)
-        let telemetryUtility = OnboardingTelemetryUtility(with: onboardingModel)
-        self.updateViewModel = UpdateViewModel(profile: profile,
-                                               model: onboardingModel,
-                                               telemetryUtility: telemetryUtility,
-                                               windowUUID: windowUUID)
         self.surveySurfaceManager = SurveySurfaceManager(windowUUID: windowUUID, and: messageManager)
     }
 
-    /// Checks if the splash screen experiment has already been shown
-    /// - Returns: True if the splash screen experiment has been shown, false otherwise
-    func getSplashScreenExperimentHasShown() -> Bool {
-        profile.prefs.boolForKey(PrefsKeys.splashScreenShownKey) ?? false
-    }
-
-    /// Marks the splash screen experiment as having been shown
-    func setSplashScreenExperimentHasShown() {
-        profile.prefs.setBool(true, forKey: PrefsKeys.splashScreenShownKey)
-    }
-
     /// Starts loading and determining which launch screens to display
-    /// - Parameter appVersion: Current app version (defaults to AppInfo.appVersion)
-    func startLoading(appVersion: String = AppInfo.appVersion) {
-        loadLaunchType(appVersion: appVersion)
+    func startLoading() {
+        loadLaunchType()
     }
 
     /// Loads and displays the next launch type in the sequence
@@ -101,10 +81,15 @@ class LaunchScreenViewModel {
 
     /// Determines which launch screens should be displayed based on app state
     /// - Parameter appVersion: Current app version
-    private func loadLaunchType(appVersion: String) {
+    private func loadLaunchType() {
         var order: [LaunchType] = []
 
         if introScreenManager.shouldShowIntroScreen {
+            // Ecosia: `.videoIntro` is upstream's; `enable-video-intro` is false on every channel in
+            // onboardingFrameworkFeature.yaml, so this never fires here. Reconciled, not removed.
+            if introScreenManager.shouldShowVideoIntro {
+                order.append(.videoIntro)
+            }
             /* Ecosia: Present Welcome right after launch screen (intro before ToS)
             if termsOfServiceManager.shouldShowScreen {
                 order.append(.termsOfService(manager: termsOfServiceManager))
@@ -115,9 +100,6 @@ class LaunchScreenViewModel {
             if termsOfServiceManager.shouldShowScreen {
                 order.append(.termsOfService(manager: termsOfServiceManager))
             }
-        } else if updateViewModel.shouldShowUpdateSheet(appVersion: appVersion),
-                  updateViewModel.containsSyncableAccount() {
-            order.append(.update(viewModel: updateViewModel))
         } else if surveySurfaceManager.shouldShowSurveySurface {
             order.append(.survey(manager: surveySurfaceManager))
         }

@@ -1,0 +1,34 @@
+# The configuration for the adBlocker feature
+features:
+  ad-blocker-feature:
+    description: >
+      The feature flag to manage the roll out of the Ad Blocker badge in the
+      Site Menu and the corresponding Block Ads toggle in Browsing settings.
+    variables:
+      enabled:
+        description: >
+          Whether or not this feature is enabled
+        type: Boolean
+        default: false
+      badge-enabled:
+        description: >
+          Whether or not the Ad Blocker badge is shown in the Site Menu
+        type: Boolean
+        default: false
+    defaults:
+      # Ecosia: Promotional suppression. The Block Ads toggle in Browsing settings ships
+      # (`enabled: true`), but the Site Menu badge advertising it does not
+      # (`badge-enabled: false`). Applies to every channel, so `release` is listed explicitly
+      # rather than inheriting the upstream variable default of `enabled: false`.
+      - channel: release
+        value:
+          enabled: true
+          badge-enabled: false
+      - channel: beta
+        value:
+          enabled: true
+          badge-enabled: false
+      - channel: developer
+        value:
+          enabled: true
+          badge-enabled: false

@@ -4,6 +4,7 @@
 
 import Common
 import Foundation
+import Shared
 import SummarizeKit
 
 protocol MainMenuCoordinatorDelegate: AnyObject {
@@ -32,6 +33,12 @@ protocol MainMenuCoordinatorDelegate: AnyObject {
     func presentSiteProtections()
 
     @MainActor
+    func presentReportBrokenSite(url: URL?)
+
+    @MainActor
+    func presentAdBlockerSettings()
+
+    @MainActor
     func showPrintSheet()
 
     /// Open the share sheet to share the currently selected `Tab`.
@@ -49,7 +56,7 @@ protocol MainMenuCoordinatorDelegate: AnyObject {
     func showFeedback(windowUUID: WindowUUID)
 }
 
-class MainMenuCoordinator: BaseCoordinator, FeatureFlaggable {
+class MainMenuCoordinator: BaseCoordinator {
     weak var parentCoordinator: ParentCoordinatorDelegate?
     weak var navigationHandler: MainMenuCoordinatorDelegate?
 
@@ -130,6 +137,13 @@ class MainMenuCoordinator: BaseCoordinator, FeatureFlaggable {
         case .passwords:
             navigationHandler?.showSettings(at: .password)
 
+        case .readerView:
+            store.dispatch(NavigationBrowserAction(
+                navigationDestination: NavigationDestination(.readerMode),
+                windowUUID: windowUUID,
+                actionType: NavigationBrowserActionType.tapOnReaderMode
+            ))
+
         // Ecosia: Reading List added for the compact menu
         case .readingList:
             navigationHandler?.showLibraryPanel(.readingList)
@@ -148,6 +162,9 @@ class MainMenuCoordinator: BaseCoordinator, FeatureFlaggable {
         case .printSheet:
             navigationHandler?.showPrintSheet()
 
+        case .reportBrokenSite:
+            navigationHandler?.presentReportBrokenSite(url: destination.url)
+
         case .shareSheet:
             navigationHandler?.showShareSheetForCurrentlySelectedTab()
 
@@ -160,12 +177,59 @@ class MainMenuCoordinator: BaseCoordinator, FeatureFlaggable {
         case .siteProtections:
             navigationHandler?.presentSiteProtections()
 
+        case .adBlocker:
+            navigationHandler?.presentAdBlockerSettings()
+
         case .defaultBrowser:
             DefaultApplicationHelper().openSettings()
 
         case .webpageSummary(let config):
-            dismissMenuModal(animated: true)
             navigationHandler?.showSummarizePanel(.mainMenu, config: config)
+
+        case .translatePage:
+            let toolbarState = store.state.componentState(ToolbarState.self, for: .toolbar, window: windowUUID)
+            let translationConfig = toolbarState?.addressToolbar.translationConfiguration
+            let isTranslated = translationConfig?.state == .active
+            let translatedLanguage = translationConfig?.translatedToLanguage
+            let isSingleLanguageFlow = if let translationConfig {
+                !translationConfig.isMultiLanguageFlow
+            } else {
+                false
+            }
+            if isSingleLanguageFlow && isTranslated {
+                store.dispatch(ToolbarMiddlewareAction(
+                    buttonType: .translate,
+                    gestureType: .tap,
+                    windowUUID: windowUUID,
+                    actionType: ToolbarMiddlewareActionType.didTapButton
+                ))
+                return
+            }
+            let prefs = profile.prefs
+            Task {
+                let manager = PreferredTranslationLanguagesManager(prefs: prefs)
+                let supported = await ASTranslationModelsFetcher.shared.fetchSupportedTargetLanguages()
+                let languages = manager.preferredLanguages(supportedTargetLanguages: supported)
+                let pageLanguage = isTranslated
+                    ? translationConfig?.sourceLanguage
+                    : (try? await TranslationsService().detectPageLanguage(for: windowUUID))
+                let filteredLanguages = languages.filter { $0 != pageLanguage && $0 != translatedLanguage }
+                if isSingleLanguageFlow, let language = filteredLanguages.first {
+                    store.dispatch(TranslationLanguageSelectedAction(
+                        windowUUID: windowUUID,
+                        targetLanguage: language,
+                        actionType: TranslationsActionType.didSelectTargetLanguage
+                    ))
+                } else {
+                    store.dispatch(GeneralBrowserAction(
+                        translationLanguages: filteredLanguages,
+                        isPageTranslated: isTranslated,
+                        translatedToLanguage: translatedLanguage,
+                        windowUUID: windowUUID,
+                        actionType: GeneralBrowserActionType.showTranslationLanguagePicker
+                    ))
+                }
+            }
 
         // Ecosia: Help and Report Issue destinations
         case .help:

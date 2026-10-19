@@ -12,26 +12,26 @@ import Shared
 protocol PrivateHomepageDelegate: AnyObject {
     @MainActor
     func homePanelDidRequestToOpenInNewTab(with url: URL, isPrivate: Bool, selectNewTab: Bool)
-
-    @MainActor
-    func switchMode()
 }
 
 // Displays the view for the private homepage when users create a new tab in private browsing
 final class PrivateHomepageViewController: UIViewController,
                                            ContentContainable,
                                            Screenshotable,
-                                           Themeable,
-                                           FeatureFlaggable {
+                                           Themeable {
     enum UX {
         static let scrollContainerStackSpacing: CGFloat = 24
-        static let defaultScrollContainerPadding: CGFloat = 16
+        static let scrollContainerTopPadding: CGFloat = 32
+        static let scrollContainerBottomPadding: CGFloat = 16
+        // Ecosia: Horizontal inset for the vertically centered message card. Was
+        // UX.defaultScrollContainerPadding, which upstream split into top (32) and bottom (16).
+        static let ecosiaMessageCardHorizontalPadding: CGFloat = 16
         private static let iPadScrollContainerPadding: CGFloat = 164
 
         @MainActor
         static func scrollContainerPadding(with traitCollection: UITraitCollection) -> CGFloat {
             let isiPad = UIDevice.current.userInterfaceIdiom == .pad && traitCollection.horizontalSizeClass == .regular
-            return isiPad ? UX.iPadScrollContainerPadding : UX.defaultScrollContainerPadding
+            return isiPad ? UX.iPadScrollContainerPadding : UX.scrollContainerTopPadding
         }
     }
 
@@ -88,7 +88,7 @@ final class PrivateHomepageViewController: UIViewController,
     private lazy var homepageHeaderCell: HomepageHeaderCell = {
         let header = HomepageHeaderCell()
         header.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
-        header.configure(headerState: HeaderState(windowUUID: windowUUID))
+        header.configure(headerState: HeaderState(windowUUID: windowUUID, isPrivate: true))
         return header
     }()
      */
@@ -127,7 +127,7 @@ final class PrivateHomepageViewController: UIViewController,
         /* Ecosia: NTPLogoCell does not need re-configuration on size class changes
         if previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
             || previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass {
-            homepageHeaderCell.configure(headerState: HeaderState(windowUUID: windowUUID))
+            homepageHeaderCell.configure(headerState: HeaderState(windowUUID: windowUUID, isPrivate: true))
         }
          */
         applyTheme()
@@ -185,19 +185,19 @@ final class PrivateHomepageViewController: UIViewController,
             scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
 
             scrollContainer.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor,
-                                                 constant: UX.defaultScrollContainerPadding),
+                                                 constant: UX.scrollContainerTopPadding),
             scrollContainer.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor,
-                                                    constant: -UX.defaultScrollContainerPadding),
+                                                    constant: -UX.scrollContainerBottomPadding),
 
             // Ecosia: Vertically center the message card in the safe area
             privateMessageCardCell.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             privateMessageCardCell.leadingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-                constant: UX.defaultScrollContainerPadding
+                constant: UX.ecosiaMessageCardHorizontalPadding
             ),
             privateMessageCardCell.trailingAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-                constant: -UX.defaultScrollContainerPadding
+                constant: -UX.ecosiaMessageCardHorizontalPadding
             ),
         ])
 
@@ -210,6 +210,16 @@ final class PrivateHomepageViewController: UIViewController,
         gradient.startPoint = CGPoint(x: 1, y: 0)
         gradient.endPoint = CGPoint(x: 0, y: 1)
         gradient.locations = [0, 0.5, 1]
+    }
+
+    private func applyBackgroundGradient(to gradient: CAGradientLayer, theme: Theme) {
+        if theme.isNova {
+            gradient.colors = theme.colors.gradientAccentSubtle.cgColors
+            gradient.locations = nil
+        } else {
+            gradient.colors = theme.colors.layerHomepage.cgColors
+            gradient.locations = [0, 0.5, 1]
+        }
     }
      */
 
@@ -251,7 +261,7 @@ final class PrivateHomepageViewController: UIViewController,
     func applyTheme() {
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         /* Ecosia: Solid background instead of Firefox gradient
-        gradient.colors = theme.colors.layerHomepage.cgColors
+        applyBackgroundGradient(to: gradient, theme: theme)
          */
         view.backgroundColor = theme.colors.ecosia.backgroundNeutralTertiary
         /* Ecosia: Logo header removed from the private homepage
@@ -306,7 +316,8 @@ final class PrivateHomepageViewController: UIViewController,
             /* Ecosia: Fill with solid background instead of rendering a gradient layer
             let renderedGradient = CAGradientLayer()
             setupGradient(renderedGradient)
-            renderedGradient.colors = themeManager.getCurrentTheme(for: windowUUID).colors.layerHomepage.cgColors
+            applyBackgroundGradient(to: renderedGradient,
+                                    theme: themeManager.getCurrentTheme(for: windowUUID))
             renderedGradient.frame = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
             renderedGradient.render(in: context.cgContext)
              */

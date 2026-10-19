@@ -104,7 +104,7 @@
 "Bookmarks.Folder.Label" = "Mapa";
 
 /* A label indicating all bookmarks grouped under the category 'Desktop Bookmarks'. */
-"Bookmarks.Menu.DesktopBookmarks" = "Namizni zaznamki";
+"Bookmarks.Menu.DesktopBookmarks" = "Zaznamki na namizju";
 
 /* The button to create a new bookmark */
 "Bookmarks.NewBookmark.Label" = "Nov zaznamek";
@@ -656,7 +656,7 @@
 "Logins.Onboarding.LearnMoreButtonTitle" = "Več o tem";
 
 /* Warning message shown when you try to enable or use native AutoFill without a device passcode setup */
-"Logins.PasscodeRequirement.Warning" = "Za uporabo samodejnega izpolnjevanja v Ecosiau mora biti omogočeno geslo naprave.";
+"Logins.PasscodeRequirement.Warning" = "Za uporabo samodejnega izpolnjevanja v Ecosia mora biti omogočeno geslo naprave.";
 
 /* Label displaying welcome view tagline under the title */
 "Logins.WelcomeView.Tagline" = "Vzemite gesla s seboj";
@@ -995,7 +995,7 @@
 "ScanQRCode.InvalidDataError.Message" = "Podatek je neveljaven";
 
 /* Text of the prompt to setup the camera authorization for the Scan QR Code feature. */
-"ScanQRCode.PermissionError.Message.v100" = "Izberite \"Nastavitve\" > \"Ecosia\". Dajte Ecosiau dovoljenje za dostop do kamere.";
+"ScanQRCode.PermissionError.Message.v100" = "Izberite \"Nastavitve\" > \"Ecosia\". Dajte Ecosia dovoljenje za dostop do kamere.";
 
 /* Title for the QR code scanner view. */
 "ScanQRCode.View.Title" = "Skenirajte QR-kodo";
@@ -1394,13 +1394,13 @@
 "Settings.NewTab.CustomURL" = "URL po meri";
 
 /* Option in settings to show a blank page when you open a new tab */
-"Settings.NewTab.Option.BlankPage" = "Prazno stran";
+"Settings.NewTab.Option.BlankPage" = "Prazna stran";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.Custom" = "Po meri";
 
 /* Option in settings to show Firefox Home when you open a new tab */
-"Settings.NewTab.Option.FirefoxHome" = "Domačo stran Ecosiaa";
+"Settings.NewTab.Option.FirefoxHome" = "Domača stran Ecosiaa";
 
 /* Option in settings to show your homepage when you open a new tab */
 "Settings.NewTab.Option.HomePage" = "Domača stran";
@@ -1500,6 +1500,9 @@
 
 /* Button label that appears in the settings to prompt the user to sign in to Firefox for iOS sync service to sync and save data. */
 "Settings.Sync.ButtonTitle.v103" = "Sinhroniziraj in shrani podatke";
+
+/* In the settings account row, shown transiently while the user is being signed out of their account. */
+"Settings.Sync.SigningOut.Title.v154" = "Odjavljanje …";
 
 /* Title for the page where the user sign in to their Firefox Sync account. */
 "Settings.Sync.SignInView.Title.v103" = "Sinhroniziraj in shrani podatke";
@@ -1607,13 +1610,13 @@
 "ShareExtension.LoadInBackgroundAction.Title" = "Naloži v ozadju";
 
 /* Share extension label shown after user has performed 'Load in Background' action. */
-"ShareExtension.LoadInBackgroundActionDone.Title" = "Nalaganje v Ecosiau";
+"ShareExtension.LoadInBackgroundActionDone.Title" = "Nalaganje v Ecosia";
 
 /* Action label on share extension to immediately open page in Firefox. */
-"ShareExtension.OpenInFirefoxAction.Title" = "Odpri v Ecosiau";
+"ShareExtension.OpenInFirefoxAction.Title" = "Odpri v Ecosia";
 
 /* Action label on share extension to search for the selected text in Firefox. */
-"ShareExtension.SeachInFirefoxAction.Title" = "Išči v Ecosiau";
+"ShareExtension.SeachInFirefoxAction.Title" = "Išči v Ecosia";
 
 /* Button in share sheet to copy the url of the current tab. */
 "ShareSheet.Copy.Title.v108" = "Kopiraj";
@@ -1805,7 +1808,7 @@
 "Yesterday" = "Včeraj";
 
 /* Error message in the remote tabs panel */
-"You don’t have any tabs open in Firefox on your other devices." = "V Ecosiau na drugih napravah nimate odprtih drugih zavihkov.";
+"You don’t have any tabs open in Firefox on your other devices." = "V Ecosia na drugih napravah nimate odprtih drugih zavihkov.";
 
 /* Your Rights settings section title */
 "Your Rights" = "Vaše pravice";

@@ -6,7 +6,8 @@ import Common
 import Foundation
 import Shared
 import Sync
-import Account
+
+import class Account.RustFirefoxAccounts
 
 final class ManageFxAccountSetting: Setting {
     private var notification: NSObjectProtocol?
@@ -184,7 +185,7 @@ class DeviceNameSetting: StringSetting {
     }
 }
 
-class SyncContentSettingsViewController: SettingsTableViewController, FeatureFlaggable {
+class SyncContentSettingsViewController: SettingsTableViewController {
     fileprivate var enginesToSyncOnExit: Set<String> = Set()
 
     init(windowUUID: WindowUUID) {

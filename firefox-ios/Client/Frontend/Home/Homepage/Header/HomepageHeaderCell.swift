@@ -5,30 +5,81 @@
 import Foundation
 import UIKit
 import Common
+import Shared
+import QuickAnswersKit
+import TipKit
 
 // Header for the homepage in both normal and private mode
-// Contains the firefox logo and the private browsing shortcut button
-class HomepageHeaderCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
+// Contains the firefox logo, and optionally the Quick Answers button
+class HomepageHeaderCell: UICollectionViewCell, ReusableCell, ThemeApplicable, FeatureFlaggable {
     enum UX {
-        static let iPhoneTopConstant: CGFloat = 16
-        static let iPadTopConstant: CGFloat = 54
-        static let circleSize = CGRect(width: 40, height: 40)
+        static let firefoxLogoImageSize = CGSize(width: 40, height: 40)
+        static let privateNovaLogoImageSize = CGSize(width: 72, height: 72)
+        static let firefoxTextImageSize = CGSize(width: 90, height: 40)
+        static let interImageSpacing: CGFloat = 10
+        static let quickAnswersButtonSize: CGFloat = 44
+
+        static func contentWidth() -> CGFloat {
+            return UX.firefoxLogoImageSize.width + UX.interImageSpacing + UX.firefoxTextImageSize.width
+        }
     }
+
+    typealias a11y = AccessibilityIdentifiers.FirefoxHomepage.OtherButtons
 
     private var headerState: HeaderState?
+    private var logoTextColor: UIColor?
+    private var showiPadSetup = false
+    private weak var tipPresenter: UIViewController?
+    private weak var tipPopoverController: UIViewController?
+    private var tipObservationTask: Task<Void, Never>?
+    private lazy var logoContainerView: UIView = .build()
 
-    private lazy var stackContainer: UIStackView = .build { stackView in
-        stackView.axis = .horizontal
+    private lazy var logoStackView: UIStackView = .build { view in
+        view.backgroundColor = .clear
+        view.alignment = .center
+        view.spacing = UX.interImageSpacing
+        view.accessibilityIdentifier = a11y.logoID
+        view.accessibilityLabel = AppName.shortName.rawValue
+        view.isAccessibilityElement = true
+        view.accessibilityTraits = .image
     }
 
-    private lazy var logoHeaderCell: HomeLogoHeaderCell = {
-        let logoHeader = HomeLogoHeaderCell()
-        return logoHeader
-    }()
+    private lazy var logoImage: UIImageView = .build { imageView in
+        imageView.contentMode = .scaleAspectFit
+    }
+
+    private lazy var logoTextImage: UIImageView = .build { imageView in
+        imageView.image = UIImage(imageLiteralResourceName: ImageIdentifiers.homeHeaderLogoText)
+            .withRenderingMode(.alwaysTemplate)
+        imageView.contentMode = .scaleAspectFit
+    }
+
+    private lazy var quickAnswersButton: UIButton = .build { button in
+        button.configuration = .filled()
+        button.configuration?.image = UIImage(named: StandardImageIdentifiers.Large.audioWave)?
+            .withRenderingMode(.alwaysTemplate)
+        button.configuration?.cornerStyle = .capsule
+        // TODO: - FXIOS-14720 Add Strings for accessibility label
+        button.accessibilityLabel = "Open Quick Answers"
+        button.accessibilityIdentifier = a11y.quickAnswersButton
+        button.adjustsImageSizeForAccessibilityContentSizeCategory = false
+        button.addAction(UIAction(handler: { [weak self] _ in
+            self?.quickAnswerButtonTapped()
+        }), for: .touchUpInside)
+    }
+    private lazy var logoCenterConstraint = logoContainerView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
+    private lazy var logoLeadingConstraint = logoContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor)
+    private lazy var logoImageWidthConstraint = logoImage.widthAnchor.constraint(
+        equalToConstant: UX.firefoxLogoImageSize.width
+    )
+    private lazy var logoImageHeightConstraint = logoImage.heightAnchor.constraint(
+        equalToConstant: UX.firefoxLogoImageSize.height
+    )
 
     // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
+        setupLayout()
     }
 
     required init?(coder: NSCoder) {
@@ -37,38 +88,147 @@ class HomepageHeaderCell: UICollectionViewCell, ReusableCell, ThemeApplicable {
 
     // MARK: - UI Setup
 
-    private func setupView(with showiPadSetup: Bool) {
-        stackContainer.addArrangedSubview(logoHeaderCell.contentView)
-        contentView.addSubview(stackContainer)
+    private func setupLayout() {
+        contentView.backgroundColor = .clear
 
-        setupConstraints(for: showiPadSetup)
+        logoStackView.addArrangedSubview(logoImage)
+        logoStackView.addArrangedSubview(logoTextImage)
+        logoContainerView.addSubview(logoStackView)
+
+        contentView.addSubview(logoContainerView)
+        contentView.addSubview(quickAnswersButton)
+
+        logoStackView.pinToSuperview()
+
+        setupConstraints()
     }
 
-    private var logoConstraints = [NSLayoutConstraint]()
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            logoImageWidthConstraint,
+            logoImageHeightConstraint,
+            logoTextImage.widthAnchor.constraint(equalToConstant: UX.firefoxTextImageSize.width),
+            logoTextImage.heightAnchor.constraint(equalToConstant: UX.firefoxTextImageSize.height),
 
-    private func setupConstraints(for iPadSetup: Bool) {
-        NSLayoutConstraint.deactivate(logoConstraints)
-        let topAnchorConstant = iPadSetup ? UX.iPadTopConstant : UX.iPhoneTopConstant
-        logoConstraints = [
-            stackContainer.topAnchor.constraint(equalTo: contentView.topAnchor, constant: topAnchorConstant),
-            stackContainer.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            stackContainer.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            stackContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).priority(.defaultLow),
+            logoContainerView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            logoContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            logoContainerView.trailingAnchor.constraint(lessThanOrEqualTo: quickAnswersButton.leadingAnchor),
 
-            logoHeaderCell.contentView.centerYAnchor.constraint(equalTo: stackContainer.centerYAnchor)
-        ]
-
-        NSLayoutConstraint.activate(logoConstraints)
+            quickAnswersButton.widthAnchor.constraint(equalToConstant: UX.quickAnswersButtonSize),
+            quickAnswersButton.heightAnchor.constraint(equalToConstant: UX.quickAnswersButtonSize),
+            quickAnswersButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            quickAnswersButton.centerYAnchor.constraint(equalTo: logoContainerView.centerYAnchor),
+            quickAnswersButton.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor),
+            quickAnswersButton.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor)
+        ])
     }
 
-    func configure(headerState: HeaderState) {
+    func configure(headerState: HeaderState,
+                   showiPadSetup: Bool = false,
+                   logoTextColor: UIColor? = nil,
+                   tipPresenter: UIViewController? = nil) {
         self.headerState = headerState
-        setupView(with: headerState.showiPadSetup)
-        logoHeaderCell.configure(with: headerState.showiPadSetup)
+        self.showiPadSetup = showiPadSetup
+        self.logoTextColor = logoTextColor
+        self.tipPresenter = tipPresenter
+
+        let isNovaPrivate = featureFlagsProvider.isEnabled(.novaDesign) && headerState.isPrivate
+
+        let logoSize = isNovaPrivate ? UX.privateNovaLogoImageSize : UX.firefoxLogoImageSize
+        logoImageWidthConstraint.constant = logoSize.width
+        logoImageHeightConstraint.constant = logoSize.height
+        logoTextImage.isHidden = isNovaPrivate
+
+        logoImage.image = isNovaPrivate
+            ? UIImage(named: StandardImageIdentifiers.ExtraExtraExtraLarge.privateModeCircleFillMulticolor)
+            : UIImage(imageLiteralResourceName: ImageIdentifiers.homeHeaderLogoBall)
+
+        quickAnswersButton.isHidden = !headerState.showQuickAnswersButton
+
+        // if the quick answers button is visible and we are on iPhone setup, align the logo to the leading
+        let alignLogoToLeading = headerState.showQuickAnswersButton && !showiPadSetup
+        logoCenterConstraint.isActive = !alignLogoToLeading
+        logoLeadingConstraint.isActive = alignLogoToLeading
+
+        if headerState.showQuickAnswersButton {
+            observeQuickAnswersTip()
+        } else {
+            cancelQuickAnswersTipObservation()
+        }
+    }
+
+    private func observeQuickAnswersTip() {
+        guard #available(iOS 17.0, *),
+              tipObservationTask == nil else { return }
+
+        tipObservationTask = Task { @MainActor [weak self] in
+            let tip = QuickAnswersTip()
+
+            for await status in tip.statusUpdates {
+                guard !Task.isCancelled else { return }
+
+                switch status {
+                // Wait for TipKit to finish evaluating the tip's display eligibility.
+                case .pending:
+                    continue
+
+                case .available:
+                    guard let tipPresenter = self?.tipPresenter,
+                          tipPresenter.presentedViewController == nil,
+                          let sourceItem = self?.quickAnswersButton
+                    else { return }
+
+                    let popover = TipUIPopoverViewController(tip, sourceItem: sourceItem)
+                    popover.popoverPresentationController?.permittedArrowDirections = .up
+                    self?.tipPopoverController = popover
+                    tipPresenter.present(popover, animated: true)
+
+                // Dismiss the presented tip when TipKit marks it as closed or otherwise invalid.
+                case .invalidated:
+                    guard let tipPresenter = self?.tipPresenter,
+                          let popover = self?.tipPopoverController,
+                          tipPresenter.presentedViewController === popover
+                    else { return }
+
+                    tipPresenter.dismiss(animated: true)
+                    self?.tipPopoverController = nil
+                    return
+
+                @unknown default:
+                    break
+                }
+            }
+        }
+    }
+
+    private func cancelQuickAnswersTipObservation() {
+        tipObservationTask?.cancel()
+        tipObservationTask = nil
+    }
+
+    private func quickAnswerButtonTapped() {
+        guard let headerState else { return }
+        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+        let transitionType: QuickAnswersTransitionType = if showiPadSetup {
+            .formSheet
+        } else {
+            // convert the button frame to the parent window frame to have correct transition.
+            .crossDissolve(sourceRect: quickAnswersButton.convert(quickAnswersButton.bounds, to: nil))
+        }
+        store.dispatch(
+            NavigationBrowserAction(
+                navigationDestination: NavigationDestination(.quickAnswers(transitionType: transitionType)),
+                windowUUID: headerState.windowUUID,
+                actionType: NavigationBrowserActionType.tapOnQuickAnswersButton
+            )
+        )
     }
 
     // MARK: - ThemeApplicable
     func applyTheme(theme: Theme) {
-        logoHeaderCell.applyTheme(theme: theme)
+        logoTextImage.tintColor = logoTextColor ?? theme.colors.textPrimary
+
+        quickAnswersButton.configuration?.baseBackgroundColor = theme.colors.layer4
+        quickAnswersButton.configuration?.baseForegroundColor = theme.colors.actionPrimary
     }
 }

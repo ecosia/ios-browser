@@ -3,28 +3,42 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import Shared
 
 @testable import Client
 
 @MainActor
 final class HomePageSettingViewControllerTests: XCTestCase {
-    private var profile: Profile!
+    private var profile: MockProfile!
     private var wallpaperManager: WallpaperManagerMock!
     private var delegate: MockSettingsDelegate!
+    private var mockNimbusLayer: MockNimbusFeatureFlagLayer!
 
-    override func setUp() {
-        super.setUp()
-        DependencyHelperMock().bootstrapDependencies()
-        self.profile = MockProfile()
-        self.delegate = MockSettingsDelegate()
-        self.wallpaperManager = WallpaperManagerMock()
+    override func setUp() async throws {
+        try await super.setUp()
+        profile = MockProfile()
+        mockNimbusLayer = MockNimbusFeatureFlagLayer()
+        let featureFlagProvider = FeatureFlagsProvider(prefs: profile.prefs, backendLayer: mockNimbusLayer)
+        let userFeaturePreferences = UserFeaturePreferenceManager(prefs: profile.prefs, backendLayer: mockNimbusLayer)
+
+        DependencyHelperMock().bootstrapDependencies(
+            injectedProfile: profile,
+            injectedFeatureFlagProvider: featureFlagProvider,
+            injectedUserFeaturePreferences: userFeaturePreferences
+        )
+
+        delegate = MockSettingsDelegate()
+        wallpaperManager = WallpaperManagerMock()
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         DependencyHelperMock().reset()
-        self.profile = nil
-        self.delegate = nil
+        profile = nil
+        delegate = nil
+        wallpaperManager = nil
+        mockNimbusLayer = nil
+
+        try await super.tearDown()
     }
 
     func testHomePageSettingsLeaks_InitCall() throws {
@@ -32,7 +46,106 @@ final class HomePageSettingViewControllerTests: XCTestCase {
         trackForMemoryLeaks(subject)
     }
 
+    /* Ecosia: Ecosia's `customizeFirefoxSettingSection` never adds the Jump Back In or Bookmarks
+       toggles (see HomePageSettingViewController), so both of these fail on the `XCTUnwrap` of a
+       setting that is deliberately absent.
+    func testHomepageSettings_generateSettings_jumpBackInSectionDefaultValue_isFalse() throws {
+        let subject = createSubject()
+        subject.profile = profile
+
+        let settingsList = subject.generateSettings()
+
+        let customizeFirefoxHomeSettingsList = settingsList.first(
+            where: {
+                $0.title?.string == .Settings.Homepage.CustomizeFirefoxHome.Title
+            })
+
+        let jumpBackInSectionSetting = customizeFirefoxHomeSettingsList?.children.first(
+            where: {
+                ($0 as? BoolSetting)?.prefKey == PrefsKeys.HomepageSettings.JumpBackInSection
+            }) as? BoolSetting
+
+        let jumpBackInSectionSettingValue = try XCTUnwrap(jumpBackInSectionSetting?.getDefaultValue())
+
+        XCTAssertFalse(jumpBackInSectionSettingValue)
+    }
+
+    func testHomepageSettings_generateSettings_bookmarksSectionDefaultValue_isFalse() throws {
+        let subject = createSubject()
+        subject.profile = profile
+
+        let settingsList = subject.generateSettings()
+
+        let customizeFirefoxHomeSettingsList = settingsList.first(
+            where: {
+                $0.title?.string == .Settings.Homepage.CustomizeFirefoxHome.Title
+            })
+
+        let bookmarksSectionSetting = customizeFirefoxHomeSettingsList?.children.first(
+            where: {
+                ($0 as? BoolSetting)?.prefKey == PrefsKeys.HomepageSettings.BookmarksSection
+            }) as? BoolSetting
+
+        let bookmarksSectionSettingValue = try XCTUnwrap(bookmarksSectionSetting?.getDefaultValue())
+
+        XCTAssertFalse(bookmarksSectionSettingValue)
+    }
+     */
+
+    func testHomepageSettings_generateSettings_trackerBlockerModule_whenFeatureDisabled_isHidden() throws {
+        let subject = createSubject()
+        subject.profile = profile
+
+        let settingsList = subject.generateSettings()
+
+        let customizeFirefoxHomeSettingsList = settingsList.first(
+            where: {
+                $0.title?.string == .Settings.Homepage.CustomizeFirefoxHome.Title
+            })
+
+        let trackerBlockerModuleSetting = customizeFirefoxHomeSettingsList?.children.first(
+            where: {
+                ($0 as? BoolSetting)?.prefKey == PrefsKeys.HomepageSettings.TrackerBlockerSection
+            }) as? BoolSetting
+
+        XCTAssertNil(trackerBlockerModuleSetting)
+    }
+
+    /* Ecosia: the Tracker Blocker toggle is inside the same removed block, so it is never added
+       even when `.homepageTrackerBlockerModule` is enabled (it is on for the developer channel).
+       The `_whenFeatureDisabled_isHidden` test above still passes and is left live.
+    func testHomepageSettings_generateSettings_trackerBlockerModule_whenFeatureEnabledDefaultValue_isTrue() throws {
+        setFeatureFlag(.homepageTrackerBlockerModule, isEnabled: true)
+        let subject = createSubject()
+        subject.profile = profile
+
+        let settingsList = subject.generateSettings()
+
+        let customizeFirefoxHomeSettingsList = settingsList.first(
+            where: {
+                $0.title?.string == .Settings.Homepage.CustomizeFirefoxHome.Title
+            })
+
+        let trackerBlockerModuleSetting = customizeFirefoxHomeSettingsList?.children.first(
+            where: {
+                ($0 as? BoolSetting)?.prefKey == PrefsKeys.HomepageSettings.TrackerBlockerSection
+            }) as? BoolSetting
+
+        let trackerBlockerModuleSettingValue = try XCTUnwrap(trackerBlockerModuleSetting?.getDefaultValue())
+
+        XCTAssertTrue(trackerBlockerModuleSettingValue)
+    }
+     */
+
     // MARK: - Helper
+    private func setFeatureFlag(_ flag: FeatureFlagID, isEnabled: Bool) {
+        if isEnabled {
+            mockNimbusLayer.enabledFlags.insert(flag)
+        } else {
+            mockNimbusLayer.enabledFlags.remove(flag)
+        }
+    }
+
     private func createSubject() -> HomePageSettingViewController {
         let subject = HomePageSettingViewController(prefs: profile.prefs,
                                                     wallpaperManager: wallpaperManager,

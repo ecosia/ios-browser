@@ -14,33 +14,29 @@ class MockSSLTrackingProtectionDelegate: ETPCoordinatorSSLStatusDelegate {
 @MainActor
 final class EnhancedTrackingProtectionCoordinatorTests: XCTestCase {
     private var mockRouter: MockRouter!
-    private var profile: MockProfile!
     private var routeBuilder: RouteBuilder!
     private var tabManager: MockTabManager!
     private var glean: MockGleanWrapper!
     private var delegate: MockEnhancedTrackingProtectionCoordinatorDelegate!
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         DependencyHelperMock().bootstrapDependencies()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: AppContainer.shared.resolve())
         self.mockRouter = MockRouter(navigationController: MockNavigationController())
-        self.profile = MockProfile()
         self.routeBuilder = RouteBuilder()
         self.tabManager = MockTabManager()
         self.glean = MockGleanWrapper()
         self.delegate = MockEnhancedTrackingProtectionCoordinatorDelegate()
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         self.routeBuilder = nil
         self.mockRouter = nil
-        self.profile = nil
         self.tabManager = nil
         self.glean = nil
         self.delegate = nil
-        AppContainer.shared.reset()
+        DependencyHelperMock().reset()
+        try await super.tearDown()
     }
 
     func testParentCoordinatorDelegate_calledWithPage() {

@@ -20,6 +20,7 @@ protocol SearchEnginesManagerProvider: AnyObject, Sendable {
 }
 
 protocol SearchEngineDelegate: AnyObject {
+    @MainActor
     func searchEnginesDidUpdate()
 }
 

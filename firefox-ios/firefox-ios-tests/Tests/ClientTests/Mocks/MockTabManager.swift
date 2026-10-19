@@ -5,84 +5,81 @@
 import Foundation
 import WebKit
 import Common
+import XCTest
 
 @testable import Client
 
 class MockTabManager: TabManager {
     let windowUUID: WindowUUID
     var isRestoringTabs = false
+    var tabRestoreHasFinished = false
+    var selectedIndex = 0
     var selectedTab: Tab?
     var selectedTabUUID: UUID?
-    var backupCloseTab: BackupCloseTab?
-    var backupCloseTabs = [Tab]()
+    // Use to return in getTabForUUID()
+    var tabForUUID: Tab?
+    // Maps tabUUID → Tab; takes precedence over `tabForUUID` for callers that need per-UUID lookups.
+    var tabsByUUID: [TabUUID: Tab] = [:]
 
-    var nextRecentlyAccessedNormalTabs = [Tab]()
-
-    var recentlyAccessedNormalTabs: [Tab] {
-        return nextRecentlyAccessedNormalTabs
-    }
+    var recentlyAccessedNormalTabs = [Tab]()
 
     var tabs = [Tab]()
 
     var lastSelectedTabs = [Tab]()
     var lastSelectedPreviousTabs = [Tab]()
 
-    var delaySelectingNewPopupTab: TimeInterval = 0
-    var count: Int = 0
+    var count = 0
     var normalTabs = [Tab]()
-    var normalActiveTabs = [Tab]()
-    var inactiveTabs = [Tab]()
     var privateTabs = [Tab]()
-    var tabRestoreHasFinished = false
 
     var addTabsForURLsCalled = 0
     var addTabsURLs: [URL] = []
 
     var removeTabsByURLCalled = 0
 
-    init(windowUUID: WindowUUID = WindowUUID.XCTestDefaultUUID) {
+    var addTabWasCalled = false
+    var notifyCurrentTabDidFinishLoadingCalled = 0
+    var commitChangesCalled = 0
+    var selectTabExpectation: XCTestExpectation?
+
+    nonisolated init(
+        windowUUID: WindowUUID = WindowUUID.XCTestDefaultUUID
+    ) {
         self.windowUUID = windowUUID
     }
 
     subscript(index: Int) -> Tab? {
-        return nil
+        return tabs[index]
     }
 
-    /* Ecosia: Allow overriding subscript
-    subscript(webView: WKWebView) -> Tab? {
-        return nil
-    }
-     */
+    // Ecosia: Lets a test pin the tab returned for any web view (AnalyticsSpyTests relies on it).
+    // Ticket 09 took upstream's version of this shared mock, which dropped the hook. Restored
+    // additively — when unset, upstream's lookup is used, so upstream's tests are unaffected.
     var subscriptedTab: Tab?
+
     subscript(webView: WKWebView) -> Tab? {
-        return subscriptedTab
+        if let subscriptedTab { return subscriptedTab }
+        return tabs.first {
+            $0.webView === webView
+        }
     }
 
-    func selectTab(_ tab: Tab?, previous: Tab?) {
+    func selectTab(_ tab: Tab?, previous: Tab?, immediatePreservation: Bool) {
         if let tab = tab {
             lastSelectedTabs.append(tab)
+            selectedTab = tab
         }
 
         if let previous = previous {
             lastSelectedPreviousTabs.append(previous)
         }
-    }
 
-    func addTab(_ request: URLRequest?, afterTab: Tab?, isPrivate: Bool) -> Tab {
-        let profile = MockProfile()
-        let tab = Tab(profile: profile, isPrivate: isPrivate, windowUUID: windowUUID)
-        tabs.append(tab)
-        return tab
-    }
-
-    func getMostRecentHomepageTab() -> Tab? {
-        return addTab(nil, afterTab: nil, isPrivate: false)
+        selectTabExpectation?.fulfill()
     }
 
     func addDelegate(_ delegate: TabManagerDelegate) {}
 
     func setNavigationDelegate(_ delegate: WKNavigationDelegate) {}
-    func addNavigationDelegate(_ delegate: WKNavigationDelegate) {}
 
     func removeDelegate(_ delegate: TabManagerDelegate, completion: (() -> Void)?) {}
 
@@ -93,61 +90,42 @@ class MockTabManager: TabManager {
 
     func reAddTabs(tabsToAdd: [Tab], previousTabUUID: String) {}
 
-    func removeTab(_ tab: Tab, completion: (() -> Void)?) {}
-
     func removeTabs(_ tabs: [Tab]) {}
 
     func removeTab(_ tabUUID: TabUUID) {}
 
     func removeAllTabs(isPrivateMode: Bool) {}
 
-    func removeNormalTabsOlderThan(period: TabsDeletionPeriod, currentDate: Date) {}
-
     func removeTabs(by urls: [URL]) {
         removeTabsByURLCalled += 1
     }
 
-    func undoCloseAllTabs() {}
-
-    func undoCloseTab() {}
-
-    func getTabFor(_ url: URL) -> Tab? {
-        return nil
-    }
+    func removeNormalTabsOlderThan(period: TabsDeletionPeriod, currentDate: Date) {}
 
     func clearAllTabsHistory() {}
 
-    func willSwitchTabMode(leavingPBM: Bool) {}
+    func commitChanges() {
+        commitChangesCalled += 1
+    }
 
-    func cleanupClosedTabs(_ closedTabs: [Tab], previous: Tab?, isPrivate: Bool) {}
+    func willSwitchTabMode(leavingPBM: Bool) {}
 
     func reorderTabs(isPrivate privateMode: Bool, fromIndex visibleFromIndex: Int, toIndex visibleToIndex: Int) {}
 
-    func preserveTabs() {}
-    func commitChanges() {}
-    func notifyCurrentTabDidFinishLoading() {}
-    func expireLoginAlerts() {}
-    func tabDidSetScreenshot(_ tab: Tab) {}
+    func preserveTabs(immediate: Bool) {}
 
-    func restoreTabs(_ forced: Bool) {}
-
-    func startAtHomeCheck() -> Bool {
-        false
-    }
+    func restoreTabs() {}
 
     func getTabForUUID(uuid: String) -> Tab? {
-        return nil
+        if let match = tabsByUUID[uuid] { return match }
+        return tabForUUID
     }
 
     func getTabForURL(_ url: URL) -> Tab? {
         return nil
     }
 
-    func expireSnackbars() {}
-
-    func switchPrivacyMode() -> SwitchPrivacyModeResult {
-        return .createdNewTab
-    }
+    func expireLoginAlerts() {}
 
     func addPopupForParentTab(profile: Profile, parentTab: Tab, configuration: WKWebViewConfiguration) -> Tab {
         return Tab(profile: MockProfile(), windowUUID: windowUUID)
@@ -157,28 +135,15 @@ class MockTabManager: TabManager {
                                          isPrivate: Bool,
                                          previousTabUUID: String) {}
 
-    func undoCloseAllTabsLegacy(recentlyClosedTabs: [Client.Tab], previousTabUUID: String, isPrivate: Bool) {}
-
     @discardableResult
-    // Ecosia: Parameter MUST be URLRequest? (optional), not URLRequest! (IUO), to satisfy the TabManager
-    // protocol requirement `addTab(_ request: URLRequest?, afterTab:zombie:isPrivate:)`. With the IUO signature
-    // this method did NOT fulfil the requirement, so the protocol's convenience default impl
-    // (addTab(_:afterTab:zombie:isPrivate:) in the TabManager extension) became the witness and called itself
-    // infinitely → stack overflow → crash. That crashed every test that calls tabManager.addTab(...) through the
-    // zombie variant (StartAtHome scan/middleware, BrowserCoordinator open-recently-closed). (MOB-4384)
     func addTab(_ request: URLRequest?,
                 afterTab: Tab?,
                 zombie: Bool,
                 isPrivate: Bool
     ) -> Tab {
-        // Ecosia: Return a MockTab whose isFxHomeTab reflects the requested URL, matching upstream v147.5.
-        // The previous plain Tab had no URL, so StartAtHomeHelper.scanForExistingHomeTab could never find the
-        // home tab (testScanForExistingHomeTab_WithHomePage failed once the recursion crash was fixed). (MOB-4384)
+        addTabWasCalled = true
         let isHomePage = request?.url?.absoluteString == "internal://local/about/home"
-        return MockTab(profile: MockProfile(),
-                       isPrivate: isPrivate,
-                       windowUUID: windowUUID,
-                       isHomePage: isHomePage)
+        return MockTab(profile: MockProfile(), isPrivate: isPrivate, windowUUID: windowUUID, isHomePage: isHomePage)
     }
 
     func backgroundRemoveAllTabs(isPrivate: Bool,
@@ -190,12 +155,18 @@ class MockTabManager: TabManager {
         return nil
     }
 
-    // MARK: - Inactive tabs
-    func getInactiveTabs() -> [Tab] {
-        return inactiveTabs
+    func notifyCurrentTabDidFinishLoading() {
+        notifyCurrentTabDidFinishLoadingCalled += 1
     }
 
-    func removeAllInactiveTabs() async {}
+    var tabDidSetScreenshotCalls = 0
+    func tabDidSetScreenshot(_ tab: Client.Tab) {
+        tabDidSetScreenshotCalls += 1
+    }
+    func offloadBackgroundWebViews() async {}
 
-    func undoCloseInactiveTabs() async {}
+    var restoreScreenshotCalls: [Tab] = []
+    func restoreScreenshot(for tab: Tab) {
+        restoreScreenshotCalls.append(tab)
+    }
 }

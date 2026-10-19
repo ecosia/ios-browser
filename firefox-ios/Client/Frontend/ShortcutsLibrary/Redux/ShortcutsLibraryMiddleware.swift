@@ -16,7 +16,13 @@ final class ShortcutsLibraryMiddleware {
         self.shortcutsLibraryTelemetry = shortcutsLibraryTelemetry
     }
 
-    lazy var shortcutsLibraryProvider: Middleware<AppState> = { state, action in
+    lazy var shortcutsLibraryProvider: Middleware<AppState> = (legacyProvider, modernProvider)
+
+    lazy var modernProvider: MiddlewareClosure<AppState> = { [self] state, action, windowUUID in
+        // Does not test any modern actions
+    }
+
+    lazy var legacyProvider: LegacyMiddlewareClosure<AppState> = { [self] state, action in
         switch action.actionType {
         case ShortcutsLibraryActionType.tapOnShortcutCell:
             self.shortcutsLibraryTelemetry.sendShortcutTappedEvent()
@@ -31,9 +37,9 @@ final class ShortcutsLibraryMiddleware {
 
     @MainActor
     private func handleViewDidAppearAction(state: AppState, action: Action) {
-        guard let shortcutsLibraryState = state.screenState(ShortcutsLibraryState.self,
-                                                            for: .shortcutsLibrary,
-                                                            window: action.windowUUID) else { return }
+        guard let shortcutsLibraryState = state.componentState(ShortcutsLibraryState.self,
+                                                               for: .shortcutsLibrary,
+                                                               window: action.windowUUID) else { return }
         if shortcutsLibraryState.shouldRecordImpressionTelemetry {
             self.shortcutsLibraryTelemetry.sendShortcutsLibraryViewedEvent()
             store.dispatch(

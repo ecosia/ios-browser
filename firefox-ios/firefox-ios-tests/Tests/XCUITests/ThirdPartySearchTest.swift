@@ -12,6 +12,7 @@ class ThirdPartySearchTest: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2443998
+    // Regression
     func testCustomSearchEngines() {
         addCustomSearchEngine()
 
@@ -35,6 +36,7 @@ class ThirdPartySearchTest: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2444328
+    // Regression
     func testCustomSearchEngineAsDefault() {
         addCustomSearchEngine()
 
@@ -58,6 +60,7 @@ class ThirdPartySearchTest: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306941
+    // Regression
     func testCustomSearchEngineDeletion() {
         addCustomSearchEngine()
 
@@ -97,10 +100,7 @@ class ThirdPartySearchTest: BaseTestCase {
         navigator.nowAt(NewTabScreen)
         navigator.performAction(Action.AddCustomSearchEngine)
         app.buttons["customEngineSaveButton"].waitAndTap()
-        if #unavailable(iOS 16) {
-            // Wait for "Fennec pasted from XCUITests-Runner" banner to disappear
-            sleep(2)
-        }
+        mozWaitForElementToNotExist(app.staticTexts["Fennec pasted from XCUITests-Runner"])
     }
 
     private func dismissSearchScreen() {

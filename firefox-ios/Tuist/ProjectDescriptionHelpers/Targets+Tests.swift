@@ -82,7 +82,9 @@ public enum TestTargets {
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
                 .package(product: "Kingfisher"),
+                .package(product: "ModifiedCopy"),
                 .package(product: "Shared"),
+                .package(product: "TestKit"),
                 .package(product: "SiteImageView"),
                 .package(product: "TabDataStore"),
                 // Ecosia: ClientTests/Toolbar/ToolbarMiddlewareTests imports ToolbarKit directly and its
@@ -248,7 +250,6 @@ public enum TestTargets {
                 "firefox-ios-tests/Tests/ClientTests/ProfileTest.swift",
                 "firefox-ios-tests/Tests/ClientTests/DependencyInjection/*.swift",
                 "firefox-ios-tests/Tests/ClientTests/Mocks/*.swift",
-                "firefox-ios-tests/Tests/ClientTests/Frontend/Theme/MockThemeManager.swift",
                 "firefox-ios-tests/Tests/ClientTests/Microsurvey/Mock/MockMicrosurveySurfaceManager.swift",
             ],
             resources: [
@@ -286,7 +287,11 @@ public enum TestTargets {
                 "firefox-ios-tests/Tests/ClientTests/DependencyInjection/*.swift",
                 "firefox-ios-tests/Tests/ClientTests/Mocks/*.swift",
                 "firefox-ios-tests/Tests/ClientTests/Coordinators/Mocks/*.swift",
-                "firefox-ios-tests/Tests/ClientTests/Frontend/Theme/MockThemeManager.swift",
+                // Ecosia: 155.1's DependencyHelperMock registers a search-engine provider and a
+                // Merino manager, so the mocks backing them have to be in this target too. They live
+                // outside Mocks/, hence the explicit paths.
+                "firefox-ios-tests/Tests/ClientTests/Frontend/Browser/SearchEngines/MockSearchEngineProvider.swift",
+                "firefox-ios-tests/Tests/ClientTests/Frontend/Homepage/Mock/MockPocketManager.swift",
                 "firefox-ios-tests/Tests/ClientTests/Utils/StoreTestUtility.swift",
                 "firefox-ios-tests/Tests/ClientTests/Microsurvey/Mock/MockMicrosurveySurfaceManager.swift",
             ],
@@ -311,6 +316,7 @@ public enum TestTargets {
                 .package(product: "Fuzi"),
                 .package(product: "GCDWebServers"),
                 .package(product: "Shared"),
+                .package(product: "TestKit"),
                 .package(product: "SiteImageView"),
                 .package(product: "SnowplowTracker"),
                 .package(product: "TabDataStore"),

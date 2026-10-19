@@ -12,7 +12,6 @@ final class TopsSitesSectionStateTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         await DependencyHelperMock().bootstrapDependencies()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: MockProfile())
     }
 
     override func tearDown() async throws {
@@ -25,20 +24,8 @@ final class TopsSitesSectionStateTests: XCTestCase {
 
         XCTAssertEqual(initialState.windowUUID, .XCTestDefaultUUID)
         XCTAssertEqual(initialState.topSitesData, [])
-    }
-
-    func test_initialState_withShortcutsLibraryEnabled_showsHeaderButton() {
-        setupNimbusShortcutsLibraryTesting(isEnabled: true)
-        let initialState = createSubject()
-
-        XCTAssertEqual(initialState.sectionHeaderState.isButtonHidden, false)
-    }
-
-    func test_initialState_withShortcutsLibraryDisabled_hidesHeaderButton() {
-        setupNimbusShortcutsLibraryTesting(isEnabled: false)
-        let initialState = createSubject()
-
-        XCTAssertEqual(initialState.sectionHeaderState.isButtonHidden, true)
+        XCTAssertFalse(initialState.shouldShowSectionHeader)
+        XCTAssertFalse(initialState.shouldShowAddShortcutTile)
     }
 
     @MainActor
@@ -54,7 +41,7 @@ final class TopsSitesSectionStateTests: XCTestCase {
             )
         )
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             TopSitesAction(
                 topSites: [exampleTopSite],
@@ -69,11 +56,67 @@ final class TopsSitesSectionStateTests: XCTestCase {
     }
 
     @MainActor
+    func test_retrievedUpdatedSitesAction_withMoreSitesThanVisibleCount_showsSectionHeader() {
+        let initialState = createSubject()
+        let reducer = topSiteReducer()
+        let visibleTopSites = initialState.numberOfRows * initialState.numberOfTilesPerRow
+
+        let newState = reducer.legacyReducer(
+            initialState,
+            TopSitesAction(
+                topSites: createSites(count: visibleTopSites + 1),
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TopSitesMiddlewareActionType.retrievedUpdatedSites
+            )
+        )
+
+        XCTAssertTrue(newState.shouldShowSectionHeader)
+    }
+
+    @MainActor
+    func test_retrievedUpdatedSitesAction_withVisibleSitesOnly_hidesSectionHeader() {
+        let initialState = createSubject()
+        let reducer = topSiteReducer()
+        let visibleTopSites = initialState.numberOfRows * initialState.numberOfTilesPerRow
+
+        let newState = reducer.legacyReducer(
+            initialState,
+            TopSitesAction(
+                topSites: createSites(count: visibleTopSites),
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TopSitesMiddlewareActionType.retrievedUpdatedSites
+            )
+        )
+
+        XCTAssertFalse(newState.shouldShowSectionHeader)
+    }
+
+    @MainActor
+    func test_retrievedUpdatedSitesAction_withAddShortcutTileAndVisibleSitesOnly_showsSectionHeader() {
+        let initialState = createSubject()
+        let reducer = topSiteReducer()
+        let visibleTopSites = initialState.numberOfRows * initialState.numberOfTilesPerRow
+
+        let newState = reducer.legacyReducer(
+            initialState,
+            TopSitesAction(
+                topSites: createSites(count: visibleTopSites),
+                shouldShowAddShortcutTile: true,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TopSitesMiddlewareActionType.retrievedUpdatedSites
+            )
+        )
+
+        XCTAssertTrue(newState.shouldShowSectionHeader)
+        XCTAssertTrue(newState.shouldShowAddShortcutTile)
+    }
+
+    @MainActor
     func test_retrievedUpdatedSitesAction_returnsDefaultState() throws {
         let initialState = createSubject()
         let reducer = topSiteReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             TopSitesAction(
                 topSites: nil,
@@ -94,7 +137,7 @@ final class TopsSitesSectionStateTests: XCTestCase {
         let initialState = createSubject()
         let reducer = topSiteReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             TopSitesAction(
                 numberOfRows: 4,
@@ -108,11 +151,40 @@ final class TopsSitesSectionStateTests: XCTestCase {
     }
 
     @MainActor
+    func test_updatedNumberOfRows_recalculatesSectionHeaderVisibility() {
+        let initialState = createSubject()
+        let reducer = topSiteReducer()
+        let overflowingTopSitesCount = initialState.numberOfRows * initialState.numberOfTilesPerRow + 1
+        let rowsToFitAllSites =
+            (overflowingTopSitesCount + initialState.numberOfTilesPerRow - 1) / initialState.numberOfTilesPerRow
+
+        let stateWithOverflowingTopSites = reducer.legacyReducer(
+            initialState,
+            TopSitesAction(
+                topSites: createSites(count: overflowingTopSitesCount),
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TopSitesMiddlewareActionType.retrievedUpdatedSites
+            )
+        )
+
+        let newState = reducer.legacyReducer(
+            stateWithOverflowingTopSites,
+            TopSitesAction(
+                numberOfRows: rowsToFitAllSites,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TopSitesActionType.updatedNumberOfRows
+            )
+        )
+
+        XCTAssertFalse(newState.shouldShowSectionHeader)
+    }
+
+    @MainActor
     func test_toggleShowSectionSetting_withToggleOn_returnsExpectedState() throws {
         let initialState = createSubject()
         let reducer = topSiteReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             TopSitesAction(
                 isEnabled: true,
@@ -125,13 +197,41 @@ final class TopsSitesSectionStateTests: XCTestCase {
         XCTAssertTrue(newState.shouldShowSection)
     }
 
+    @MainActor
+    func test_toggleShowSectionSetting_preservesSectionHeaderVisibility() {
+        let initialState = createSubject()
+        let reducer = topSiteReducer()
+        let overflowingTopSitesCount = initialState.numberOfRows * initialState.numberOfTilesPerRow + 1
+
+        let stateWithHeader = reducer.legacyReducer(
+            initialState,
+            TopSitesAction(
+                topSites: createSites(count: overflowingTopSitesCount),
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TopSitesMiddlewareActionType.retrievedUpdatedSites
+            )
+        )
+
+        let newState = reducer.legacyReducer(
+            stateWithHeader,
+            TopSitesAction(
+                isEnabled: false,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TopSitesActionType.toggleShowSectionSetting
+            )
+        )
+
+        XCTAssertTrue(stateWithHeader.shouldShowSectionHeader)
+        XCTAssertTrue(newState.shouldShowSectionHeader)
+    }
+
     // MARK: numberOfTilesPerRow
     @MainActor
     func test_viewWillTransition_numberOfTilesPerRow_returnsExpectedState() {
         let initialState = createSubject()
         let reducer = topSiteReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             HomepageAction(
                 numberOfTopSitesPerRow: 8,
@@ -145,11 +245,40 @@ final class TopsSitesSectionStateTests: XCTestCase {
     }
 
     @MainActor
+    func test_viewWillTransition_recalculatesSectionHeaderVisibility() {
+        let initialState = createSubject()
+        let reducer = topSiteReducer()
+        let overflowingTopSitesCount = initialState.numberOfRows * initialState.numberOfTilesPerRow + 1
+        let tilesPerRowToFitAllSites = (overflowingTopSitesCount + initialState.numberOfRows - 1) / initialState.numberOfRows
+
+        let stateWithOverflowingTopSites = reducer.legacyReducer(
+            initialState,
+            TopSitesAction(
+                topSites: createSites(count: overflowingTopSitesCount),
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TopSitesMiddlewareActionType.retrievedUpdatedSites
+            )
+        )
+
+        let newState = reducer.legacyReducer(
+            stateWithOverflowingTopSites,
+            HomepageAction(
+                numberOfTopSitesPerRow: tilesPerRowToFitAllSites,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: HomepageActionType.viewWillTransition
+            )
+        )
+
+        XCTAssertTrue(stateWithOverflowingTopSites.shouldShowSectionHeader)
+        XCTAssertFalse(newState.shouldShowSectionHeader)
+    }
+
+    @MainActor
     func test_viewDidLayoutSubviews_numberOfTilesPerRow_returnsExpectedState() {
         let initialState = createSubject()
         let reducer = topSiteReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             HomepageAction(
                 numberOfTopSitesPerRow: 8,
@@ -167,7 +296,7 @@ final class TopsSitesSectionStateTests: XCTestCase {
         let initialState = createSubject()
         let reducer = topSiteReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             HomepageAction(
                 numberOfTopSitesPerRow: 8,
@@ -201,11 +330,5 @@ final class TopsSitesSectionStateTests: XCTestCase {
             sites.append(TopSiteConfiguration(site: site))
         }
         return sites
-    }
-
-    private func setupNimbusShortcutsLibraryTesting(isEnabled: Bool) {
-        FxNimbus.shared.features.homepageRedesignFeature.with { _, _ in
-            return HomepageRedesignFeature(shortcutsLibrary: isEnabled)
-        }
     }
 }

@@ -41,6 +41,8 @@ class BlockedTrackersTableView: UITableView,
                  forCellReuseIdentifier: BlockedTrackerCell.cellIdentifier)
         register(BlockedTrackersHeaderView.self,
                  forHeaderFooterViewReuseIdentifier: BlockedTrackersHeaderView.cellIdentifier)
+        register(BlockedTrackersFooterView.self,
+                 forHeaderFooterViewReuseIdentifier: BlockedTrackersFooterView.cellIdentifier)
     }
 
     func applySnapshot(with items: [BlockedTrackerItem]) {
@@ -52,7 +54,7 @@ class BlockedTrackersTableView: UITableView,
 
     // MARK: Themable
     func applyTheme(theme: Theme) {
-        backgroundColor = theme.colors.layer3
+        backgroundColor = theme.isNova ? theme.colors.layer1 : theme.colors.layer3
         layer.borderColor = theme.colors.borderPrimary.cgColor
     }
 }

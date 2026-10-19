@@ -14,13 +14,13 @@ let releaseCheck = ReleaseBranchCheck()
 if releaseCheck.isReleaseBranch {
     releaseCheck.postReleaseBranchComment()
 } else {
-    checkStringsFile()
     checkForFunMetrics()
     checkAlphabeticalOrder(inFile: standardImageIdentifiersPath)
-    checkForWebEngineFileChange()
+    checkForSpecificFileChange()
     checkForGleanFileChange()
+    checkForNimbusFeatureChange()
     CodeUsageDetector().checkForCodeUsage()
-    CodeCoverageGate().failOnNewFilesWithoutCoverage()
+    CodeCoverageGate().run()
     BrowserViewControllerChecker().failsOnAddedExtension()
     checkCodeCoverage()
 }
@@ -98,56 +98,68 @@ func checkCodeCoverage() {
 }
 
 class CodeCoverageGate {
-    private let coverageBypassLabel = "coverage-exception"
+    private let coverageBypassLabel = "ignore-code-coverage"
     private let jsonPath = "coverage.json"
-    private let threshold: Double = 35
-    private let minimumAddedLines = 5
 
-    func failOnNewFilesWithoutCoverage() {
-        guard let data = FileManager.default.contents(atPath: jsonPath),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let targets = json["targets"] as? [[String: Any]] else {
-            fail("Could not parse coverage.json for per-file coverage")
-            return
-        }
+    enum CoverageType {
+        case newFiles
+        case modifiedFiles
 
-        let coverageFiles: [[String: Any]] = targets.flatMap { $0["files"] as? [[String: Any]] ?? [] }
-        // Consider created + modified Swift files, excluding Tests & Generated
-        let candidates = (danger.git.createdFiles + danger.git.modifiedFiles).filter {
-            $0.hasSuffix(".swift") &&
-            !$0.contains("Tests/") &&
-            !$0.contains("/Generated/") &&
-            !$0.contains("/Strings.swift") &&
-            !$0.contains("/AccessibilityIdentifiers.swift")
-        }
-
-        // Ignore tiny edits: only gate files with at least `minimumAddedLines`
-        func addedLines(_ file: String) -> Int {
-            switch saferFileDiff(for: file) {
-            case .success(let diff):
-                switch diff.changes {
-                case .created(let newLines):
-                    return newLines.count
-                case .deleted:
-                    return 0
-                case .modified(let hunks), .renamed(_, let hunks):
-                    return hunks.reduce(0) { acc, h in
-                        acc + h.lines.filter {
-                            let s = String(describing: $0)
-                            return s.hasPrefix("+") && !s.hasPrefix("+++")
-                        }.count
-                    }
-                }
-            case .failure:
-                return 999 // if diff fails, be conservative and mention it
+        var sourceFiles: [String] {
+            switch self {
+            case .newFiles: return danger.git.createdFiles
+            case .modifiedFiles: return danger.git.modifiedFiles
             }
         }
 
-        let gated = candidates.filter { addedLines($0) >= minimumAddedLines }
-        // Collect failures
+        var minimumLines: Int {
+            switch self {
+            case .newFiles: return 5
+            case .modifiedFiles: return 20
+            }
+        }
+
+        var thresholdRange: (min: Double, max: Double) {
+            switch self {
+            case .newFiles: return (min: 0.4, max: 0.7)
+            case .modifiedFiles: return (min: 0.10, max: 0.25)
+            }
+        }
+    }
+
+    enum GateOutcome {
+        case noCandidates
+        case noSignificantChanges
+        case allPass
+        case failures([String]) // pre-formatted markdown table rows
+    }
+
+    func run() {
+        guard let coverageFiles = parseCoverageFiles() else { return }
+        let newOutcome = evaluate(type: .newFiles, coverageFiles: coverageFiles)
+        let modifiedOutcome = evaluate(type: .modifiedFiles, coverageFiles: coverageFiles)
+
+        var failureRows: [String] = []
+        if case .failures(let rows) = newOutcome { failureRows += rows }
+        if case .failures(let rows) = modifiedOutcome { failureRows += rows }
+
+        if !failureRows.isEmpty {
+            reportCoverageFailure(rows: failureRows)
+        } else {
+            reportCoverageSuccess(newOutcome: newOutcome, modifiedOutcome: modifiedOutcome)
+        }
+    }
+
+    private func evaluate(type: CoverageType, coverageFiles: [[String: Any]]) -> GateOutcome {
+        let candidates = swiftSourceCandidates(from: type.sourceFiles)
+        guard !candidates.isEmpty else { return .noCandidates }
+
+        // Ignore tiny edits: only gate files with at least `type.minimumLines`
+        let gated = candidates.filter { addedLines(in: $0) >= type.minimumLines }
+        guard !gated.isEmpty else { return .noSignificantChanges }
+
         var rows: [String] = []
         for file in gated {
-            // Find matching coverage entry
             let entry = coverageMatch(repoPath: file, coverageFiles: coverageFiles)
 
             // Extract percentage (supports 0..1 or 0..100 in lineCoverage)
@@ -156,37 +168,142 @@ class CodeCoverageGate {
                 return raw <= 1.000001 ? raw * 100.0 : raw
             }()
 
+            let lineCount = countLines(in: file)
+            let threshold = scaledPercentage(for: Double(lineCount), in: type.thresholdRange) * 100.0
+
             if percent + 0.0001 < threshold { // epsilon for float stability
                 rows.append("| `\(file)` | \(formatPct(percent)) | \(formatPct(threshold)) |")
             }
         }
 
-        guard !rows.isEmpty else {
-            markdown("""
-            ### ✅ Per-file coverage
-            All changed files meet the threshold of **\(formatPct(threshold))**.
-            """)
-            return
-        }
+        return rows.isEmpty ? .allPass : .failures(rows)
+    }
 
+    private func reportCoverageSuccess(newOutcome: GateOutcome, modifiedOutcome: GateOutcome) {
+        let body: String
+        switch (newOutcome, modifiedOutcome) {
+        case (.noCandidates, .noCandidates):
+            body = "No new or modified files detected so the code coverage gate wasn't run."
+        case (.allPass, .allPass):
+            body = "All new and modified files meet their coverage thresholds."
+        default:
+            body = """
+            - \(successLine(for: newOutcome, type: .newFiles))
+            - \(successLine(for: modifiedOutcome, type: .modifiedFiles))
+            """
+        }
+        markdown("""
+        ### ✅ Code coverage
+        \(body)
+        """)
+    }
+
+    private func successLine(for outcome: GateOutcome, type: CoverageType) -> String {
+        let noun = (type == .newFiles) ? "new" : "modified"
+        switch outcome {
+        case .noCandidates:
+            return "No \(noun) files detected so the coverage gate wasn't run."
+        case .noSignificantChanges:
+            return "No \(noun) files had significant enough changes for the coverage gate to run."
+        case .allPass:
+            return "All \(noun) files meet their coverage thresholds."
+        case .failures:
+            return ""
+        }
+    }
+
+    private func swiftSourceCandidates(from files: [String]) -> [String] {
+        files.filter {
+            $0.hasSuffix(".swift") &&
+            !$0.contains("Tests/") &&
+            !$0.contains("/Generated/") &&
+            !$0.contains("/Strings.swift") &&
+            !$0.contains("/AccessibilityIdentifiers.swift") &&
+            !$0.contains("ImageIdentifiers.swift") &&
+            !$0.contains("Protocol.swift") &&
+            !$0.contains("/Preview/") &&
+            !$0.contains("Dangerfile.swift")
+        }
+    }
+
+    private func parseCoverageFiles() -> [[String: Any]]? {
+        guard let data = FileManager.default.contents(atPath: jsonPath),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let targets = json["targets"] as? [[String: Any]] else {
+            fail("Could not parse coverage.json for per-file coverage")
+            return nil
+        }
+        return targets.flatMap { $0["files"] as? [[String: Any]] ?? [] }
+    }
+
+    private func addedLines(in file: String) -> Int {
+        switch saferFileDiff(for: file) {
+        case .success(let diff):
+            switch diff.changes {
+            case .created(let newLines):
+                return newLines.count
+            case .deleted:
+                return 0
+            case .modified(let hunks), .renamed(_, let hunks):
+                return hunks.reduce(0) { acc, h in
+                    acc + h.lines.filter {
+                        let s = String(describing: $0)
+                        return s.hasPrefix("+") && !s.hasPrefix("+++")
+                    }.count
+                }
+            }
+        case .failure:
+            return 999 // if diff fails, be conservative and mention it
+        }
+    }
+
+    private func reportCoverageFailure(rows: [String]) {
         let header = """
-        ### ❌ Per-file test coverage gate
-        The following changed file(s) are below **\(formatPct(threshold))** coverage:
+        ### ❌ Code coverage
+        The following file(s) are below their scaled coverage:
 
         | File | Coverage | Required |
         |---|---:|---:|
         \(rows.joined(separator: "\n"))
         """
+        if hasLabel(coverageBypassLabel) {
+            warn("\(header)\n\n*Bypass label `\(coverageBypassLabel)` detected — reporting as warnings only for this PR.*")
+        } else {
+            let tip = "You can add the `\(coverageBypassLabel)` label with a short justification to bypass this check."
+            let team = "[@fxios-unit-test-owners](https://github.com/orgs/mozilla-mobile/teams/fxios-unit-test-owners)"
+            let owners = "Please also tag a member of the \(team) if the bypass is used."
+            fail("\(header)\n\n\(tip) \(owners)")
+        }
+    }
 
-        markdown("\(header)")
-        // If we want to fail the PRs at one point, then uncomment this and remove the markdown
-//        let hasBypass = danger.github.issue.labels.contains { $0.name == coverageBypassLabel }
-//        if hasBypass {
-//            warn("\(header)\n\n*Bypass label `\(coverageBypassLabel)` detected — reporting as warnings only for this PR.*")
-//        } else {
-//            let tip = "*Tip:* Add the `\(coverageBypassLabel)` label with a short justification to bypass this check."
-//            fail("\(header)\n\n\(tip)")
-//        }
+    /// Maps an input value to a percentage using logarithmic scaling within the given range.
+    /// - Parameter x: Input value (must be > 0)
+    /// - Parameter range: The output min/max bounds for the scaling
+    /// - Returns: A scaled value within `range` for inputs between 10 and 500
+    private func scaledPercentage(for x: Double, in range: (min: Double, max: Double)) -> Double {
+        precondition(x > 0, "Input must be greater than 0")
+
+        let minX = 10.0
+        let maxX = 500.0
+
+        // Clamp to min/max bounds
+        if x <= minX { return range.min }
+        if x >= maxX { return range.max }
+
+        let numerator = log(x / minX)
+        let denominator = log(maxX / minX)
+
+        return range.min + (range.max - range.min) * (numerator / denominator)
+    }
+
+    /// Counts the number of lines in a file
+    /// - Parameter filePath: Path to the file
+    /// - Returns: Number of lines in the file, or 0 if file cannot be read
+    private func countLines(in filePath: String) -> Int {
+        guard let content = try? String(contentsOfFile: filePath, encoding: .utf8) else {
+            return 0
+        }
+        return content.components(separatedBy: .newlines).count
     }
 
     // Small helper to format percentages
@@ -226,6 +343,9 @@ class CodeCoverageGate {
 // swiftlint:disable line_length
 // Encourage smaller PRs
 func checkBigPullRequest() {
+    // Skip size commentary and tech lead heads-up for bot-authored PRs.
+    if danger.github.pullRequest.user.login.hasSuffix("[bot]") { return }
+
     let mediumPRThreshold = 400
     let bigPRThreshold = 800
     let monsterPRThreshold = 2000
@@ -259,20 +379,63 @@ func checkBigPullRequest() {
         Smaller PRs are easier to review. Thanks for making life easy for reviewers! ✨
         """)
     }
+
+    if additionsAndDeletions > bigPRThreshold {
+        markdown("""
+        ### 👀 **Tech lead review**
+        Because this PR is large, the `@mozilla-mobile/firefox-ios-tech-leads` team \
+        will be auto-assigned as reviewer by GitHub Actions.
+        """)
+    }
 }
 
-// Detect and warn about some changes related to WebView management to ensure we port changes to the WebEngine project
-func checkForWebEngineFileChange() {
-    let webEngineFiles = ["Tab.swift", "BrowserViewController+WebViewDelegates.swift"]
+// Detect and tag specific people whenever specific files are modified
+func checkForSpecificFileChange() {
     let modifiedFiles = danger.git.modifiedFiles
-    let affectedFiles = modifiedFiles.filter { file in
-        webEngineFiles.contains { webFile in file.hasSuffix(webFile) }
+
+    struct FileCheck {
+        let fileMatches: (String) -> Bool
+        let message: String
+        let contacts: String
+        var foundMatches: [String] = []
     }
 
-    if !affectedFiles.isEmpty {
-        let message = "Ensure that necessary updates are also ported to the WebEngine project if required"
-        let contact = "(cc @lmarceau)."
-        warn("Changes detected in files: \(affectedFiles.joined(separator: ", ")). \(message) \(contact)")
+    var fileChecks = [
+        FileCheck(
+            fileMatches: { file in
+                ["Tab.swift",
+                 "TabManager.swift",
+                 "TabManagerImplementation.swift",
+                 "BrowserViewController+WebViewDelegates.swift"
+                ].contains { file.hasSuffix($0) }
+            },
+            message: "Detected tab related changes in:",
+            contacts: "(cc @yoanarios)"
+        ),
+        FileCheck(
+            fileMatches: { $0.hasSuffix(".sh") },
+            message: "Detected shell script changes in:",
+            contacts: "(cc @adudenamedruby)"
+        ),
+        FileCheck(
+            fileMatches: { file in
+                file.contains("firefox-ios/Client/Glean/") && (file.hasSuffix(".yaml"))
+            },
+            message: "Detected telemetry changes in:",
+            contacts: "(cc @ih-codes @Foxbolts @adudenamedruby)"
+        )
+    ]
+
+    for file in modifiedFiles {
+        for fileIndex in fileChecks.indices where fileChecks[fileIndex].fileMatches(file) {
+            fileChecks[fileIndex].foundMatches.append(file)
+        }
+    }
+
+    // Issue warnings only for categories with matches
+    for check in fileChecks where !check.foundMatches.isEmpty {
+        let matches = check.foundMatches.joined(separator: ", ")
+        warn("\(check.message) \(matches) \(check.contacts)")
     }
 }
 
@@ -320,6 +483,43 @@ func checkForGleanFileChange() {
     }
 }
 
+// Detect added/removed Nimbus features and request a spreadsheet update
+func checkForNimbusFeatureChange() {
+    let nimbusFeaturesPath = "firefox-ios/nimbus-features/"
+    let nimbusManifestPath = "firefox-ios/nimbus.fml.yaml"
+    let spreadsheetURL = "https://docs.google.com/spreadsheets/d/1j5Eo0kY3LDgfKdeVu44PxYmkWMRJ1QaU07NTCl2c0Kg/edit?gid=842661143#gid=842661143"
+
+    let isFeatureFile: (String) -> Bool = { file in
+        file.contains(nimbusFeaturesPath) && file.hasSuffix(".yaml")
+    }
+    let createdFeatures = danger.git.createdFiles.filter(isFeatureFile)
+    let deletedFeatures = danger.git.deletedFiles.filter(isFeatureFile)
+    let manifestModified = danger.git.modifiedFiles.contains(nimbusManifestPath)
+
+    guard !createdFeatures.isEmpty || !deletedFeatures.isEmpty || manifestModified else { return }
+
+    var sections: [String] = []
+    if !createdFeatures.isEmpty {
+        let bullets = createdFeatures.map { "• `\($0)`" }.joined(separator: "\n")
+        sections.append("**Added feature file(s):**\n\(bullets)")
+    }
+    if !deletedFeatures.isEmpty {
+        let bullets = deletedFeatures.map { "• `\($0)`" }.joined(separator: "\n")
+        sections.append("**Removed feature file(s):**\n\(bullets)")
+    }
+    if manifestModified {
+        sections.append("**Manifest modified:** `\(nimbusManifestPath)`")
+    }
+
+    markdown("""
+    ### 🧪 **Nimbus feature changes detected**
+    \(sections.joined(separator: "\n\n"))
+
+    If a feature was added or removed, please update the \
+    [Nimbus features tracking spreadsheet](\(spreadsheetURL)) to reflect the change.
+    """)
+}
+
 private func saferFileDiff(for file: String) -> Result<FileDiff, Error> {
     let baseSHA = danger.github.pullRequest.base.sha
     let headSHA = danger.github.pullRequest.head.sha
@@ -358,8 +558,20 @@ class CodeUsageDetector {
         "MozillaRustComponents/Sources/MozillaRustComponentsWrapper/Generated/"
     ]
 
+    private struct Detection {
+        let keyword: Keywords
+        let file: String
+        let lineNumber: Int
+        let isRemoval: Bool
+    }
+
     private enum Keywords: CaseIterable {
         static let commonLoggerSentence = " Please remove this usage from production code or use BrowserKit Logger."
+        static let commonOrientationSentence = """
+        Per Apple's WWDC 26 "Modernize your UIKit app" guidance, avoid interface orientation checks for layout \
+        decisions. In a resizable environment the supported orientation is only a preference and may be ignored \
+        (e.g. iPhone Mirroring on Mac always reports portrait). Use size classes or trait-based layout instead.
+        """
 
         case print
         case nsLog
@@ -368,29 +580,85 @@ class CodeUsageDetector {
         case swiftUIText
         case task
         case notifiable
+        case unsafe
+        case cspHeader
+        case userInterfaceIdiom
+        case uiScreenMain
+        case screenBounds
+        case screenScale
+        case deviceOrientation
+        case isPortrait
+        case isLandscape
+        case interfaceOrientation
 
-        var message: String {
+        var bundledHeader: String {
             switch self {
             case .print:
-                return "Print() function seems to be used in file %@ at line %d.\(Keywords.commonLoggerSentence)"
+                return "### ⚠️ `print()` usage detected\nPrint() function seems to be used.\(Keywords.commonLoggerSentence)"
             case .nsLog:
-                return "NSLog() function seems to be used in file %@ at line %d.\(Keywords.commonLoggerSentence)"
+                return "### ⚠️ `NSLog()` usage detected\nNSLog() function seems to be used.\(Keywords.commonLoggerSentence)"
             case .osLog:
-                return "os_log() function seems to be used in file %@ at line %d.\(Keywords.commonLoggerSentence)"
+                return "### ⚠️ `os_log()` usage detected\nos_log() function seems to be used.\(Keywords.commonLoggerSentence)"
             case .deferred:
-                return "Deferred class is used in file %@ at line %d. Please replace with completion handler instead."
+                return "### ⚠️ `Deferred` usage detected\nDeferred class is used. Please replace with completion handler instead."
             case .swiftUIText:
-                return "SwiftUI 'Text(\"\"'  in file %@ at line %d needs to be avoided, use Strings.swift localization instead."
+                return "### ⚠️ SwiftUI `Text(\"\")` usage detected\nSwiftUI 'Text(\"\"' needs to be avoided, use Strings.swift localization instead."
             case .task:
-                let contacts = "@Cramsden @ih-codes @lmarceau"
-                return """
-                ### 🧑‍💻 New `Task {}` detected
-                New `Task {}` added in file %@ at line %d.
-                Please add a concurrency reviewer on your PR: \(contacts)
-                """
+                let contacts = "@Cramsden @ih-codes"
+                return "### 🧑‍💻 New `Task {}` detected\nNew `Task {}` added. Please add a concurrency reviewer on your PR: \(contacts)"
             case .notifiable:
-                let usage = "Please prefer Notifiable over `NotificationCenter` unless specific circumstances."
-                return "`NotificationCenter.default.addObserver` detected in file %@ at line %d. \(usage)"
+                return "### ⚠️ `NotificationCenter.default.addObserver` detected\nPlease prefer Notifiable over `NotificationCenter` unless specific circumstances."
+            case .unsafe:
+                return "### 🔒 Security: CSP `unsafe-` detected\nPlease request a security review."
+            case .cspHeader:
+                return "### 🔒 Security: `Content-Security-Policy` change detected\nPlease request a security review."
+            case .userInterfaceIdiom:
+                return """
+                ### ⚠️ `userInterfaceIdiom` usage detected
+                Per Apple's WWDC 26 "Modernize your UIKit app" guidance, avoid checking `userInterfaceIdiom` for layout \
+                decisions. iPhone apps running on iPad or in iPhone Mirroring on Mac still report the phone idiom. \
+                Prefer size classes or trait-based layout instead.
+                """
+            case .uiScreenMain:
+                return """
+                ### ⚠️ `UIScreen.main` usage detected
+                Per Apple's WWDC 26 "Modernize your UIKit app" guidance, avoid referencing `UIScreen.main`. Access the \
+                screen dynamically from a window's window scene, or better, remove screen references altogether and \
+                rely on the view's/window's bounds or trait-based layout.
+                """
+            case .screenBounds:
+                return """
+                ### ⚠️ `UIScreen.main.bounds` usage detected
+                Per Apple's WWDC 26 "Modernize your UIKit app" guidance, avoid using `UIScreen.main.bounds`. In an \
+                adaptive environment, your scene may not span the full screen. Use the view's or window's bounds, \
+                size classes, or trait-based layout instead.
+                """
+            case .screenScale:
+                return """
+                ### ⚠️ `UIScreen.main.scale` usage detected
+                Per Apple's WWDC 26 "Modernize your UIKit app" guidance, avoid using `UIScreen.main.scale`. \
+                Use the trait collection's `displayScale` instead.
+                """
+            case .deviceOrientation:
+                return """
+                ### ⚠️ `UIDevice.current.orientation` usage detected
+                \(Keywords.commonOrientationSentence)
+                """
+            case .isPortrait:
+                return """
+                ### ⚠️ `.isPortrait` usage detected
+                \(Keywords.commonOrientationSentence)
+                """
+            case .isLandscape:
+                return """
+                ### ⚠️ `.isLandscape` usage detected
+                \(Keywords.commonOrientationSentence)
+                """
+            case .interfaceOrientation:
+                return """
+                ### ⚠️ `interfaceOrientation` usage detected
+                \(Keywords.commonOrientationSentence)
+                """
             }
         }
 
@@ -410,6 +678,35 @@ class CodeUsageDetector {
                 return " Task {"
             case .notifiable:
                 return "NotificationCenter.default.addObserver("
+            case .unsafe:
+                return "unsafe-"
+            case .cspHeader:
+                return "Content-Security-Policy"
+            case .userInterfaceIdiom:
+                return "userInterfaceIdiom"
+            case .uiScreenMain:
+                return "UIScreen.main"
+            case .screenBounds:
+                return "UIScreen.main.bounds"
+            case .screenScale:
+                return "UIScreen.main.scale"
+            case .deviceOrientation:
+                return "UIDevice.current.orientation"
+            case .isPortrait:
+                return ".isPortrait"
+            case .isLandscape:
+                return ".isLandscape"
+            case .interfaceOrientation:
+                return "interfaceOrientation"
+            }
+        }
+
+        func applies(to file: String) -> Bool {
+            switch self {
+            case .unsafe, .cspHeader:
+                return file.hasSuffix(".swift") || file.hasSuffix(".js")
+            default:
+                return file.contains(".swift")
             }
         }
 
@@ -426,8 +723,27 @@ class CodeUsageDetector {
         // Decide if we want to `warn` instead of `fail` on the pull request.
         var shouldWarn: Bool {
             switch self {
-            case .deferred, .notifiable:
+            case .deferred, .notifiable, .userInterfaceIdiom, .uiScreenMain, .screenBounds, .screenScale,
+                 .deviceOrientation, .isPortrait, .isLandscape, .interfaceOrientation:
                 return true
+            default:
+                return false
+            }
+        }
+
+        // Default is false, expect for some code removals that we want to flag
+        var detectsRemovals: Bool {
+            switch self {
+            case .cspHeader: return true
+            default: return false
+            }
+        }
+
+        // Skip lines already covered by a more specific keyword to avoid double-flagging
+        func isSupersededOnLine(_ line: String) -> Bool {
+            switch self {
+            case .uiScreenMain:
+                return line.contains(Keywords.screenBounds.keyword) || line.contains(Keywords.screenScale.keyword)
             default:
                 return false
             }
@@ -442,21 +758,22 @@ class CodeUsageDetector {
     }
 
     func checkForCodeUsage() {
+        var detections: [Detection] = []
         let editedFiles = danger.git.modifiedFiles + danger.git.createdFiles
-        // Iterate through each added and modified file, running the checks on swift files only
-        for file in editedFiles where file.contains(".swift") && !file.contains("Dangerfile") {
-            // For modified, renamed hunks, or created new lines detect code usage to avoid in PR
+        for file in editedFiles where !file.contains("Dangerfile") {
+            let applicable = Keywords.allCases.filter { $0.applies(to: file) }
+            guard !applicable.isEmpty else { continue }
+
             switch saferFileDiff(for: file) {
             case let .success(diff):
                 if file == BrowserViewControllerChecker.bvcPath {
                     BrowserViewControllerChecker().checkBrowserViewControllerSize(fileDiff: diff)
                 }
-
                 switch diff.changes {
                 case let .modified(hunks), let .renamed(_, hunks):
-                    detect(keywords: Keywords.allCases, inHunks: hunks, file: file)
+                    detections += collect(keywords: applicable, inHunks: hunks, file: file)
                 case let .created(newLines):
-                    detect(keywords: Keywords.allCases, inLines: newLines, file: file)
+                    detections += collect(keywords: applicable, inLines: newLines, file: file)
                 case .deleted:
                     break // do not warn on deleted lines
                 }
@@ -464,57 +781,81 @@ class CodeUsageDetector {
                 break
             }
         }
-    }
 
-    private func detect(keywords: [Keywords], inHunks hunks: [FileDiff.Hunk], file: String) {
-        for keyword in keywords {
-            detect(keyword: keyword, inHunks: hunks, file: file, message: keyword.message)
+        // Group by keyword and emit one bundled message per keyword
+        let grouped = Dictionary(grouping: detections, by: { $0.keyword })
+        for keyword in Keywords.allCases {
+            guard let items = grouped[keyword], !items.isEmpty else { continue }
+            emitBundled(keyword: keyword, detections: items)
         }
     }
 
-    private func detect(keyword: Keywords, inHunks hunks: [FileDiff.Hunk], file: String, message: String) {
-        guard !shouldSkip(keyword, for: file) else { return }
+    private func emitBundled(keyword: Keywords, detections: [Detection]) {
+        let rows = detections.map { "| `\($0.file)` | \($0.lineNumber) | \($0.isRemoval ? "Removed" : "Added") |" }.joined(separator: "\n")
+        let fullMessage = """
+        \(keyword.bundledHeader)
+
+        | File | Line | Change |
+        |---|---|---|
+        \(rows)
+        """
+
+        if keyword.shouldComment {
+            markdown(fullMessage)
+        } else if keyword.shouldWarn {
+            warn(fullMessage)
+        } else {
+            failOrWarn(fullMessage)
+        }
+    }
+
+    private func collect(keywords: [Keywords], inHunks hunks: [FileDiff.Hunk], file: String) -> [Detection] {
+        keywords.flatMap { collect(keyword: $0, inHunks: hunks, file: file) }
+    }
+
+    private func collect(keyword: Keywords, inHunks hunks: [FileDiff.Hunk], file: String) -> [Detection] {
+        guard !shouldSkip(keyword, for: file) else { return [] }
+        var detections: [Detection] = []
         for hunk in hunks {
             var newLineCount = 0
+            var oldLineCount = 0
             for line in hunk.lines {
-                let isAddedLine = "\(line)".starts(with: "+")
-                let isRemovedLine = "\(line)".starts(with: "-")
-                // Make sure our newLineCount is proper to fail on correct line number
-                guard isAddedLine || !isRemovedLine else { continue }
-                newLineCount += 1
-
-                // Fail only on added line having the particular keyword
-                guard isAddedLine && String(describing: line).contains(keyword.keyword) else { continue }
-
-                let lineNumber = hunk.newLineStart + newLineCount - 1
-                if keyword.shouldComment {
-                    markdown(String(format: message, file, lineNumber))
-                } else if keyword.shouldWarn {
-                    warn(String(format: message, file, lineNumber))
+                let lineStr = String(describing: line)
+                let isAddedLine = lineStr.starts(with: "+")
+                let isRemovedLine = lineStr.starts(with: "-")
+                if isRemovedLine {
+                    oldLineCount += 1
+                    if keyword.detectsRemovals
+                        && lineStr.contains(keyword.keyword)
+                        && !keyword.isSupersededOnLine(lineStr) {
+                        let lineNumber = hunk.oldLineStart + oldLineCount - 1
+                        detections.append(Detection(keyword: keyword, file: file, lineNumber: lineNumber, isRemoval: true))
+                    }
                 } else {
-                    failOrWarn(String(format: message, file, lineNumber))
+                    // Context or added line: exists in both old and new file
+                    newLineCount += 1
+                    oldLineCount += 1
+                    if isAddedLine
+                        && lineStr.contains(keyword.keyword)
+                        && !keyword.isSupersededOnLine(lineStr) {
+                        let lineNumber = hunk.newLineStart + newLineCount - 1
+                        detections.append(Detection(keyword: keyword, file: file, lineNumber: lineNumber, isRemoval: false))
+                    }
                 }
             }
         }
+        return detections
     }
 
-    private func detect(keywords: [Keywords], inLines lines: [String], file: String) {
-        for keyword in keywords {
-            detect(keyword: keyword, inLines: lines, file: file, message: keyword.message)
-        }
+    private func collect(keywords: [Keywords], inLines lines: [String], file: String) -> [Detection] {
+        keywords.flatMap { collect(keyword: $0, inLines: lines, file: file) }
     }
 
-    private func detect(keyword: Keywords, inLines lines: [String], file: String, message: String) {
-        guard !shouldSkip(keyword, for: file) else { return }
-        for (index, line) in lines.enumerated() where line.contains(keyword.keyword) {
-            let lineNumber = index + 1
-            if keyword.shouldComment {
-                markdown(String(format: message, file, lineNumber))
-            } else if keyword.shouldWarn {
-                warn(String(format: message, file, lineNumber))
-            } else {
-                failOrWarn(String(format: message, file, lineNumber))
-            }
+    private func collect(keyword: Keywords, inLines lines: [String], file: String) -> [Detection] {
+        guard !shouldSkip(keyword, for: file) else { return [] }
+        return lines.enumerated().compactMap { index, line in
+            guard line.contains(keyword.keyword), !keyword.isSupersededOnLine(line) else { return nil }
+            return Detection(keyword: keyword, file: file, lineNumber: index + 1, isRemoval: false)
         }
     }
 }
@@ -551,7 +892,10 @@ private func failOrWarn(_ message: String) {
         Since bypass label \(bypassLabel) detected we are reporting as warning only for this PR.
         """)
     } else {
-        fail(message)
+        fail("""
+        \(message)
+        You can add the \(bypassLabel) label on the PR to by-pass the checks.\nIf you use it, please add a comment explaining why.
+        """)
     }
 }
 
@@ -598,22 +942,6 @@ func checkAlphabeticalOrder(inFile filePath: String) {
         }
     } catch {
         warn("Failed to read or process file \(filePath): \(error)")
-    }
-}
-
-// Check if there's String file changes, and if so ask the l10n reviewers
-func checkStringsFile() {
-    let edited = danger.git.modifiedFiles
-    let touchedStrings = edited.filter { path in
-        path.localizedCaseInsensitiveContains("/Strings.swift")
-    }
-
-    if !touchedStrings.isEmpty {
-        markdown("""
-        ### ✍️ **Strings Updated**
-        Detected changes in `Shared/Strings.swift`.
-        To keep strings up to standards, please add a member of the [firefox-ios-l10n team](https://github.com/orgs/mozilla-mobile/teams/firefox-ios-l10n) as reviewer. 🌍
-        """)
     }
 }
 
@@ -681,7 +1009,7 @@ struct ReleaseBranchCheck {
         markdown("""
         # ‼️ ATTENTION ‼️
         ### 🎯 This PR targets a **release branch**.
-        Please ensure you've followed the [uplift request process](https://github.com/mozilla-mobile/firefox-ios/wiki/Requesting-an-uplift-to-a-release-branch).
+        Please ensure you've followed the [uplift request process](https://mozilla-hub.atlassian.net/wiki/x/OgAbog).
         """)
     }
 }

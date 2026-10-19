@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "Icono de la aplicación";
+
 /* (No Comment) */
 "New Private Tab" = "Nueva pestaña privada";
 
@@ -5,7 +8,7 @@
 "New Tab" = "Nueva pestaña";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia usa la cámara para escanear los códigos QR, tomar fotos y grabar video.";
+"NSCameraUsageDescription" = "Ecosia puede usar tu cámara para escanear códigos QR o tomar fotos y videos.";
 
 /* Privacy - Face ID Usage Description */
 "NSFaceIDUsageDescription" = "Ecosia requiere Face ID para acceder a tus contraseñas guardadas y métodos de pago.";
@@ -18,6 +21,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Esto te permite guardar las fotos.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Ecosia usa reconocimiento de voz para convertir tu voz a texto para la búsqueda por voz.";
 
 /* (No Comment) */
 "Scan QR Code" = "Escanear código QR";

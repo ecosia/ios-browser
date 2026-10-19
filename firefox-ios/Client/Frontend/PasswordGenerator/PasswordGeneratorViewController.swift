@@ -98,7 +98,7 @@ class PasswordGeneratorViewController: UIViewController, StoreSubscriber, Themea
     deinit {
         // TODO: FXIOS-13097 This is a work around until we can leverage isolated deinits
         guard Thread.isMainThread else {
-            assertionFailure("AddressBarPanGestureHandler was not deallocated on the main thread. Observer was not removed")
+            assertionFailure("TabSwipeGestureHandler was not deallocated on the main thread. Observer was not removed")
             return
         }
 
@@ -206,10 +206,10 @@ class PasswordGeneratorViewController: UIViewController, StoreSubscriber, Themea
     // MARK: - Redux
     func subscribeToRedux() {
         store.dispatch(
-            ScreenAction(
+            ComponentAction(
                 windowUUID: windowUUID,
-                actionType: ScreenActionType.showScreen,
-                screen: .passwordGenerator
+                actionType: ComponentActionType.addComponent,
+                component: .passwordGenerator
             )
         )
 
@@ -223,10 +223,10 @@ class PasswordGeneratorViewController: UIViewController, StoreSubscriber, Themea
 
     func unsubscribeFromRedux() {
         store.dispatch(
-            ScreenAction(
+            ComponentAction(
                 windowUUID: windowUUID,
-                actionType: ScreenActionType.closeScreen,
-                screen: .passwordGenerator
+                actionType: ComponentActionType.removeComponent,
+                component: .passwordGenerator
             )
         )
     }

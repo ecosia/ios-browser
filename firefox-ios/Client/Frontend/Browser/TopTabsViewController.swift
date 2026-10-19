@@ -18,11 +18,9 @@ protocol TopTabsDelegate: AnyObject {
     func topTabsDidChangeTab()
     @MainActor
     func topTabsDidPressPrivateMode()
-    @MainActor
-    func topTabsShowCloseTabsToast()
 }
 
-class TopTabsViewController: UIViewController, Themeable, Notifiable, FeatureFlaggable {
+class TopTabsViewController: UIViewController, Themeable, Notifiable {
     private struct UX {
         static let trailingEdgeSpace: CGFloat = 10
         static let topTabsViewHeight: CGFloat = 44
@@ -70,13 +68,13 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable, FeatureFla
         button.setImage(UIImage.templateImageNamed(StandardImageIdentifiers.Large.plus), for: .normal)
         button.semanticContentAttribute = .forceLeftToRight
         button.addTarget(self, action: #selector(TopTabsViewController.newTabTapped), for: .touchUpInside)
-        if self.featureFlags.isFeatureEnabled(.toolbarOneTapNewTab, checking: .buildOnly) {
-            let longPressRecognizer = UILongPressGestureRecognizer(
-                target: self,
-                action: #selector(TopTabsViewController.newTabLongPressed)
-            )
-            button.addGestureRecognizer(longPressRecognizer)
-        }
+
+        let longPressRecognizer = UILongPressGestureRecognizer(
+            target: self,
+            action: #selector(TopTabsViewController.newTabLongPressed)
+        )
+        button.addGestureRecognizer(longPressRecognizer)
+
         button.accessibilityIdentifier = AccessibilityIdentifiers.Toolbar.addNewTabButton
         button.accessibilityLabel = .AddTabAccessibilityLabel
         button.showsLargeContentViewer = true
@@ -201,7 +199,7 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable, FeatureFla
         let colors = currentTheme.colors
 
         view.backgroundColor = .clear
-        if let toolbarState = store.state.screenState(ToolbarState.self, for: .toolbar, window: windowUUID),
+        if let toolbarState = store.state.componentState(ToolbarState.self, for: .toolbar, window: windowUUID),
            toolbarState.isTranslucent {
             collectionView.backgroundColor = .clear
         } else {
@@ -296,7 +294,7 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable, FeatureFla
             top: iconInset, left: iconInset, bottom: iconInset, right: iconInset
         )
 
-        NSLayoutConstraint.activate([
+        var constraints = [
             view.heightAnchor.constraint(equalToConstant: UX.topTabsViewHeight),
 
             newTab.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -304,11 +302,6 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable, FeatureFla
             newTab.heightAnchor.constraint(equalTo: view.heightAnchor),
 
             privateModeButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            /* Ecosia: Use safeAreaLayoutGuide so the button stays clear of screen-edge safe areas
-               (e.g. iPad landscape on Face ID models).
-            privateModeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
-             */
-            privateModeButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 10),
             privateModeButton.widthAnchor.constraint(equalTo: view.heightAnchor),
             privateModeButton.heightAnchor.constraint(equalTo: view.heightAnchor),
 
@@ -321,7 +314,31 @@ class TopTabsViewController: UIViewController, Themeable, Notifiable, FeatureFla
             collectionView.bottomAnchor.constraint(equalTo: topTabFader.bottomAnchor),
             collectionView.leadingAnchor.constraint(equalTo: topTabFader.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: topTabFader.trailingAnchor),
-        ])
+        ]
+
+        if #available(iOS 26.0, *) {
+            constraints.append(
+                privateModeButton.leadingAnchor.constraint(
+                    equalTo: view.layoutGuide(for: .margins(cornerAdaptation: .horizontal)).leadingAnchor
+                )
+            )
+        } else {
+            /* Ecosia: Use safeAreaLayoutGuide so the button stays clear of screen-edge safe areas
+               (e.g. iPad landscape on Face ID models). Re-homed in 155.1: upstream moved this
+               constraint out of the main array and into this availability branch.
+            constraints.append(
+                privateModeButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10)
+            )
+             */
+            constraints.append(
+                privateModeButton.leadingAnchor.constraint(
+                    equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+                    constant: 10
+                )
+            )
+        }
+
+        NSLayoutConstraint.activate(constraints)
 
         /* Ecosia: Use safeAreaLayoutGuide so the new-tab button stays clear of screen-edge safe areas.
         newTab.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -UX.trailingEdgeSpace).isActive = true
@@ -390,9 +407,19 @@ extension TopTabsViewController: TopTabCellDelegate {
     func tabCellDidClose(_ cell: UICollectionViewCell) {
         store.dispatch(ToolbarAction(windowUUID: windowUUID, actionType: ToolbarActionType.cancelEdit))
         topTabDisplayManager.closeActionPerformed(forCell: cell)
-        delegate?.topTabsShowCloseTabsToast()
         NotificationCenter.default.post(name: .TopTabsTabClosed, object: nil, userInfo: windowUUID.userInfo)
         store.dispatch(TopTabsAction(windowUUID: windowUUID, actionType: TopTabsActionType.didTapCloseTab))
+
+        // Focus voice-over on the selected tab after current tab is closed
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            guard let self,
+                  let selected = self.tabManager.selectedTab,
+                  let index = self.topTabDisplayManager.dataStore.index(of: selected) else { return }
+
+            let indexPath = IndexPath(item: index, section: 0)
+            guard let selectedCell = self.collectionView.cellForItem(at: indexPath) else { return }
+            UIAccessibility.post(notification: .layoutChanged, argument: selectedCell)
+        }
     }
 }
 

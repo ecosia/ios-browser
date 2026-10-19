@@ -20,7 +20,6 @@ enum TabAnimationType {
     case addTab
     case removedNonLastTab
     case removedLastTab
-    case updateTab
     case moveTab
 }
 
@@ -338,6 +337,7 @@ class TopTabDisplayManager: NSObject {
     func performCloseAction(for tab: Tab) {
         guard !isDragging else { return }
 
+        // TODO: FXIOS-TODO - Why do we call get tabs here, can we remove it
         _ = getTabs()
         tabsPanelTelemetry.tabClosed(mode: tab.isPrivate ? .private : .normal)
         tabManager.removeTab(tab.tabUUID)

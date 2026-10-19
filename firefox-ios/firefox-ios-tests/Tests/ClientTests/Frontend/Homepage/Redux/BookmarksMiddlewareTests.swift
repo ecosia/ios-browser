@@ -36,7 +36,7 @@ final class BookmarksMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked S
             expectation.fulfill()
         }
 
-        subject.bookmarksProvider(AppState(), action)
+        subject.bookmarksProvider.legacyMiddleware(AppState(), action)
 
         wait(for: [expectation])
 
@@ -60,7 +60,7 @@ final class BookmarksMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked S
             expectation.fulfill()
         }
 
-        subject.bookmarksProvider(AppState(), action)
+        subject.bookmarksProvider.legacyMiddleware(AppState(), action)
 
         wait(for: [expectation])
 
@@ -79,8 +79,8 @@ final class BookmarksMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked S
     // MARK: StoreTestUtility
     func setupAppState() -> AppState {
         return AppState(
-            activeScreens: ActiveScreensState(
-                screens: [
+            presentedComponents: PresentedComponentsState(
+                components: [
                     .homepage(
                         HomepageState(
                             windowUUID: .XCTestDefaultUUID

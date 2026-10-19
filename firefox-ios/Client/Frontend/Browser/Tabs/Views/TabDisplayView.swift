@@ -27,9 +27,9 @@ final class TabDisplayView: UIView,
                       ThemeApplicable,
                       UICollectionViewDelegate,
                       UICollectionViewDelegateFlowLayout,
+                      UICollectionViewDataSourcePrefetching,
                       TabCellDelegate,
                       SwipeAnimatorDelegate,
-                      FeatureFlaggable,
                       InsetUpdatable {
     struct UX {
         static let cornerRadius: CGFloat = 6.0
@@ -41,7 +41,11 @@ final class TabDisplayView: UIView,
     private var tabsSectionManager: TabsSectionManager
     private let windowUUID: WindowUUID
     var theme: Theme?
+
+    /// UUID of the tab currently minimizing into the tray during the open animation
+    var minimizingTabUUID: TabUUID?
     weak var dragAndDropDelegate: TabDisplayViewDragAndDropInteraction?
+    private var tabTrayUtils: TabTrayUtils
 
     lazy var dataSource =
     TabDisplayDiffableDataSource(
@@ -52,6 +56,7 @@ final class TabDisplayView: UIView,
 
             switch sectionItem {
             case .tab(let tab):
+                let newTabTitle = tab.url == nil ? String.TabsTray.TabsSelectorBlankTabsTitle : nil
                 if isTabTrayUIExperimentsEnabled {
                     guard let cell = collectionView.dequeueReusableCell(
                         withReuseIdentifier: ExperimentTabCell.cellIdentifier,
@@ -59,7 +64,10 @@ final class TabDisplayView: UIView,
                     ) as? ExperimentTabCell else { return UICollectionViewCell() }
 
                     let a11yId = "\(AccessibilityIdentifiers.TabTray.tabCell)_\(indexPath.section)_\(indexPath.row)"
-                    cell.configure(with: tab, theme: theme, delegate: self, a11yId: a11yId)
+                    cell.configure(with: tab, theme: theme, delegate: self, a11yId: a11yId, newTabTitle: newTabTitle)
+                    if tab.tabUUID == self.minimizingTabUUID {
+                        cell.isHidden = true
+                    }
                     return cell
                 } else {
                     guard let cell = collectionView.dequeueReusableCell(
@@ -68,15 +76,14 @@ final class TabDisplayView: UIView,
                     ) as? TabCell else { return UICollectionViewCell() }
 
                     let a11yId = "\(AccessibilityIdentifiers.TabTray.tabCell)_\(indexPath.section)_\(indexPath.row)"
-                    cell.configure(with: tab, theme: theme, delegate: self, a11yId: a11yId)
+                    cell.configure(with: tab, theme: theme, delegate: self, a11yId: a11yId, newTabTitle: newTabTitle)
                     return cell
                 }
             }
         })
 
     private var isTabTrayUIExperimentsEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.tabTrayUIExperiments, checking: .buildOnly)
-        && UIDevice.current.userInterfaceIdiom != .pad
+        return tabTrayUtils.shouldDisplayExperimentUI()
     }
 
     // Dragging on the collection view is either an 'active drag' where the item is moved, or
@@ -118,6 +125,7 @@ final class TabDisplayView: UIView,
         collectionView.delegate = self
         collectionView.dragDelegate = self
         collectionView.dropDelegate = self
+        collectionView.prefetchDataSource = self
         collectionView.collectionViewLayout = createLayout()
         collectionView.accessibilityIdentifier = AccessibilityIdentifiers.TabTray.collectionView
         return collectionView
@@ -125,11 +133,13 @@ final class TabDisplayView: UIView,
 
     public init(panelType: TabTrayPanelType,
                 state: TabsPanelState,
-                windowUUID: WindowUUID) {
+                windowUUID: WindowUUID,
+                tabTrayUtils: TabTrayUtils = DefaultTabTrayUtils()) {
         self.panelType = panelType
         self.tabsState = state
         self.tabsSectionManager = TabsSectionManager()
         self.windowUUID = windowUUID
+        self.tabTrayUtils = tabTrayUtils
         super.init(frame: .zero)
         setupLayout()
         configureDataSource()
@@ -200,7 +210,8 @@ final class TabDisplayView: UIView,
             ) as? TabTitleSupplementaryView else { return nil }
 
             if let tab = tabsState.tabs[safe: indexPath.row] {
-                titleView.configure(with: tab, theme: theme)
+                let newTabTitle = tab.url == nil ? String.TabsTray.TabsSelectorBlankTabsTitle : nil
+                titleView.configure(with: tab, theme: theme, newTabTitle: newTabTitle)
             }
             return titleView
 
@@ -237,7 +248,7 @@ final class TabDisplayView: UIView,
 
     func applyTheme(theme: Theme) {
         self.theme = theme
-        collectionView.backgroundColor = theme.colors.layer3
+        collectionView.backgroundColor = theme.isNova ? theme.colors.layer1 : theme.colors.layer3
         collectionView.visibleCells.forEach { ($0 as? ThemeApplicable)?.applyTheme(theme: theme) }
         collectionView.visibleSupplementaryViews(ofKind: TabTitleSupplementaryView.cellIdentifier)
             .compactMap { $0 as? TabTitleSupplementaryView }
@@ -267,6 +278,13 @@ final class TabDisplayView: UIView,
                 store.dispatch(action)
             }
         }
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        willDisplay cell: UICollectionViewCell,
+                        forItemAt indexPath: IndexPath) {
+        guard let tab = tabsState.tabs[safe: indexPath.row] else { return }
+        dispatchPrefetchScreenshot(for: tab.tabUUID)
     }
 
     func collectionView(_ collectionView: UICollectionView,
@@ -316,6 +334,23 @@ final class TabDisplayView: UIView,
     func updateInsets(top: CGFloat, bottom: CGFloat) {
         collectionView.contentInset.top = top
         collectionView.contentInset.bottom = bottom
+    }
+
+    // MARK: - UICollectionViewDataSourcePrefetching
+
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        for indexPath in indexPaths {
+            guard let tab = tabsState.tabs[safe: indexPath.row] else { continue }
+            dispatchPrefetchScreenshot(for: tab.tabUUID)
+        }
+    }
+
+    private func dispatchPrefetchScreenshot(for tabUUID: TabUUID) {
+        let action = TabPanelViewAction(panelType: panelType,
+                                        tabUUID: tabUUID,
+                                        windowUUID: windowUUID,
+                                        actionType: TabPanelViewActionType.prefetchScreenshots)
+        store.dispatch(action)
     }
 }
 

@@ -1376,10 +1376,10 @@
 "Settings.Homepage.Shortcuts.SponsoredShortcutsToggle.v100" = "후원된 바로가기";
 
 /* Toggled OFF to hide the shortcuts section */
-"Settings.Homepage.Shortcuts.ToggleOff.v100" = "끄기";
+"Settings.Homepage.Shortcuts.ToggleOff.v100" = "꺼짐";
 
 /* Toggled ON to show the shortcuts section */
-"Settings.Homepage.Shortcuts.ToggleOn.v100" = "켜기";
+"Settings.Homepage.Shortcuts.ToggleOn.v100" = "켜짐";
 
 /* Title of the setting section containing the URL of the current home page. */
 "Settings.HomePage.URL.Title" = "현재 홈페이지";
@@ -1500,6 +1500,9 @@
 
 /* Button label that appears in the settings to prompt the user to sign in to Firefox for iOS sync service to sync and save data. */
 "Settings.Sync.ButtonTitle.v103" = "데이터 동기화 및 저장";
+
+/* In the settings account row, shown transiently while the user is being signed out of their account. */
+"Settings.Sync.SigningOut.Title.v154" = "로그아웃 중…";
 
 /* Title for the page where the user sign in to their Firefox Sync account. */
 "Settings.Sync.SignInView.Title.v103" = "데이터 동기화 및 저장";

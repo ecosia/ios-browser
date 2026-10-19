@@ -4,14 +4,16 @@
 
 import Redux
 import Common
+import ModifiedCopy
 
+@Copyable
 struct MicrosurveyState: ScreenState {
     var windowUUID: WindowUUID
     var shouldDismiss: Bool
     var showPrivacy: Bool
 
     init(appState: AppState, uuid: WindowUUID) {
-        guard let microsurveyState = appState.screenState(
+        guard let microsurveyState = appState.componentState(
             MicrosurveyState.self,
             for: .microsurvey,
             window: uuid
@@ -43,7 +45,14 @@ struct MicrosurveyState: ScreenState {
         self.showPrivacy = showPrivacy
     }
 
-    static let reducer: Reducer<Self> = { state, action in
+    static let reducer: Reducer<Self> = (legacyReducer, modernReducer)
+
+    static let modernReducer: ReducerMethod<Self> = { state, action, actionWindowUUID in
+        // Does not handle any modern actions
+        return defaultState(from: state)
+    }
+
+    static let legacyReducer: LegacyReducerMethod<Self> = { state, action in
         guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID
         else {
             return defaultState(from: state)
@@ -51,17 +60,13 @@ struct MicrosurveyState: ScreenState {
 
         switch action.actionType {
         case MicrosurveyActionType.closeSurvey:
-            return MicrosurveyState(
-                windowUUID: state.windowUUID,
-                shouldDismiss: true,
-                showPrivacy: false
-            )
+            return state
+                .resetTransientState()
+                .copy(shouldDismiss: true)
         case MicrosurveyActionType.tapPrivacyNotice:
-            return MicrosurveyState(
-                windowUUID: state.windowUUID,
-                shouldDismiss: false,
-                showPrivacy: true
-            )
+            return state
+                .resetTransientState()
+                .copy(showPrivacy: true)
         default:
             return defaultState(from: state)
         }

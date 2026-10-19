@@ -5,7 +5,7 @@
 "New Tab" = "တပ်ဗ်အသစ်";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "ဓါတ်ပုံရိုက်ခြင်းနှင့် တင်ပို့ခြင်းတို့ကို ဆောင်ရွက်နိုင်စေသည်။";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "သင်သွားလည်သော ဝတ်ဆိုဒ်မှ သင့်တည်နေရာကို သိချင်ကောင်းသိမ်ချင်လိမ့်မည်";

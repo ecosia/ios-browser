@@ -23,10 +23,6 @@ public enum AppEvent: AppEventType {
     // Ecosia: Add Feature Management event
     case featureManagementInitialized
 
-    // Events: Open Deeplink startup time record
-    case recordStartupTimeOpenDeeplinkComplete
-    case recordStartupTimeOpenDeeplinkCancelled
-
     // Activities: Profile Syncing
     case profileSyncing
 

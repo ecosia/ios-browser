@@ -64,8 +64,6 @@ class OneLineTableViewCell: UITableViewCell,
     lazy var titleLabel: UILabel = .build { label in
         label.font = FXFontStyles.Regular.body.scaledFont()
         label.textAlignment = .natural
-        label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
     }
 
     private lazy var bottomSeparatorView: UIView = .build { separatorLine in
@@ -96,7 +94,7 @@ class OneLineTableViewCell: UITableViewCell,
         updateReorderControl()
 
         // Position the accessory at the trailing edge of the cell, accounting for safe area and padding
-        if let accessoryView {
+        if !isEditing, let accessoryView {
             if UIView.userInterfaceLayoutDirection(for: semanticContentAttribute) == .rightToLeft {
                 accessoryView.frame.origin.x = UX.accessoryViewTrailingPadding + safeAreaInsets.left
             } else {

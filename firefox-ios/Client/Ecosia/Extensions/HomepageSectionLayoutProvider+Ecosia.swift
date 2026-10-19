@@ -26,7 +26,7 @@ extension HomepageSectionLayoutProvider {
         case .ecosiaNTPCustomization:
             return createEcosiaNTPCustomizationLayout(for: traitCollection)
         // Match shortcuts width to the other Ecosia sections (MOB-4150)
-        case .topSites(_, let numberOfTilesPerRow):
+        case .topSites(_, let numberOfTilesPerRow, _):
             return createEcosiaTopSitesLayout(for: traitCollection, numberOfTilesPerRow: numberOfTilesPerRow)
         default:
             return nil

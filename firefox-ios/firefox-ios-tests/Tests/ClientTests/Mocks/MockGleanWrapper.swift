@@ -6,12 +6,36 @@ import Glean
 import UIKit
 @testable import Client
 
-final class MockGleanWrapper: GleanWrapper, @unchecked Sendable {
+class MockGleanWrapper: GleanWrapper, @unchecked Sendable {
     var handleDeeplinkUrlCalled = 0
     var setUploadEnabledCalled = 0
+    var recordEventCalled = 0
+    var recordEventNoExtraCalled = 0
+    var incrementCounterCalled = 0
+    var recordStringCalled = 0
+    var recordTextCalled = 0
+    var recordStringListCalled = 0
+    var incrementLabeledCounterCalled = 0
+    var setBooleanCalled = 0
+    var recordQuantityCalled = 0
+    var recordUrlCalled = 0
+    var recordDatetimeCalled = 0
+    var recordUUIDCalled = 0
+    var startTimingCalled = 0
+    var cancelTimingCalled = 0
+    var stopAndAccumulateCalled = 0
+    var submitPingCalled = 0
+    var savedEvents: [Any] = []
+    var savedExtras: [Any] = []
+    var savedValues: [Any] = []
+    var savedBooleans: [Bool] = []
+    var savedQuantities: [Int64] = []
+    var savedLabel: Any?
+    var savedPing: Any?
 
     var savedHandleDeeplinkUrl: URL?
     var savedSetUploadIsEnabled: Bool?
+    var savedTimerId = GleanTimerId(id: 0)
 
     func handleDeeplinkUrl(url: URL) {
         handleDeeplinkUrlCalled += 1
@@ -25,72 +49,101 @@ final class MockGleanWrapper: GleanWrapper, @unchecked Sendable {
 
     func enableTestingMode() {}
 
-    var recordEventCalled = 0
-    var recordEventNoExtraCalled = 0
-    var incrementCounterCalled = 0
-    var incrementLabeledCounterCalled = 0
-    var recordLabelCalled = 0
-    var recordStringCalled = 0
-    var recordQuantityCalled = 0
-    var recordUrlCalled = 0
-    var recordDatetimeCalled = 0
-    var submitPingCalled = 0
-    var stopAndAccumulateCalled = 0
-    var cancelTimingCalled = 0
-    var savedLabel: String?
-    var savedEvents: [Any] = []
-    var savedExtras: [Any] = []
-    var savedValues: [Any] = []
-    var savedPing: Any?
-
-    func recordEvent<ExtraObject>(for metric: EventMetricType<ExtraObject>,
-                                  extras: EventExtras) where ExtraObject: EventExtras {
-        recordEventCalled += 1
-        savedEvents.append(metric)
+    func recordEvent<ExtraObject>(
+        for metric: EventMetricType<ExtraObject>,
+        extras: EventExtras
+    ) where ExtraObject: EventExtras {
         savedExtras.append(extras)
-    }
-    func recordEvent<NoExtras>(for metric: EventMetricType<NoExtras>) where NoExtras: EventExtras {
-        recordEventNoExtraCalled += 1
         savedEvents.append(metric)
+        recordEventCalled += 1
     }
+
+    func recordEvent<NoExtras>(for metric: EventMetricType<NoExtras>) where NoExtras: EventExtras {
+        savedEvents.append(metric)
+        recordEventNoExtraCalled += 1
+    }
+
     func incrementCounter(for metric: CounterMetricType) {
+        savedEvents.append(metric)
         incrementCounterCalled += 1
     }
+
     func recordString(for metric: StringMetricType, value: String) {
-        recordStringCalled += 1
         savedEvents.append(metric)
         savedValues.append(value)
+        recordStringCalled += 1
     }
-    func incrementLabeledCounter(for metric: LabeledMetricType<CounterMetricType>, label: String) {
+
+    func recordText(for metric: TextMetricType, value: String) {
+        savedEvents.append(metric)
+        savedValues.append(value)
+        recordTextCalled += 1
+    }
+
+    func recordStringList(for metric: StringListMetricType, value: [String]) {
+        savedEvents.append(metric)
+        savedValues.append(value)
+        recordStringListCalled += 1
+    }
+
+    func incrementLabeledCounter(
+        for metric: LabeledMetricType<CounterMetricType>,
+        label: String
+    ) {
+        savedLabel = label
+        savedEvents.append(metric)
         incrementLabeledCounterCalled += 1
     }
-    func setBoolean(for metric: BooleanMetricType, value: Bool) {}
+
+    func setBoolean(for metric: BooleanMetricType, value: Bool) {
+        savedEvents.append(metric)
+        savedBooleans.append(value)
+        setBooleanCalled += 1
+    }
+
     func recordQuantity(for metric: QuantityMetricType, value: Int64) {
+        savedEvents.append(metric)
+        savedQuantities.append(value)
         recordQuantityCalled += 1
     }
-    func recordLabel(for metric: LabeledMetricType<StringMetricType>, label: String, value: String) {
-        recordLabelCalled += 1
-        savedLabel = label
-    }
-    func recordLabeledQuantity(for metric: LabeledMetricType<QuantityMetricType>, label: String, value: Int64) {}
+
     func recordUrl(for metric: UrlMetricType, value: URL) {
+        savedEvents.append(metric)
         recordUrlCalled += 1
     }
+
     func recordDatetime(for metric: DatetimeMetricType, value: Date) {
+        savedEvents.append(metric)
+        savedValues.append(value)
         recordDatetimeCalled += 1
     }
-    func recordUUID(for metric: UuidMetricType, value: UUID) {}
-    func incrementNumerator(for metric: RateMetricType, amount: Int32) {}
-    func incrementDenominator(for metric: RateMetricType, amount: Int32) {}
-    func startTiming(for metric: TimingDistributionMetricType) -> GleanTimerId { GleanTimerId(id: 0) }
-    func cancelTiming(for metric: TimingDistributionMetricType, timerId: GleanTimerId) {
+
+    func recordUUID(for metric: UuidMetricType, value: UUID) {
+        savedEvents.append(metric)
+        savedValues.append(value)
+        recordUUIDCalled += 1
+    }
+
+    func startTiming(for metric: TimingDistributionMetricType) -> GleanTimerId {
+        savedEvents.append(metric)
+        startTimingCalled += 1
+        return savedTimerId
+    }
+
+    func cancelTiming(for metric: TimingDistributionMetricType,
+                      timerId: GleanTimerId) {
+        savedEvents.append(metric)
         cancelTimingCalled += 1
     }
-    func stopAndAccumulateTiming(for metric: TimingDistributionMetricType, timerId: GleanTimerId) {
+
+    func stopAndAccumulateTiming(for metric: TimingDistributionMetricType,
+                                 timerId: GleanTimerId) {
+        savedEvents.append(metric)
         stopAndAccumulateCalled += 1
     }
+
     func submit<ReasonCodesEnum>(ping: Ping<ReasonCodesEnum>) where ReasonCodesEnum: ReasonCodes {
-        submitPingCalled += 1
         savedPing = ping
+        submitPingCalled += 1
     }
 }

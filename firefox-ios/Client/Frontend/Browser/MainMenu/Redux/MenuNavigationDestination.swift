@@ -6,6 +6,7 @@ import Foundation
 import SummarizeKit
 
 enum MainMenuNavigationDestination: Equatable {
+    case adBlocker
     case bookmarks
     case defaultBrowser
     case downloads
@@ -13,16 +14,19 @@ enum MainMenuNavigationDestination: Equatable {
     case findInPage
     case history
     case passwords
+    case readerView
     // Ecosia: Reading List added for the compact menu
     case readingList
     case settings
     case siteProtections
     case syncSignIn
     case printSheet
+    case reportBrokenSite
     case shareSheet
     case saveAsPDF
     case webpageSummary(config: SummarizerConfig?)
     case zoom
+    case translatePage
     // Ecosia: Help and Report Issue destinations for the compact menu
     case help
     case reportIssue
@@ -34,6 +38,7 @@ enum MainMenuNavigationDestination: Equatable {
     /// revert to using CaseIterable on the enum.
     public static var allCasesForTests: [MainMenuNavigationDestination] {
         [
+            .adBlocker,
             .bookmarks,
             .defaultBrowser,
             .downloads,
@@ -41,16 +46,19 @@ enum MainMenuNavigationDestination: Equatable {
             .findInPage,
             .history,
             .passwords,
+            .readerView,
             // Ecosia: Reading List added for the compact menu
             .readingList,
             .settings,
             .siteProtections,
             .syncSignIn,
             .printSheet,
+            .reportBrokenSite,
             .shareSheet,
             .saveAsPDF,
             .webpageSummary(config: SummarizerConfig(instructions: "", options: [:])),
             .zoom,
+            .translatePage,
             // Ecosia: Help and Report Issue destinations for the compact menu
             .help,
             .reportIssue

@@ -4,58 +4,39 @@
 
 import Foundation
 import Glean
-import XCTest
+import MozillaAppServices
 import Storage
+import TestKit
+import XCTest
 
 @testable import Client
 
 @MainActor
 final class UnifiedAdsCallbackTelemetryTests: XCTestCase {
-    private var networking: MockUnifiedTileNetworking!
     private var logger: MockLogger!
     private var gleanWrapper: MockGleanWrapper!
+    private var mockAdsClient: MockMozAdsClient!
+    private var adsClientCallbackQueue: MockDispatchQueue!
 
     override func setUp() async throws {
         try await super.setUp()
-        networking = MockUnifiedTileNetworking()
+        DependencyHelperMock().bootstrapDependencies()
         logger = MockLogger()
         gleanWrapper = MockGleanWrapper()
+        mockAdsClient = MockMozAdsClient()
+        adsClientCallbackQueue = MockDispatchQueue()
     }
 
     override func tearDown() async throws {
-        networking = nil
         logger = nil
         gleanWrapper = nil
+        mockAdsClient = nil
+        adsClientCallbackQueue = nil
+        DependencyHelperMock().reset()
         try await super.tearDown()
     }
 
-    func testImpressionTelemetry_givenErrorResponse_thenFailsWithLogMessage() {
-        networking.error = UnifiedTileNetworkingError.dataUnavailable
-        let subject = createSubject()
-
-        guard case SiteType.sponsoredSite(let siteInfo) = tileSite.type else {
-            XCTFail()
-            return
-        }
-
-        subject.sendImpressionTelemetry(tileSite: tileSite, position: 1)
-        XCTAssertEqual(logger.savedMessage, "The unified ads telemetry call failed: \(siteInfo.impressionURL)")
-    }
-
-    func testClickTelemetry_givenErrorResponse_thenFailsWithLogMessage() {
-        networking.error = UnifiedTileNetworkingError.dataUnavailable
-        let subject = createSubject()
-
-        guard case SiteType.sponsoredSite(let siteInfo) = tileSite.type else {
-            XCTFail()
-            return
-        }
-
-        subject.sendClickTelemetry(tileSite: tileSite, position: 2)
-        XCTAssertEqual(logger.savedMessage, "The unified ads telemetry call failed: \(siteInfo.clickURL)")
-    }
-
-    func testLegacyImpressionTelemetry() throws {
+    func testGleanImpressionTelemetry() throws {
         let subject = createSubject()
         subject.sendImpressionTelemetry(tileSite: tileSite, position: 1)
 
@@ -68,28 +49,22 @@ final class UnifiedAdsCallbackTelemetryTests: XCTestCase {
             XCTFail("savedPing is not of type Ping<NoReasonCodes>")
             return
         }
-        XCTAssertTrue(savedPing === GleanMetrics.Pings.shared.topsitesImpression)
+        XCTAssertEqual(asAnyHashable(savedPing), asAnyHashable(GleanMetrics.Pings.shared.topsitesImpression))
         XCTAssertEqual(gleanWrapper.savedEvents.count, 2)
 
         // Ensuring we call the right metrics type
+        let firstMetric = GleanMetrics.TopSites.contileImpression
         let firstSavedMetric = try XCTUnwrap(
             gleanWrapper.savedEvents.first as? EventMetricType<GleanMetrics.TopSites.ContileImpressionExtra>
         )
-        let expectedFirstMetricType = type(of: GleanMetrics.TopSites.contileImpression)
-        let firstResultMetricType = type(of: firstSavedMetric)
-        let debugMessage = TelemetryDebugMessage(expectedMetric: expectedFirstMetricType,
-                                                 resultMetric: firstResultMetricType)
-        XCTAssert(firstResultMetricType == expectedFirstMetricType, debugMessage.text)
+        XCTAssert(firstSavedMetric === firstMetric, "Received \(firstSavedMetric) instead of \(firstMetric)")
 
+        let secondMetric = GleanMetrics.TopSites.contileAdvertiser
         let secondSavedMetric = try XCTUnwrap(gleanWrapper.savedEvents[safe: 1] as? StringMetricType)
-        let expectedSecondMetricType = type(of: GleanMetrics.TopSites.contileAdvertiser)
-        let secondResultMetricType = type(of: secondSavedMetric)
-        let secondDebugMessage = TelemetryDebugMessage(expectedMetric: expectedSecondMetricType,
-                                                       resultMetric: secondResultMetricType)
-        XCTAssert(secondResultMetricType == expectedSecondMetricType, secondDebugMessage.text)
+        XCTAssert(secondSavedMetric === secondMetric, "Received \(secondSavedMetric) instead of \(secondMetric)")
     }
 
-    func testLegacyClickTelemetry() throws {
+    func testGleanClickTelemetry() throws {
         let subject = createSubject()
         subject.sendClickTelemetry(tileSite: tileSite, position: 1)
 
@@ -102,34 +77,59 @@ final class UnifiedAdsCallbackTelemetryTests: XCTestCase {
             XCTFail("savedPing is not of type Ping<NoReasonCodes>")
             return
         }
-        XCTAssertTrue(savedPing === GleanMetrics.Pings.shared.topsitesImpression)
+        XCTAssertEqual(asAnyHashable(savedPing), asAnyHashable(GleanMetrics.Pings.shared.topsitesImpression))
         XCTAssertEqual(gleanWrapper.savedEvents.count, 2)
 
         // Ensuring we call the right metrics type
+        let firstMetric = GleanMetrics.TopSites.contileClick
         let firstSavedMetric = try XCTUnwrap(
             gleanWrapper.savedEvents.first as? EventMetricType<GleanMetrics.TopSites.ContileClickExtra>
         )
-        let expectedFirstMetricType = type(of: GleanMetrics.TopSites.contileClick)
-        let firstResultMetricType = type(of: firstSavedMetric)
-        let debugMessage = TelemetryDebugMessage(expectedMetric: expectedFirstMetricType,
-                                                 resultMetric: firstResultMetricType)
-        XCTAssert(firstResultMetricType == expectedFirstMetricType, debugMessage.text)
+        XCTAssert(firstSavedMetric === firstMetric, "Received \(firstSavedMetric) instead of \(firstMetric)")
 
+        let secondMetric = GleanMetrics.TopSites.contileAdvertiser
         let secondSavedMetric = try XCTUnwrap(gleanWrapper.savedEvents[safe: 1] as? StringMetricType)
-        let expectedSecondMetricType = type(of: GleanMetrics.TopSites.contileAdvertiser)
-        let secondResultMetricType = type(of: secondSavedMetric)
-        let secondDebugMessage = TelemetryDebugMessage(expectedMetric: expectedSecondMetricType,
-                                                       resultMetric: secondResultMetricType)
-        XCTAssert(secondResultMetricType == expectedSecondMetricType, secondDebugMessage.text)
+        XCTAssert(secondSavedMetric === secondMetric, "Received \(secondSavedMetric) instead of \(secondMetric)")
+    }
+
+    func testImpressionTelemetry_callsRecordImpression() {
+        let subject = createSubject()
+
+        guard case SiteType.sponsoredSite(let siteInfo) = tileSite.type else {
+            XCTFail("Expected tileSite to be a .sponsoredSite")
+            return
+        }
+
+        subject.sendImpressionTelemetry(tileSite: tileSite, position: 1)
+        XCTAssertEqual(adsClientCallbackQueue.asyncCalled, 1)
+        XCTAssertEqual(mockAdsClient.recordImpressionCalledWith, siteInfo.impressionURL)
+        XCTAssertNil(mockAdsClient.recordClickCalledWith)
+    }
+
+    func testClickTelemetry_callsRecordClick() {
+        let subject = createSubject()
+
+        guard case SiteType.sponsoredSite(let siteInfo) = tileSite.type else {
+            XCTFail("Expected tileSite to be a .sponsoredSite")
+            return
+        }
+
+        subject.sendClickTelemetry(tileSite: tileSite, position: 1)
+        XCTAssertEqual(adsClientCallbackQueue.asyncCalled, 1)
+        XCTAssertEqual(mockAdsClient.recordClickCalledWith, siteInfo.clickURL)
+        XCTAssertNil(mockAdsClient.recordImpressionCalledWith)
     }
 
     // MARK: - Helper functions
 
     func createSubject(file: StaticString = #filePath, line: UInt = #line) -> UnifiedAdsCallbackTelemetry {
         let sponsoredTileGleanTelemetry = DefaultSponsoredTileGleanTelemetry(gleanWrapper: gleanWrapper)
-        let subject = DefaultUnifiedAdsCallbackTelemetry(networking: networking,
-                                                         logger: logger,
-                                                         sponsoredTileGleanTelemetry: sponsoredTileGleanTelemetry)
+        let subject = DefaultUnifiedAdsCallbackTelemetry(
+            adsClientFactory: MockMozAdsClientFactory(mockClient: mockAdsClient),
+            logger: logger,
+            sponsoredTileGleanTelemetry: sponsoredTileGleanTelemetry,
+            adsClientCallbackQueue: adsClientCallbackQueue
+        )
 
         trackForMemoryLeaks(subject, file: file, line: line)
 

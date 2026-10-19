@@ -34,6 +34,8 @@ final class MenuCell: UITableViewCell, ReusableCell, ThemeApplicable {
 
     private var iconImageView: UIImageView = .build()
 
+    private lazy var novaSelectedBackgroundView: UIView = .build()
+
     private var horizontalMargin: CGFloat {
         if #available(iOS 26.0, *) {
             return UX.horizontalMargin
@@ -135,11 +137,17 @@ final class MenuCell: UITableViewCell, ReusableCell, ThemeApplicable {
     func applyTheme(theme: Theme) {
         guard let model else { return }
         backgroundColor = theme.colors.layerSurfaceMedium.withAlphaComponent(mainMenuHelper?.backgroundAlpha() ?? 1.0)
+        if theme.isNova {
+            novaSelectedBackgroundView.backgroundColor = theme.colors.layer5Hover
+            selectedBackgroundView = novaSelectedBackgroundView
+        } else {
+            selectedBackgroundView = nil
+        }
         if model.isActive {
             titleLabel.textColor = theme.colors.textAccent
             descriptionLabel.textColor = theme.colors.textSecondary
             /* Ecosia: Use textAccent so the icon tint matches the title and aligns with the toggle's active colour
-            iconImageView.tintColor = theme.colors.iconAccentBlue
+            iconImageView.tintColor = theme.isNova ? theme.colors.iconAccent : theme.colors.iconAccentBlue
             */
             iconImageView.tintColor = theme.colors.textAccent
         } else if !model.isEnabled {

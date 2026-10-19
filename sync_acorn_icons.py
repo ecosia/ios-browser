@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import re
 import shutil
 import subprocess
 
@@ -9,7 +10,7 @@ This script automates the process of fetching, syncing, and organizing Acorn ico
 It performs the following tasks:
 1. Fetches the latest release of the Acorn icons repository from GitHub.
 2. Saves the latest release information locally to detect if a new release needs to be synced.
-3. Downloads the icons from the latest release and synchronizes them with the project's asset folder.
+3. Downloads the icons from the latest release and synchronizes them with the project's asset folders (see `ASSET_FOLDER_PATHS`).
 4. Sorts icons into categories based on their size (e.g., ExtraSmall, Small, Large, etc.).
 5. Generates the StandardImageIdentifiers.swift from BrowserKit's Common package.
 
@@ -36,7 +37,16 @@ TARGET_SIZES = [
     ("16", "Small"),
     ("20", "Medium"),
     ("24", "Large"),
-    ("30", "ExtraLarge")
+    ("30", "ExtraLarge"),
+    ("72", "ExtraExtraExtraLarge")
+]
+
+# Asset catalogs kept in sync with Acorn.
+ASSET_FOLDER_PATHS = [
+    "firefox-ios/Client/Assets/Images.xcassets/",
+    "firefox-ios/CredentialProvider/CredentialAssets.xcassets/",
+    "firefox-ios/Extensions/ShareTo/Images.xcassets/",
+    "firefox-ios/WidgetKit/Assets.xcassets/"
 ]
 
 def fetch_latest_release_from_acorn() -> dict|None:
@@ -87,8 +97,7 @@ def download_icons_and_save_in_assets():
     if clone_response.returncode != 0:
         print(f"Couldn't clone acorn icon repository")
         exit()
-    asset_folder_path = "../firefox-ios/Client/Assets/Images.xcassets/"
-    asset_folder_list = os.listdir(asset_folder_path)
+    asset_folders = [(f"../{path}", os.listdir(f"../{path}")) for path in ASSET_FOLDER_PATHS]
     sizes_to_copy = map(lambda x: x[0], TARGET_SIZES)
     for size in sizes_to_copy:
         icons_dir_path = f"acorn-icons/icons/mobile/{size}/pdf"
@@ -99,22 +108,24 @@ def download_icons_and_save_in_assets():
                 icon_path = os.path.join(dir_object[0], file)
                 folder_name = f"{os.path.splitext(file)[0]}.imageset".replace("Dark", "").replace("Light", "")
 
-                asset_file_path = f"{asset_folder_path}{folder_name}/{file}"
-                # file has to be a pdf and we need the file already present in the images folder
-                # the file need to be already in the asset folder, no different file can be added
-                if file.endswith(".pdf") and folder_name in asset_folder_list and os.path.exists(asset_file_path):
-                    destination_folder = os.path.join(asset_folder_path, folder_name)
-                    os.makedirs(destination_folder, exist_ok=True)
-                    
-                    destination_file = os.path.join(destination_folder, file)
-                    shutil.copy(icon_path, destination_file)
+                for asset_folder_path, asset_folder_list in asset_folders:
+                    asset_file_path = f"{asset_folder_path}{folder_name}/{file}"
+                    # file has to be a pdf and we need the file already present in the images folder
+                    # the file need to be already in the asset folder, no different file can be added
+                    if file.endswith(".pdf") and folder_name in asset_folder_list and os.path.exists(asset_file_path):
+                        destination_folder = os.path.join(asset_folder_path, folder_name)
+                        os.makedirs(destination_folder, exist_ok=True)
+
+                        destination_file = os.path.join(destination_folder, file)
+                        shutil.copy(icon_path, destination_file)
     
     os.chdir("..")
     subprocess.run(["rm", "-rf", temp_dir_folder_name])
 
 def sort_icons_by_size() -> dict:
     '''
-    Sort all the Acorns icons in firefox-ios/Client/Assets/Images.xcassets/ by their respective size
+    Sort all the Acorns icons found in ASSET_FOLDER_PATHS by their respective size.
+    Icons shared between several asset catalogs are only listed once.
 
     Returns:
         dict: A dictionary with the title sizes as key and as value the list of acorn folders with the respective size
@@ -124,25 +135,37 @@ def sort_icons_by_size() -> dict:
             ...
         }
     '''
+    # regular expression to check for camel case format starting with lowercase char i.e crossCircleFill
+    lower_camel_case_pattern = re.compile(r"^[a-z][a-zA-Z0-9]*$")
+
     icons_by_size = {}
     for _, titleSize in TARGET_SIZES:
         icons_by_size[titleSize] = []
 
-    asset_folder_path = "firefox-ios/Client/Assets/Images.xcassets/"
-    for folder in os.listdir(asset_folder_path):
-        if folder.endswith(".imageset"):
-            file_name = folder.split(".")[0]
+    seen_icons = set()
+    for asset_folder_path in ASSET_FOLDER_PATHS:
+        for folder in sorted(os.listdir(asset_folder_path)):
+            if not folder.endswith(".imageset"):
+                continue
 
-            size_key = next((key for key in icons_by_size if key in file_name), None)
-            
-            if size_key:
-                # Check wether Extra not in the size_key while the file name has Extra size
-                # this means the next method pulled the wrong size_key
-                if "Extra" not in size_key and "Extra" in file_name:
-                    size_key = f"Extra{size_key}"
-                
-                icon_name = file_name.replace(size_key, "")
-                icons_by_size[size_key].append((icon_name, file_name))
+            file_name = folder.split(".")[0]
+            if file_name in seen_icons:
+                continue
+            seen_icons.add(file_name)
+
+            # Longest match wins so that sizes sharing a suffix (Large, ExtraLarge,
+            # ExtraExtraExtraLarge) resolve to the most specific one
+            size_key = max((key for key in icons_by_size if key in file_name), key=len, default=None)
+            if not size_key:
+                continue
+
+            icon_name = file_name.replace(size_key, "")
+            # Check wheter the icon_name is in lower camel case format otherwise the name is not a valid swift name for an acorn icon.
+            if not lower_camel_case_pattern.match(icon_name):
+                print(f"Skipping {folder}, \"{icon_name}\" is not lowerCamelCase")
+                continue
+
+            icons_by_size[size_key].append((icon_name, file_name))
 
     return icons_by_size
 
@@ -162,19 +185,20 @@ public struct StandardImageIdentifiers {
     for image_size, image_size_title in TARGET_SIZES:
         size_struct_map[image_size_title] = f"{image_size}x{image_size}"
 
+    struct_blocks = []
     for size, struct_name in size_struct_map.items():
         if sorted_icons[size]:
-            swift_file_content += f"    // Icon size {struct_name}\n"
-            swift_file_content += f"    public struct {size} {{\n"
-            
+            block = f"    // Icon size {struct_name}\n"
+            block += f"    public struct {size} {{\n"
+
             # Sort icons alphabetically and add them to the struct
             for icon_info in sorted(sorted_icons[size], key=lambda x: x[0].lower()):
-                swift_file_content += f"        public static let {icon_info[0]} = \"{icon_info[1]}\"\n"
-            
-            if size == "ExtraLarge":
-                swift_file_content += "    }\n"
-            else:
-                swift_file_content += "    }\n\n"
+                block += f"        public static let {icon_info[0]} = \"{icon_info[1]}\"\n"
+
+            block += "    }\n"
+            struct_blocks.append(block)
+
+    swift_file_content += "\n".join(struct_blocks)
     swift_file_content += "}\n"
 
     standard_image_file_path = "BrowserKit/Sources/Common/Constants/StandardImageIdentifiers.swift"

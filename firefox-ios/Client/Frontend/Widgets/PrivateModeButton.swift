@@ -35,7 +35,8 @@ final class PrivateModeButton: ToggleButton, PrivateModeUI {
            - normal:   iconPrimary  (buttonContentSecondary) as icon, no circle
            - selected: buttonContentPrimary (White) as icon, buttonContentSecondary circle
                        (circle colour is driven by layerAccentPrivate in EcosiaLightTheme).
-        tintColor = isPrivate ? colors.iconOnColor : colors.iconPrimary
+        let selectedTint = theme.isNova ? colors.iconInverted : colors.iconOnColor
+        tintColor = isPrivate ? selectedTint : colors.iconPrimary
          */
         tintColor = isPrivate ? theme.colors.ecosia.buttonContentPrimary : colors.iconPrimary
         imageView?.tintColor = tintColor
@@ -50,7 +51,9 @@ final class PrivateModeButton: ToggleButton, PrivateModeUI {
     override func applyTheme(theme: Theme) {
         super.applyTheme(theme: theme)
         /* Ecosia: Same inversion logic as applyUIMode — see comment there.
-        tintColor = isSelected ? colors.iconOnColor : colors.iconPrimary
+        let colors = theme.colors
+        let selectedTint = theme.isNova ? colors.iconInverted : colors.iconOnColor
+        tintColor = isSelected ? selectedTint : colors.iconPrimary
          */
         tintColor = isSelected ? theme.colors.ecosia.buttonContentPrimary : theme.colors.iconPrimary
         imageView?.tintColor = tintColor

@@ -5,7 +5,7 @@
 import UIKit
 import Common
 
-final class ReaderPanelEmptyStateView: UIView {
+final class ReaderPanelEmptyStateView: UIView, ThemeApplicable {
     private struct UX {
         static let WelcomeScreenPadding: CGFloat = 15
         static let WelcomeScreenHorizontalMinPadding: CGFloat = 40
@@ -28,7 +28,6 @@ final class ReaderPanelEmptyStateView: UIView {
         label.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: .systemFont(ofSize: 17, weight: .semibold))
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
-        label.textColor = self.currentTheme().colors.textSecondary
     }
 
     private lazy var readerModeLabel: UILabel = .build { label in
@@ -39,14 +38,12 @@ final class ReaderPanelEmptyStateView: UIView {
         label.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
-        label.textColor = self.currentTheme().colors.textSecondary
     }
 
     private lazy var readerModeImageView: UIImageView = .build { imageView in
         imageView.contentMode = .scaleAspectFill
         imageView.image = UIImage(named: StandardImageIdentifiers.Large.readerView)?
             .withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = self.currentTheme().colors.textSecondary
     }
 
     private lazy var readingListLabel: UILabel = .build { label in
@@ -57,7 +54,6 @@ final class ReaderPanelEmptyStateView: UIView {
         label.font = UIFontMetrics(forTextStyle: .callout).scaledFont(for: .systemFont(ofSize: 16))
         label.adjustsFontForContentSizeCategory = true
         label.numberOfLines = 0
-        label.textColor = self.currentTheme().colors.textSecondary
     }
 
     private lazy var readingListImageView: UIImageView = .build { imageView in
@@ -67,7 +63,6 @@ final class ReaderPanelEmptyStateView: UIView {
         */
         imageView.image = UIImage(named: "addToReadingListUpdate")?
             .withRenderingMode(.alwaysTemplate)
-        imageView.tintColor = self.currentTheme().colors.textSecondary
     }
 
     private lazy var emptyStateViewWrapper: UIView = .build { view in
@@ -174,7 +169,12 @@ final class ReaderPanelEmptyStateView: UIView {
         readingListLabel.setContentHuggingPriority(.defaultHigh, for: .vertical)
     }
 
-    private func currentTheme() -> Theme {
-        return themeManager.getCurrentTheme(for: windowUUID)
+    func applyTheme(theme: Theme) {
+        let iconColor = theme.isNova ? theme.colors.iconSecondary : theme.colors.textSecondary
+        welcomeLabel.textColor = theme.colors.textSecondary
+        readerModeLabel.textColor = theme.colors.textSecondary
+        readerModeImageView.tintColor = iconColor
+        readingListLabel.textColor = theme.colors.textSecondary
+        readingListImageView.tintColor = iconColor
     }
 }

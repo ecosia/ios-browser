@@ -15,14 +15,15 @@ class MainMenuViewController: UIViewController,
                               UIScrollViewDelegate,
                               Themeable,
                               Notifiable,
-                              StoreSubscriber,
-                              FeatureFlaggable {
+                              FeatureFlaggable,
+                              StoreSubscriber {
     private struct UX {
         static let hintViewCornerRadius: CGFloat = 20
         static let hintViewHeight: CGFloat = 140
         static let hintViewMargin: CGFloat = 20
         static let menuHeightTolerance: CGFloat = 20
         static let topMarginCFR: CGFloat = 100
+        static let novaBackgroundAlpha: CGFloat = 0.85
     }
     typealias SubscriberStateType = MainMenuState
 
@@ -52,10 +53,6 @@ class MainMenuViewController: UIViewController,
     private var isPad: Bool {
         traitCollection.verticalSizeClass == .regular &&
         !(UIDevice.current.userInterfaceIdiom == .phone)
-    }
-
-    private var isMenuDefaultBrowserBanner: Bool {
-        return featureFlags.isFeatureEnabled(.menuDefaultBrowserBanner, checking: .buildOnly)
     }
 
     private var bannerShown: Bool {
@@ -177,6 +174,10 @@ class MainMenuViewController: UIViewController,
             self?.dispatchSiteProtectionAction()
         }
 
+        menuContent.siteProtectionHeader.adBlockerButtonCallback = { [weak self] in
+            self?.dispatchAdBlockerAction()
+        }
+
         menuContent.closeButtonCallback = { [weak self] in
             self?.dispatchCloseMenuAction()
         }
@@ -187,6 +188,11 @@ class MainMenuViewController: UIViewController,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         applyTheme()
+
+        // An extra reload for menu content is necessary only on iOS 15
+        if #unavailable(iOS 16) {
+            reloadTableView(with: menuState.menuElements)
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -224,13 +230,9 @@ class MainMenuViewController: UIViewController,
         let shouldShowBlur = !mainMenuHelper.isReduceTransparencyEnabled
 
         if shouldShowBlur {
-#if canImport(FoundationModels)
             if #unavailable(iOS 26.0) {
                 view.addBlurEffectWithClearBackgroundAndClipping(using: .regular)
             }
-#else
-            view.addBlurEffectWithClearBackgroundAndClipping(using: .regular)
-#endif
         } else {
             view.removeVisualEffectView()
         }
@@ -291,13 +293,9 @@ class MainMenuViewController: UIViewController,
     }
 
     private func setupView() {
-        #if canImport(FoundationModels)
         if #unavailable(iOS 26.0) {
             view.addBlurEffectWithClearBackgroundAndClipping(using: .regular)
         }
-        #else
-            view.addBlurEffectWithClearBackgroundAndClipping(using: .regular)
-        #endif
         view.addSubview(menuContent)
 
         NSLayoutConstraint.activate([
@@ -311,7 +309,6 @@ class MainMenuViewController: UIViewController,
             title: String(format: .MainMenu.HeaderBanner.Title, AppName.shortName.rawValue),
             subtitle: .MainMenu.HeaderBanner.Subtitle,
             image: UIImage(named: ImageIdentifiers.foxDefaultBrowser),
-            isBannerFlagEnabled: isMenuDefaultBrowserBanner,
             isBrowserDefault: isBrowserDefault,
             bannerShown: bannerShown
         )
@@ -373,10 +370,10 @@ class MainMenuViewController: UIViewController,
     // MARK: - Redux
     func subscribeToRedux() {
         store.dispatch(
-            ScreenAction(
+            ComponentAction(
                 windowUUID: windowUUID,
-                actionType: ScreenActionType.showScreen,
-                screen: .mainMenu
+                actionType: ComponentActionType.addComponent,
+                component: .mainMenu
             )
         )
         let uuid = windowUUID
@@ -389,10 +386,10 @@ class MainMenuViewController: UIViewController,
 
     func unsubscribeFromRedux() {
         store.dispatch(
-            ScreenAction(
+            ComponentAction(
                 windowUUID: windowUUID,
-                actionType: ScreenActionType.closeScreen,
-                screen: .mainMenu
+                actionType: ComponentActionType.removeComponent,
+                component: .mainMenu
             )
         )
     }
@@ -449,6 +446,17 @@ class MainMenuViewController: UIViewController,
         )
     }
 
+    private func dispatchAdBlockerAction() {
+        store.dispatch(
+            MainMenuAction(
+                windowUUID: self.windowUUID,
+                actionType: MainMenuActionType.tapNavigateToDestination,
+                navigationDestination: MenuNavigationDestination(.adBlocker),
+                currentTabInfo: menuState.currentTabInfo
+            )
+        )
+    }
+
     private func dispatchDefaultBrowserAction() {
         store.dispatch(
             MainMenuAction(
@@ -465,27 +473,58 @@ class MainMenuViewController: UIViewController,
         let theme = themeManager.getCurrentTheme(for: windowUUID)
         /* Ecosia: Use layer1 (backgroundPrimaryDecorative) to match the Settings screen in dark
            mode; layerSurfaceLow falls through to Firefox's default palette.
-        view.backgroundColor = theme.colors.layerSurfaceLow.withAlphaComponent(mainMenuHelper.backgroundAlpha())
+        let menuBackground = theme.isNova ? theme.colors.layer1 : theme.colors.layerSurfaceLow
+        let shouldUseNovaAlpha = theme.isNova && !mainMenuHelper.isReduceTransparencyEnabled
+        let alpha = shouldUseNovaAlpha ? UX.novaBackgroundAlpha : mainMenuHelper.backgroundAlpha()
+        view.backgroundColor = menuBackground.withAlphaComponent(alpha)
          */
         view.backgroundColor = theme.colors.layer1.withAlphaComponent(mainMenuHelper.backgroundAlpha())
         menuContent.applyTheme(theme: theme)
     }
 
     private func updateSiteProtectionsHeaderWith(siteProtectionsData: SiteProtectionsData) {
-        var state = String.MainMenu.SiteProtection.ProtectionsOn
+        let state = String.MainMenu.SiteProtection.Protections
         var stateImage = StandardImageIdentifiers.Small.shieldCheckmarkFill
         var shouldUseRenderMode = false
+        var isProtectionsOn = false
 
         switch siteProtectionsData.state {
         case .notSecure:
-            state = String.MainMenu.SiteProtection.ConnectionNotSecure
             stateImage = StandardImageIdentifiers.Small.shieldSlashFillMulticolor
         case .on:
             shouldUseRenderMode = true
+            isProtectionsOn = true
         case .off:
-            state = String.MainMenu.SiteProtection.ProtectionsOff
             stateImage = StandardImageIdentifiers.Small.shieldSlashFillMulticolor
         }
+
+        let currentTheme = themeManager.getCurrentTheme(for: windowUUID)
+        if currentTheme.isNova {
+            stateImage = isProtectionsOn
+                ? StandardImageIdentifiers.Small.shieldCheckmarkFillGradient
+                : StandardImageIdentifiers.Small.shieldSlashFillMulticolor
+            shouldUseRenderMode = false
+        }
+
+        let protectionsTintColor = isProtectionsOn
+            ? currentTheme.colors.iconAccentGreen
+            : currentTheme.colors.iconAccentYellow
+
+        let adBlocker: MenuSiteAdBlockerBadgeData? = {
+            guard featureFlagsProvider.isEnabled(.adBlocker),
+                  featureFlagsProvider.isEnabled(.adBlockerBadge) else { return nil }
+            let isAdBlockerOn = profile.prefs.boolForKey(PrefsKeys.BlockAds) ?? false
+            let adBlockerImage = isAdBlockerOn
+                ? StandardImageIdentifiers.Medium.adBlockerCheckmark
+                : StandardImageIdentifiers.Medium.adBlockerCross
+            let adBlockerTintColor = isAdBlockerOn
+                ? currentTheme.colors.iconAccentGreen
+                : currentTheme.colors.iconAccentYellow
+            return MenuSiteAdBlockerBadgeData(title: String.MainMenu.SiteProtection.AdBlocker,
+                                              image: adBlockerImage,
+                                              shouldUseRenderMode: true,
+                                              iconTintColor: adBlockerTintColor)
+        }()
 
         menuContent.siteProtectionHeader.setupDetails(
             title: siteProtectionsData.title,
@@ -493,7 +532,11 @@ class MainMenuViewController: UIViewController,
             image: siteProtectionsData.image,
             state: state,
             stateImage: stateImage,
-            shouldUseRenderMode: shouldUseRenderMode)
+            shouldUseRenderMode: shouldUseRenderMode,
+            stateIconTintColor: protectionsTintColor,
+            stateTextColor: currentTheme.isNova ? currentTheme.colors.textPrimary : nil,
+            stateChevronTintColor: currentTheme.isNova ? currentTheme.colors.iconPrimary : nil,
+            adBlocker: adBlocker)
     }
 
     // MARK: - A11y

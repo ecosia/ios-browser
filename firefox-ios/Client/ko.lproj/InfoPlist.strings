@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "앱 아이콘";
+
 /* (No Comment) */
 "New Private Tab" = "새 사생활 보호 탭";
 
@@ -5,7 +8,7 @@
 "New Tab" = "새 탭";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia가 QR code 를 스캔하거나 사진, 영상을 찍기 위해 카메라를 사용합니다.";
+"NSCameraUsageDescription" = "Ecosia는 QR코드를 스캔하거나 사진이나 동영상을 찍을 때 카메라를 사용할 수 있습니다.";
 
 /* Privacy - Face ID Usage Description */
 "NSFaceIDUsageDescription" = "Ecosia가 저장된 비밀번호와 결제 방법에 접근하려면 Face ID가 필요합니다.";
@@ -18,6 +21,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "사진을 저장할 수 있게 합니다.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Ecosia는 음성 검색을 위해 음성 인식을 사용하여 음성을 텍스트로 변환합니다.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR 코드 스캔";

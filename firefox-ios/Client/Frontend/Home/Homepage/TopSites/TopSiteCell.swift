@@ -6,7 +6,6 @@ import Common
 import Foundation
 import Shared
 import SiteImageView
-import Storage
 import UIKit
 
 /// The TopSite cell that appears for the homepage rebuild project.
@@ -20,12 +19,8 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         static let imageBackgroundSize = CGSize(width: 60, height: 60)
         */
         static let imageBackgroundSize = CGSize(width: 56, height: 56)
-        static let pinIconSize = CGSize(width: 12, height: 12)
-        static let pinBackgroundSize = CGSize(width: 16, height: 16)
-        static let pinBackgroundCornerRadius: CGFloat = pinBackgroundSize.width / 2
-        static let pinBackgroundShadowOffset = CGSize(width: 1, height: 1)
-        static let pinBackgroundShadowOpacity: Float = 1.0
-        static let pinBackgroundShadowRadius: CGFloat = 4.0
+        static let addShortcutIconSize = CGSize(width: 24, height: 24)
+        static let pinIconSize = CGSize(width: 8, height: 8)
         /* Ecosia: Gap between icon container and label
         static let textSafeSpace: CGFloat = 6
         */
@@ -55,6 +50,11 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         return imageView
     }()
 
+    private lazy var addShortcutImageView: UIImageView = .build { imageView in
+        imageView.image = UIImage.templateImageNamed(StandardImageIdentifiers.Large.plus)
+        imageView.isHidden = true
+    }
+
     private lazy var descriptionWrapper: UIStackView = .build { stackView in
         stackView.backgroundColor = .clear
         stackView.axis = .vertical
@@ -62,18 +62,9 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         stackView.distribution = .fillProportionally
     }
 
-    private lazy var pinImageBackgroundView: UIView = .build { view in
-        view.backgroundColor = LightTheme().colors.layer2
-        view.layer.cornerRadius = UX.pinBackgroundCornerRadius
-        view.isHidden = true
-    }
-
     private lazy var pinImageView: UIImageView = .build { imageView in
-        /* Ecosia: StandardImageIdentifiers.Large.pinFill ("pinFillLarge") doesn't exist in the asset
-           catalog; use the small badge variant that does.
-        imageView.image = UIImage(named: StandardImageIdentifiers.Large.pinFill)
-         */
-        imageView.image = UIImage(named: "pinBadgeFillSmall")
+        imageView.image = UIImage(named: StandardImageIdentifiers.ExtraSmall.pin)?.withRenderingMode(.alwaysTemplate)
+        imageView.isHidden = true
     }
 
     private lazy var titleLabel: UILabel = .build { titleLabel in
@@ -125,7 +116,7 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         super.init(frame: frame)
         isAccessibilityElement = true
         accessibilityIdentifier = AccessibilityIdentifiers.FirefoxHomepage.TopSites.itemCell
-        // Ecosia: Allow pin badge to overflow outside rootContainer bounds
+        // Ecosia: Let the rootContainer shadow draw outside the cell bounds
         clipsToBounds = false
         contentView.clipsToBounds = false
 
@@ -141,7 +132,9 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 
         titleLabel.text = nil
         sponsoredLabel.text = nil
-        pinImageBackgroundView.isHidden = true
+        pinImageView.isHidden = true
+        imageView.isHidden = true
+        addShortcutImageView.isHidden = true
         imageViewConstraints.forEach { $0.constant = 0 }
         // Ecosia: Clean up glass-style views added in adjustBlur
         ecosiaRemoveGlassTintView()
@@ -159,13 +152,6 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         rootContainer.layoutIfNeeded()
         rootContainer.layer.shadowPath = UIBezierPath(roundedRect: rootContainer.bounds,
                                                       cornerRadius: UX.faviconCornerRadius).cgPath
-
-        pinImageBackgroundView.layer.shadowPath = UIBezierPath(roundedRect: pinImageBackgroundView.bounds,
-                                                               cornerRadius: UX.pinBackgroundCornerRadius).cgPath
-        pinImageBackgroundView.layer.shadowColor = theme?.colors.shadowStrong.cgColor
-        pinImageBackgroundView.layer.shadowOpacity = UX.pinBackgroundShadowOpacity
-        pinImageBackgroundView.layer.shadowOffset = UX.pinBackgroundShadowOffset
-        pinImageBackgroundView.layer.shadowRadius = UX.pinBackgroundShadowRadius
 
         // Ecosia: `addBlurEffect` guards on `!bounds.isEmpty` so it silently no-ops when called
         // during `configure()` before the first layout pass (new cells start with zero bounds).
@@ -190,6 +176,9 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         self.theme = theme
         homeTopSite = topSite
         titleLabel.text = topSite.title
+        imageView.isHidden = false
+        addShortcutImageView.isHidden = true
+        selectedOverlay.isHidden = true
         accessibilityLabel = topSite.accessibilityLabel
         accessibilityTraits = .link
 
@@ -230,23 +219,34 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         applyTheme(theme: theme)
     }
 
+    func configureAddShortcutTile(theme: Theme, textColor: UIColor?) {
+        self.theme = theme
+        self.textColor = textColor
+        homeTopSite = nil
+        titleLabel.text = .FirefoxHomepage.Shortcuts.AddShortcut.TileTitle
+        sponsoredLabel.text = nil
+        pinImageView.isHidden = true
+        imageView.isHidden = true
+        addShortcutImageView.isHidden = false
+        selectedOverlay.isHidden = true
+        accessibilityLabel = .FirefoxHomepage.Shortcuts.AddShortcut.TileTitle
+        accessibilityTraits = .button
+
+        applyTheme(theme: theme)
+    }
+
     // MARK: - Setup Helper methods
 
     private func setupLayout() {
-        pinImageBackgroundView.addSubview(pinImageView)
-
         descriptionWrapper.addArrangedSubview(titleLabel)
         descriptionWrapper.addArrangedSubview(sponsoredLabel)
 
         rootContainer.addSubview(imageView)
+        rootContainer.addSubview(addShortcutImageView)
         rootContainer.addSubview(selectedOverlay)
-        /* Ecosia: Pin badge moved from rootContainer to contentView so it isn't
-           clipped by rootContainer.clipsToBounds when the glass blur is applied.
-        rootContainer.addSubview(pinImageBackgroundView)
-         */
+        rootContainer.addSubview(pinImageView)
         contentView.addSubview(rootContainer)
         contentView.addSubview(descriptionWrapper)
-        contentView.addSubview(pinImageBackgroundView)
 
         NSLayoutConstraint.activate([
             /* Ecosia: Restore top alignment (centered layout was not on spec per ntp-design-feedback)
@@ -271,15 +271,15 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
             selectedOverlay.trailingAnchor.constraint(equalTo: rootContainer.trailingAnchor),
             selectedOverlay.bottomAnchor.constraint(equalTo: rootContainer.bottomAnchor),
 
-            pinImageView.centerXAnchor.constraint(equalTo: pinImageBackgroundView.centerXAnchor),
-            pinImageView.centerYAnchor.constraint(equalTo: pinImageBackgroundView.centerYAnchor),
+            addShortcutImageView.centerXAnchor.constraint(equalTo: rootContainer.centerXAnchor),
+            addShortcutImageView.centerYAnchor.constraint(equalTo: rootContainer.centerYAnchor),
+            addShortcutImageView.widthAnchor.constraint(equalToConstant: UX.addShortcutIconSize.width),
+            addShortcutImageView.heightAnchor.constraint(equalToConstant: UX.addShortcutIconSize.height),
+
+            pinImageView.topAnchor.constraint(equalTo: rootContainer.topAnchor),
+            pinImageView.leadingAnchor.constraint(equalTo: rootContainer.leadingAnchor),
             pinImageView.widthAnchor.constraint(equalToConstant: UX.pinIconSize.width),
             pinImageView.heightAnchor.constraint(equalToConstant: UX.pinIconSize.height),
-
-            pinImageBackgroundView.topAnchor.constraint(equalTo: rootContainer.topAnchor, constant: -4),
-            pinImageBackgroundView.leadingAnchor.constraint(equalTo: rootContainer.leadingAnchor, constant: -4),
-            pinImageBackgroundView.widthAnchor.constraint(equalToConstant: UX.pinBackgroundSize.width),
-            pinImageBackgroundView.heightAnchor.constraint(equalToConstant: UX.pinBackgroundSize.height),
         ])
 
         imageViewConstraints = [
@@ -293,11 +293,8 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 
     private func configurePinnedSite(_ topSite: TopSiteConfiguration) {
         guard topSite.isPinned else { return }
-        /* Ecosia: Pin badge was previously hidden on glass tiles. Re-enabled so users
-           can distinguish pinned shortcuts. Badge is now on contentView to avoid clipping.
-        guard !ecosiaGlassStyleEnabled else { return }
-         */
-        pinImageBackgroundView.isHidden = false
+
+        pinImageView.isHidden = false
     }
 
     private func configureSponsoredSite(_ topSite: TopSiteConfiguration) {
@@ -346,6 +343,7 @@ extension TopSiteCell: ThemeApplicable {
            may be nil or dark which would be invisible against the NTP dark wallpaper.
         titleLabel.textColor = textColor ?? theme.colors.textPrimary
         sponsoredLabel.textColor = textColor ?? theme.colors.textPrimary
+        selectedOverlay.backgroundColor = theme.colors.layer5Hover.withAlphaComponent(0.25)
         */
         let labelColor: UIColor = ecosiaGlassStyleEnabled ? .white : (textColor ?? theme.colors.textPrimary)
         titleLabel.textColor = labelColor
@@ -356,6 +354,8 @@ extension TopSiteCell: ThemeApplicable {
         } else {
             selectedOverlay.backgroundColor = theme.colors.layer5Hover.withAlphaComponent(0.25)
         }
+        pinImageView.tintColor = theme.colors.iconSecondary
+        addShortcutImageView.tintColor = theme.colors.iconPrimary
 
         adjustBlur(theme: theme)
     }

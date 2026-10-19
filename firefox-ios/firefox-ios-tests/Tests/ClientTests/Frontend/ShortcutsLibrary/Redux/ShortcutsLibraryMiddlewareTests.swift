@@ -33,15 +33,13 @@ final class ShortcutsLibraryMiddlewareTests: XCTestCase, StoreTestUtility {
             actionType: ShortcutsLibraryActionType.viewDidAppear
         )
 
-        subject.shortcutsLibraryProvider(initialState, action)
+        subject.shortcutsLibraryProvider.legacyMiddleware(initialState, action)
 
         let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<NoExtras>)
-        let expectedMetricType = type(of: GleanMetrics.HomepageShortcutsLibrary.viewed)
-        let resultMetricType = type(of: savedMetric)
-        let debugMessage = TelemetryDebugMessage(expectedMetric: expectedMetricType, resultMetric: resultMetricType)
+        let event = GleanMetrics.HomepageShortcutsLibrary.viewed
 
         XCTAssertEqual(mockGleanWrapper.recordEventNoExtraCalled, 1)
-        XCTAssert(resultMetricType == expectedMetricType, debugMessage.text)
+        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
     }
 
     func test_viewDidAppearAction_doesNotSendTelemetryData_whenShouldRecordImpressionTelemetry_isFalse() throws {
@@ -51,7 +49,7 @@ final class ShortcutsLibraryMiddlewareTests: XCTestCase, StoreTestUtility {
             actionType: ShortcutsLibraryActionType.viewDidAppear
         )
 
-        subject.shortcutsLibraryProvider(AppState(), action)
+        subject.shortcutsLibraryProvider.legacyMiddleware(AppState(), action)
 
         XCTAssertEqual(mockGleanWrapper.recordEventNoExtraCalled, 0)
     }
@@ -63,15 +61,13 @@ final class ShortcutsLibraryMiddlewareTests: XCTestCase, StoreTestUtility {
             actionType: ShortcutsLibraryActionType.viewDidDisappear
         )
 
-        subject.shortcutsLibraryProvider(AppState(), action)
+        subject.shortcutsLibraryProvider.legacyMiddleware(AppState(), action)
 
         let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<NoExtras>)
-        let expectedMetricType = type(of: GleanMetrics.HomepageShortcutsLibrary.closed)
-        let resultMetricType = type(of: savedMetric)
-        let debugMessage = TelemetryDebugMessage(expectedMetric: expectedMetricType, resultMetric: resultMetricType)
+        let event = GleanMetrics.HomepageShortcutsLibrary.closed
 
         XCTAssertEqual(mockGleanWrapper.recordEventNoExtraCalled, 1)
-        XCTAssert(resultMetricType == expectedMetricType, debugMessage.text)
+        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
     }
 
     func test_tapOnShortcutCellAction_sendsTelemetryData() throws {
@@ -81,15 +77,13 @@ final class ShortcutsLibraryMiddlewareTests: XCTestCase, StoreTestUtility {
             actionType: ShortcutsLibraryActionType.tapOnShortcutCell
         )
 
-        subject.shortcutsLibraryProvider(AppState(), action)
+        subject.shortcutsLibraryProvider.legacyMiddleware(AppState(), action)
 
         let savedMetric = try XCTUnwrap(mockGleanWrapper.savedEvents.first as? EventMetricType<NoExtras>)
-        let expectedMetricType = type(of: GleanMetrics.HomepageShortcutsLibrary.shortcutTapped)
-        let resultMetricType = type(of: savedMetric)
-        let debugMessage = TelemetryDebugMessage(expectedMetric: expectedMetricType, resultMetric: resultMetricType)
+        let event = GleanMetrics.HomepageShortcutsLibrary.shortcutTapped
 
         XCTAssertEqual(mockGleanWrapper.recordEventNoExtraCalled, 1)
-        XCTAssert(resultMetricType == expectedMetricType, debugMessage.text)
+        XCTAssert(savedMetric === event, "Received \(savedMetric) instead of \(event)")
     }
 
     // MARK: - Helpers
@@ -112,11 +106,11 @@ final class ShortcutsLibraryMiddlewareTests: XCTestCase, StoreTestUtility {
             windowUUID: .XCTestDefaultUUID,
             actionType: ShortcutsLibraryActionType.initialize
         )
-        let newState = reducer(initialState, action)
+        let newState = reducer.legacyReducer(initialState, action)
 
         return AppState(
-            activeScreens: ActiveScreensState(
-                screens: [
+            presentedComponents: PresentedComponentsState(
+                components: [
                     .shortcutsLibrary(newState)
                 ]
             )
@@ -132,8 +126,8 @@ final class ShortcutsLibraryMiddlewareTests: XCTestCase, StoreTestUtility {
     // MARK: StoreTestUtility
     func setupAppState() -> AppState {
         return AppState(
-            activeScreens: ActiveScreensState(
-                screens: [
+            presentedComponents: PresentedComponentsState(
+                components: [
                     .shortcutsLibrary(
                         ShortcutsLibraryState(
                             windowUUID: .DefaultUITestingUUID

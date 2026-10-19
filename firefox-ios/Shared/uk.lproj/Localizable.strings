@@ -1415,7 +1415,7 @@
 "Settings.NewTab.TopSectionName" = "Показати";
 
 /* Footer at the bottom of the New Tab screen after entering New Tab in settings */
-"Settings.NewTab.TopSectionNameFooter" = "Оберіть, що завантажувати при відкритті нової вкладки";
+"Settings.NewTab.TopSectionNameFooter" = "Оберіть, що завантажувати під час відкриття нової вкладки";
 
 /* Label for the block images toggle displayed in the settings menu. Enabling this toggle will hide images on any webpage the user visits. */
 "Settings.NoImageModeBlockImages.Label.v99" = "Блокувати зображення";
@@ -1500,6 +1500,9 @@
 
 /* Button label that appears in the settings to prompt the user to sign in to Firefox for iOS sync service to sync and save data. */
 "Settings.Sync.ButtonTitle.v103" = "Синхронізувати та зберегти дані";
+
+/* In the settings account row, shown transiently while the user is being signed out of their account. */
+"Settings.Sync.SigningOut.Title.v154" = "Вихід…";
 
 /* Title for the page where the user sign in to their Firefox Sync account. */
 "Settings.Sync.SignInView.Title.v103" = "Синхронізувати та зберегти дані";

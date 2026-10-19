@@ -28,7 +28,6 @@ class SnapshotBaseTests: XCTestCase {
         mockThemeManager.windowUUID = .snapshotTestDefaultUUID
         DependencyHelperMock().bootstrapDependencies(themeManager: mockThemeManager)
         profile = MockProfile()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         themeManager = AppContainer.shared.resolve()
     }
 

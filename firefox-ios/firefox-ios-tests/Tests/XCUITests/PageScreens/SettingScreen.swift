@@ -17,19 +17,21 @@ final class SettingScreen {
     private var clearDataCell: XCUIElement { sel.CLEAR_PRIVATE_DATA_CELL.element(in: app) }
     private var okButton: XCUIElement { sel.ALERT_OK_BUTTON.element(in: app)}
     private var toggle: XCUIElement { sel.BLOCK_POPUPS_SWITCH.element(in: app) }
+    private var copiedLinksToggle: XCUIElement {
+        app.tables.cells.switches["Offer to Open Copied Links, When opening Firefox"]
+    }
     private var translationCell: XCUIElement { sel.TRANSLATION_CELL_TITLE.element(in: app) }
+    private var toolbarCell: XCUIElement { sel.TOOLBAR_CELL.element(in: app) }
+    private var bottomToolbarButton: XCUIElement { sel.BOTTOM_TOOLBAR_BUTTON.element(in: app) }
 
     func closeSettingsWithDoneButton() {
         let doneButton = sel.DONE_BUTTON.element(in: app)
+        BaseTestCase().mozWaitElementHittable(element: doneButton, timeout: TIMEOUT)
         doneButton.waitAndTap()
     }
 
     func rotateDevice(to orientation: UIDeviceOrientation) {
         XCUIDevice.shared.orientation = orientation
-    }
-
-    func switchTheme(to theme: String) {
-        BaseTestCase().switchThemeToDarkOrLight(theme: theme)
     }
 
     func validatePrivacyOptions(timeout: TimeInterval = TIMEOUT_LONG) {
@@ -106,6 +108,33 @@ final class SettingScreen {
         XCTAssertEqual(value, "0", "Expected 'Block Pop-Ups' switch to be OFF (value = 0), but got \(String(describing: value))")
     }
 
+    func assertCopiedLinksToggleIsOff() {
+        BaseTestCase().mozWaitForElementToExist(copiedLinksToggle)
+
+        let value = copiedLinksToggle.value as? String
+        XCTAssertEqual(
+            value,
+            "0",
+            "Expected 'Offer to Open Copied Links, When opening Firefox' switch to be OFF (value = 0), but got \(String(describing: value))"
+        )
+    }
+
+    func assertCopiedLinksToggleIsOn() {
+        BaseTestCase().mozWaitForElementToExist(copiedLinksToggle)
+
+        let value = copiedLinksToggle.value as? String
+        XCTAssertEqual(
+            value,
+            "1",
+            "Expected 'Offer to Open Copied Links, When opening Firefox' switch to be ON (value = 1), but got \(String(describing: value))"
+        )
+    }
+
+    func tapCopiedLinksToggle() {
+        BaseTestCase().mozWaitForElementToExist(copiedLinksToggle)
+        copiedLinksToggle.waitAndTap()
+    }
+
     func navigateBackToHomePage() {
         sel.TITLE.element(in: app).waitAndTap()
         sel.NAVIGATIONBAR.element(in: app).waitAndTap()
@@ -159,6 +188,84 @@ final class SettingScreen {
         cell.waitAndTap()
     }
 
+    func navigateToToolbarSettings() {
+        BaseTestCase().mozWaitForElementToExist(toolbarCell)
+        toolbarCell.waitAndTap()
+    }
+
+    func selectBottomToolbar() {
+        BaseTestCase().mozWaitForElementToExist(bottomToolbarButton)
+        bottomToolbarButton.waitAndTap()
+    }
+
+    func navigateToDisplaySettings() {
+        let cell = sel.DISPLAY_THEME_CELL.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(cell)
+        cell.waitAndTap()
+    }
+
+    func assertAppearanceScreenIsShown() {
+        let navBar = sel.APPEARANCE_NAVIGATION_BAR.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(navBar)
+    }
+
+    func assertAutomaticThemeSelected(_ selected: Bool = true) {
+        let button = sel.AUTOMATIC_THEME_BUTTON.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(button)
+        let value = button.value as? String
+        let expected = selected ? "1" : "0"
+        XCTAssertEqual(value, expected, "Expected 'Automatic Theme' button selected=\(selected), but got \(String(describing: value))")
+    }
+
+    func assertLightThemeSelected(_ selected: Bool = true) {
+        let button = sel.LIGHT_THEME_BUTTON.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(button)
+        let value = button.value as? String
+        let expected = selected ? "1" : "0"
+        XCTAssertEqual(value, expected, "Expected 'Light Theme' button selected=\(selected), but got \(String(describing: value))")
+    }
+
+    func assertDarkThemeSelected(_ selected: Bool = true) {
+        let button = sel.DARK_THEME_BUTTON.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(button)
+        let value = button.value as? String
+        let expected = selected ? "1" : "0"
+        XCTAssertEqual(value, expected, "Expected 'Dark Theme' button selected=\(selected), but got \(String(describing: value))")
+    }
+
+    func selectDarkTheme() {
+        let button = sel.DARK_THEME_BUTTON.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(button)
+        button.waitAndTap()
+    }
+
+    func selectLightTheme() {
+        let button = sel.LIGHT_THEME_BUTTON.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(button)
+        button.waitAndTap()
+    }
+
+    func selectAutomaticTheme() {
+        let button = sel.AUTOMATIC_THEME_BUTTON.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(button)
+        button.waitAndTap()
+    }
+
+    func tapBackToSettings() {
+        guard !app.navigationBars["Settings"].exists else { return }
+        let backButton = app.navigationBars.element(boundBy: 0).buttons.element(boundBy: 0)
+        BaseTestCase().mozWaitElementHittable(element: backButton, timeout: TIMEOUT)
+        backButton.tap()
+        BaseTestCase().mozWaitForElementToExist(app.navigationBars["Settings"])
+    }
+
+    func navigateToAutofillPasswordSettings() {
+        let settingsTable = sel.SETTINGS_TABLE.element(in: app)
+        let cell = settingsTable.cells[sel.AUTOFILLS_PASSWORDS_CELL.value]
+        BaseTestCase().mozWaitForElementToExist(cell)
+        cell.waitAndTap()
+    }
+
     func waitForBlockImagesSwitch() -> XCUIElement {
         let sw = app.otherElements.tables.cells.switches[sel.BLOCK_IMAGES_SWITCH_TITLE.value]
         BaseTestCase().mozWaitForElementToExist(sw)
@@ -186,7 +293,84 @@ final class SettingScreen {
         translationCell.waitAndTap()
     }
 
+    func openAIControlsSettings() {
+        let cell = app.tables.cells[AccessibilityIdentifiers.Settings.AIControls.title]
+        BaseTestCase().scrollToElement(cell)
+        cell.waitAndTap()
+    }
+
+    func openSummarizeSettings() {
+        let cell = app.tables.cells[AccessibilityIdentifiers.Settings.Summarize.title]
+        BaseTestCase().scrollToElement(cell)
+        cell.waitAndTap()
+    }
+
     func assertTranslationSettingsDoesNotExist() {
         BaseTestCase().mozWaitForElementToNotExist(translationCell)
+    }
+
+    func assertSendTechicalDataIsOn() {
+        let toggle = sel.SEND_DATA_CELL.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(toggle)
+
+        let value = toggle.value as? String
+        XCTAssertEqual(value,
+                       "1",
+                       "Expected 'Technical Data' switch to be ON (value = 1), but got \(String(describing: value))")
+    }
+
+    func assertSendCrashReportsIsOn() {
+        let toggle = sel.SEND_CRASH_REPORTS_CELL.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(toggle)
+
+        let value = toggle.value as? String
+        XCTAssertEqual(value,
+                       "1",
+                       "Expected 'Crash reports' switch to be ON (value = 1), but got \(String(describing: value))")
+    }
+
+    private var closePrivateTabsSwitch: XCUIElement {
+        let settingTable = sel.SETTINGS_TABLE.element(in: app)
+        let toggle = sel.CLOSE_PRIVATE_TABS_SWITCH.value
+        return settingTable.cells.switches[toggle]
+    }
+
+    func disableClosePrivateTabs() {
+        setClosePrivateTabs(on: false)
+    }
+
+    func enableClosePrivateTabs() {
+        setClosePrivateTabs(on: true)
+    }
+
+    /// XCUITest can retry a tap that already registered, which toggles the switch straight back, so
+    /// the value is re-checked and corrected rather than toggled once.
+    private func setClosePrivateTabs(on: Bool, attempts: Int = 3) {
+        let switchElement = closePrivateTabsSwitch
+        let expected = on ? "1" : "0"
+        BaseTestCase().mozWaitForElementToExist(switchElement)
+        BaseTestCase().scrollToElement(switchElement)
+        for _ in 0..<attempts {
+            if switchElement.value as? String == expected { break }
+            switchElement.waitAndTap()
+            _ = switchValueSettles(switchElement, to: expected)
+        }
+        XCTAssertTrue(switchValueSettles(switchElement, to: expected),
+                      "The Close Private Tabs switch did not settle on \(expected)")
+    }
+
+    private func switchValueSettles(_ element: XCUIElement, to expected: String, timeout: TimeInterval = 2) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        repeat {
+            if element.value as? String == expected { return true }
+            usleep(10000)
+        } while Date() < deadline
+        return false
+    }
+
+    func navigateToSearchSettings() {
+        let searchCell = sel.SEARCH_CELL.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(searchCell)
+        searchCell.waitAndTap()
     }
 }

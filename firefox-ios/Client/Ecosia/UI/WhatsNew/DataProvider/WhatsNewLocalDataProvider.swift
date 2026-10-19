@@ -67,7 +67,10 @@ final class WhatsNewLocalDataProvider: WhatsNewDataProvider {
                          subtitle: .localized(.whatsNewSecondItemDescription9_0_0))
         ],
         Version("10.0.0")!: [
-            WhatsNewItem(image: UIImage(named: StandardImageIdentifiers.Large.pageZoom),
+            // Ecosia: 155.1 removed both `StandardImageIdentifiers.Large.pageZoom` and the
+            // `pageZoomLarge` imageset. Kept as a literal so this historical 10.0.0 entry still
+            // compiles; the icon now resolves to nil for that (long-past) release note.
+            WhatsNewItem(image: UIImage(named: "pageZoomLarge"),
                          title: .localized(.whatsNewFirstItemTitle10_0_0),
                          subtitle: .localized(.whatsNewFirstItemDescription10_0_0)),
             WhatsNewItem(image: UIImage(named: StandardImageIdentifiers.Large.lock),

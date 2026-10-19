@@ -7,7 +7,9 @@ import Shared
 import Common
 import Ecosia
 
-class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggable {
+class HomePageSettingViewController: SettingsTableViewController,
+                                     FeatureFlaggable,
+                                     UserFeaturePreferenceProvider {
     // MARK: - Variables
     /* variables for checkmark settings */
     let prefs: Prefs
@@ -46,7 +48,9 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
             action: #selector(done))
         if #available(iOS 26.0, *) {
             let theme = themeManager.getCurrentTheme(for: windowUUID)
-            navigationItem.rightBarButtonItem?.tintColor = theme.colors.textPrimary
+            navigationItem.rightBarButtonItem?.tintColor = theme.isNova
+                ? theme.colors.actionPrimary
+                : theme.colors.textPrimary
         }
     }
 
@@ -134,25 +138,17 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
         // Ecosia: Climate Impact toggle to show/hide impact rows on the NTP
         sectionItems.append(ClimateImpactSettings(settings: self))
 
-        /* Ecosia: Ecosia's NTP never shows Jump Back In or Bookmarks sections, so their
-           settings toggles must never appear regardless of feature-flag state. The original
-           Firefox guard (shouldHideSections) only suppresses them when .homepageStoriesRedesign
-           is enabled at build time, which is not the case on release builds.
-        let shouldHideSections = featureFlags.isFeatureEnabled(.homepageStoriesRedesign, checking: .buildOnly)
-        let isStoriesRedesignV2Enabled = featureFlags.isFeatureEnabled(.homepageStoriesRedesignV2, checking: .buildOnly)
-
-        if let profile, !shouldHideSections {
-            let bookmarksAndJBIDefaultValue = !isStoriesRedesignV2Enabled
-            let isBookmarksSectionPrefEnabled = profile.prefs.boolForKey(PrefsKeys.HomepageSettings.BookmarksSection)
-                                                ?? bookmarksAndJBIDefaultValue
-            let isJumpBackInSectionPrefEnabled = profile.prefs.boolForKey(PrefsKeys.HomepageSettings.JumpBackInSection)
-                                                ?? bookmarksAndJBIDefaultValue
-
+        /* Ecosia: Ecosia's NTP never shows the Jump Back In, Tracker Blocker or Bookmarks sections,
+           so their settings toggles must never appear. Upstream dropped its own `shouldHideSections`
+           feature-flag guard in 155.1 and now shows these unconditionally (the Tracker Blocker toggle
+           behind `.homepageTrackerBlockerModule`, which is enabled on the developer channel), so the
+           whole block stays removed here.
+        if let profile {
             let jumpBackInSetting = BoolSetting(
                 prefs: profile.prefs,
                 theme: themeManager.getCurrentTheme(for: windowUUID),
                 prefKey: PrefsKeys.HomepageSettings.JumpBackInSection,
-                defaultValue: isJumpBackInSectionPrefEnabled,
+                defaultValue: userPreferences.getPreferenceFor(.homepageJumpBackinSectionDefault),
                 titleText: .Settings.Homepage.CustomizeFirefoxHome.JumpBackIn
             ) { value in
                 store.dispatch(
@@ -165,11 +161,30 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
             }
             sectionItems.append(jumpBackInSetting)
 
+            if featureFlagsProvider.isEnabled(.homepageTrackerBlockerModule) {
+                let trackerBlockerModuleSetting = BoolSetting(
+                    prefs: profile.prefs,
+                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    prefKey: PrefsKeys.HomepageSettings.TrackerBlockerSection,
+                    defaultValue: userPreferences.getPreferenceFor(.homepageTrackerBlockerModule),
+                    titleText: .Settings.Homepage.CustomizeFirefoxHome.PrivacyReport
+                ) { value in
+                    store.dispatch(
+                        TrackerBlockerModuleAction(
+                            isEnabled: value,
+                            windowUUID: self.windowUUID,
+                            actionType: TrackerBlockerModuleActionType.toggleShowSectionSetting
+                        )
+                    )
+                }
+                sectionItems.append(trackerBlockerModuleSetting)
+            }
+
             let bookmarksSetting = BoolSetting(
                 prefs: profile.prefs,
                 theme: themeManager.getCurrentTheme(for: windowUUID),
                 prefKey: PrefsKeys.HomepageSettings.BookmarksSection,
-                defaultValue: isBookmarksSectionPrefEnabled,
+                defaultValue: userPreferences.getPreferenceFor(.homepageBookmarksSectionDefault),
                 titleText: .Settings.Homepage.CustomizeFirefoxHome.Bookmarks
             ) { value in
                 store.dispatch(
@@ -224,7 +239,7 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
     }
 
     private func setupStartAtHomeSection() -> SettingSection {
-        let pref: StartAtHome = featureFlags.getCustomState(for: .startAtHome) ?? .afterFourHours
+        let pref = userPreferences.startAtHomeSetting
         currentStartAtHomeSetting = StartAtHomeSetting(rawValue: pref.rawValue) ?? .afterFourHours
 
         typealias a11y = AccessibilityIdentifiers.Settings.Homepage.StartAtHome
@@ -291,7 +306,7 @@ class HomePageSettingViewController: SettingsTableViewController, FeatureFlaggab
 
 // MARK: - TopSitesSettings
 extension HomePageSettingViewController {
-    class TopSitesSettings: Setting, FeatureFlaggable {
+    class TopSitesSettings: Setting {
         var profile: Profile?
         let windowUUID: WindowUUID
 
@@ -325,7 +340,7 @@ extension HomePageSettingViewController {
 
 // MARK: - WallpaperSettings
 extension HomePageSettingViewController {
-    class WallpaperSettings: Setting, FeatureFlaggable {
+    class WallpaperSettings: Setting {
         var settings: SettingsTableViewController
         var tabManager: TabManager
         var wallpaperManager: WallpaperManagerInterface

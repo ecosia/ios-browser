@@ -20,6 +20,7 @@ final class AddressToolbarContainerModel: Equatable {
     let searchEngineName: String
     let searchEngineImage: UIImage
     let searchEnginesManager: SearchEnginesManager
+    let lockIconButtonA11yId: String?
     let lockIconImageName: String?
     let lockIconNeedsTheming: Bool
     let safeListedURLImageName: String?
@@ -29,13 +30,15 @@ final class AddressToolbarContainerModel: Equatable {
     let isEditing: Bool
     let didStartTyping: Bool
     let shouldShowKeyboard: Bool
+    let editingAccessoryAction: ToolbarElement?
     let isPrivateMode: Bool
     let shouldSelectSearchTerm: Bool
     let shouldDisplayCompact: Bool
     let canShowNavigationHint: Bool
     let shouldAnimate: Bool
-    let scrollAlpha: Float
     let hasAlternativeLocationColor: Bool
+    let isAddressBarMinimized: Bool
+    let isAccessoryViewVisible: Bool
 
     let windowUUID: UUID
 
@@ -51,7 +54,7 @@ final class AddressToolbarContainerModel: Equatable {
         let shouldBlur = toolbarHelper.shouldBlur()
         let uxConfiguration: AddressToolbarUXConfiguration = .experiment(
             backgroundAlpha: backgroundAlpha,
-            scrollAlpha: CGFloat(scrollAlpha),
+            isAddressBarMinimized: isAddressBarMinimized,
             shouldBlur: shouldBlur,
             hasAlternativeLocationColor: hasAlternativeLocationColor)
 
@@ -85,7 +88,7 @@ final class AddressToolbarContainerModel: Equatable {
                 format: .AddressToolbar.SearchEngineA11yLabel,
                 searchEngineName
             ),
-            lockIconButtonA11yId: AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon,
+            lockIconButtonA11yId: lockIconButtonA11yId,
             lockIconButtonA11yLabel: .AddressToolbar.PrivacyAndSecuritySettingsA11yLabel,
             urlTextFieldPlaceholder: .AddressToolbar.LocationPlaceholder,
             urlTextFieldA11yId: AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField,
@@ -100,6 +103,7 @@ final class AddressToolbarContainerModel: Equatable {
             didStartTyping: didStartTyping,
             shouldShowKeyboard: shouldShowKeyboard,
             shouldSelectSearchTerm: shouldSelectSearchTerm,
+            editingAccessoryAction: editingAccessoryAction,
             onTapLockIcon: { button in
                 let action = ToolbarMiddlewareAction(buttonType: .trackingProtection,
                                                      buttonTapped: button,
@@ -164,16 +168,12 @@ final class AddressToolbarContainerModel: Equatable {
     /// Returns a skeleton (placeholder) `AddressToolbarConfiguration` for the address bar.
     /// This method is intended to provide a minimal configuration for loading or placeholder states,
     /// with only essential actions and UI elements set up. Most properties are left empty or set to default values.
-    /// - Parameters:
-    ///   - url: The URL to display in the address bar, if any.
-    ///   - isReaderModeAvailableOrActive: Indicates if reader mode is available or active,
+    /// - Parameter tab: The tab whose URL, secure content status are used to configure
+    /// and determine which page actions should be displayed.
     ///   used to determine trailing actions.
     /// - Returns: A skeleton `AddressToolbarConfiguration` suitable for placeholder or loading UI.
     @MainActor
-    func configureSkeletonAddressBar(
-        with url: URL?,
-        isReaderModeAvailableOrActive: Bool?
-    ) -> AddressToolbarConfiguration {
+    func getSkeletonAddressBarConfiguration(for tab: Tab?) -> AddressToolbarConfiguration {
         let backgroundAlpha = toolbarHelper.glassEffectAlpha
         let shouldBlur = toolbarHelper.shouldBlur()
         let uxConfiguration: AddressToolbarUXConfiguration = .experiment(backgroundAlpha: backgroundAlpha,
@@ -181,7 +181,7 @@ final class AddressToolbarContainerModel: Equatable {
         // Leading Page Actions
         let shareAction: ToolbarActionConfiguration = .init(
             actionType: .share,
-            iconName: StandardImageIdentifiers.Medium.share,
+            iconName: StandardImageIdentifiers.Medium.shareApple,
             isEnabled: true,
             hasCustomColor: true,
             a11yLabel: "",
@@ -189,15 +189,6 @@ final class AddressToolbarContainerModel: Equatable {
         )
 
         // Trailing Page Actions
-        let readerModeAction: ToolbarActionConfiguration = .init(
-            actionType: .readerMode,
-            iconName: StandardImageIdentifiers.Medium.readerView,
-            isEnabled: true,
-            hasCustomColor: true,
-            a11yLabel: "",
-            a11yId: AccessibilityIdentifiers.Toolbar.readerModeButton
-        )
-
         let reloadAction: ToolbarActionConfiguration = .init(
             actionType: .reload,
             iconName: StandardImageIdentifiers.Medium.arrowClockwise,
@@ -210,23 +201,35 @@ final class AddressToolbarContainerModel: Equatable {
         var leadingPageElements = [ToolbarElement]()
         var trailingPageElements = [ToolbarElement]()
 
+        let url = tab?.url?.displayURL
         if url != nil {
             leadingPageElements = Self.mapActions([shareAction], isShowingTopTabs: false, windowUUID: windowUUID)
-            trailingPageElements = isReaderModeAvailableOrActive == true
-            ? Self.mapActions([readerModeAction, reloadAction], isShowingTopTabs: false, windowUUID: windowUUID)
-            : Self.mapActions([reloadAction], isShowingTopTabs: false, windowUUID: windowUUID)
+            trailingPageElements = Self.mapActions([reloadAction], isShowingTopTabs: false, windowUUID: windowUUID)
+        }
+
+        var lockIconImageName: String?
+        var lockIconNeedsTheming = true
+
+        let hasSecureContent = tab?.webView?.hasOnlySecureContent == true
+        let isWebsiteMode = tab?.url?.isReaderModeURL == false
+
+        if isWebsiteMode {
+            lockIconImageName = hasSecureContent ?
+                StandardImageIdentifiers.Small.shieldCheckmarkFill :
+                StandardImageIdentifiers.Small.shieldSlashFillMulticolor
+            lockIconNeedsTheming = hasSecureContent
         }
 
         let locationViewConfiguration = LocationViewConfiguration(
             searchEngineImageViewA11yId: "",
             searchEngineImageViewA11yLabel: "",
-            lockIconButtonA11yId: "",
+            lockIconButtonA11yId: nil,
             lockIconButtonA11yLabel: "",
             urlTextFieldPlaceholder: .AddressToolbar.LocationPlaceholder,
             urlTextFieldA11yId: "",
             searchEngineImage: nil,
-            lockIconImageName: "",
-            lockIconNeedsTheming: false,
+            lockIconImageName: lockIconImageName,
+            lockIconNeedsTheming: lockIconNeedsTheming,
             safeListedURLImageName: safeListedURLImageName,
             url: url,
             droppableUrl: nil,
@@ -262,18 +265,21 @@ final class AddressToolbarContainerModel: Equatable {
         windowUUID: UUID
     ) {
         self.borderPosition = state.addressToolbar.borderPosition
-        self.navigationActions = AddressToolbarContainerModel.mapActions(state.addressToolbar.navigationActions,
-                                                                         isShowingTopTabs: state.isShowingTopTabs,
-                                                                         windowUUID: windowUUID)
-        self.leadingPageActions = AddressToolbarContainerModel.mapActions(state.addressToolbar.leadingPageActions,
-                                                                          isShowingTopTabs: state.isShowingTopTabs,
-                                                                          windowUUID: windowUUID)
-        self.trailingPageActions = AddressToolbarContainerModel.mapActions(state.addressToolbar.trailingPageActions,
-                                                                           isShowingTopTabs: state.isShowingTopTabs,
-                                                                           windowUUID: windowUUID)
-        self.browserActions = AddressToolbarContainerModel.mapActions(state.addressToolbar.browserActions,
-                                                                      isShowingTopTabs: state.isShowingTopTabs,
-                                                                      windowUUID: windowUUID)
+        self.navigationActions = Self.mapActions(state.addressToolbar.navigationActions,
+                                                 isShowingTopTabs: state.isShowingTopTabs,
+                                                 windowUUID: windowUUID)
+        self.leadingPageActions = Self.mapActions(state.addressToolbar.leadingPageActions,
+                                                  isShowingTopTabs: state.isShowingTopTabs,
+                                                  windowUUID: windowUUID)
+        self.trailingPageActions = Self.mapActions(state.addressToolbar.trailingPageActions,
+                                                   isShowingTopTabs: state.isShowingTopTabs,
+                                                   windowUUID: windowUUID)
+        self.browserActions = Self.mapActions(state.addressToolbar.browserActions,
+                                              isShowingTopTabs: state.isShowingTopTabs,
+                                              windowUUID: windowUUID)
+        self.editingAccessoryAction = state.addressToolbar.editingAccessoryAction.map {
+            Self.mapAction($0, isShowingTopTabs: state.isShowingTopTabs, windowUUID: windowUUID)
+        }
 
         // If the user has selected an alternative search engine, use that. Otherwise, use the default engine.
         let searchEngineModel = state.addressToolbar.alternativeSearchEngine
@@ -286,6 +292,7 @@ final class AddressToolbarContainerModel: Equatable {
         self.searchEngineName = searchEngineModel?.name ?? ""
         self.searchEngineImage = searchEngineModel?.image ?? UIImage()
         self.searchEnginesManager = searchEnginesManager
+        self.lockIconButtonA11yId = state.addressToolbar.lockIconButtonA11yId
         self.lockIconImageName = state.addressToolbar.lockIconImageName
         self.lockIconNeedsTheming = state.addressToolbar.lockIconNeedsTheming
         self.safeListedURLImageName = state.addressToolbar.safeListedURLImageName
@@ -300,7 +307,8 @@ final class AddressToolbarContainerModel: Equatable {
         self.shouldDisplayCompact = state.isShowingNavigationToolbar
         self.canShowNavigationHint = state.canShowNavigationHint
         self.shouldAnimate = state.shouldAnimate
-        self.scrollAlpha = state.scrollAlpha
+        self.isAddressBarMinimized = state.isAddressBarMinimized
+        self.isAccessoryViewVisible = state.isAccessoryViewVisible
         self.hasAlternativeLocationColor = hasAlternativeLocationColor
         self.toolbarLayoutStyle = state.toolbarLayout
         self.toolbarHelper = toolbarHelper
@@ -332,36 +340,49 @@ final class AddressToolbarContainerModel: Equatable {
                                    isShowingTopTabs: Bool,
                                    windowUUID: UUID) -> [ToolbarElement] {
         return actions.map { action in
-            ToolbarElement(
-                iconName: action.iconName,
-                title: action.actionLabel,
-                badgeImageName: action.badgeImageName,
-                // Ecosia: Forward badge customisation parameters for the incognito icon
-                badgeBundle: action.badgeBundle,
-                badgeSize: action.badgeSize,
-                badgeXOffset: action.badgeXOffset,
-                badgeYOffset: action.badgeYOffset,
-                maskImageName: action.maskImageName,
-                templateModeForImage: action.templateModeForImage,
-                loadingConfig: action.loadingConfig,
-                numberOfTabs: action.numberOfTabs,
-                isEnabled: action.isEnabled,
-                isFlippedForRTL: action.isFlippedForRTL,
-                isSelected: action.isSelected,
-                hasCustomColor: action.hasCustomColor,
-                hasHighlightedColor: action.hasHighlightedColor,
-                largeContentTitle: action.largeContentTitle,
-                contextualHintType: action.contextualHintType,
-                a11yLabel: action.a11yLabel,
-                a11yHint: action.a11yHint,
-                a11yId: action.a11yId,
-                a11yCustomActionName: action.a11yCustomActionName,
-                a11yCustomAction: getA11yCustomAction(action: action, windowUUID: windowUUID),
-                hasLongPressAction: action.canPerformLongPressAction(isShowingTopTabs: isShowingTopTabs),
-                onSelected: getOnSelected(action: action, windowUUID: windowUUID),
-                onLongPress: getOnLongPress(action: action, windowUUID: windowUUID, isShowingTopTabs: isShowingTopTabs)
-            )
+            mapAction(action, isShowingTopTabs: isShowingTopTabs, windowUUID: windowUUID)
         }
+    }
+
+    @MainActor
+    private static func mapAction(_ action: ToolbarActionConfiguration,
+                                  isShowingTopTabs: Bool,
+                                  windowUUID: UUID) -> ToolbarElement {
+        return ToolbarElement(
+            iconName: action.iconName,
+            title: action.actionLabel,
+            badgeImageName: action.badgeImageName,
+            bottomBadgeImage: action.bottomBadgeImage,
+            // Ecosia: Forward badge customisation parameters for the incognito icon. These follow
+            // `bottomBadgeImage`, which 155.1 inserted ahead of them in `ToolbarElement.init`.
+            badgeBundle: action.badgeBundle,
+            badgeSize: action.badgeSize,
+            badgeXOffset: action.badgeXOffset,
+            badgeYOffset: action.badgeYOffset,
+            maskImageName: action.maskImageName,
+            templateModeForImage: action.templateModeForImage,
+            loadingConfig: action.loadingConfig,
+            numberOfTabs: action.numberOfTabs,
+            isEnabled: action.isEnabled,
+            isFlippedForRTL: action.isFlippedForRTL,
+            isSelected: action.isSelected,
+            hasCustomColor: action.hasCustomColor,
+            hasHighlightedColor: action.hasHighlightedColor,
+            largeContentTitle: action.largeContentTitle,
+            contextualHintType: action.contextualHintType,
+            a11yLabel: action.a11yLabel,
+            a11yHint: action.a11yHint,
+            a11yId: action.a11yId,
+            cacheId: action.cacheId,
+            a11yCustomActionName: action.a11yCustomActionName,
+            a11yCustomAction: getA11yCustomAction(action: action, windowUUID: windowUUID),
+            hasLongPressAction: action.canPerformLongPressAction(isShowingTopTabs: isShowingTopTabs),
+            previousTabScreenshot: action.previousTabScreenshot,
+            nextTabScreenshot: action.nextTabScreenshot,
+            onSelected: getOnSelected(actionType: action.actionType, windowUUID: windowUUID),
+            onLongPress: getOnLongPress(action: action, windowUUID: windowUUID, isShowingTopTabs: isShowingTopTabs),
+            menuElements: getMenuElements(action: action, windowUUID: windowUUID)
+        )
     }
 
     @MainActor
@@ -375,9 +396,10 @@ final class AddressToolbarContainerModel: Equatable {
     }
 
     @MainActor
-    private static func getOnSelected(action: ToolbarActionConfiguration, windowUUID: UUID) -> ((UIButton) -> Void)? {
+    private static func getOnSelected(actionType: ToolbarActionConfiguration.ActionType,
+                                      windowUUID: UUID) -> ((UIButton) -> Void)? {
         return { button in
-            let action = ToolbarMiddlewareAction(buttonType: action.actionType,
+            let action = ToolbarMiddlewareAction(buttonType: actionType,
                                                  buttonTapped: button,
                                                  gestureType: .tap,
                                                  windowUUID: windowUUID,
@@ -400,6 +422,18 @@ final class AddressToolbarContainerModel: Equatable {
         } : nil
     }
 
+    @MainActor
+    private static func getMenuElements(action: ToolbarActionConfiguration, windowUUID: UUID) -> [ToolbarMenuElement] {
+        return action.menuElements.map { menuElement in
+            ToolbarMenuElement(
+                title: menuElement.title,
+                imageName: menuElement.imageName,
+                a11yIdentifier: menuElement.a11yIdentifier,
+                onSelected: getOnSelected(actionType: menuElement.actionType, windowUUID: windowUUID)
+            )
+        }
+    }
+
     static func == (lhs: AddressToolbarContainerModel, rhs: AddressToolbarContainerModel) -> Bool {
         lhs.navigationActions == rhs.navigationActions &&
         lhs.leadingPageActions == rhs.leadingPageActions &&
@@ -409,6 +443,7 @@ final class AddressToolbarContainerModel: Equatable {
         lhs.borderPosition == rhs.borderPosition &&
         lhs.searchEngineName == rhs.searchEngineName &&
         lhs.searchEngineImage == rhs.searchEngineImage &&
+        lhs.lockIconButtonA11yId == rhs.lockIconButtonA11yId &&
         lhs.lockIconImageName == rhs.lockIconImageName &&
         lhs.lockIconNeedsTheming == rhs.lockIconNeedsTheming &&
         lhs.safeListedURLImageName == rhs.safeListedURLImageName &&
@@ -418,12 +453,14 @@ final class AddressToolbarContainerModel: Equatable {
         lhs.isEditing == rhs.isEditing &&
         lhs.didStartTyping == rhs.didStartTyping &&
         lhs.shouldShowKeyboard == rhs.shouldShowKeyboard &&
+        lhs.editingAccessoryAction == rhs.editingAccessoryAction &&
         lhs.isPrivateMode == rhs.isPrivateMode &&
         lhs.shouldSelectSearchTerm == rhs.shouldSelectSearchTerm &&
         lhs.shouldDisplayCompact == rhs.shouldDisplayCompact &&
         lhs.canShowNavigationHint == rhs.canShowNavigationHint &&
         lhs.shouldAnimate == rhs.shouldAnimate &&
-        lhs.scrollAlpha == rhs.scrollAlpha &&
+        lhs.isAddressBarMinimized == rhs.isAddressBarMinimized &&
+        lhs.isAccessoryViewVisible == rhs.isAccessoryViewVisible &&
         lhs.hasAlternativeLocationColor == rhs.hasAlternativeLocationColor &&
 
         lhs.windowUUID == rhs.windowUUID

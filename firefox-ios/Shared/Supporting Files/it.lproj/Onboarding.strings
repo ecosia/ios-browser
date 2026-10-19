@@ -187,6 +187,9 @@
 /* Title for the welcome card in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.Welcome.Title.v148.v2" = "Apri ogni link sapendo che la privacy è integrata";
 
+/* Title for the welcome card in the v149 brand refresh onboarding flow. */
+"Onboarding.Modern.BrandRefresh.Welcome.TitleV3.v149" = "Apri ogni link sapendo che la privacy è integrata";
+
 /* Option for the automatic theme. */
 "Onboarding.Modern.Customization.Theme.Automatic.v145" = "Automatico";
 
@@ -419,7 +422,7 @@
 "Onboarding.TermsOfService.TermsOfServiceAgreement.v135" = "Proseguendo, accetti le %@";
 
 /* Title for the Terms of Service screen in the onboarding process. %@ is the app name (e.g. Firefox). */
-"Onboarding.TermsOfService.Title.v135" = "Benvenuto in %@";
+"Onboarding.TermsOfService.Title.v135" = "Ti diamo il benvenuto in %@";
 
 /* Title for the Terms of Use button link, in the Terms of Use screen for redirecting the user to the Terms of Use page. %@ is the app name (e.g. Firefox). */
 "Onboarding.TermsOfUse.TermsOfUseLink.v136" = "Condizioni di utilizzo di %@.";
@@ -452,10 +455,10 @@
 "Onboarding.Welcome.Close.AccessibilityLabel.v121" = "Chiudi e termina introduzione di %@";
 
 /* String used to describes the description of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. */
-"Onboarding.Welcome.Description.TreatementA.v120" = "Il nostro browser, supportato da un’organizzazione senza fini di lucro, blocca automaticamente le società che, di nascosto, cercano di seguire le tue attività sul Web.";
+"Onboarding.Welcome.Description.TreatementA.v120" = "Il nostro browser, supportato da un’organizzazione senza fini di lucro, aiuta a bloccare le aziende che, di nascosto, cercano di seguire le tue attività sul Web.";
 
 /* String used to describes the description of what Firefox is on the welcome onboarding page for current version in our Onboarding screens. %@ is the app name (e.g. Firefox). */
-"Onboarding.Welcome.Description.v120" = "Il nostro browser, supportato da un’organizzazione senza fini di lucro, blocca automaticamente le società che, di nascosto, cercano di seguire le tue attività sul Web.";
+"Onboarding.Welcome.Description.v120" = "Il nostro browser, supportato da un’organizzazione senza fini di lucro, aiuta a bloccare le aziende che, di nascosto, cercano di seguire le tue attività sul Web.";
 
 /* String used to describe the title of link button is on the welcome onboarding page for current version in our Onboarding screens. */
 "Onboarding.Welcome.Link.Action.v114" = "Ulteriori informazioni nella nostra informativa sulla privacy";

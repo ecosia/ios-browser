@@ -5,17 +5,24 @@
 import XCTest
 
 class EngagementNotificationTests: BaseTestCase {
-    override func setUp() {
+    var notificationsSettingsScreen: NotificationsSettingsScreen!
+    var springboardScreen: SpringboardScreen!
+
+    override func setUp() async throws {
         // Fresh install the app
         // removeApp() does not work on iOS 15 and 16 intermittently
         if #available(iOS 17, *) {
             removeApp()
         }
         // The app is correctly installed
-        super.setUp()
+        try await super.setUp()
+
+        notificationsSettingsScreen = NotificationsSettingsScreen(app: app)
+        springboardScreen = SpringboardScreen()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2307101
+    // Regression
     func testDontAllowNotifications() throws {
         if #unavailable(iOS 17) {
             throw XCTSkip("setUp() fails to remove app intermittently")
@@ -26,24 +33,47 @@ class EngagementNotificationTests: BaseTestCase {
         // Navigate to "Tips and Features"
         // Toggle on switch position
         navigator.goto(NotificationsSettings)
-        let tipsSwitch = app.switches["TipsAndFeaturesNotificationsUserPrefsKey"]
-        mozWaitForElementToExist(tipsSwitch)
-        app.switches["TipsAndFeaturesNotificationsUserPrefsKey"].tap()
-        let springBoard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        let popUpTitle = "Would Like to Send You Notifications"
+        notificationsSettingsScreen.assertTipsAndFeaturesSwitchExists()
+        notificationsSettingsScreen.tapTipsAndFeaturesSwitch()
         // Validate pop-up
-        mozWaitForElementToExist(springBoard.alerts.elementContainingText(popUpTitle))
+        springboardScreen.assertNotificationsPermissionAlertExists()
         // Choose "Don't allow"
-        springBoard.buttons["Don’t Allow"].tap()
+        springboardScreen.tapDontAllowNotifications()
         // Toggle moves back to the "Off" position
-        mozWaitForValueContains(tipsSwitch, value: "0")
+        notificationsSettingsScreen.assertTipsAndFeaturesSwitchIsOff()
         // Validate You turned off all Firefox notifications message
-        let notificationMessage1 = "You turned off all Firefox notifications. "
-        let notificationMessage2 = "Turn them on by going to device Settings > Notifications > Firefox"
         // Workaround to validate message due to https://github.com/mozilla-mobile/firefox-ios/issues/13790
-        mozWaitForElementToNotExist(app.staticTexts[notificationMessage1 + notificationMessage2])
+        notificationsSettingsScreen.assertSystemNotificationsDisabledMessageNotExists()
         navigator.goto(SettingsScreen)
         navigator.goto(NotificationsSettings)
-        mozWaitForElementToExist(app.staticTexts[notificationMessage1 + notificationMessage2])
+        notificationsSettingsScreen.assertSystemNotificationsDisabledMessageExists()
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/view/2307102
+    // Regression
+    func testAllowNotifications() throws {
+        if #unavailable(iOS 17) {
+            throw XCTSkip("setUp() fails to remove app intermittently")
+        }
+        // Skip login
+        navigator.nowAt(BrowserTab)
+        waitForTabsButton()
+        // Navigate to "Tips and Features"
+        // Toggle on switch position
+        navigator.goto(NotificationsSettings)
+        notificationsSettingsScreen.assertTipsAndFeaturesSwitchExists()
+        notificationsSettingsScreen.tapTipsAndFeaturesSwitch()
+        // Validate pop-up
+        springboardScreen.assertNotificationsPermissionAlertExists()
+        // Choose "Allow"
+        springboardScreen.tapAllowNotifications()
+        // Toggle moves back to the "On" position
+        notificationsSettingsScreen.assertTipsAndFeaturesSwitchIsOn()
+        // Notifications are granted, so the system notifications disabled message is not displayed
+        notificationsSettingsScreen.assertSystemNotificationsDisabledMessageNotExists()
+        // The preference is persisted, so the toggle is still on when the screen is reopened
+        navigator.goto(SettingsScreen)
+        navigator.goto(NotificationsSettings)
+        notificationsSettingsScreen.assertTipsAndFeaturesSwitchIsOn()
     }
 }

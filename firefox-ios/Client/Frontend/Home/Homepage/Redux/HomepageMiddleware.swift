@@ -5,6 +5,7 @@
 import Foundation
 import Redux
 import Common
+import Shared
 
 /// Middleware to handle generic homepage related actions
 /// If this gets too big, can split out notifications and feature flags
@@ -29,13 +30,16 @@ final class HomepageMiddleware: FeatureFlaggable, Notifiable {
         observeNotifications()
     }
 
-    lazy var homepageProvider: Middleware<AppState> = { state, action in
-        switch action.actionType {
-        case HomepageActionType.viewDidAppear, GeneralBrowserActionType.didSelectedTabChangeToHomepage:
-            self.homepageTelemetry.sendHomepageImpressionEvent()
+    lazy var homepageProvider: Middleware<AppState> = (legacyProvider, modernProvider)
 
-        case NavigationBrowserActionType.tapOnCustomizeHomepageButton:
-            self.homepageTelemetry.sendItemTappedTelemetryEvent(for: .customizeHomepage)
+    lazy var modernProvider: MiddlewareClosure<AppState> = { [self] state, action, windowUUID in
+        // Does not test any modern actions
+    }
+
+    lazy var legacyProvider: LegacyMiddlewareClosure<AppState> = { [self] state, action in
+        switch action.actionType {
+        case HomepageActionType.viewDidAppear:
+            self.homepageTelemetry.sendHomepageImpressionEvent()
 
         case NavigationBrowserActionType.tapOnBookmarksShowMoreButton:
             self.homepageTelemetry.sendItemTappedTelemetryEvent(for: .bookmarkShowAll)
@@ -62,7 +66,6 @@ final class HomepageMiddleware: FeatureFlaggable, Notifiable {
         case HomepageActionType.initialize:
             self.dispatchPrivacyNoticeConfigurationAction(action: action)
             self.dispatchSearchBarConfigurationAction(action: action)
-            self.dispatchSpacerConfigurationAction(action: action)
 
         case HomepageActionType.viewWillTransition, ToolbarActionType.cancelEdit,
             GeneralBrowserActionType.navigateBack, GeneralBrowserActionType.didCloseTabFromToolbar:
@@ -78,17 +81,23 @@ final class HomepageMiddleware: FeatureFlaggable, Notifiable {
               let type = extras.itemType else {
             return
         }
-        self.homepageTelemetry.sendSectionLabeledCounter(for: type)
+        switch type {
+        case .quickAnswersEntryPoint:
+            self.homepageTelemetry.sendQuickAnswersButtonViewedEvent()
+        default:
+            self.homepageTelemetry.sendSectionLabeledCounter(for: type)
+        }
     }
 
     private func dispatchPrivacyNoticeConfigurationAction(action: Action) {
-        store.dispatch(
-            HomepageAction(
-                shouldShowPrivacyNotice: privacyNoticeHelper.shouldShowPrivacyNotice(),
-                windowUUID: action.windowUUID,
-                actionType: HomepageMiddlewareActionType.configuredPrivacyNotice
+        if privacyNoticeHelper.shouldShowPrivacyNotice() {
+            store.dispatch(
+                HomepageAction(
+                    windowUUID: action.windowUUID,
+                    actionType: HomepageMiddlewareActionType.configuredPrivacyNotice
+                )
             )
-        )
+        }
     }
 
     private func dispatchSearchBarConfigurationAction(action: Action) {
@@ -101,21 +110,11 @@ final class HomepageMiddleware: FeatureFlaggable, Notifiable {
         )
     }
 
-    private func dispatchSpacerConfigurationAction(action: Action) {
-        store.dispatch(
-            HomepageAction(
-                shouldShowSpacer: self.shouldShowSpacer(),
-                windowUUID: action.windowUUID,
-                actionType: HomepageMiddlewareActionType.configuredSpacer
-            )
-        )
-    }
-
     private func shouldShowSearchBar(
         for device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom,
         and isLandscape: Bool = UIWindow.isLandscape
     ) -> Bool {
-        let isHomepageSearchEnabled = featureFlags.isFeatureEnabled(.homepageSearchBar, checking: .buildOnly)
+        let isHomepageSearchEnabled = featureFlagsProvider.isEnabled(.homepageSearchBar)
         let isCompact = device == .phone && !isLandscape
 
         guard isHomepageSearchEnabled, isCompact else {
@@ -124,14 +123,11 @@ final class HomepageMiddleware: FeatureFlaggable, Notifiable {
         return true
     }
 
-    private func shouldShowSpacer(for device: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) -> Bool {
-        return device == .phone && isAnyStoriesRedesignEnabled
-    }
-
     // MARK: - Notifications
     private func observeNotifications() {
         let notifications: [Notification.Name] = [
             UIApplication.didBecomeActiveNotification,
+            UIApplication.didEnterBackgroundNotification,
             .FirefoxAccountChanged,
             .PrivateDataClearedHistory,
             .ProfileDidFinishSyncing,
@@ -159,12 +155,19 @@ final class HomepageMiddleware: FeatureFlaggable, Notifiable {
         ensureMainThread {
             self.windowManager.windows.forEach { windowUUID, _ in
                 switch notificationName {
-                case UIApplication.willEnterForegroundNotification:
+                case UIApplication.didBecomeActiveNotification:
                     let storiesAction = HomepageAction(
                         windowUUID: windowUUID,
-                        actionType: HomepageMiddlewareActionType.enteredForeground
+                        actionType: HomepageMiddlewareActionType.didBecomeActive
                     )
                     store.dispatch(storiesAction)
+
+                case UIApplication.didEnterBackgroundNotification:
+                    let backgroundAction = HomepageAction(
+                        windowUUID: windowUUID,
+                        actionType: HomepageMiddlewareActionType.didEnterBackground
+                    )
+                    store.dispatch(backgroundAction)
 
                 case .PrivateDataClearedHistory,
                         .TopSitesUpdated,

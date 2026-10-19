@@ -29,7 +29,6 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
                 tabManager: mockTabManager
             )
             DependencyHelperMock().bootstrapDependencies(injectedWindowManager: mockWindowManager)
-            LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: mockProfile)
         }
         setupStore()
         appState = setupAppState()
@@ -58,7 +57,7 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
             expectation.fulfill()
         }
 
-        subject.startAtHomeProvider(appState, action)
+        subject.startAtHomeProvider.legacyMiddleware(appState, action)
 
         wait(for: [expectation])
 
@@ -85,7 +84,7 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
             expectation.fulfill()
         }
 
-        subject.startAtHomeProvider(appState, action)
+        subject.startAtHomeProvider.legacyMiddleware(appState, action)
 
         wait(for: [expectation])
 
@@ -112,7 +111,7 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
             expectation.fulfill()
         }
 
-        subject.startAtHomeProvider(appState, action)
+        subject.startAtHomeProvider.legacyMiddleware(appState, action)
 
         wait(for: [expectation])
 
@@ -138,7 +137,7 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
             expectation.fulfill()
         }
 
-        subject.startAtHomeProvider(appState, action)
+        subject.startAtHomeProvider.legacyMiddleware(appState, action)
 
         wait(for: [expectation])
 
@@ -168,7 +167,7 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
             expectation.fulfill()
         }
 
-        subject.startAtHomeProvider(appState, action)
+        subject.startAtHomeProvider.legacyMiddleware(appState, action)
 
         wait(for: [expectation])
 
@@ -200,9 +199,11 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
 
     // MARK: StoreTestUtility
     func setupAppState() -> Client.AppState {
+        // Ecosia: 155.1 renamed `AppState.activeScreens` / `ActiveScreensState(screens:)` to
+        // `presentedComponents` / `PresentedComponentsState(components:)`.
         let appState = AppState(
-            activeScreens: ActiveScreensState(
-                screens: [
+            presentedComponents: PresentedComponentsState(
+                components: [
                     .browserViewController(
                         BrowserViewControllerState(
                             windowUUID: .XCTestDefaultUUID

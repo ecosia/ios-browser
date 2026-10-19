@@ -3,6 +3,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import Foundation
+import Glean
 
 /**
  * A builder for [Nimbus] singleton objects, parameterized in a declarative class.
@@ -193,9 +194,9 @@ public class NimbusBuilder {
     ) -> NimbusInterface {
         let serverSettings: NimbusServerSettings?
         if usePreviewCollection {
-            serverSettings = NimbusServerSettings(remoteSettingsService: remoteSettingsService, collection: remoteSettingsPreviewCollection)
+            serverSettings = NimbusServerSettings(rsService: remoteSettingsService, collectionName: remoteSettingsPreviewCollection)
         } else {
-            serverSettings = NimbusServerSettings(remoteSettingsService: remoteSettingsService, collection: remoteSettingsCollection)
+            serverSettings = NimbusServerSettings(rsService: remoteSettingsService, collectionName: remoteSettingsCollection)
         }
 
         do {
@@ -238,6 +239,9 @@ public class NimbusBuilder {
             // * we gave a 200ms timeout to the loading of a file from res/raw
             // * on completion or cancellation, applyPendingExperiments or initialize was
             //   called, and this thread waited for that to complete.
+            // Ecosia: Telemetry silenced - new upstream call in 155.1, silenced to match the rest
+            // of the Nimbus event recording in this package.
+            // GleanMetrics.NimbusEvents.isReady.record()
             featureManifest?.initialize { nimbus }
             onCreateCallback?(nimbus)
 
@@ -258,7 +262,7 @@ public class NimbusBuilder {
         _ appInfo: NimbusAppSettings,
         serverSettings: NimbusServerSettings?
     ) throws -> NimbusInterface {
-        try Nimbus.create(serverSettings,
+        try Nimbus.create(server: serverSettings,
                           appSettings: appInfo,
                           coenrollingFeatureIds: getCoenrollingFeatureIds(),
                           dbPath: dbFilePath,

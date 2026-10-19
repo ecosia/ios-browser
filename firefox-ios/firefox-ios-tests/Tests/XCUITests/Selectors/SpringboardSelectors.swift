@@ -1,0 +1,116 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import XCTest
+
+protocol SpringboardSelectorsSet {
+    var FENNEC_ICONS: Selector { get }
+    var FIREFOX_ICON: Selector { get }
+    var NEW_TAB_BUTTON: Selector { get }
+    var NEW_PRIVATE_TAB_BUTTON: Selector { get }
+    var OPEN_LAST_BOOKMARK_BUTTON: Selector { get }
+    var APP_ICON_BUTTON: Selector { get }
+    var NOTIFICATIONS_PERMISSION_ALERT: Selector { get }
+    var ALLOW_NOTIFICATIONS_BUTTON: Selector { get }
+    var DONT_ALLOW_NOTIFICATIONS_BUTTON: Selector { get }
+    var all: [Selector] { get }
+}
+
+struct SpringboardSelectors: SpringboardSelectorsSet {
+    private enum IDs {
+        static let fennecIconsPrefix = "Fennec "
+        static let firefoxIcon = "Firefox"
+        static let newTabButton = "New Tab"
+        static let newPrivateTabButton = "New Private Tab"
+        // Matched by identifier suffix so it works on every scheme's bundle id
+        // (org.mozilla.ios.Fennec / .Firefox / .FirefoxBeta).
+        static let openLastBookmarkSuffix = ".OpenLastBookmark"
+        static let appIconButton = "App Icon"
+        // The alert title is prefixed by the app name, so only the invariant part is matched.
+        static let notificationsPermissionAlert = "Would Like to Send You Notifications"
+        static let allowNotificationsButton = "Allow"
+        static let dontAllowNotificationsButton = "Don’t Allow"
+    }
+
+    let FENNEC_ICONS = Selector(
+        strategy: .predicate(
+            NSPredicate(format: "identifier BEGINSWITH %@", IDs.fennecIconsPrefix)
+        ),
+        value: IDs.fennecIconsPrefix,
+        description: "Fennec app icons on springboard",
+        groups: ["springboard", "icons"]
+    )
+
+    let FIREFOX_ICON = Selector(
+        strategy: .predicate(
+            NSPredicate(format: "identifier BEGINSWITH %@", IDs.firefoxIcon)
+        ),
+        value: IDs.firefoxIcon,
+        description: "Firefox app icons on springboard",
+        groups: ["springboard", "icons"]
+    )
+
+    let NEW_TAB_BUTTON = Selector.buttonId(
+        IDs.newTabButton,
+        description: "New Tab button in springboard context menu",
+        groups: ["springboard", "context-menu"]
+    )
+
+    let NEW_PRIVATE_TAB_BUTTON = Selector.buttonId(
+        IDs.newPrivateTabButton,
+        description: "New Private Tab button in springboard context menu",
+        groups: ["springboard", "context-menu"]
+    )
+
+    let OPEN_LAST_BOOKMARK_BUTTON = Selector(
+        strategy: .predicate(
+            NSPredicate(
+                format: "elementType == %d AND identifier ENDSWITH %@",
+                XCUIElement.ElementType.button.rawValue,
+                IDs.openLastBookmarkSuffix
+            )
+        ),
+        value: IDs.openLastBookmarkSuffix,
+        description: "Open Last Bookmark button in springboard context menu",
+        groups: ["springboard", "context-menu"]
+    )
+
+    let APP_ICON_BUTTON = Selector.buttonId(
+        IDs.appIconButton,
+        description: "App Icon button in springboard context menu",
+        groups: ["springboard", "context-menu"]
+    )
+
+    let NOTIFICATIONS_PERMISSION_ALERT = Selector.alertByTitle(
+        IDs.notificationsPermissionAlert,
+        description: "System alert asking for permission to send notifications",
+        groups: ["springboard", "notifications"]
+    )
+
+    let ALLOW_NOTIFICATIONS_BUTTON = Selector.buttonId(
+        IDs.allowNotificationsButton,
+        description: "Allow button in the system notifications permission alert",
+        groups: ["springboard", "notifications"]
+    )
+
+    let DONT_ALLOW_NOTIFICATIONS_BUTTON = Selector.buttonId(
+        IDs.dontAllowNotificationsButton,
+        description: "Don't Allow button in the system notifications permission alert",
+        groups: ["springboard", "notifications"]
+    )
+
+    var all: [Selector] {
+        [
+            FENNEC_ICONS,
+            FIREFOX_ICON,
+            APP_ICON_BUTTON,
+            NEW_TAB_BUTTON,
+            NEW_PRIVATE_TAB_BUTTON,
+            OPEN_LAST_BOOKMARK_BUTTON,
+            NOTIFICATIONS_PERMISSION_ALERT,
+            ALLOW_NOTIFICATIONS_BUTTON,
+            DONT_ALLOW_NOTIFICATIONS_BUTTON
+        ]
+    }
+}

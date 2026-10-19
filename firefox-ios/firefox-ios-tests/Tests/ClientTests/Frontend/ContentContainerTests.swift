@@ -9,22 +9,21 @@ import XCTest
 
 @MainActor
 final class ContentContainerTests: XCTestCase {
-    private var profile: MockProfile!
     private var overlayModeManager: MockOverlayModeManager!
+    private var tabManager: MockTabManager!
 
     override func setUp() {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: AppContainer.shared.resolve())
-        self.profile = MockProfile()
         self.overlayModeManager = MockOverlayModeManager()
+        self.tabManager = MockTabManager()
     }
 
     override func tearDown() {
         super.tearDown()
-        self.profile = nil
         self.overlayModeManager = nil
-        AppContainer.shared.reset()
+        self.tabManager = nil
+        DependencyHelperMock().reset()
     }
 
     // MARK: - canAddHomepage
@@ -52,6 +51,7 @@ final class ContentContainerTests: XCTestCase {
         let subject = ContentContainer(frame: .zero)
         let homepage = HomepageViewController(
             windowUUID: .XCTestDefaultUUID,
+            tabManager: tabManager,
             overlayManager: overlayModeManager,
             toastContainer: UIView()
         )
@@ -63,6 +63,7 @@ final class ContentContainerTests: XCTestCase {
         let subject = ContentContainer(frame: .zero)
         let homepage = HomepageViewController(
             windowUUID: .XCTestDefaultUUID,
+            tabManager: tabManager,
             overlayManager: overlayModeManager,
             toastContainer: UIView()
         )
@@ -142,6 +143,7 @@ final class ContentContainerTests: XCTestCase {
         let subject = ContentContainer(frame: .zero)
         let homepage = HomepageViewController(
             windowUUID: .XCTestDefaultUUID,
+            tabManager: tabManager,
             overlayManager: overlayModeManager,
             toastContainer: UIView()
         )
@@ -189,6 +191,37 @@ final class ContentContainerTests: XCTestCase {
         XCTAssertFalse(subject.hasPrivateHomepage)
     }
 
+    // MARK: - hasAnyHomepage
+
+    func testHasAnyHomepage_returnsTrueWhenAddedNewHomepage() {
+        let subject = createSubject()
+        let homepage = HomepageViewController(
+            windowUUID: .XCTestDefaultUUID,
+            tabManager: tabManager,
+            overlayManager: overlayModeManager,
+            toastContainer: UIView()
+        )
+        subject.add(content: homepage)
+
+        XCTAssertTrue(subject.hasAnyHomepage)
+    }
+
+    func testHasAnyHomepage_returnsTrueWhenAddedPrivate() {
+        let subject = createSubject()
+        let privateHomepage = PrivateHomepageViewController(
+            windowUUID: .XCTestDefaultUUID,
+            overlayManager: overlayModeManager
+        )
+        subject.add(content: privateHomepage)
+
+        XCTAssertTrue(subject.hasAnyHomepage)
+    }
+
+    func testHasAnyHomepage_returnsFalseWhenNil() {
+        let subject = createSubject()
+        XCTAssertFalse(subject.hasAnyHomepage)
+    }
+
     // MARK: - contentView
 
     func testContentView_notContent_viewIsNil() {
@@ -209,6 +242,7 @@ final class ContentContainerTests: XCTestCase {
         let subject = ContentContainer(frame: .zero)
         let homepage = HomepageViewController(
             windowUUID: .XCTestDefaultUUID,
+            tabManager: tabManager,
             overlayManager: overlayModeManager,
             toastContainer: UIView()
         )
@@ -244,6 +278,7 @@ final class ContentContainerTests: XCTestCase {
         let subject = ContentContainer(frame: .zero)
         let homepage = HomepageViewController(
             windowUUID: .XCTestDefaultUUID,
+            tabManager: tabManager,
             overlayManager: overlayModeManager,
             toastContainer: UIView()
         )
@@ -274,25 +309,43 @@ final class ContentContainerTests: XCTestCase {
         XCTAssertFalse(subject.hasPrivateHomepage)
     }
 
-    /* Ecosia: LegacyHomepageViewController removed in v147
-    private func createHomepage() -> LegacyHomepageViewController {
-        /* Ecosia: Update HomepageViewController init
-        return LegacyHomepageViewController(
-            profile: profile,
-            toastContainer: UIView(),
-            tabManager: MockTabManager(),
-            overlayManager: overlayModeManager
-        )
-        */
-        return LegacyHomepageViewController(
-            profile: profile,
-            toastContainer: UIView(),
-            tabManager: MockTabManager(),
+    func testAdd_doesNotRemoveWebView() {
+        let subject = createSubject()
+
+        let webView = WebviewViewController(webView: WKWebView())
+        subject.add(content: webView)
+        subject.add(content: createHomepage())
+
+        XCTAssertNotNil(webView.view.superview)
+    }
+
+    func testAdd_doesRemoveHomepage() {
+        let subject = createSubject()
+
+        let homepage = HomepageViewController(
+            windowUUID: .XCTestDefaultUUID,
+            tabManager: tabManager,
             overlayManager: overlayModeManager,
-            referrals: .init(),
-            delegate: nil,
-            auth: EcosiaAuth(browserViewController: BrowserViewController(profile: profile, tabManager: MockTabManager()))
+            toastContainer: UIView()
+        )
+        subject.add(content: homepage)
+        subject.add(content: WebviewViewController(webView: WKWebView()))
+
+        XCTAssertNil(homepage.view.superview)
+    }
+
+    private func createSubject() -> ContentContainer {
+        let subject = ContentContainer()
+        trackForMemoryLeaks(subject)
+        return subject
+    }
+
+    private func createHomepage() -> HomepageViewController {
+        return HomepageViewController(
+            windowUUID: WindowUUID.XCTestDefaultUUID,
+            tabManager: tabManager,
+            overlayManager: overlayModeManager,
+            toastContainer: UIView()
         )
     }
-    */
 }

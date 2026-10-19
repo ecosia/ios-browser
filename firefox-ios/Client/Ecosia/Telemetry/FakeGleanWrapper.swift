@@ -48,6 +48,14 @@ struct FakeGleanWrapper: GleanWrapper {
         // Ecosia: No-op
     }
 
+    func recordText(for metric: TextMetricType, value: String) {
+        // Ecosia: No-op
+    }
+
+    func recordStringList(for metric: StringListMetricType, value: [String]) {
+        // Ecosia: No-op
+    }
+
     func incrementLabeledCounter(for metric: LabeledMetricType<CounterMetricType>, label: String) {
         // Ecosia: No-op
     }
@@ -60,14 +68,6 @@ struct FakeGleanWrapper: GleanWrapper {
         // Ecosia: No-op
     }
 
-    func recordLabel(for metric: LabeledMetricType<StringMetricType>, label: String, value: String) {
-        // Ecosia: No-op
-    }
-
-    func recordLabeledQuantity(for metric: LabeledMetricType<QuantityMetricType>, label: String, value: Int64) {
-        // Ecosia: No-op
-    }
-
     func recordUrl(for metric: UrlMetricType, value: URL) {
         // Ecosia: No-op
     }
@@ -77,14 +77,6 @@ struct FakeGleanWrapper: GleanWrapper {
     }
 
     func recordUUID(for metric: UuidMetricType, value: UUID) {
-        // Ecosia: No-op
-    }
-
-    func incrementNumerator(for metric: RateMetricType, amount: Int32) {
-        // Ecosia: No-op
-    }
-
-    func incrementDenominator(for metric: RateMetricType, amount: Int32) {
         // Ecosia: No-op
     }
 

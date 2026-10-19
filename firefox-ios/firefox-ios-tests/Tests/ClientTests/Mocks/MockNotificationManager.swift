@@ -6,22 +6,18 @@ import Foundation
 @testable import Client
 
 class MockNotificationManager: NotificationManagerProtocol {
-    var shouldGrantPermission = true
+    let wasAuthorizationSuccessful = true
     var requestAuthorizationCalled = false
+    var shouldGrantPermission = true
+    var errorToReturn: Error?
 
     func requestAuthorization(completion: @escaping @Sendable (Bool, Error?) -> Void) {
         requestAuthorizationCalled = true
-        completion(shouldGrantPermission, nil)
-    }
-
-    func requestAuthorization(completion: @escaping @Sendable (Result<Bool, Error>) -> Void) {
-        requestAuthorizationCalled = true
-        completion(.success(shouldGrantPermission))
+        completion(shouldGrantPermission, errorToReturn)
     }
 
     func requestAuthorization() async throws -> Bool {
-        requestAuthorizationCalled = true
-        return shouldGrantPermission
+        return wasAuthorizationSuccessful
     }
 
     func getNotificationSettings(sendTelemetry: Bool) async -> UNNotificationSettings {
@@ -29,23 +25,15 @@ class MockNotificationManager: NotificationManagerProtocol {
     }
 
     var hasPermission = true
+    func hasPermission(completion: @escaping @Sendable (Bool) -> Void) {
+        completion(hasPermission)
+    }
+
     func hasPermission() async -> Bool {
         return hasPermission
     }
 
     var scheduledNotifications = 0
-    var scheduleWithDateWasCalled = false
-    func schedule(title: String,
-                  body: String,
-                  id: String,
-                  userInfo: [AnyHashable: Any]?,
-                  categoryIdentifier: String,
-                  date: Date,
-                  repeats: Bool) {
-        scheduledNotifications += 1
-        scheduleWithDateWasCalled = true
-    }
-
     var scheduleWithIntervalWasCalled = false
     func schedule(title: String,
                   body: String,
@@ -58,23 +46,7 @@ class MockNotificationManager: NotificationManagerProtocol {
         scheduleWithIntervalWasCalled = true
     }
 
-    func findDeliveredNotifications() async -> [UNNotification] {
-        return []
-    }
-
     func findDeliveredNotificationForId(id: String) async -> UNNotification? {
         return nil
-    }
-
-    var removeAllPendingNotificationsWasCalled = false
-    func removeAllPendingNotifications() {
-        removeAllPendingNotificationsWasCalled = true
-        scheduledNotifications = 0
-    }
-
-    var removePendingNotificationsWithIdWasCalled = false
-    func removePendingNotificationsWithId(ids: [String]) {
-        scheduledNotifications -= 1
-        removePendingNotificationsWithIdWasCalled = true
     }
 }

@@ -7,14 +7,33 @@ import Foundation
 import Common
 
 class MockLaunchScreenViewModel: LaunchScreenViewModel {
+    // MARK: - Properties
+    var introScreenManager: IntroScreenManager
+    var surveySurfaceManager: SurveySurfaceManager
     var startLoadingCalled = 0
     var loadNextLaunchTypeCalled = 0
     var mockLaunchType: LaunchType?
+    let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func startLoading(appVersion: String) {
+    // MARK: - Call Tracking
+    private var loadNextLaunchTypeCallHistory: [Date] = []
+
+    override init(
+        windowUUID: WindowUUID,
+        profile: Profile = AppContainer.shared.resolve(),
+        messageManager: GleanPlumbMessageManagerProtocol = Experiments.messaging,
+        introScreenManager: IntroScreenManagerProtocol? = nil
+    ) {
+        self.introScreenManager = IntroScreenManager(prefs: profile.prefs)
+        self.surveySurfaceManager = SurveySurfaceManager(windowUUID: windowUUID, and: messageManager)
+        super.init(windowUUID: windowUUID,
+                   profile: profile,
+                   messageManager: messageManager,
+                   introScreenManager: introScreenManager)
+    }
+
+    override func startLoading() {
         startLoadingCalled += 1
-        // Ecosia: startLoading must NOT bump loadNextLaunchTypeCalled — the VC defers loadNextLaunchType to
-        // viewWillAppear/finishedLoadingLaunchOrder. Track it in the dedicated override below. (MOB-4384)
         if let mockLaunchType = mockLaunchType {
             delegate?.launchWith(launchType: mockLaunchType)
         } else {
@@ -24,5 +43,11 @@ class MockLaunchScreenViewModel: LaunchScreenViewModel {
 
     override func loadNextLaunchType() {
         loadNextLaunchTypeCalled += 1
+        loadNextLaunchTypeCallHistory.append(Date())
+        if let mockLaunchType = mockLaunchType {
+            delegate?.launchWith(launchType: mockLaunchType)
+        } else {
+            delegate?.launchBrowser()
+        }
     }
 }

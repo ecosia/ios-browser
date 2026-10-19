@@ -25,10 +25,17 @@ final class ReadingListScreen {
     func tapOnReaderView() {
         BaseTestCase().mozWaitForElementToExist(readerViewButton)
         readerViewButton.tapOnApp()
+        BaseTestCase().waitUntilPageLoad()
     }
 
     func tapOnDoneButton() {
         sel.DONE_BUTTON_READING_LIST.element(in: app).waitAndTap()
+    }
+
+    /// Enters reader mode on the current page and saves it for later.
+    func addCurrentPageToReadingList() {
+        tapOnReaderView()
+        sel.ADD_TO_READING_LIST_BUTTON.element(in: app).waitAndTap()
     }
 
     func checkReadingListNumberOfItems(items: Int) {

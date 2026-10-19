@@ -14,6 +14,9 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
         static let estimatedSectionHeaderHeight: CGFloat = 16
         static let shortcuts = "Shortcuts"
         static let rowHeight: CGFloat = 50
+        // Ecosia: 155.1 removed `bigSpacing` (32) from `PhotonActionSheet.UX` along with `spacing`
+        // and `smallSpacing`. Only this iPad height adjustment used it, so the value is kept here.
+        static let iPadPreferredContentHeightPadding: CGFloat = 32
     }
 
     // MARK: - Themeable Properties
@@ -86,7 +89,7 @@ final class PageActionMenu: UIViewController, UIGestureRecognizerDelegate, Theme
             // self?.preferredContentSize = CGSize(width: 350, height: tableView.contentSize.height)
             var height = tableView.contentSize.height
             if UIDevice.current.userInterfaceIdiom == .pad {
-                height += PhotonActionSheet.UX.bigSpacing
+                height += UX.iPadPreferredContentHeightPadding
             }
             self?.preferredContentSize = CGSize(width: 350, height: height)
         }

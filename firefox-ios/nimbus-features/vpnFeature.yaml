@@ -1,0 +1,20 @@
+# The configuration for the vpnFeature feature
+features:
+  vpn-feature:
+    description: >
+      Configuration feature for VPN
+    variables:
+      enabled:
+        description: >
+          Whether or not this feature is enabled
+        type: Boolean
+        default: false
+    defaults:
+      # Ecosia: VPN is not part of the Ecosia product; suppressed on every channel including
+      # developer, so no VPN entry point is ever reachable.
+      - channel: beta
+        value:
+          enabled: false
+      - channel: developer
+        value:
+          enabled: false

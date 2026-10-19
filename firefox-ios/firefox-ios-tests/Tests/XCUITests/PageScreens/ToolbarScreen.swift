@@ -16,20 +16,37 @@ final class ToolbarScreen {
 
     private var tabsButton: XCUIElement { sel.TABS_BUTTON.element(in: app) }
     private var newTabButton: XCUIElement { sel.NEW_TAB_BUTTON.element(in: app)}
+    private var forwardButton: XCUIElement { sel.FORWARD_BUTTON.element(in: app)}
     private var backButton: XCUIElement { sel.BACK_BUTTON.element(in: app)}
     private var tabToolbarMenuButton: XCUIElement { sel.TABTOOLBAR_MENUBUTTON.element(in: app) }
     private var shareButton: XCUIElement { sel.SHARE_BUTTON.element(in: app) }
+    private var homeButton: XCUIElement { sel.HOME_BUTTON.element(in: app) }
     private var translateButton: XCUIElement { sel.TRANSLATE_BUTTON.element(in: app) }
     private var translateLoadingButton: XCUIElement { sel.TRANSLATE_LOADING_BUTTON.element(in: app) }
     private var translateActiveButton: XCUIElement { sel.TRANSLATE_ACTIVE_BUTTON.element(in: app) }
+    private var translateLanguageEnglishOption: XCUIElement { sel.TRANSLATE_LANGUAGE_ENGLISH_OPTION.element(in: app) }
 
     func assertSettingsButtonExists(timeout: TimeInterval = TIMEOUT) {
         let settingsButton = sel.SETTINGS_MENU_BUTTON.element(in: app)
         BaseTestCase().mozWaitForElementToExist(settingsButton, timeout: timeout)
     }
 
+    func tapSettingsMenuButton() {
+        let settingsButton = sel.SETTINGS_MENU_BUTTON.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(settingsButton)
+        settingsButton.waitAndTap()
+    }
+
     func assertTabsButtonExists(timeout: TimeInterval = TIMEOUT) {
         BaseTestCase().mozWaitForElementToExist(tabsButton)
+    }
+
+    func assertToolbarIsVisible(timeout: TimeInterval = TIMEOUT) {
+        let settingsButton = sel.SETTINGS_MENU_BUTTON.element(in: app)
+        BaseTestCase().mozWaitForElementToExist(settingsButton, timeout: timeout)
+        XCTAssertTrue(settingsButton.isHittable, "The toolbar is not visible")
+        BaseTestCase().mozWaitForElementToExist(tabsButton, timeout: timeout)
+        XCTAssertTrue(tabsButton.isHittable, "The toolbar is not visible")
     }
 
     func pressTabsButton(duration: TimeInterval) {
@@ -49,13 +66,31 @@ final class ToolbarScreen {
         tabsButton.waitAndTap()
     }
 
+    func openNewTabFromTabTray() {
+        tabsButton.waitAndTap()
+        let newTabInTray = app.buttons[AccessibilityIdentifiers.TabTray.newTabButton]
+        BaseTestCase().mozWaitForElementToExist(newTabInTray)
+        newTabInTray.waitAndTap()
+    }
+
     func assertNewTabButtonExists() {
         BaseTestCase().mozWaitForElementToExist(newTabButton)
     }
 
     func assertTabsButtonValue(expectedCount: String) {
+        BaseTestCase().mozWaitForElementToExist(tabsButton)
         let tabsButtonValue = tabsButton.value as? String
         XCTAssertEqual(expectedCount, tabsButtonValue, "Expected \(expectedCount) open tabs after switching")
+    }
+
+    func tabsButtonHasValue(_ expectedCount: String, timeout: TimeInterval = TIMEOUT) -> Bool {
+        guard BaseTestCase().mozWaitForElementToExist(tabsButton, timeout: timeout, failOnTimeout: false)
+        else { return false }
+        let expectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@", expectedCount),
+            object: tabsButton
+        )
+        return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
     }
 
     func pressBackButton(duration: TimeInterval) {
@@ -76,6 +111,10 @@ final class ToolbarScreen {
     func assertBackButtonExists() {
         BaseTestCase().mozWaitForElementToExist(backButton)
     }
+
+	func assertForwardButtonExists() {
+		BaseTestCase().mozWaitForElementToExist(forwardButton)
+	}
 
     func tapBackButton() {
         backButton.waitAndTap()
@@ -117,12 +156,26 @@ final class ToolbarScreen {
         return settingMenuButton
     }
 
+    func getTabsButtonElement() -> XCUIElement {
+        BaseTestCase().mozWaitForElementToExist(tabsButton)
+        return tabsButton
+    }
+
+    func getForwardButtonElement() -> XCUIElement {
+        BaseTestCase().mozWaitForElementToExist(forwardButton)
+        return forwardButton
+    }
+
     func tapShareButton() {
         shareButton.waitAndTap()
     }
 
     func tapOnNewTabButton() {
         newTabButton.waitAndTap()
+    }
+
+    func tapHomeButton() {
+        homeButton.waitAndTap()
     }
 
     // MARK: - Translate Button
@@ -143,15 +196,43 @@ final class ToolbarScreen {
         }
     }
 
-    func assertTranslateButtonExists(with mode: TranslationButtonType) {
+    /// Selects English in the translation language picker action sheet when it is shown.
+    /// The picker only appears when the language picker feature is enabled and multiple
+    /// target languages are available, so this is a no-op when the sheet doesn't show.
+    /// The probe is short on purpose: waiting the full TIMEOUT lets the translation finish before the
+    /// caller can observe the spinner.
+    func selectTranslationLanguageIfPresented(timeout: TimeInterval = TIMEOUT_PICKER_PROBE) {
+        if translateLanguageEnglishOption.mozWaitForElementToExist(timeout: timeout, failOnTimeout: false) {
+            translateLanguageEnglishOption.waitAndTap()
+        }
+    }
+
+    /// The spinner is transient and a fast translation can pass through it between UI samples, so the
+    /// active button counts too.
+    func assertTranslationInProgressOrCompleted(timeout: TimeInterval = TIMEOUT) {
+        guard !translateLoadingButton.mozWaitForElementToExist(timeout: timeout, failOnTimeout: false) else {
+            return
+        }
+        BaseTestCase().mozWaitForElementToExist(translateActiveButton, timeout: timeout)
+    }
+
+    func assertTranslateButtonExists(with mode: TranslationButtonType, timeout: TimeInterval = TIMEOUT) {
         switch mode {
         case .inactive:
-            BaseTestCase().mozWaitForElementToExist(translateButton)
+            BaseTestCase().mozWaitForElementToExist(translateButton, timeout: timeout)
         case .loading:
-            BaseTestCase().mozWaitForElementToExist(translateLoadingButton)
+            BaseTestCase().mozWaitForElementToExist(translateLoadingButton, timeout: timeout)
         case .active:
-            BaseTestCase().mozWaitForElementToExist(translateActiveButton)
+            BaseTestCase().mozWaitForElementToExist(translateActiveButton, timeout: timeout)
         }
+    }
+
+    /// Gates on the loading spinner disappearing (translation done) before asserting the active
+    /// button, since translation is network-bound and can take much longer than a normal UI wait.
+    func waitForTranslateButtonToBecomeActive() {
+        let base = BaseTestCase()
+        base.mozWaitForElementToNotExist(translateLoadingButton, timeout: TRANSLATION_TIMEOUT)
+        base.mozWaitForElementToExist(translateActiveButton)
     }
 
     func assertTranslateButtonDoesNotExist(with mode: TranslationButtonType) {

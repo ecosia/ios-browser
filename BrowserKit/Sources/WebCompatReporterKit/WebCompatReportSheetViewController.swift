@@ -1,0 +1,442 @@
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at http://mozilla.org/MPL/2.0/
+
+import Common
+import UIKit
+
+/// The intents the sheet emits; the Client maps these to Redux actions and navigation.
+@MainActor
+public protocol WebCompatReportSheetDelegate: AnyObject {
+    func webCompatReportSheetDidTapClose()
+    func webCompatReportSheetDidTapPreview()
+    func webCompatReportSheetDidSelectCategory(id: String)
+    func webCompatReportSheetDidSelectSubOption(id: String)
+    func webCompatReportSheetDidTapButton(id: String)
+    func webCompatReportSheetDidToggleCheckbox(id: String, isChecked: Bool)
+    func webCompatReportSheetDidTapLearnMore(url: URL)
+    func webCompatReportSheetDidEditText(id: String, text: String)
+}
+
+/// The "Report a Website Issue" sheet content. Store-agnostic: configured with a
+/// `WebCompatReportViewModel`, emits intents via `WebCompatReportSheetDelegate`.
+public final class WebCompatReportSheetViewController: UIViewController,
+                                                       ThemeApplicable,
+                                                       UICollectionViewDelegate,
+                                                       Notifiable {
+    public weak var delegate: WebCompatReportSheetDelegate?
+
+    private var viewModel: WebCompatReportViewModel
+    private var theme: Theme
+
+    /// The data source keys on stable section/row `id`s; current values are looked up here.
+    private var rowsByID: [String: WebCompatReportViewModel.Row] = [:]
+    private var sectionsByID: [String: WebCompatReportViewModel.Section] = [:]
+
+    /// configure(with:) themes cells at build time, so the first applyTheme must skip the
+    /// reconfigure — running it then lands in the nav bar's large-title pass and collapses
+    /// the title on load. Later (live) theme changes do reconfigure to re-theme cells.
+    private var hasAppliedThemeOnce = false
+
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.delegate = self
+        collectionView.keyboardDismissMode = .onDrag
+        return collectionView
+    }()
+
+    private lazy var dataSource = makeDataSource()
+
+    private lazy var closeButton: UIBarButtonItem = {
+        let image = UIImage(named: StandardImageIdentifiers.Large.cross)?.withRenderingMode(.alwaysTemplate)
+        let button = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(didTapClose))
+        return button
+    }()
+
+    private lazy var previewButton = UIBarButtonItem(
+        title: nil,
+        style: .done,
+        target: self,
+        action: #selector(didTapPreview)
+    )
+
+    public init(viewModel: WebCompatReportViewModel, theme: Theme) {
+        self.viewModel = viewModel
+        self.theme = theme
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Lifecycle
+
+    override public func viewDidLoad() {
+        super.viewDidLoad()
+        setupNavigationItem()
+        setupCollectionView()
+        setupDismissKeyboardGesture()
+        configure(with: viewModel)
+        applyTheme(theme: theme)
+        startObservingNotifications(
+            withNotificationCenter: NotificationCenter.default,
+            forObserver: self,
+            observing: [
+                UIResponder.keyboardWillShowNotification,
+                UIResponder.keyboardWillHideNotification
+            ]
+        )
+    }
+
+    // MARK: - Configuration
+
+    /// Renders the latest mapped state. Safe to call before or after the view loads.
+    public func configure(with viewModel: WebCompatReportViewModel) {
+        self.viewModel = viewModel
+        guard isViewLoaded else { return }
+        navigationItem.title = viewModel.navigationTitle
+        closeButton.accessibilityLabel = viewModel.closeButtonAccessibilityLabel
+        previewButton.title = viewModel.previewButtonTitle
+        previewButton.isEnabled = viewModel.isPreviewEnabled
+        navigationItem.rightBarButtonItem = viewModel.previewButtonTitle == nil ? nil : previewButton
+        applySnapshot()
+    }
+
+    // MARK: - Setup
+
+    private func setupNavigationItem() {
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.leftBarButtonItem = closeButton
+        navigationItem.largeTitleDisplayMode = .always
+    }
+
+    private func setupCollectionView() {
+        view.addSubview(collectionView)
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+
+    private func setupDismissKeyboardGesture() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    // MARK: - Keyboard
+
+    private func adjustForKeyboard(endFrameInScreen: CGRect, isHiding: Bool) {
+        guard isViewLoaded else { return }
+        var bottomInset: CGFloat = 0
+        if !isHiding {
+            let keyboardFrameInView = view.convert(endFrameInScreen, from: nil)
+            let overlap = max(0, collectionView.frame.maxY - keyboardFrameInView.minY)
+            // adjustedContentInset already covers the bottom safe area, so add only the rest.
+            let uncoveredOverlap = max(0, overlap - view.safeAreaInsets.bottom)
+            if uncoveredOverlap > 0 {
+                bottomInset = uncoveredOverlap + WebCompatReporterUX.Keyboard.focusPadding
+            }
+            // Otherwise the keyboard hides nothing (hardware, or undocked on iPad) and the
+            // inset stays at zero, so focusing a field doesn't shift the list.
+        }
+        collectionView.contentInset.bottom = bottomInset
+        collectionView.verticalScrollIndicatorInsets.bottom = bottomInset
+        guard let responder = firstResponder(in: collectionView) else { return }
+        let responderFrame = responder.convert(responder.bounds, to: collectionView)
+        collectionView.scrollRectToVisible(responderFrame, animated: true)
+    }
+
+    private func firstResponder(in view: UIView) -> UIView? {
+        if view.isFirstResponder { return view }
+        for subview in view.subviews {
+            if let found = firstResponder(in: subview) { return found }
+        }
+        return nil
+    }
+
+    private func makeLayout(backgroundColor: UIColor? = nil) -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { [weak self] index, environment in
+            var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+            let sections = self?.viewModel.sections ?? []
+            let hasHeader = index < sections.count && sections[index].title != nil
+            let hasFooter = index < sections.count && sections[index].footer != nil
+            config.headerMode = hasHeader ? .supplementary : .none
+            config.footerMode = hasFooter ? .supplementary : .none
+            config.backgroundColor = backgroundColor
+            return NSCollectionLayoutSection.list(using: config, layoutEnvironment: environment)
+        }
+    }
+
+    // MARK: - Data source
+
+    // Registrations MUST be created up front and reused; UIKit asserts if one is
+    // created lazily inside the cell provider. So they're built once here and the
+    // provider only dequeues with them.
+    private func makeDataSource() -> UICollectionViewDiffableDataSource<String, String> {
+        let plain = plainCellRegistration()
+        let subOption = subOptionCellRegistration()
+        let category = categoryCellRegistration()
+        let url = urlCellRegistration()
+        let details = detailsCellRegistration()
+        let sendButton = sendButtonCellRegistration()
+        let checkbox = checkboxCellRegistration()
+
+        let dataSource = UICollectionViewDiffableDataSource<String, String>(
+            collectionView: collectionView
+        ) { [weak self] collectionView, indexPath, rowID in
+            guard let row = self?.rowsByID[rowID] else { return UICollectionViewListCell() }
+            switch row.kind {
+            case .categoryMenu:
+                return collectionView.dequeueConfiguredReusableCell(using: category, for: indexPath, item: row)
+            case .subOption:
+                return collectionView.dequeueConfiguredReusableCell(using: subOption, for: indexPath, item: row)
+            case .urlField:
+                return collectionView.dequeueConfiguredReusableCell(using: url, for: indexPath, item: row)
+            case .detailsField:
+                return collectionView.dequeueConfiguredReusableCell(using: details, for: indexPath, item: row)
+            case .sendButton:
+                return collectionView.dequeueConfiguredReusableCell(using: sendButton, for: indexPath, item: row)
+            case .checkbox:
+                return collectionView.dequeueConfiguredReusableCell(using: checkbox, for: indexPath, item: row)
+            case .plain:
+                return collectionView.dequeueConfiguredReusableCell(using: plain, for: indexPath, item: row)
+            }
+        }
+        configureSupplementaryProvider(on: dataSource)
+        return dataSource
+    }
+
+    private func configureSupplementaryProvider(on dataSource: UICollectionViewDiffableDataSource<String, String>) {
+        let header = headerRegistration()
+        let footer = footerRegistration()
+        dataSource.supplementaryViewProvider = { collectionView, elementKind, indexPath in
+            if elementKind == UICollectionView.elementKindSectionFooter {
+                return collectionView.dequeueConfiguredReusableSupplementary(using: footer, for: indexPath)
+            }
+            return collectionView.dequeueConfiguredReusableSupplementary(using: header, for: indexPath)
+        }
+    }
+
+    private func plainCellRegistration()
+    -> UICollectionView.CellRegistration<UICollectionViewListCell, WebCompatReportViewModel.Row> {
+        return UICollectionView.CellRegistration { cell, _, row in
+            var content = cell.defaultContentConfiguration()
+            content.text = row.title
+            cell.contentConfiguration = content
+            cell.accessories = []
+        }
+    }
+
+    private func subOptionCellRegistration()
+    -> UICollectionView.CellRegistration<WebCompatSubOptionCell, WebCompatReportViewModel.Row> {
+        return UICollectionView.CellRegistration { [weak self] cell, _, row in
+            guard let self, case let .subOption(isSelected) = row.kind else { return }
+            cell.configure(title: row.title, isSelected: isSelected, theme: self.theme, a11yIdentifier: row.a11yIdentifier)
+        }
+    }
+
+    private func categoryCellRegistration()
+    -> UICollectionView.CellRegistration<WebCompatCategoryMenuCell, WebCompatReportViewModel.Row> {
+        return UICollectionView.CellRegistration { [weak self] cell, _, row in
+            guard let self, case let .categoryMenu(isPlaceholder, options) = row.kind else { return }
+            cell.configure(
+                title: row.title,
+                isPlaceholder: isPlaceholder,
+                options: options,
+                theme: self.theme,
+                a11yIdentifier: row.a11yIdentifier
+            ) { [weak self] optionID in
+                self?.delegate?.webCompatReportSheetDidSelectCategory(id: optionID)
+            }
+        }
+    }
+
+    private func urlCellRegistration()
+    -> UICollectionView.CellRegistration<WebCompatURLCell, WebCompatReportViewModel.Row> {
+        return UICollectionView.CellRegistration { [weak self] cell, _, row in
+            guard let self, case let .urlField(text, errorMessage) = row.kind else { return }
+            cell.configure(
+                title: row.title,
+                text: text,
+                errorMessage: errorMessage,
+                a11yIdentifier: row.a11yIdentifier
+            ) { [weak self] text in
+                self?.delegate?.webCompatReportSheetDidEditText(id: row.id, text: text)
+            }
+            cell.applyTheme(theme: self.theme)
+        }
+    }
+
+    private func detailsCellRegistration()
+    -> UICollectionView.CellRegistration<WebCompatDetailsCell, WebCompatReportViewModel.Row> {
+        return UICollectionView.CellRegistration { [weak self] cell, _, row in
+            guard let self, case let .detailsField(text, placeholder) = row.kind else { return }
+            cell.configure(
+                text: text,
+                placeholder: placeholder,
+                accessibilityLabel: row.title,
+                a11yIdentifier: row.a11yIdentifier,
+                onEditingEnded: { [weak self] text in
+                    self?.delegate?.webCompatReportSheetDidEditText(id: row.id, text: text)
+                }
+            )
+            cell.applyTheme(theme: self.theme)
+        }
+    }
+
+    private func sendButtonCellRegistration()
+    -> UICollectionView.CellRegistration<WebCompatSendButtonCell, WebCompatReportViewModel.Row> {
+        return UICollectionView.CellRegistration { [weak self] cell, _, row in
+            guard let self, case let .sendButton(isEnabled) = row.kind else { return }
+            cell.configure(title: row.title, isEnabled: isEnabled, a11yIdentifier: row.a11yIdentifier) { [weak self] in
+                // Text fields report on end-editing, so commit the active one before submitting.
+                self?.view.endEditing(true)
+                self?.delegate?.webCompatReportSheetDidTapButton(id: row.id)
+            }
+            cell.applyTheme(theme: self.theme)
+        }
+    }
+
+    private func checkboxCellRegistration()
+    -> UICollectionView.CellRegistration<WebCompatCheckboxCell, WebCompatReportViewModel.Row> {
+        return UICollectionView.CellRegistration { [weak self] cell, _, row in
+            guard let self, case let .checkbox(isChecked) = row.kind else { return }
+            cell.configure(title: row.title, isChecked: isChecked, a11yIdentifier: row.a11yIdentifier)
+            cell.applyTheme(theme: self.theme)
+        }
+    }
+
+    private func headerRegistration()
+    -> UICollectionView.SupplementaryRegistration<UICollectionViewListCell> {
+        return UICollectionView.SupplementaryRegistration(
+            elementKind: UICollectionView.elementKindSectionHeader
+        ) { [weak self] header, _, indexPath in
+            guard let self,
+                  let sectionID = self.dataSource.sectionIdentifier(for: indexPath.section),
+                  let section = self.sectionsByID[sectionID] else { return }
+            var content = header.defaultContentConfiguration()
+            content.text = section.title
+            content.textProperties.color = self.theme.colors.textSecondary
+            header.contentConfiguration = content
+            header.accessibilityTraits.insert(.header)
+        }
+    }
+
+    private func footerRegistration()
+    -> UICollectionView.SupplementaryRegistration<WebCompatLearnMoreFooterView> {
+        return UICollectionView.SupplementaryRegistration(
+            elementKind: UICollectionView.elementKindSectionFooter
+        ) { [weak self] footerView, _, indexPath in
+            guard let self,
+                  let sectionID = self.dataSource.sectionIdentifier(for: indexPath.section),
+                  let footer = self.sectionsByID[sectionID]?.footer else { return }
+            footerView.configure(footer: footer) { [weak self] url in
+                // Text fields report on end-editing, so commit the active one before leaving the form.
+                self?.view.endEditing(true)
+                self?.delegate?.webCompatReportSheetDidTapLearnMore(url: url)
+            }
+            footerView.applyTheme(theme: self.theme)
+        }
+    }
+
+    private func applySnapshot() {
+        let previousRowsByID = rowsByID
+        rowsByID = [:]
+        sectionsByID = [:]
+        let previousItems = Set(dataSource.snapshot().itemIdentifiers)
+        var snapshot = NSDiffableDataSourceSnapshot<String, String>()
+        for section in viewModel.sections {
+            sectionsByID[section.id] = section
+            snapshot.appendSections([section.id])
+            for row in section.rows { rowsByID[row.id] = row }
+            snapshot.appendItems(section.rows.map { $0.id }, toSection: section.id)
+        }
+        // The data source keys on id, so rows that persist won't re-render on
+        // content change unless explicitly reconfigured. Only reconfigure the ones
+        // whose content actually changed: cells rebuild their accessories on every
+        // configure, and the list animates that as a remove+insert, so reconfiguring
+        // untouched rows flickers their checkmark away.
+        let changedItems = snapshot.itemIdentifiers.filter { rowID in
+            previousItems.contains(rowID) && previousRowsByID[rowID] != rowsByID[rowID]
+        }
+        snapshot.reconfigureItems(changedItems)
+        dataSource.apply(snapshot, animatingDifferences: !previousItems.isEmpty)
+    }
+
+    private func reconfigureAllItems() {
+        var snapshot = dataSource.snapshot()
+        guard !snapshot.itemIdentifiers.isEmpty else { return }
+        snapshot.reconfigureItems(snapshot.itemIdentifiers)
+        dataSource.apply(snapshot, animatingDifferences: false)
+    }
+
+    // MARK: - UICollectionViewDelegate
+
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        guard let rowID = dataSource.itemIdentifier(for: indexPath),
+              let row = rowsByID[rowID] else { return }
+        switch row.kind {
+        case .subOption:
+            delegate?.webCompatReportSheetDidSelectSubOption(id: row.id)
+        case let .checkbox(isChecked):
+            delegate?.webCompatReportSheetDidToggleCheckbox(id: row.id, isChecked: !isChecked)
+        case .plain, .categoryMenu, .urlField, .detailsField, .sendButton:
+            break
+        }
+    }
+
+    // MARK: - Actions
+
+    @objc
+    private func didTapClose() {
+        delegate?.webCompatReportSheetDidTapClose()
+    }
+
+    @objc
+    private func didTapPreview() {
+        view.endEditing(true)
+        delegate?.webCompatReportSheetDidTapPreview()
+    }
+
+    @objc
+    private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+
+    // MARK: - Notifiable
+
+    nonisolated public func handleNotifications(_ notification: Notification) {
+        let isHiding = notification.name == UIResponder.keyboardWillHideNotification
+        let endFrame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue ?? .zero
+        ensureMainThread { [weak self] in
+            self?.adjustForKeyboard(endFrameInScreen: endFrame, isHiding: isHiding)
+        }
+    }
+
+    // MARK: - ThemeApplicable
+
+    public func applyTheme(theme: Theme) {
+        self.theme = theme
+        guard isViewLoaded else { return }
+        view.backgroundColor = theme.colors.layer1
+        collectionView.backgroundColor = theme.colors.layer1
+        collectionView.setCollectionViewLayout(makeLayout(backgroundColor: theme.colors.layer1), animated: false)
+        navigationController?.navigationBar.tintColor = theme.colors.actionPrimary
+        if theme.isNova {
+            previewButton.tintColor = theme.colors.actionPrimary
+            if #available(iOS 26.0, *) {
+                previewButton.setTitleTextAttributes([.foregroundColor: theme.colors.textInverted], for: .normal)
+            }
+        }
+        if hasAppliedThemeOnce {
+            reconfigureAllItems()
+        }
+        hasAppliedThemeOnce = true
+    }
+}

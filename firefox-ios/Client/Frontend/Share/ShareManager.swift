@@ -6,14 +6,9 @@ import Foundation
 import MobileCoreServices
 import WebKit
 import UniformTypeIdentifiers
+import Common
 
 class ShareManager: NSObject, FeatureFlaggable {
-    private struct ActivityIdentifiers {
-        static let pocketIconExtension = "com.ideashower.ReadItLaterPro.AddToPocketExtension"
-        static let pocketActionExtension = "com.ideashower.ReadItLaterPro.Action-Extension"
-        static let whatsApp = "net.whatsapp.WhatsApp.ShareExtension"
-    }
-
     // Black list for activities to which we don't want to share
     private static let excludingActivities: [UIActivity.ActivityType] = [
         UIActivity.ActivityType.addToReadingList
@@ -70,10 +65,9 @@ class ShareManager: NSObject, FeatureFlaggable {
             }
 
         case .tab(let siteURL, let tab):
-            let isSentFromFirefoxEnabled = LegacyFeatureFlagsManager.shared.isFeatureEnabled(
-                .sentFromFirefox,
-                checking: .buildAndUser
-            )
+            let provider: FeatureFlagProviding = AppContainer.shared.resolve()
+            let prefs: UserFeaturePreferring = AppContainer.shared.resolve()
+            let isSentFromFirefoxEnabled = provider.isEnabled(.sentFromFirefox) && prefs.getPreferenceFor(.sentFromFirefox)
             activityItems.append(
                 URLActivityItemProvider(
                     url: siteURL,
@@ -86,7 +80,11 @@ class ShareManager: NSObject, FeatureFlaggable {
 
             // Only show the print activity if the tab's webview is loaded
             if tab.webView != nil {
+                let printInfo = UIPrintInfo(dictionary: nil)
+                printInfo.jobName = tab.displayTitle
+                printInfo.outputType = .general
                 let viewPrintFormatter = tab.webView?.viewPrintFormatter()
+                activityItems.append(printInfo)
                 activityItems.append(
                     TabPrintPageRenderer(
                         tabDisplayTitle: tab.displayTitle,

@@ -29,18 +29,77 @@ enum TelemetryReportingError: Error {
 }
 
 func processSyncTelemetry(syncTelemetry: RustSyncTelemetryPing,
-                          submitGlobalPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
-                          submitHistoryPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
-                          submitBookmarksPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
-                          submitLoginsPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
-                          submitCreditCardsPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
-                         submitAddressesPing: (NoReasonCodes?) -> Void = { _ in }, // Ecosia: Telemetry silenced
-                         submitTabsPing: (NoReasonCodes?) -> Void = { _ in }) throws { // Ecosia: Telemetry silenced
-    // Ecosia: Entire function body silenced - all sync telemetry disabled
-    // for syncInfo in syncTelemetry.syncs {
-    //     _ = SyncMetrics.syncUuid.generateAndSet()
-    //     ... (all telemetry code removed)
-    // }
+                          /* Ecosia: All sync telemetry is silenced — the ping-submitting defaults
+                             become no-ops and the body is removed. The GleanMetrics typealiases this
+                             body needs are commented out at the top of the file for the same reason.
+                             Upstream's 155.1 version, kept for reference:
+                          submitGlobalPing: (NoReasonCodes?) -> Void = GleanMetrics.Pings.shared.sync.submit,
+                          submitHistoryPing: (NoReasonCodes?) -> Void = GleanMetrics.Pings.shared.historySync.submit,
+                          submitBookmarksPing: (NoReasonCodes?) -> Void
+                              = GleanMetrics.Pings.shared.bookmarksSync.submit,
+                          submitLoginsPing: (NoReasonCodes?) -> Void
+                              = GleanMetrics.Pings.shared.loginsSync.submit,
+                          submitCreditCardsPing: (NoReasonCodes?) -> Void
+                              = GleanMetrics.Pings.shared.creditcardsSync.submit,
+                          submitAddressesPing: (NoReasonCodes?) -> Void
+                              = GleanMetrics.Pings.shared.addressesSync.submit,
+                          submitTabsPing: (NoReasonCodes?) -> Void = GleanMetrics.Pings.shared.tabsSync.submit) throws
+{
+    for syncInfo in syncTelemetry.syncs {
+        _ = SyncMetrics.syncUuid.generateAndSet()
+
+        if let failureReason = syncInfo.failureReason {
+            recordFailureReason(reason: failureReason,
+                                failureReasonMetric: SyncMetrics.failureReason)
+        }
+
+        for engineInfo in syncInfo.engines {
+            switch engineInfo.name {
+            case SupportedEngines.Bookmarks.rawValue:
+                try individualBookmarksSync(hashedFxaUid: syncTelemetry.uid,
+                                            engineInfo: engineInfo)
+                submitBookmarksPing(nil)
+            case SupportedEngines.History.rawValue:
+                try individualHistorySync(hashedFxaUid: syncTelemetry.uid,
+                                          engineInfo: engineInfo)
+                submitHistoryPing(nil)
+            case SupportedEngines.Logins.rawValue:
+                try individualLoginsSync(hashedFxaUid: syncTelemetry.uid,
+                                         engineInfo: engineInfo)
+                submitLoginsPing(nil)
+            case SupportedEngines.CreditCards.rawValue:
+                try individualCreditCardsSync(hashedFxaUid: syncTelemetry.uid,
+                                              engineInfo: engineInfo)
+                submitCreditCardsPing(nil)
+            case SupportedEngines.Addresses.rawValue:
+                try individualAddressesSync(hashedFxaUid: syncTelemetry.uid,
+                                              engineInfo: engineInfo)
+                submitAddressesPing(nil)
+            case SupportedEngines.Tabs.rawValue:
+                try individualTabsSync(hashedFxaUid: syncTelemetry.uid,
+                                       engineInfo: engineInfo)
+                submitTabsPing(nil)
+            default:
+                // Previously when we encountered an unsupported engine we threw an error.
+                // This was problematic because it prevented other engines queued after the
+                // unsupported engine from reporting metrics. For now we will do nothing.
+                // See FXIOS-14438
+                assertionFailure(
+                    "Error: attempting to process telemetry for unsupported sync engine")
+                break
+            }
+        }
+        submitGlobalPing(nil)
+    }
+}
+                           */
+                          submitGlobalPing: (NoReasonCodes?) -> Void = { _ in },
+                          submitHistoryPing: (NoReasonCodes?) -> Void = { _ in },
+                          submitBookmarksPing: (NoReasonCodes?) -> Void = { _ in },
+                          submitLoginsPing: (NoReasonCodes?) -> Void = { _ in },
+                          submitCreditCardsPing: (NoReasonCodes?) -> Void = { _ in },
+                          submitAddressesPing: (NoReasonCodes?) -> Void = { _ in },
+                          submitTabsPing: (NoReasonCodes?) -> Void = { _ in }) throws {
 }
 
 // Ecosia: All telemetry helper functions silenced - GleanMetrics not available in separate package

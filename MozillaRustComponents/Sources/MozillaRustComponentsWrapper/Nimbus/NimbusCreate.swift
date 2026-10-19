@@ -19,7 +19,30 @@ public let defaultErrorReporter: NimbusErrorReporter = { err in
     }
 }
 
-class GleanMetricsHandler: MetricsHandler {
+final class GleanMetricsHandler: MetricsHandler {
+    func recordDatabaseLoad(event: DatabaseLoadExtraDef) {
+        // Ecosia: Telemetry silenced - new MetricsHandler requirement in 155.1
+        // GleanMetrics.NimbusEvents.databaseLoad
+        //     .record(GleanMetrics.NimbusEvents.DatabaseLoadExtra(
+        //         corrupt: event.corrupt,
+        //         error: event.error,
+        //         initialVersion: event.initialVersion.map(Int32.init),
+        //         migratedVersion: event.migratedVersion.map(Int32.init),
+        //         migrationError: event.migrationError,
+        //     ))
+    }
+
+    func recordDatabaseMigration(event: DatabaseMigrationExtraDef) {
+        // Ecosia: Telemetry silenced - new MetricsHandler requirement in 155.1
+        // GleanMetrics.NimbusEvents.databaseMigration
+        //     .record(GleanMetrics.NimbusEvents.DatabaseMigrationExtra(
+        //         error: event.error,
+        //         fromVersion: Int32(event.fromVersion),
+        //         reason: event.reason,
+        //         toVersion: Int32(event.toVersion),
+        //     ))
+    }
+
     func recordEnrollmentStatuses(enrollmentStatusExtras: [EnrollmentStatusExtraDef]) {
         // Ecosia: Telemetry silenced - GleanMetrics not available in separate package
         // for extra in enrollmentStatusExtras {
@@ -65,6 +88,12 @@ class GleanMetricsHandler: MetricsHandler {
         //         partId: event.part
         //     ))
     }
+
+    func submitTargetingContext() {
+        // Ecosia: Telemetry silenced - the nimbus-targeting-context ping is never submitted
+        // (TelemetryWrapper deliberately does not register it either).
+        // GleanMetrics.Pings.shared.nimbusTargetingContext.submit()
+    }
 }
 
 public extension Nimbus {
@@ -81,7 +110,7 @@ public extension Nimbus {
     /// - Throws `NimbusError` if anything goes wrong with the Rust FFI or in the `NimbusClient` constructor.
     ///
     static func create(
-        _ server: NimbusServerSettings?,
+        server: NimbusServerSettings?,
         appSettings: NimbusAppSettings,
         coenrollingFeatureIds: [String] = [],
         dbPath: String,
@@ -89,16 +118,13 @@ public extension Nimbus {
         enabled: Bool = true,
         userDefaults: UserDefaults? = nil,
         errorReporter: @escaping NimbusErrorReporter = defaultErrorReporter,
-        recordedContext: RecordedContext? = nil,
-        remoteSettingsService: RemoteSettingsService? = nil,
-        collectionName: String? = nil
+        recordedContext: RecordedContext? = nil
     ) throws -> NimbusInterface {
         guard enabled else {
             return NimbusDisabled.shared
         }
 
         let context = Nimbus.buildExperimentContext(appSettings)
-        // Ecosia: Use remoteSettingsService from server config (API changed in newer version)
         let nimbusClient = try NimbusClient(
             appCtx: context,
             recordedContext: recordedContext,
@@ -106,8 +132,7 @@ public extension Nimbus {
             dbpath: dbPath,
             metricsHandler: GleanMetricsHandler(),
             geckoPrefHandler: nil,
-            remoteSettingsService: server?.remoteSettingsService ?? remoteSettingsService,
-            collectionName: server?.collection ?? collectionName
+            remoteSettingsInfo: server,
         )
 
         return Nimbus(

@@ -5,7 +5,7 @@
 "New Tab" = "Skedë e Re";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia-i përdor kamerën tuaj për të skanuar kode QR dhe për të bërë foto dhe video.";
+"NSCameraUsageDescription" = "Ecosia can use your camera to scan QR codes or take photos and video.";
 
 /* Privacy - Face ID Usage Description */
 "NSFaceIDUsageDescription" = "Ecosia-i lyp Face ID që të hyjë në fjalëkalimet dhe metoda pagesash tuajat të ruajtura.";
@@ -18,6 +18,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Kjo ju lejon të ruani foto.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Ecosia-i përdor njohje të folure për të shndërruar zërin tuaj në tekst për kërkime me zë.";
 
 /* (No Comment) */
 "Scan QR Code" = "Skanonin Kodin QR";

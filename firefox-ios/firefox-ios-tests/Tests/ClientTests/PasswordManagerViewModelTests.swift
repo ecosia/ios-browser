@@ -32,8 +32,6 @@ class PasswordManagerViewModelTests: XCTestCase, @unchecked Sendable {
         )
         self.mockDelegate = MockLoginViewModelDelegate()
         self.viewModel.delegate = mockDelegate
-        self.viewModel.setBreachAlertsManager(MockBreachAlertsClient())
-        Glean.shared.resetGlean(clearStores: true)
     }
 
     override func tearDown() {

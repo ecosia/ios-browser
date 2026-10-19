@@ -14,7 +14,12 @@ final class FirefoxHomePageScreen {
         self.sel = selectors
     }
 
-    private var customizeHomepage: XCUIElement { sel.CUSTOMIZE_HOMEPAGE.element(in: app) }
+    /// Dismisses the "new changes" popup on Home, if present.
+    func dismissNewChangesPopupIfNeeded() {
+        // Dismiss "new changes" popup if present
+        let closePopup = app.buttons["Close"]
+        if closePopup.exists { closePopup.tap() }
+    }
 
     func assertTopSitesItemCellExist(timeout: TimeInterval = TIMEOUT) {
         let topSites_ItemCell = sel.TOPSITES_ITEMCELL.element(in: app)
@@ -32,11 +37,14 @@ final class FirefoxHomePageScreen {
         BaseTestCase().mozWaitForElementToExist(bookmarks_ItemCell, timeout: timeout)
     }
 
-    func tapOnCustomizeHomePageOption(timeout: TimeInterval = TIMEOUT) {
-        customizeHomepage.waitAndTap()
+    func tapBookmarksShowAll() {
+        sel.BOOKMARKS_SHOW_ALL_BUTTON.element(in: app).waitAndTap()
     }
 
-    func assertCustomizeHomePageOptionExists(timeout: TimeInterval = TIMEOUT) {
-        BaseTestCase().mozWaitForElementToExist(customizeHomepage)
+    /// Unlike `assertBookmarksItemCellToNotExist`, this checks a single entry rather than the whole
+    /// section, so it can be used while the section holds other bookmarks.
+    func assertBookmarkItemNotExists(title: String, timeout: TimeInterval = TIMEOUT) {
+        let bookmarkTitle = sel.BOOKMARKS_ITEMCELL.query(in: app).staticTexts[title].firstMatch
+        BaseTestCase().mozWaitForElementToNotExist(bookmarkTitle, timeout: timeout)
     }
 }

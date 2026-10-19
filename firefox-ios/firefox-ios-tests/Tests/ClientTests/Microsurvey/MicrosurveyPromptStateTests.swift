@@ -7,18 +7,18 @@ import XCTest
 
 @testable import Client
 
-@MainActor
 final class MicrosurveyPromptStateTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-        DependencyHelperMock().bootstrapDependencies()
+    override func setUp() async throws {
+        try await super.setUp()
+        await DependencyHelperMock().bootstrapDependencies()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         DependencyHelperMock().reset()
-        super.tearDown()
+        try await super.tearDown()
     }
 
+    @MainActor
     func testShowPromptAction() {
         let initialState = createSubject()
         let reducer = microsurveyReducer()
@@ -29,12 +29,13 @@ final class MicrosurveyPromptStateTests: XCTestCase {
             windowUUID: .XCTestDefaultUUID,
             actionType: MicrosurveyPromptMiddlewareActionType.initialize
         )
-        let newState = reducer(initialState, action)
+        let newState = reducer.legacyReducer(initialState, action)
 
         XCTAssertEqual(newState.showPrompt, true)
         XCTAssertEqual(newState.showSurvey, false)
     }
 
+    @MainActor
     func testDismissPromptAction() {
         let initialState = MicrosurveyPromptState(
             windowUUID: .XCTestDefaultUUID,
@@ -47,12 +48,13 @@ final class MicrosurveyPromptStateTests: XCTestCase {
         XCTAssertEqual(initialState.showPrompt, true)
 
         let action = getAction(for: .closePrompt)
-        let newState = reducer(initialState, action)
+        let newState = reducer.legacyReducer(initialState, action)
 
         XCTAssertEqual(newState.showPrompt, false)
         XCTAssertEqual(newState.showSurvey, false)
     }
 
+    @MainActor
     func testShowSurveyAction() {
         let initialState = createSubject()
         let reducer = microsurveyReducer()
@@ -60,10 +62,29 @@ final class MicrosurveyPromptStateTests: XCTestCase {
         XCTAssertEqual(initialState.showSurvey, false)
 
         let action = getAction(for: .continueToSurvey)
-        let newState = reducer(initialState, action)
+        let newState = reducer.legacyReducer(initialState, action)
 
         XCTAssertEqual(newState.showSurvey, true)
         XCTAssertEqual(newState.showPrompt, true)
+    }
+
+    @MainActor
+    func testDefaultAction() {
+        let initialState = MicrosurveyPromptState(
+            windowUUID: .XCTestDefaultUUID,
+            showPrompt: true,
+            showSurvey: true,
+            model: MicrosurveyMock.model
+        )
+        let reducer = microsurveyReducer()
+
+        let action = MicrosurveyPromptAction(windowUUID: .XCTestDefaultUUID, actionType: FakeActionType.testAction)
+        let newState = reducer.legacyReducer(initialState, action)
+
+        XCTAssertEqual(newState.windowUUID, .XCTestDefaultUUID)
+        XCTAssertEqual(newState.showPrompt, true)
+        XCTAssertEqual(newState.showSurvey, false)
+        XCTAssertEqual(newState.model, MicrosurveyMock.model)
     }
 
     // MARK: - Private
@@ -77,5 +98,9 @@ final class MicrosurveyPromptStateTests: XCTestCase {
 
     private func getAction(for actionType: MicrosurveyPromptActionType) -> MicrosurveyPromptAction {
         return  MicrosurveyPromptAction(windowUUID: .XCTestDefaultUUID, actionType: actionType)
+    }
+
+    enum FakeActionType: ActionType {
+        case testAction
     }
 }

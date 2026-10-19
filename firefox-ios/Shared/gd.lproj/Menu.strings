@@ -1,5 +1,5 @@
 /* Label for the button, displayed in the menu, used to close all tabs currently open. */
-"Menu.CloseAllTabsAction.Title" = "Dùin a h&#x2011;uile taba";
+"Menu.CloseAllTabsAction.Title" = "Dùin a h-uile taba";
 
 /* Label for the button, displayed in the menu, used to copy the current page link to the clipboard. */
 "Menu.CopyLink.Title" = "Dèan lethbhreac dhen cheangal";

@@ -39,21 +39,32 @@ struct CreditCardInputView: ThemeableView {
     }
 
     var body: some View {
-        NavigationView {
-            main
-                .blur(radius: isBlurred ? UX.blurRadius : 0)
-                .onReceive(NotificationCenter.default.publisher(
-                    for: UIApplication.willResignActiveNotification)
-                ) { _ in
-                    isBlurred = true
-                }
-                .onReceive(NotificationCenter.default.publisher(
-                    for: UIApplication.didBecomeActiveNotification)
-                ) { _ in
-                    isBlurred = false
-                }
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                bodyContent
+            }
+            .listenToThemeChanges(theme: $theme, manager: themeManager, windowUUID: windowUUID)
+        } else {
+            NavigationView {
+                bodyContent
+            }
+            .listenToThemeChanges(theme: $theme, manager: themeManager, windowUUID: windowUUID)
         }
-        .listenToThemeChanges(theme: $theme, manager: themeManager, windowUUID: windowUUID)
+    }
+
+    private var bodyContent: some View {
+        main
+            .blur(radius: isBlurred ? UX.blurRadius : 0)
+            .onReceive(NotificationCenter.default.publisher(
+                for: UIApplication.willResignActiveNotification)
+            ) { _ in
+                isBlurred = true
+            }
+            .onReceive(NotificationCenter.default.publisher(
+                for: UIApplication.didBecomeActiveNotification)
+            ) { _ in
+                isBlurred = false
+            }
     }
 
     private var main: some View {
@@ -70,7 +81,7 @@ struct CreditCardInputView: ThemeableView {
                     }
                     ToolbarItem(placement: .navigationBarLeading) {
                         leftBarButton()
-                            .foregroundColor(Color(theme.colors.actionPrimary))
+                            .foregroundColor(Color(theme.isNova ? theme.colors.iconPrimary : theme.colors.actionPrimary))
                     }
                 }
                 .padding(.top, 0)
@@ -79,6 +90,7 @@ struct CreditCardInputView: ThemeableView {
     }
 
     private var form: some View {
+        let listBackgroundColor = Color(theme.isNova ? theme.colors.layerSurfaceMedium : theme.colors.layer2)
         return VStack(spacing: 0) {
             if #unavailable(iOS 26.0) {
                 Divider()
@@ -87,17 +99,17 @@ struct CreditCardInputView: ThemeableView {
             }
 
             name
-                .background(Color(theme.colors.layer2))
+                .background(listBackgroundColor)
                 .modifier(NewStyleRoundedCorners(topLeadingCorner: UX.cornerRadius,
                                                  topTrailingCorner: UX.cornerRadius,
                                                  bottomLeadingCorner: nil,
                                                  bottomTrailingCorner: nil))
 
             number
-                .background(Color(theme.colors.layer2))
+                .background(listBackgroundColor)
 
             expiration
-                .background(Color(theme.colors.layer2))
+                .background(listBackgroundColor)
                 .modifier(NewStyleRoundedCorners(topLeadingCorner: nil,
                                                  topTrailingCorner: nil,
                                                  bottomLeadingCorner: UX.cornerRadius,
@@ -179,9 +191,10 @@ struct CreditCardInputView: ThemeableView {
                                 viewModel.dismiss?(.updatedCard, true)
                                 return
                             }
-                            viewModel.logger.log("Unable to update card with error: \(error)",
+                            viewModel.logger.log("Unable to update card",
                                                  level: .fatal,
-                                                 category: .autofill)
+                                                 category: .autofill,
+                                                 description: "\(error)")
                             viewModel.dismiss?(.none, false)
                         }
                     }
@@ -193,9 +206,10 @@ struct CreditCardInputView: ThemeableView {
                                 viewModel.dismiss?(.savedCard, true)
                                 return
                             }
-                            viewModel.logger.log("Unable to save credit card with error: \(error)",
+                            viewModel.logger.log("Unable to save credit card",
                                                  level: .fatal,
-                                                 category: .autofill)
+                                                 category: .autofill,
+                                                 description: "\(error)")
                             viewModel.dismiss?(.savedCard, false)
                         }
                     }

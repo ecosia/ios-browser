@@ -1249,7 +1249,7 @@ open class BrowserSchema: Schema {
 
         if from < 19 && to >= 19 {
             if !self.run(db, queries: [
-                // Adds tables/indicies for metadata content
+                // Adds tables/indices for metadata content
                 pageMetadataCreate,
                 indexPageMetadataCacheKeyCreate]) {
                 return false
@@ -1648,11 +1648,9 @@ open class BrowserSchema: Schema {
             do {
                 try db.executeChange(sql)
             } catch let err as NSError {
-                let extra = ["table": "clients", "errorDescription": "\(err.localizedDescription)", "sql": "\(sql)"]
-                logger.log("Error altering clients table",
+                logger.log("Error altering clients table: \(err.localizedDescription), sql: \(sql)",
                            level: .warning,
-                           category: .storage,
-                           extra: extra)
+                           category: .storage)
                 return .failure
             }
         }

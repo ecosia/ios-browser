@@ -5,37 +5,33 @@
 import Common
 import Shared
 import XCTest
+import OnboardingKit
 @testable import Client
 
 @MainActor
 final class LaunchScreenViewModelTests: XCTestCase {
-    // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
-    // private var messageManager: MockGleanPlumbMessageManagerProtocol!
+    private var messageManager: MockGleanPlumbMessageManagerProtocol!
     private var profile: MockProfile!
     private var delegate: MockLaunchFinishedLoadingDelegate!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() {
-        super.setUp()
-        DependencyHelperMock().bootstrapDependencies()
+    override func setUp() async throws {
+        try await super.setUp()
         profile = MockProfile()
+        DependencyHelperMock().bootstrapDependencies(injectedProfile: profile)
         delegate = MockLaunchFinishedLoadingDelegate()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
-        // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
-        // messageManager = MockGleanPlumbMessageManagerProtocol()
+        messageManager = MockGleanPlumbMessageManagerProtocol()
 
-        // Ecosia: PrefsKeys.NimbusFeatureTestsOverride removed in v147
+        setTermsOfServiceFeatureEnabled(false)
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
+        DependencyHelperMock().reset()
         AppContainer.shared.reset()
         profile = nil
-        // Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
-        // messageManager = nil
+        messageManager = nil
         delegate = nil
-
-        // Ecosia: PrefsKeys.NimbusFeatureTestsOverride removed in v147
+        try await super.tearDown()
     }
 
     func testLaunchDoesntCallLoadedIfNotStarted() {
@@ -43,41 +39,41 @@ final class LaunchScreenViewModelTests: XCTestCase {
         subject.delegate = delegate
 
         XCTAssertEqual(delegate.launchBrowserCalled, 0)
-        XCTAssertEqual(delegate.launchWithTypeCalled, 0)
+        XCTAssertEqual(delegate.finishedLoadingLaunchOrderCalled, 0)
     }
-    /* Ecosia: Versioning is testes in a dedicated Ecosia test
-    func testLaunchType_intro() async {
+
+    func testLaunchType_intro() {
+        profile.prefs.setInt(1, forKey: PrefsKeys.TermsOfServiceAccepted)
         let subject = createSubject()
         subject.delegate = delegate
-        await subject.startLoading(appVersion: "112.0")
+        subject.startLoading()
 
-        guard case .intro = delegate.savedLaunchType else {
-            XCTFail("Expected intro, but was \(String(describing: delegate.savedLaunchType))")
-            return
-        }
         XCTAssertEqual(delegate.launchBrowserCalled, 0)
+        XCTAssertEqual(delegate.finishedLoadingLaunchOrderCalled, 1)
+
+        subject.loadNextLaunchType()
+
+        assertSavedLaunchType(.intro(manager: IntroScreenManager(prefs: profile.prefs)))
         XCTAssertEqual(delegate.launchWithTypeCalled, 1)
     }
 
-    func testLaunchType_update() async {
-        profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
-        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+    func testLaunchType_termsOfService() {
+        setTermsOfServiceFeatureEnabled(true)
 
         let subject = createSubject()
         subject.delegate = delegate
-        await subject.startLoading(appVersion: "113.0")
+        subject.startLoading()
 
-        guard case .update = delegate.savedLaunchType else {
-            XCTFail("Expected update, but was \(String(describing: delegate.savedLaunchType))")
-            return
-        }
         XCTAssertEqual(delegate.launchBrowserCalled, 0)
+        XCTAssertEqual(delegate.finishedLoadingLaunchOrderCalled, 1)
+
+        subject.loadNextLaunchType()
+
+        assertSavedLaunchType(.termsOfService(manager: TermsOfServiceManager(prefs: profile.prefs)))
         XCTAssertEqual(delegate.launchWithTypeCalled, 1)
     }
-     */
 
-    /* Ecosia: Comment test with no mean to Launch survey
-    func testLaunchType_survey() async {
+    func testLaunchType_survey() {
         profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
         profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
         let message = createMessage()
@@ -85,41 +81,266 @@ final class LaunchScreenViewModelTests: XCTestCase {
 
         let subject = createSubject()
         subject.delegate = delegate
-        await subject.startLoading(appVersion: "112.0")
+        subject.startLoading()
 
-        guard case .survey = delegate.savedLaunchType else {
-            XCTFail("Expected survey, but was \(String(describing: delegate.savedLaunchType))")
-            return
-        }
         XCTAssertEqual(delegate.launchBrowserCalled, 0)
+        XCTAssertEqual(delegate.finishedLoadingLaunchOrderCalled, 1)
+
+        subject.loadNextLaunchType()
+
+        assertSavedLaunchType(.survey(manager: SurveySurfaceManager(windowUUID: windowUUID, and: messageManager)))
         XCTAssertEqual(delegate.launchWithTypeCalled, 1)
     }
-     */
 
-    /* Ecosia: Versioning is testes in a dedicated Ecosia test
-    func testSplashScreenExperiment_afterShown_returnsTrue() {
+    // MARK: - Multiple Launch Types Tests
+
+    // Ecosia: order is intro -> terms of service, not the reverse; see the block below.
+    func testLaunchType_termsOfServiceAndIntro_sequence() {
+        setTermsOfServiceFeatureEnabled(true)
 
         let subject = createSubject()
-        let value = subject.getSplashScreenExperimentHasShown()
-        XCTAssertFalse(value)
+        subject.delegate = delegate
+        subject.startLoading()
 
-        subject.setSplashScreenExperimentHasShown()
+        XCTAssertEqual(delegate.launchBrowserCalled, 0)
+        XCTAssertEqual(delegate.finishedLoadingLaunchOrderCalled, 1)
+        XCTAssertEqual(subject.launchOrder.count, 2)
 
-        let updatedValue = subject.getSplashScreenExperimentHasShown()
-        XCTAssertTrue(updatedValue)
+        /* Ecosia: Ecosia presents Welcome right after the launch screen, i.e. intro BEFORE terms of
+           service (see LaunchScreenViewModel.loadLaunchType), so the order below is inverted.
+        subject.loadNextLaunchType()
+        assertSavedLaunchType(.termsOfService(manager: TermsOfServiceManager(prefs: profile.prefs)))
+        XCTAssertEqual(delegate.launchWithTypeCalled, 1)
+        XCTAssertEqual(subject.launchOrder.count, 1)
+
+        subject.loadNextLaunchType()
+        assertSavedLaunchType(.intro(manager: IntroScreenManager(prefs: profile.prefs)))
+        XCTAssertEqual(delegate.launchWithTypeCalled, 2)
+        XCTAssertEqual(subject.launchOrder.count, 0)
+         */
+        subject.loadNextLaunchType()
+        assertSavedLaunchType(.intro(manager: IntroScreenManager(prefs: profile.prefs)))
+        XCTAssertEqual(delegate.launchWithTypeCalled, 1)
+        XCTAssertEqual(subject.launchOrder.count, 1)
+
+        subject.loadNextLaunchType()
+        assertSavedLaunchType(.termsOfService(manager: TermsOfServiceManager(prefs: profile.prefs)))
+        XCTAssertEqual(delegate.launchWithTypeCalled, 2)
+        XCTAssertEqual(subject.launchOrder.count, 0)
+
+        subject.loadNextLaunchType()
+        XCTAssertEqual(delegate.launchBrowserCalled, 1)
+        XCTAssertEqual(delegate.launchWithTypeCalled, 2)
     }
-     */
+
+    // MARK: - Empty Launch Order Tests
+
+    func testLaunchType_noScreensToShow_launchesBrowserDirectly() {
+        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
+        messageManager.message = nil
+
+        let subject = createSubject()
+        subject.delegate = delegate
+        subject.startLoading()
+
+        XCTAssertEqual(subject.launchOrder.count, 0)
+        XCTAssertEqual(delegate.launchBrowserCalled, 1)
+        XCTAssertEqual(delegate.finishedLoadingLaunchOrderCalled, 0)
+    }
+
+    func testLoadNextLaunchType_whenEmpty_launchesBrowser() {
+        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
+        messageManager.message = nil
+
+        let subject = createSubject()
+        subject.delegate = delegate
+        subject.startLoading()
+
+        subject.loadNextLaunchType()
+        XCTAssertEqual(delegate.launchBrowserCalled, 2)
+        XCTAssertEqual(subject.launchOrder.count, 0)
+    }
+
+    // MARK: - Delegate Tests
+
+    func testLoadNextLaunchType_withoutDelegate_doesNotCrash() {
+        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
+        messageManager.message = nil
+
+        let subject = createSubject()
+        subject.delegate = nil
+        subject.startLoading()
+
+        subject.loadNextLaunchType()
+        XCTAssertEqual(subject.launchOrder.count, 0)
+    }
+
+    func testStartLoading_withoutDelegate_doesNotCrash() {
+        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
+        messageManager.message = nil
+
+        let subject = createSubject()
+        subject.delegate = nil
+
+        subject.startLoading()
+        XCTAssertEqual(subject.launchOrder.count, 0)
+    }
+
+    // MARK: - Launch Order Property Tests
+
+    func testLaunchOrder_initiallyEmpty() {
+        let subject = createSubject()
+        XCTAssertEqual(subject.launchOrder.count, 0)
+    }
+
+    func testLaunchOrder_afterStartLoading_containsExpectedTypes() {
+        profile.prefs.setInt(1, forKey: PrefsKeys.TermsOfServiceAccepted)
+        let subject = createSubject()
+        subject.delegate = delegate
+        subject.startLoading()
+
+        XCTAssertEqual(subject.launchOrder.count, 1)
+        if case .intro = subject.launchOrder.first {
+        } else {
+            XCTFail("Expected intro as first launch type")
+        }
+    }
+
+    func testLaunchOrder_afterLoadingAllTypes_isEmpty() {
+        profile.prefs.setInt(1, forKey: PrefsKeys.TermsOfServiceAccepted)
+        let subject = createSubject()
+        subject.delegate = delegate
+        subject.startLoading()
+
+        XCTAssertEqual(subject.launchOrder.count, 1)
+        subject.loadNextLaunchType()
+        XCTAssertEqual(subject.launchOrder.count, 0)
+    }
+
+    // MARK: - Custom IntroScreenManager Tests
+
+    func testInit_withCustomIntroScreenManager_usesInjectedManager() {
+        profile.prefs.setInt(1, forKey: PrefsKeys.TermsOfServiceAccepted)
+
+        let mockIntroManager = MockIntroScreenManager(
+            shouldShowIntro: true,
+            isModernEnabled: false
+        )
+
+        let subject = LaunchScreenViewModel(
+            windowUUID: windowUUID,
+            profile: profile,
+            messageManager: messageManager,
+            introScreenManager: mockIntroManager
+        )
+        subject.delegate = delegate
+        subject.startLoading()
+
+        XCTAssertEqual(delegate.finishedLoadingLaunchOrderCalled, 1)
+        XCTAssertEqual(subject.launchOrder.count, 1)
+        if case .intro = subject.launchOrder.first {
+        } else {
+            XCTFail("Expected intro launch type")
+        }
+    }
+
+    func testInit_withCustomIntroScreenManager_notShowingIntro_skipsIntro() {
+        let mockIntroManager = MockIntroScreenManager(
+            shouldShowIntro: false,
+            isModernEnabled: false
+        )
+
+        profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
+        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+
+        let subject = LaunchScreenViewModel(
+            windowUUID: windowUUID,
+            profile: profile,
+            messageManager: messageManager,
+            introScreenManager: mockIntroManager
+        )
+        subject.delegate = delegate
+        subject.startLoading()
+
+        XCTAssertEqual(subject.launchOrder.count, 0)
+    }
+
+    // MARK: - Survey Screen Tests
+
+    func testLaunchType_survey_whenAvailable_showsSurvey() {
+        profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
+        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        let message = createMessage()
+        messageManager.message = message
+
+        let subject = createSubject()
+        subject.delegate = delegate
+        subject.startLoading()
+
+        XCTAssertEqual(delegate.launchBrowserCalled, 0)
+        XCTAssertEqual(delegate.finishedLoadingLaunchOrderCalled, 1)
+
+        subject.loadNextLaunchType()
+
+        assertSavedLaunchType(.survey(manager: SurveySurfaceManager(windowUUID: windowUUID, and: messageManager)))
+        XCTAssertEqual(delegate.launchWithTypeCalled, 1)
+    }
+
+    func testLaunchType_survey_whenNotAvailable_doesNotShowSurvey() {
+        profile.prefs.setString("112.0", forKey: PrefsKeys.AppVersion.Latest)
+        profile.prefs.setInt(1, forKey: PrefsKeys.IntroSeen)
+        messageManager.message = nil
+
+        let subject = createSubject()
+        subject.delegate = delegate
+        subject.startLoading()
+
+        XCTAssertEqual(subject.launchOrder.count, 0)
+        XCTAssertEqual(delegate.launchBrowserCalled, 1)
+    }
 
     // MARK: - Helpers
-    private func createSubject(file: StaticString = #file,
+
+    private func setTermsOfServiceFeatureEnabled(_ enabled: Bool) {
+        FxNimbus.shared.features.tosFeature.with(initializer: { _, _ in
+            TosFeature(status: enabled)
+        })
+    }
+
+    private func assertSavedLaunchType(
+        _ expected: LaunchType,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        guard let saved = delegate.savedLaunchType else {
+            XCTFail("Expected \(expected) but savedLaunchType was nil", file: file, line: line)
+            return
+        }
+
+        switch (saved, expected) {
+        case (.intro, .intro),
+             (.termsOfService, .termsOfService),
+             (.survey, .survey),
+             (.defaultBrowser, .defaultBrowser):
+            break
+        default:
+            XCTFail("Expected \(expected) but was \(saved)", file: file, line: line)
+        }
+    }
+
+    private func createSubject(file: StaticString = #filePath,
                                line: UInt = #line) -> LaunchScreenViewModel {
-        // Ecosia: OnboardingViewModel/OnboardingCardInfoModel removed in v147; use default onboardingModel
         let subject = LaunchScreenViewModel(windowUUID: windowUUID,
-                                            profile: profile)
+                                            profile: profile,
+                                            messageManager: messageManager)
         trackForMemoryLeaks(subject, file: file, line: line)
         return subject
     }
-    /* Ecosia: Remove MockGleanPlumbMessageManagerProtocol ref
+
     private func createMessage(
         for surface: MessageSurfaceId = .survey,
         action: String = "OPEN_NEW_TAB"
@@ -137,11 +358,4 @@ final class LaunchScreenViewModelTests: XCTestCase {
                                  style: MockStyleDataProtocol(),
                                  metadata: metadata)
     }
-     */
-
-    /* Ecosia: OnboardingViewModel, OnboardingCardInfoModel, OnboardingButtons, OnboardingButtonInfoModel
-       and .forwardOneCard removed in v147
-    func createOnboardingViewModel() -> OnboardingViewModel { ... }
-    func createCard(index: Int) -> OnboardingCardInfoModel { ... }
-    */
 }

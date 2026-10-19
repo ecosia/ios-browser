@@ -38,7 +38,7 @@ fi
 which -s virtualenv
 if [[ $? != 0 ]] ; then
     # Install virtualenv
-	echo "Installing vitualenv"
+	echo "Installing virtualenv"
     pip3 install virtualenv
 else
 	echo "virtualenv already installed"
@@ -57,13 +57,8 @@ else
 fi
 
 #
-# Check if swiftlint is installed
+# Install the swiftlint version pinned in .swiftlint-version. Deliberately not
+# installed through Homebrew so that every engineer and CI run lint with the
+# same version.
 #
-which -s swiftlint
-if [[ $? != 0 ]] ; then
-    # Install swiftlint
-	echo "Installing swiftlint."
-    brew install swiftlint
-else
-	echo "Swiftlint already installed"
-fi
+"$(dirname "$0")/scripts/install-swiftlint.sh" > /dev/null

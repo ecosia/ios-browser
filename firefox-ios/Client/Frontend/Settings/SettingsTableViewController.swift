@@ -2,7 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Account
 import Common
 import Ecosia
 import Shared
@@ -233,7 +232,7 @@ class PaddedSwitch: UIView {
 
 // A helper class for settings with a UISwitch.
 // Takes and optional settingsDidChange callback and status text.
-class BoolSetting: Setting, FeatureFlaggable {
+class BoolSetting: Setting, UserFeaturePreferenceProvider {
     // Sometimes a subclass will manage its own pref setting. In that case the prefkey will be nil
     let prefKey: String?
     let prefs: Prefs?
@@ -241,7 +240,7 @@ class BoolSetting: Setting, FeatureFlaggable {
     var settingDidChange: ((Bool) -> Void)?
     private let defaultValue: Bool?
     private let statusText: NSAttributedString?
-    private let featureFlagName: NimbusFeatureFlagID?
+    private let featureFlagName: FeatureFlagID?
 
     init(
         prefs: Prefs?,
@@ -249,7 +248,7 @@ class BoolSetting: Setting, FeatureFlaggable {
         defaultValue: Bool?,
         attributedTitleText: NSAttributedString,
         attributedStatusText: NSAttributedString? = nil,
-        featureFlagName: NimbusFeatureFlagID? = nil,
+        featureFlagName: FeatureFlagID? = nil,
         settingDidChange: ((Bool) -> Void)? = nil
     ) {
         self.prefs = prefs
@@ -293,7 +292,7 @@ class BoolSetting: Setting, FeatureFlaggable {
         prefs: Prefs?,
         prefKey: String? = nil,
         defaultValue: Bool = false,
-        featureFlagName: NimbusFeatureFlagID? = nil,
+        featureFlagName: FeatureFlagID? = nil,
         enabled: Bool = true,
         settingDidChange: @escaping (Bool) -> Void
     ) {
@@ -307,7 +306,7 @@ class BoolSetting: Setting, FeatureFlaggable {
     }
 
     convenience init(
-        with featureFlagID: NimbusFeatureFlagID,
+        with featureFlagID: FeatureFlagID,
         titleText: NSAttributedString,
         statusText: NSAttributedString? = nil,
         settingDidChange: ((Bool) -> Void)? = nil
@@ -381,7 +380,7 @@ class BoolSetting: Setting, FeatureFlaggable {
         }
     }
 
-    func getFeatureFlagName() -> NimbusFeatureFlagID? {
+    func getFeatureFlagName() -> FeatureFlagID? {
         return featureFlagName
     }
 
@@ -392,7 +391,7 @@ class BoolSetting: Setting, FeatureFlaggable {
     // These methods allow a subclass to control how the pref is saved
     func displayBool(_ control: UISwitch) {
         if let featureFlagName = featureFlagName {
-            control.isOn = featureFlags.isFeatureEnabled(featureFlagName, checking: .userOnly)
+            control.isOn = userPreferences.getPreferenceFor(featureFlagName)
         } else {
             guard let key = prefKey, let defaultValue = defaultValue else { return }
             control.isOn = prefs?.boolForKey(key) ?? defaultValue
@@ -401,7 +400,7 @@ class BoolSetting: Setting, FeatureFlaggable {
 
     func writeBool(_ control: UISwitch) {
         if let featureFlagName = featureFlagName {
-            featureFlags.set(feature: featureFlagName, to: control.isOn)
+            userPreferences.setPreferenceFor(featureFlagName, to: control.isOn)
         } else {
             guard let key = prefKey else { return }
             prefs?.setBool(control.isOn, forKey: key)
@@ -414,7 +413,7 @@ class BoolNotificationSetting: BoolSetting {
 
     override func displayBool(_ control: UISwitch) {
         if let featureFlagName = getFeatureFlagName() {
-            control.isOn = featureFlags.isFeatureEnabled(featureFlagName, checking: .userOnly)
+            control.isOn = userPreferences.getPreferenceFor(featureFlagName)
         } else {
             guard let key = prefKey, let defaultValue = getDefaultValue() else { return }
 
@@ -427,7 +426,7 @@ class BoolNotificationSetting: BoolSetting {
 
     override func writeBool(_ control: UISwitch) {
         if let featureFlagName = getFeatureFlagName() {
-            featureFlags.set(feature: featureFlagName, to: control.isOn)
+            userPreferences.setPreferenceFor(featureFlagName, to: control.isOn)
         } else {
             Task { @MainActor in
                 let isSystemNotificationOn = await isSystemNotificationOn()
@@ -830,6 +829,123 @@ class WithoutAccountSetting: AccountSetting {
     }
 }
 
+/// A setting that displays a picker menu allowing users to select from multiple predefined options.
+///
+/// Note: on pre iOS 17.4 devices the setting shows an `UIAlertController` on cell tap instead of an `UIMenu`.
+class PickerSetting<Value: Equatable>: Setting {
+    private let pickerOptions: [(value: Value, displayString: String)]
+    private let onOptionSelected: (Value) -> Void
+    private var menuItems: [UIAction] {
+        return pickerOptions.map { option in
+            return UIAction(title: option.displayString) { [weak self] _ in
+                self?.selectedDisplayString = option.displayString
+                self?.onOptionSelected(option.value)
+            }
+        }
+    }
+    private var selectedDisplayString: String
+    private var pickerButton: UIButton?
+
+    /// Initializes a new picker setting with the specified configuration.
+    ///
+    /// - Parameters:
+    ///   - selectedValue: The currently selected value that determines which option appears as selected.
+    ///   - pickerOptions: An array of tuples pairing each selectable value with its localized display string.
+    ///   - accessibilityIdentifier: The accessibility identifier for the setting cell.
+    ///   - onOptionSelected: A closure called when a new option is selected,
+    ///   receiving the selected value (not the display string).
+    init(
+        selectedValue: Value,
+        pickerOptions: [(value: Value, displayString: String)],
+        accessibilityIdentifier: String,
+        onOptionSelected: @escaping (Value) -> Void
+    ) {
+        self.selectedDisplayString = pickerOptions.first(where: { $0.value == selectedValue })?.displayString ?? ""
+        self.pickerOptions = pickerOptions
+        self.onOptionSelected = onOptionSelected
+        super.init()
+        self.accessibilityIdentifier = accessibilityIdentifier
+    }
+
+    override func onConfigureCell(_ cell: UITableViewCell, theme: any Theme) {
+        super.onConfigureCell(cell, theme: theme)
+        cell.textLabel?.text = selectedDisplayString
+
+        // We show the picker button with the attached UIMenu only in iOS 17.4 more devices cause on previous
+        // version there is no possibility to trigger the menu programmatically on cell tap, given missing
+        // button.performPrimaryAction() API.
+        if #available(iOS 17.4, *) {
+            let pickerButton = makePickerButton(theme: theme)
+            cell.accessoryView = pickerButton
+            self.pickerButton = pickerButton
+        } else {
+            // Use UIImageView for older iOS to avoid button tint color flickering issue when tapping the cell.
+            let accessoryImageView = makeAccessoryImageView(theme: theme)
+            cell.accessoryView = accessoryImageView
+        }
+
+        cell.selectionStyle = .none
+    }
+
+    private func makePickerButton(theme: any Theme) -> UIButton {
+        let button = UIButton()
+        button.setImage(
+            UIImage(named: StandardImageIdentifiers.Large.chevronDown)?.withRenderingMode(.alwaysTemplate),
+            for: .normal
+        )
+        button.adjustsImageSizeForAccessibilityContentSizeCategory = true
+        button.sizeToFit()
+        button.tintColor = theme.colors.iconSecondary
+        button.isAccessibilityElement = false
+        button.showsMenuAsPrimaryAction = true
+        button.menu = UIMenu(children: menuItems)
+        return button
+    }
+
+    private func makeAccessoryImageView(theme: any Theme) -> UIImageView {
+        let imageView = UIImageView(
+            image: UIImage(named: StandardImageIdentifiers.Large.chevronDown)?.withRenderingMode(.alwaysTemplate)
+        )
+        imageView.tintColor = theme.colors.iconSecondary
+        imageView.contentMode = .scaleAspectFit
+        imageView.adjustsImageSizeForAccessibilityContentSizeCategory = true
+        return imageView
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        if #available(iOS 17.4, *) {
+            pickerButton?.performPrimaryAction()
+        } else {
+            presentActionSheet(from: navigationController)
+        }
+    }
+
+    private func presentActionSheet(from navigationController: UINavigationController?) {
+        let alertController = UIAlertController(
+            title: nil,
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+
+        for option in pickerOptions {
+            let action = UIAlertAction(
+                title: option.displayString,
+                style: .default
+            ) { [weak self] _ in
+                self?.selectedDisplayString = option.displayString
+                self?.onOptionSelected(option.value)
+            }
+            alertController.addAction(action)
+        }
+        alertController.addAction(UIAlertAction(title: .CancelString, style: .cancel))
+
+        if let theme {
+            alertController.applyNovaActionTint(theme)
+        }
+        navigationController?.present(alertController, animated: true)
+    }
+}
+
 protocol SettingsDelegate: AnyObject {
     @MainActor
     func settingsOpenURLInNewTab(_ url: URL)
@@ -902,11 +1018,6 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
         super.applyTheme()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        refresh()
-    }
-
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
@@ -924,13 +1035,6 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
 
     private func syncDidChangeState() {
         self.tableView.reloadData()
-    }
-
-    private func refresh() {
-        // Through-out, be aware that modifying the control while a refresh is in progress is /not/ supported
-        // and will likely crash the app.
-        // self.profile.rustAccount.refreshProfile()
-        // TODO [rustfxa] listen to notification and refresh profile
     }
 
     func firefoxAccountDidChange() {
@@ -982,7 +1086,7 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
                 return ThemedCenteredTableViewCell()
             }
             return cell
-        } else if setting is SendDataSetting {
+        } else if setting is SendDataSetting || setting is AdBlockerSetting {
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: ThemedLearnMoreTableViewCell.cellIdentifier,
                 for: indexPath

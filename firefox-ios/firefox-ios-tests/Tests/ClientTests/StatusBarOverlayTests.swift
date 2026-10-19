@@ -9,174 +9,86 @@ import Shared
 import XCTest
 
 @MainActor
-class StatusBarOverlayTests: XCTestCase {
+final class StatusBarOverlayTests: XCTestCase {
     private var profile: MockProfile!
     private var wallpaperManager: WallpaperManagerMock!
     private var notificationCenter: MockNotificationCenter!
+    private var toolbarHelper: ToolbarHelperInterface!
+    // Ecosia: Status-bar overlay uses Ecosia's own background token, not Firefox's `layerSurfaceLow`.
+    // Every expectation below substitutes it; upstream's alpha handling is kept as-is.
     private let theme = LightTheme()
 
-    override func setUp() {
-        super.setUp()
+    private var expectedAlpha: CGFloat = if #available(iOS 26, *) { .zero } else { 0.85 }
+
+    override func setUp() async throws {
+        try await super.setUp()
         self.profile = MockProfile()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
         self.wallpaperManager = WallpaperManagerMock()
         self.notificationCenter = MockNotificationCenter()
+        DependencyHelperMock().bootstrapDependencies(injectedProfile: profile)
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         self.profile = nil
         self.wallpaperManager = nil
         self.notificationCenter = nil
+        DependencyHelperMock().reset()
+        try await super.tearDown()
     }
 
-    func testInitialState_isOpaque() throws {
-        let subject = createSubject()
+    // MARK: Translucency enabled
+
+    func testInitialState_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(toolbarHelper: toolbarHelper)
 
         XCTAssertFalse(subject.hasTopTabs)
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer1.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
-    func testOnHomepage_withoutWallpaperWithBottomURLBar_isOpaque() throws {
-        let subject = createSubject()
+    func testOnHomepage_withoutWallpaperWithBottomURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(toolbarHelper: toolbarHelper)
         profile.prefs.setString("bottom", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
 
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer1.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
-    }
-
-    func testOnHomepage_withoutWallpaperWithTopURLBar_isOpaque() throws {
-        let subject = createSubject()
-        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
-
-        subject.resetState(isHomepage: true)
-
-        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer1.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
-    }
-
-    func testOnHomepage_withWallpaperWithBottomURLBar_notOpaque() throws {
-        let subject = createSubject()
-        profile.prefs.setString("bottom", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
-        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
-                                                      textColor: nil,
-                                                      cardColor: nil,
-                                                      logoTextColor: nil)
-
-        subject.resetState(isHomepage: true)
-
-        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer1.withAlphaComponent(1).cgColor)
-         */
         XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(0).cgColor)
     }
 
-    func testOnHomepage_withWallpaperWithTopURLBar_isOpaque() throws {
-        let subject = createSubject()
+    func testOnHomepage_withoutWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(toolbarHelper: toolbarHelper)
         profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
-        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
-                                                      textColor: nil,
-                                                      cardColor: nil,
-                                                      logoTextColor: nil)
 
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer1.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
-    func testOnWebpage_withoutWallpaperWithBottomURLBar_isOpaque() throws {
-        let subject = createSubject()
-        profile.prefs.setString("bottom", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
-
-        subject.resetState(isHomepage: false)
-
-        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer1.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
-    }
-
-    func testOnWebpage_withoutWallpaperWithTopURLBar_isOpaque() throws {
-        let subject = createSubject()
-        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
-
-        subject.resetState(isHomepage: false)
-
-        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer1.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
-    }
-
-    func testOnWebpage_withWallpaperWithBottomURLBar_isOpaque() throws {
-        let subject = createSubject()
+    func testOnHomepage_withWallpaperWithBottomURLBar_translucencyOn_notOpaque() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(toolbarHelper: toolbarHelper)
         profile.prefs.setString("bottom", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
         wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
                                                       textColor: nil,
                                                       cardColor: nil,
                                                       logoTextColor: nil)
 
-        subject.resetState(isHomepage: false)
-
-        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer1.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
-    }
-
-    func testOnWebpage_withWallpaperWithTopURLBar_isOpaque() throws {
-        let subject = createSubject()
-        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
-        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
-                                                      textColor: nil,
-                                                      cardColor: nil,
-                                                      logoTextColor: nil)
-
-        subject.resetState(isHomepage: false)
-
-        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer1.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
-    }
-
-    func testHasTopTabs_onHomepageWithoutWallpaperWithTopURLBar_isOpaque() throws {
-        let subject = createSubject(hasTopTabs: true)
-        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
-
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer3.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(0).cgColor)
     }
 
-    func testHasTopTabs_onHomepageWithWallpaperWithTopURLBar_isOpaque() throws {
-        let subject = createSubject(hasTopTabs: true)
-        subject.hasTopTabs = true
+    func testOnHomepage_withWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(toolbarHelper: toolbarHelper)
         profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
         wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
                                                       textColor: nil,
@@ -186,29 +98,53 @@ class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: true)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer3.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
-    func testHasTopTabs_onWebpageWithoutWallpaperWithTopURLBar_isOpaque() throws {
-        let subject = createSubject(hasTopTabs: true)
-        subject.hasTopTabs = true
+    func testOnWebpage_withoutWallpaperWithBottomURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+        profile.prefs.setString("bottom", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.resetState(isHomepage: false)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
+    }
+
+    func testOnWebpage_withoutWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(toolbarHelper: toolbarHelper)
         profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
 
         subject.resetState(isHomepage: false)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer3.withAlphaComponent(1).cgColor)
-         */
-        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
     }
 
-    func testHasTopTabs_onWebpageWithWallpaperWithTopURLBar_isOpaque() throws {
-        let subject = createSubject(hasTopTabs: true)
-        subject.hasTopTabs = true
+    func testOnWebpage_withWallpaperWithBottomURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+        profile.prefs.setString("bottom", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
+                                                      textColor: nil,
+                                                      cardColor: nil,
+                                                      logoTextColor: nil)
+
+        subject.resetState(isHomepage: false)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
+    }
+
+    func testOnWebpage_withWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(toolbarHelper: toolbarHelper)
         profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
         wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
                                                       textColor: nil,
@@ -218,19 +154,250 @@ class StatusBarOverlayTests: XCTestCase {
         subject.resetState(isHomepage: false)
 
         let backgroundColor = try XCTUnwrap(subject.backgroundColor)
-        /* Ecosia: Update expected background color
-        XCTAssertEqual(backgroundColor.cgColor, LightTheme().colors.layer3.withAlphaComponent(1).cgColor)
-         */
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
+    }
+
+    func testHasTopTabs_onHomepageWithoutWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(hasTopTabs: true, toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.resetState(isHomepage: true)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
+    }
+
+    func testHasTopTabs_onHomepageWithWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(hasTopTabs: true, toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
+                                                      textColor: nil,
+                                                      cardColor: nil,
+                                                      logoTextColor: nil)
+
+        subject.resetState(isHomepage: true)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
+    }
+
+    func testHasTopTabs_onWebpageWithoutWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(hasTopTabs: true, toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.resetState(isHomepage: false)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
+    }
+
+    func testHasTopTabs_onWebpageWithWallpaperWithTopURLBar_translucencyOn_isTranslucent() throws {
+        let toolbarHelper = createToolbarMock()
+        let subject = createSubject(hasTopTabs: true, toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
+                                                      textColor: nil,
+                                                      cardColor: nil,
+                                                      logoTextColor: nil)
+
+        subject.resetState(isHomepage: false)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor,
+                       theme.colors.ecosia.backgroundPrimary.withAlphaComponent(expectedAlpha).cgColor)
+    }
+
+    // MARK: Reduce Transparency
+
+    func testInitialState_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+
+        XCTAssertFalse(subject.hasTopTabs)
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    func testOnHomepage_withoutWallpaperWithBottomURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+        profile.prefs.setString("bottom", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.resetState(isHomepage: true)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
         XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(1).cgColor)
     }
 
-    private func createSubject(hasTopTabs: Bool = false) -> StatusBarOverlay {
+    func testOnHomepage_withoutWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.resetState(isHomepage: true)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    func testOnHomepage_withWallpaperWithBottomURLBar_reduceTransparency_notOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+        profile.prefs.setString("bottom", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
+                                                      textColor: nil,
+                                                      cardColor: nil,
+                                                      logoTextColor: nil)
+
+        subject.resetState(isHomepage: true)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.withAlphaComponent(0).cgColor)
+    }
+
+    func testOnHomepage_withWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
+                                                      textColor: nil,
+                                                      cardColor: nil,
+                                                      logoTextColor: nil)
+
+        subject.resetState(isHomepage: true)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    func testOnWebpage_withoutWallpaperWithBottomURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+        profile.prefs.setString("bottom", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.resetState(isHomepage: false)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    func testOnWebpage_withoutWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.resetState(isHomepage: false)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    func testOnWebpage_withWallpaperWithBottomURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+        profile.prefs.setString("bottom", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
+                                                      textColor: nil,
+                                                      cardColor: nil,
+                                                      logoTextColor: nil)
+
+        subject.resetState(isHomepage: false)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    func testOnWebpage_withWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
+                                                      textColor: nil,
+                                                      cardColor: nil,
+                                                      logoTextColor: nil)
+
+        subject.resetState(isHomepage: false)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    func testHasTopTabs_onHomepageWithoutWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(hasTopTabs: true, toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.resetState(isHomepage: true)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    func testHasTopTabs_onHomepageWithWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(hasTopTabs: true, toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
+                                                      textColor: nil,
+                                                      cardColor: nil,
+                                                      logoTextColor: nil)
+
+        subject.resetState(isHomepage: true)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    func testHasTopTabs_onWebpageWithoutWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(hasTopTabs: true, toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.resetState(isHomepage: false)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    func testHasTopTabs_onWebpageWithWallpaperWithTopURLBar_reduceTransparency_isOpaque() throws {
+        let toolbarHelper = createToolbarMock(isReduceTransparencyEnabled: true)
+        let subject = createSubject(hasTopTabs: true, toolbarHelper: toolbarHelper)
+        profile.prefs.setString("top", forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+        wallpaperManager.currentWallpaper = Wallpaper(id: "A Custom Wallpaper",
+                                                      textColor: nil,
+                                                      cardColor: nil,
+                                                      logoTextColor: nil)
+
+        subject.resetState(isHomepage: false)
+
+        let backgroundColor = try XCTUnwrap(subject.backgroundColor)
+        XCTAssertEqual(backgroundColor.cgColor, theme.colors.ecosia.backgroundPrimary.cgColor)
+    }
+
+    // MARK: Helper
+
+    private func createSubject(hasTopTabs: Bool = false,
+                               toolbarHelper: ToolbarHelperInterface = ToolbarHelper()) -> StatusBarOverlay {
         let subject = StatusBarOverlay(frame: .zero,
                                        notificationCenter: notificationCenter,
-                                       wallpaperManager: wallpaperManager)
+                                       wallpaperManager: wallpaperManager,
+                                       toolbarHelper: toolbarHelper)
         subject.hasTopTabs = hasTopTabs
-        subject.applyTheme(theme: theme)
+        subject.applyTheme(theme: LightTheme())
         trackForMemoryLeaks(subject)
         return subject
+    }
+
+    private func createToolbarMock(isReduceTransparencyEnabled: Bool = false) -> ToolbarHelperInterface {
+        let toolbarHelper = MockToolbarHelper()
+        toolbarHelper.reduceTransparencyEnabled = isReduceTransparencyEnabled
+        return toolbarHelper
     }
 }

@@ -3,34 +3,48 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import ModifiedCopy
 import Foundation
 import Redux
 
 /// State for the header cell that is used in the homepage header section
+@Copyable
 struct HeaderState: StateType, Equatable, Hashable {
     var windowUUID: WindowUUID
     var isPrivate: Bool
-    var showiPadSetup: Bool
+    var showQuickAnswersButton: Bool
 
-    init(windowUUID: WindowUUID) {
+    init(
+        windowUUID: WindowUUID,
+        isPrivate: Bool = false,
+        quickAnswersStore: QuickAnswersStore = QuickAnswersMiddleware()
+    ) {
+        let showQuickAnswersButton = isPrivate ? false : quickAnswersStore.isQuickAnswersEnabled
         self.init(
             windowUUID: windowUUID,
-            isPrivate: false,
-            showiPadSetup: false
+            isPrivate: isPrivate,
+            showQuickAnswersButton: showQuickAnswersButton
         )
     }
 
     private init(
         windowUUID: WindowUUID,
         isPrivate: Bool,
-        showiPadSetup: Bool
+        showQuickAnswersButton: Bool
     ) {
         self.windowUUID = windowUUID
         self.isPrivate = isPrivate
-        self.showiPadSetup = showiPadSetup
+        self.showQuickAnswersButton = showQuickAnswersButton
     }
 
-    static let reducer: Reducer<Self> = { state, action in
+    static let reducer: Reducer<Self> = (legacyReducer, modernReducer)
+
+    static let modernReducer: ReducerMethod<Self> = { state, action, actionWindowUUID in
+        // Does not handle any modern actions
+        return defaultState(from: state)
+    }
+
+    static let legacyReducer: LegacyReducerMethod<Self> = { state, action in
         guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID
         else {
             return defaultState(from: state)
@@ -39,36 +53,28 @@ struct HeaderState: StateType, Equatable, Hashable {
         switch action.actionType {
         case HomepageActionType.initialize:
             return handleInitializeAction(for: state, with: action)
-        case HomepageActionType.traitCollectionDidChange:
-            return handleTraitCollectionDidChangeAction(for: state, with: action)
+        case QuickAnswersMiddlewareActionType.didInitialize, QuickAnswersMiddlewareActionType.didUpdateSettings:
+            return handleQuickAnswersAction(for: state, with: action)
         default:
             return defaultState(from: state)
         }
     }
 
     private static func handleInitializeAction(for state: HeaderState, with action: Action) -> HeaderState {
-        guard let homepageAction = action as? HomepageAction,
-              let showiPadSetup = homepageAction.showiPadSetup
-        else {
+        guard action is HomepageAction else {
             return defaultState(from: state)
         }
-        return HeaderState(
-            windowUUID: state.windowUUID,
-            isPrivate: false,
-            showiPadSetup: showiPadSetup
-        )
+        return state.copy(isPrivate: false)
     }
 
-    private static func handleTraitCollectionDidChangeAction(for state: HeaderState, with action: Action) -> HeaderState {
-        guard let homepageAction = action as? HomepageAction,
-              let showiPadSetup = homepageAction.showiPadSetup
+    private static func handleQuickAnswersAction(for state: HeaderState, with action: Action) -> HeaderState {
+        guard let quickAnswersAction = action as? QuickAnswersMiddlewareAction,
+              let showQuickAnswers = quickAnswersAction.isQuickAnswersEnabled
         else {
             return defaultState(from: state)
         }
-        return HeaderState(
-            windowUUID: state.windowUUID,
-            isPrivate: state.isPrivate,
-            showiPadSetup: showiPadSetup
+        return state.copy(
+            showQuickAnswersButton: showQuickAnswers && !state.isPrivate
         )
     }
 
@@ -76,7 +82,7 @@ struct HeaderState: StateType, Equatable, Hashable {
         return HeaderState(
             windowUUID: state.windowUUID,
             isPrivate: state.isPrivate,
-            showiPadSetup: state.showiPadSetup
+            showQuickAnswersButton: state.showQuickAnswersButton
         )
     }
 }

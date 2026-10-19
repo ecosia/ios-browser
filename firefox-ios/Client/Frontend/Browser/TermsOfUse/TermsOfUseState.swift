@@ -3,15 +3,17 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import ModifiedCopy
 import Redux
 
+@Copyable
 struct TermsOfUseState: ScreenState {
     let windowUUID: WindowUUID
     var hasAccepted: Bool
     var wasDismissed: Bool
 
     init(appState: AppState, uuid: WindowUUID) {
-        guard let termsOfUseState = appState.screenState(
+        guard let termsOfUseState = appState.componentState(
             TermsOfUseState.self,
             for: .termsOfUse,
             window: uuid)
@@ -48,14 +50,20 @@ struct TermsOfUseState: ScreenState {
                                wasDismissed: state.wasDismissed)
     }
 
-    static let reducer: Reducer<TermsOfUseState> = { state, action in
+    static let reducer: Reducer<Self> = (legacyReducer, modernReducer)
+
+    static let modernReducer: ReducerMethod<TermsOfUseState> = { state, action, actionWindowUUID in
+        // Does not handle any modern actions
+        return defaultState(from: state)
+    }
+
+    static let legacyReducer: LegacyReducerMethod<TermsOfUseState> = { state, action in
         return handleReducer(state: state, action: action)
     }
 
     private static func handleReducer(state: TermsOfUseState, action: Action) -> TermsOfUseState {
         // Only process actions for the current window
-        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID
-        else {
+        guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else {
             return defaultState(from: state)
         }
 
@@ -74,24 +82,22 @@ struct TermsOfUseState: ScreenState {
 
         switch type {
         case .termsShown:
-            return TermsOfUseState(windowUUID: state.windowUUID,
-                                   hasAccepted: false,
-                                   wasDismissed: false)
+            return state
+                .copy(hasAccepted: false)
+                .copy(wasDismissed: false)
+
         case .termsAccepted:
-            return TermsOfUseState(windowUUID: state.windowUUID,
-                                   hasAccepted: true,
-                                   wasDismissed: false)
+            return state
+                .copy(hasAccepted: true)
+                .copy(wasDismissed: false)
+
         case .gestureDismiss,
              .remindMeLaterTapped:
-            return TermsOfUseState(windowUUID: state.windowUUID,
-                                   hasAccepted: state.hasAccepted,
-                                   wasDismissed: true)
-        case .learnMoreLinkTapped,
-             .privacyLinkTapped,
-             .termsLinkTapped:
-            return TermsOfUseState(windowUUID: state.windowUUID,
-                                   hasAccepted: state.hasAccepted,
-                                   wasDismissed: state.wasDismissed)
+            return state
+                .copy(wasDismissed: true)
+
+        default:
+            return defaultState(from: state)
         }
     }
 }

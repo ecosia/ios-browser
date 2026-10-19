@@ -187,6 +187,9 @@
 /* Title for the welcome card in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.Welcome.Title.v148.v2" = "Aperi tu ligamines con confidentialitate";
 
+/* Title for the welcome card in the v149 brand refresh onboarding flow. */
+"Onboarding.Modern.BrandRefresh.Welcome.TitleV3.v149" = "Aperi tote tu ligamines con confidentialitate integrate";
+
 /* Option for the automatic theme. */
 "Onboarding.Modern.Customization.Theme.Automatic.v145" = "Automatic";
 
@@ -263,7 +266,7 @@
 "Onboarding.Modern.TermsOfService.AgreementButtonTitle.v145" = "Continuar";
 
 /* Description for the Terms of Service screen in the v2 onboarding flow. The '\n' symbols denote line breaks. %@ is the company name (e.g. Mozilla) */
-"Onboarding.Modern.TermsOfService.Description.v145" = "Protection automatic de tu informationes personal \ncargamento de sitos rapide e recerca plus intelligente \nApportate a te per le organisation non-lucrative %@, de confidentia pro ultra 20 annos";
+"Onboarding.Modern.TermsOfService.Description.v145" = "Protection automatic de tu informationes personal\ncargamento de sitos rapide e recerca plus intelligente\nApportate a te per le organisation non-lucrative %@, de confidentia pro ultra 20 annos";
 
 /* Title for the Manage button link, in the Terms of Service screen for redirecting the user to the Manage data collection preferences screen. */
 "Onboarding.Modern.TermsOfService.ManageLink.v140" = "Gerer";

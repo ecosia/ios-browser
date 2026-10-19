@@ -60,6 +60,10 @@ open class UserAgent {
         return clientUserAgent(prefix: "Ecosia-iOS-EcosiaA")
     }
 
+    public static var waybackUserAgent: String {
+        return "firefox-ios-neterr/\(AppInfo.appVersion) (+https://mzl.la/3RNfZFB)"
+    }
+
     public static var defaultClientUserAgent: String {
         /* Ecosia: Use Ecosia UA prefix for generic client requests.
         return clientUserAgent(prefix: "Firefox-iOS")
@@ -103,6 +107,12 @@ open class UserAgent {
              */
             if let customUA = CustomUserAgentConstant.customDesktopUAForDomain[domain] {
                 return customUA
+            }
+
+            // Ecosia: upstream's Google webcompat override, kept but ordered after the per-domain
+            // overrides above so Ecosia's stated priority still holds.
+            if CustomUserAgentConstant.isGoogleDomain(domain) {
+                return CustomUserAgentConstant.googleDesktopUserAgent
             }
 
             // Ecosia: Use our desktop UA for URLProvider-backed Ecosia domains.
@@ -159,12 +169,23 @@ struct CustomUserAgentConstant {
     private static let defaultMobileUA = UserAgentBuilder.defaultMobileUserAgent().userAgent()
     // Ecosia: Keep a Firefox mobile UA for domains that reject Ecosia's default UA.
     private static let defaultFirefoxMobileUA = UserAgentBuilder.defaultFirefoxMobileUserAgent().userAgent()
-    /* Ecosia: Build Safari-only overrides from the Firefox mobile UA.
-    private static let safariMobileUA = UserAgentBuilder.defaultMobileUserAgent().clone(extensions: "Version/18.6 \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
+    /* Ecosia: Build Safari-only overrides from the Firefox mobile UA. The Safari version itself
+       tracks upstream (18.6 -> 26.4 in 155.1) — these overrides exist to look like current Safari,
+       so pinning an old version would re-trigger the very webcompat bugs they fix.
+    private static let safariMobileUA = UserAgentBuilder.defaultMobileUserAgent().clone(extensions: "Version/26.4 \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
      */
     private static let safariMobileUA = UserAgentBuilder.defaultFirefoxMobileUserAgent().clone(
-        extensions: "Version/18.6 \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)"
+        extensions: "Version/26.4 \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)"
     )
+
+    static let googleDesktopUserAgent = UserAgentBuilder.defaultDesktopUserAgent().clone(
+        extensions: "\(UserAgent.uaBitFx) Version/18.6 Safari/605.1.15"
+    )
+
+    static func isGoogleDomain(_ domain: String) -> Bool {
+        let urlString = domain.contains("://") ? domain : "https://\(domain)"
+        return URL(string: urlString)?.isDomain("google") == true
+    }
 
     static let customMobileUAForDomain = [
         // Ecosia: PayPal expects the Firefox mobile UA.
@@ -173,8 +194,9 @@ struct CustomUserAgentConstant {
         "roku.com": safariMobileUA,
         // TODO: FXIOS-13391 [webcompat] "connection error" only on FxiOS/* UA (bug 1983983)
         "tver.jp": safariMobileUA,
-        // TODO: FXIOS-14398 [webcompat] ServiceNow rejects Mobile Safari version "null" (bug 1978984)
+        // TODO: FXIOS-15618 FXIOS-14398 [webcompat] ServiceNow rejects Mobile Safari version "null" (bug 1978984)
         "lta.go.jp": safariMobileUA,
+        "service-now.com": safariMobileUA,
         // TODO: FXIOS-13096 [webcompat] UA version parsed as "Safari 0" (webcompat #170304)
         "epic.com": safariMobileUA,
         "athenahealth.com": safariMobileUA,
@@ -189,6 +211,11 @@ struct CustomUserAgentConstant {
         "paypal.com": defaultFirefoxMobileUA,
         // FXIOS-10251: Do not appear as desktop/Safari for firefox.com/pair
         "firefox.com": defaultMobileUA,
+        // FXIOS-15905: Do not identify as (desktop) Safari on addons.m.o, bugzilla.m.o, support.m.o for correct info
+        "mozilla.org": defaultMobileUA,
+        // TODO: FXIOS-15483 [webcompat] Docusign forms broken using desktop UA
+        "docusign.com": defaultMobileUA,
+        "docusign.net": defaultMobileUA,
         // Ecosia: WKWebView doesn't propagate `customUserAgent` overrides to fetch/XHR/Worker requests, only to document navigations,
         // we want to keep these domains on the plain desktop UA so every request (navigation and subresource) uses the same string.
         "ecosia.org": UserAgent.desktopUserAgent(),
@@ -248,9 +275,11 @@ public struct UserAgentBuilder {
 
     public static func defaultMobileUserAgent() -> UserAgentBuilder {
         /* Ecosia: Always return Ecosia's UA as the default mobile UA.
+        let device = UIDeviceDetails.model
+        let system = device == "iPad" ? "CPU" : "CPU iPhone"
         return UserAgentBuilder(
             product: UserAgent.product,
-            systemInfo: "(\(UIDeviceDetails.model); CPU iPhone OS 18_7 like Mac OS X)",
+            systemInfo: "(\(device); \(system) OS 18_7 like Mac OS X)",
             platform: UserAgent.platform,
             platformDetails: UserAgent.platformDetails,
             extensions: "FxiOS/\(AppInfo.appVersion) \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
@@ -259,9 +288,11 @@ public struct UserAgentBuilder {
     }
 
     public static func defaultFirefoxMobileUserAgent() -> UserAgentBuilder {
+        let device = UIDeviceDetails.model
+        let system = device == "iPad" ? "CPU" : "CPU iPhone"
         return UserAgentBuilder(
             product: UserAgent.product,
-            systemInfo: "(\(UIDeviceDetails.model); CPU iPhone OS 18_7 like Mac OS X)",
+            systemInfo: "(\(device); \(system) OS 18_7 like Mac OS X)",
             platform: UserAgent.platform,
             platformDetails: UserAgent.platformDetails,
             extensions: "FxiOS/\(AppInfo.appVersion) \(UserAgent.uaBitMobile) \(UserAgent.uaBitSafari)")
@@ -273,7 +304,7 @@ public struct UserAgentBuilder {
             systemInfo: "(Macintosh; Intel Mac OS X 10_15_7)",
             platform: UserAgent.platform,
             platformDetails: UserAgent.platformDetails,
-            extensions: "Version/18.6 Safari/605.1.15")
+            extensions: "Version/26.4 Safari/605.1.15")
     }
 }
 

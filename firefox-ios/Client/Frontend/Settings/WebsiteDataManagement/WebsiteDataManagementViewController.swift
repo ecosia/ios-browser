@@ -8,7 +8,7 @@ import Common
 // Ecosia: Analytics for "Clear Website Data" tracking.
 import Ecosia
 
-class WebsiteDataManagementViewController: UIViewController,
+final class WebsiteDataManagementViewController: UIViewController,
                                            UITableViewDataSource,
                                            UITableViewDelegate,
                                            UISearchBarDelegate,
@@ -24,6 +24,10 @@ class WebsiteDataManagementViewController: UIViewController,
         static var tableViewStyleForCurrentOS: UITableView.Style {
             guard #available(iOS 26.0, *) else { return .grouped }
             return .insetGrouped
+        }
+        static var shouldShowSectionBorders: Bool {
+            guard #available(iOS 26.0, *) else { return true }
+            return false
         }
         static var sectionTopMarginForCurrentOS: CGFloat {
             guard #available(iOS 26.0, *) else { return 0 }
@@ -67,6 +71,12 @@ class WebsiteDataManagementViewController: UIViewController,
         return themeManager.getCurrentTheme(for: windowUUID)
     }
 
+    /// Number of records shown before the user taps "Show More": either 10, 8 or 6 depending on the screen size.
+    private var numberOfInitialRecords: Int {
+        let height = max(view.frame.width, view.frame.height)
+        return height > 667 ? 10 : height > 568 ? 8 : 6
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
@@ -106,7 +116,7 @@ class WebsiteDataManagementViewController: UIViewController,
                           height: SettingsUX.TableViewHeaderFooterHeight)
         )
         footer.applyTheme(theme: currentTheme())
-        footer.showBorder(for: .top, true)
+        footer.showBorder(for: .top, UX.shouldShowSectionBorders)
         tableView.tableFooterView = footer
 
         view.addSubview(tableView)
@@ -128,10 +138,17 @@ class WebsiteDataManagementViewController: UIViewController,
         ])
 
         viewModel.onViewModelChanged = { [weak self] in
-            guard let self = self else { return }
-            self.loadingView.isHidden = self.viewModel.state != .loading
-            self.searchResultsViewController.reloadData()
-            self.tableView?.reloadData()
+            guard let self else { return }
+            loadingView.isHidden = viewModel.state != .loading
+            searchResultsViewController.reloadData()
+            reloadTableView()
+        }
+
+        viewModel.onSelectionChanged = { [weak self] in
+            guard let self else { return }
+            syncSelectedRows()
+            updateClearButtonTitle()
+            searchResultsViewController.selectionDidChange()
         }
 
         viewModel.loadAllWebsiteData()
@@ -158,10 +175,7 @@ class WebsiteDataManagementViewController: UIViewController,
         definesPresentationContext = true
     }
 
-    func tableView(
-        _ tableView: UITableView,
-        cellForRowAt indexPath: IndexPath
-    ) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let section = Section(rawValue: indexPath.section)!
         switch section {
         case .sites:
@@ -169,11 +183,6 @@ class WebsiteDataManagementViewController: UIViewController,
             cell.applyTheme(theme: currentTheme())
             if let record = viewModel.siteRecords[safe: indexPath.row] {
                 cell.textLabel?.text = record.displayName
-                if viewModel.selectedRecords.contains(record) {
-                    tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-                } else {
-                    tableView.deselectRow(at: indexPath, animated: false)
-                }
             }
             let cellViewModel = ThemedTableViewCellViewModel(
                 theme: currentTheme(),
@@ -247,13 +256,10 @@ class WebsiteDataManagementViewController: UIViewController,
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let section = Section(rawValue: section)!
-        let height = max(self.view.frame.width, self.view.frame.height)
-        let numberOfInitialRecords = height > 667 ? 10 : height > 568 ? 8 : 6
 
         switch section {
         case .sites:
             let numberOfRecords = viewModel.siteRecords.count
-            // Show either 10, 8 or 6 records initially depending on the screen size.
             return viewModel.state == .displayAll ? numberOfRecords: min(numberOfRecords, numberOfInitialRecords)
         case .showMore:
             return (viewModel.state != .displayAll && viewModel.siteRecords.count > numberOfInitialRecords) ? 1 : 0
@@ -269,8 +275,7 @@ class WebsiteDataManagementViewController: UIViewController,
             guard let item = viewModel.siteRecords[safe: indexPath.row] else { return }
             viewModel.selectItem(item)
         case .showMore:
-            viewModel.showMoreButtonPressed()
-            tableView.reloadData()
+            expandSiteRecords(replacing: indexPath)
         case .clearButton:
             // Ecosia: Track "Clear Website Data" button click (restored; lost in the v147 upgrade — MOB-4384)
             Analytics.shared.clearsDataFromSection(.websites)
@@ -302,6 +307,66 @@ class WebsiteDataManagementViewController: UIViewController,
         }
     }
 
+    private func expandSiteRecords(replacing showMoreIndexPath: IndexPath) {
+        guard let tableView else { return }
+        let sitesSection = Section.sites.rawValue
+        let previousRowCount = tableView.numberOfRows(inSection: sitesSection)
+
+        viewModel.showMoreButtonPressed()
+
+        let expandedRowCount = viewModel.siteRecords.count
+        guard expandedRowCount > previousRowCount else {
+            // Safeguard: not expected to happen, but if the records shrank since the tableView last queried the
+            // data source, the range below would trap. Reloading is safe in that case.
+            reloadTableView()
+            return
+        }
+
+        tableView.performBatchUpdates {
+            tableView.insertRows(
+                at: (previousRowCount..<expandedRowCount).map { IndexPath(row: $0, section: sitesSection) },
+                with: .none
+            )
+            tableView.deleteRows(at: [showMoreIndexPath], with: .none)
+        }
+        syncSelectedRows()
+    }
+
+    private func reloadTableView() {
+        tableView?.reloadData()
+        syncSelectedRows()
+    }
+
+    /// Aligns the tableView's selected rows with the view model.
+    private func syncSelectedRows() {
+        guard let tableView else { return }
+        let section = Section.sites.rawValue
+        // Snapshot the selection once, so each row below is a lookup instead of a fresh query on the table view.
+        let selectedIndexPaths = Set(tableView.indexPathsForSelectedRows ?? [])
+
+        // Only the rows the tableView currently knows about, which is fewer than `siteRecords` while truncated.
+        for row in 0..<tableView.numberOfRows(inSection: section) {
+            guard let record = viewModel.siteRecords[safe: row] else { continue }
+            let indexPath = IndexPath(row: row, section: section)
+            let isSelectedInTableView = selectedIndexPaths.contains(indexPath)
+
+            if viewModel.selectedRecords.contains(record) {
+                // Already selected, so leave it alone: reselecting forces a redundant layout pass and a visible blink.
+                guard !isSelectedInTableView else { continue }
+                tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+            } else if isSelectedInTableView {
+                // Stale checkmark left over from a reload or a reused cell.
+                tableView.deselectRow(at: indexPath, animated: false)
+            }
+        }
+    }
+
+    private func updateClearButtonTitle() {
+        let indexPath = IndexPath(row: 0, section: Section.clearButton.rawValue)
+        guard let cell = tableView?.cellForRow(at: indexPath) as? ThemedCenteredTableViewCell else { return }
+        cell.setTitle(to: viewModel.clearButtonTitle)
+    }
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let headerView = tableView.dequeueReusableHeaderFooterView(
             withIdentifier: ThemedTableSectionHeaderFooterView.cellIdentifier
@@ -309,8 +374,8 @@ class WebsiteDataManagementViewController: UIViewController,
 
         headerView.titleLabel.text = section == Section.sites.rawValue ? .SettingsWebsiteDataTitle : nil
 
-        headerView.showBorder(for: .top, true)
-        headerView.showBorder(for: .bottom, true)
+        headerView.showBorder(for: .top, UX.shouldShowSectionBorders)
+        headerView.showBorder(for: .bottom, UX.shouldShowSectionBorders)
 
         // top section: no top border (this is a plain table)
         guard let section = Section(rawValue: section) else { return headerView }
@@ -325,7 +390,7 @@ class WebsiteDataManagementViewController: UIViewController,
             }
         } else if section == .clearButton {
             headerView.showBorder(for: .top, false)
-            headerView.showBorder(for: .bottom, true)
+            headerView.showBorder(for: .bottom, UX.shouldShowSectionBorders)
         }
 
         return headerView
@@ -348,8 +413,8 @@ class WebsiteDataManagementViewController: UIViewController,
             withIdentifier: ThemedTableSectionHeaderFooterView.cellIdentifier
         ) as? ThemedTableSectionHeaderFooterView else { return nil }
 
-        footerView.showBorder(for: .top, true)
-        footerView.showBorder(for: .bottom, true)
+        footerView.showBorder(for: .top, UX.shouldShowSectionBorders)
+        footerView.showBorder(for: .bottom, UX.shouldShowSectionBorders)
         return footerView
     }
 

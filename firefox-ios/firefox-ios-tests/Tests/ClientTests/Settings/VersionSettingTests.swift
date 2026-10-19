@@ -4,8 +4,7 @@
 
 import XCTest
 @testable import Client
-// Ecosia: Remove Shared as we import Client
-// import Shared
+import Shared
 import Common
 
 @MainActor
@@ -13,17 +12,16 @@ class VersionSettingTests: XCTestCase {
     private var delegate: MockDebugSettingsDelegate!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() {
-        super.setUp()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: MockProfile())
+    override func setUp() async throws {
+        try await super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         delegate = MockDebugSettingsDelegate()
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         DependencyHelperMock().reset()
         delegate = nil
+        try await super.tearDown()
     }
 
     func testCopyAppVersion() {

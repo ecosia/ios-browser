@@ -6,60 +6,59 @@ import SwiftUI
 import Common
 
 public struct AttributedLinkText<Action: RawRepresentable>: View where Action.RawValue == String {
-    let theme: Theme
+    let textColor: UIColor
+    let linkColor: UIColor
     let fullText: String
     let linkText: String
     let action: Action
     let linkAction: (Action) -> Void
     let textAlignment: TextAlignment
+    let accessibilityIdentifier: String?
 
     public init(
-        theme: Theme,
+        textColor: UIColor,
+        linkColor: UIColor,
         fullText: String,
         linkText: String,
         action: Action,
         textAlignment: TextAlignment = .center,
+        accessibilityIdentifier: String? = nil,
         linkAction: @escaping (Action) -> Void
     ) {
-        self.theme = theme
+        self.textColor = textColor
+        self.linkColor = linkColor
         self.fullText = fullText
         self.linkText = linkText
         self.action = action
         self.linkAction = linkAction
         self.textAlignment = textAlignment
+        self.accessibilityIdentifier = accessibilityIdentifier
     }
 
     public var body: some View {
-        Text(attributedString)
-            .fixedSize(horizontal: false, vertical: true)
-            .accessibilityElement(children: .combine)
-            .accessibilityAddTraits(.isLink)
-            .accessibilityLabel(fullText)
-            .accessibilityAction {
-                linkAction(action)
-            }
-            .font(.caption)
-            .multilineTextAlignment(textAlignment)
-            .environment(\.openURL, OpenURLAction { url in
-                if url.scheme == "action", let host = url.host,
-                   let action = Action(rawValue: host) {
-                    // Handle in-app navigation
-                    linkAction(action)
-                    return .handled
-                }
-                return .systemAction
-            })
+        // Rendered as a Button so the link is a single, reliably hittable accessibility element that is
+        // addressable by identifier in UI tests. The link substring keeps its underlined link styling.
+        Button {
+            linkAction(action)
+        } label: {
+            Text(attributedString)
+                .fixedSize(horizontal: false, vertical: true)
+                .font(.caption)
+                .multilineTextAlignment(textAlignment)
+        }
+        .buttonStyle(.noHighlight)
+        .accessibilityLabel(fullText)
+        .accessibilityAddTraits(.isLink)
+        .accessibilityIdentifier(accessibilityIdentifier ?? action.rawValue)
     }
 
     private var attributedString: AttributedString {
         var attrString = AttributedString(fullText)
-        attrString.foregroundColor = Color(uiColor: theme.colors.textSecondary)
+        attrString.foregroundColor = Color(uiColor: textColor)
 
-        let actionURL = URL(string: "action://\(action.rawValue)")!
         if let range = attrString.range(of: linkText) {
             attrString[range].underlineStyle = .single
-            attrString[range].foregroundColor = Color(uiColor: theme.colors.actionPrimary)
-            attrString[range].link = actionURL
+            attrString[range].foregroundColor = Color(uiColor: linkColor)
         }
 
         return attrString

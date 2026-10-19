@@ -8,13 +8,27 @@ import XCTest
 @testable import Client
 
 final class HomepageStateTests: XCTestCase {
+    private var profile: MockProfile!
+    private var mockNimbusLayer: MockNimbusFeatureFlagLayer!
+
     override func setUp() async throws {
         try await super.setUp()
-        await DependencyHelperMock().bootstrapDependencies()
+        profile = MockProfile()
+        mockNimbusLayer = MockNimbusFeatureFlagLayer()
+        let featureFlagProvider = FeatureFlagsProvider(prefs: profile.prefs, backendLayer: mockNimbusLayer)
+        let userFeaturePreferences = UserFeaturePreferenceManager(prefs: profile.prefs, backendLayer: mockNimbusLayer)
+
+        await DependencyHelperMock().bootstrapDependencies(
+            injectedProfile: profile,
+            injectedFeatureFlagProvider: featureFlagProvider,
+            injectedUserFeaturePreferences: userFeaturePreferences
+        )
     }
 
     override func tearDown() async throws {
         DependencyHelperMock().reset()
+        profile = nil
+        mockNimbusLayer = nil
         try await super.tearDown()
     }
 
@@ -24,10 +38,7 @@ final class HomepageStateTests: XCTestCase {
         XCTAssertEqual(initialState.windowUUID, .XCTestDefaultUUID)
 
         XCTAssertFalse(initialState.headerState.isPrivate)
-        XCTAssertFalse(initialState.headerState.showiPadSetup)
-        XCTAssertFalse(initialState.isZeroSearch)
-        XCTAssertFalse(initialState.shouldTriggerImpression)
-        XCTAssertEqual(initialState.availableContentHeight, 0)
+        XCTAssertFalse(initialState.trackerBlockerModuleState.shouldShowSection)
     }
 
     @MainActor
@@ -35,10 +46,9 @@ final class HomepageStateTests: XCTestCase {
         let initialState = createSubject()
         let reducer = homepageReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             HomepageAction(
-                showiPadSetup: true,
                 windowUUID: .XCTestDefaultUUID,
                 actionType: HomepageActionType.initialize
             )
@@ -46,50 +56,6 @@ final class HomepageStateTests: XCTestCase {
 
         XCTAssertEqual(newState.windowUUID, .XCTestDefaultUUID)
         XCTAssertFalse(newState.headerState.isPrivate)
-        XCTAssertTrue(newState.headerState.showiPadSetup)
-        XCTAssertFalse(newState.isZeroSearch)
-        XCTAssertFalse(initialState.shouldTriggerImpression)
-        XCTAssertEqual(newState.availableContentHeight, initialState.availableContentHeight)
-    }
-
-    @MainActor
-    func test_embeddedHomepageAction_withTrueZeroSearch_returnsExpectedState() {
-        let initialState = createSubject()
-        let reducer = homepageReducer()
-
-        let newState = reducer(
-            initialState,
-            HomepageAction(
-                isZeroSearch: true,
-                windowUUID: .XCTestDefaultUUID,
-                actionType: HomepageActionType.embeddedHomepage
-            )
-        )
-
-        XCTAssertEqual(newState.windowUUID, .XCTestDefaultUUID)
-        XCTAssertTrue(newState.isZeroSearch)
-        XCTAssertFalse(initialState.shouldTriggerImpression)
-        XCTAssertEqual(newState.availableContentHeight, initialState.availableContentHeight)
-    }
-
-    @MainActor
-    func test_embeddedHomepageAction_withFalseZeroSearch_returnsExpectedState() {
-        let initialState = createSubject()
-        let reducer = homepageReducer()
-
-        let newState = reducer(
-            initialState,
-            HomepageAction(
-                isZeroSearch: false,
-                windowUUID: .XCTestDefaultUUID,
-                actionType: HomepageActionType.embeddedHomepage
-            )
-        )
-
-        XCTAssertEqual(newState.windowUUID, .XCTestDefaultUUID)
-        XCTAssertFalse(newState.isZeroSearch)
-        XCTAssertFalse(initialState.shouldTriggerImpression)
-        XCTAssertEqual(newState.availableContentHeight, initialState.availableContentHeight)
     }
 
     @MainActor
@@ -97,38 +63,15 @@ final class HomepageStateTests: XCTestCase {
         let initialState = createSubject()
         let reducer = homepageReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             GeneralBrowserAction(
                 windowUUID: .XCTestDefaultUUID,
                 actionType: GeneralBrowserActionType.didSelectedTabChangeToHomepage
             )
         )
-        XCTAssertFalse(initialState.shouldTriggerImpression)
+        XCTAssertFalse(initialState.telemetryState.shouldTriggerImpression)
         XCTAssertEqual(newState.windowUUID, .XCTestDefaultUUID)
-        XCTAssertFalse(newState.isZeroSearch)
-        XCTAssertTrue(newState.shouldTriggerImpression)
-        XCTAssertEqual(newState.availableContentHeight, initialState.availableContentHeight)
-    }
-
-    @MainActor
-    func test_handleAvailableContentHeightChangeAction_returnsExpectedState() {
-        let initialState = createSubject()
-        let reducer = homepageReducer()
-
-        let newState = reducer(
-            initialState,
-            HomepageAction(
-                availableContentHeight: 500,
-                windowUUID: .XCTestDefaultUUID,
-                actionType: HomepageActionType.availableContentHeightDidChange
-            )
-        )
-
-        XCTAssertEqual(newState.availableContentHeight, 500)
-        XCTAssertEqual(newState.windowUUID, .XCTestDefaultUUID)
-        XCTAssertFalse(newState.shouldTriggerImpression)
-        XCTAssertEqual(newState.isZeroSearch, initialState.isZeroSearch)
     }
 
     @MainActor
@@ -136,16 +79,15 @@ final class HomepageStateTests: XCTestCase {
         let initialState = createSubject()
         let reducer = homepageReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             HomepageAction(
-                shouldShowPrivacyNotice: true,
                 windowUUID: .XCTestDefaultUUID,
                 actionType: HomepageMiddlewareActionType.configuredPrivacyNotice
             )
         )
 
-        XCTAssertTrue(newState.shouldShowPrivacyNotice)
+        XCTAssertTrue(newState.privacyNoticeState.shouldShowPrivacyNotice)
         XCTAssertEqual(newState.windowUUID, .XCTestDefaultUUID)
     }
 
@@ -154,7 +96,7 @@ final class HomepageStateTests: XCTestCase {
         let initialState = createSubject()
         let reducer = homepageReducer()
 
-        let newState = reducer(
+        let newState = reducer.legacyReducer(
             initialState,
             HomepageAction(
                 windowUUID: .XCTestDefaultUUID,
@@ -162,8 +104,60 @@ final class HomepageStateTests: XCTestCase {
             )
         )
 
-        XCTAssertFalse(newState.shouldShowPrivacyNotice)
+        XCTAssertFalse(newState.privacyNoticeState.shouldShowPrivacyNotice)
         XCTAssertEqual(newState.windowUUID, .XCTestDefaultUUID)
+    }
+
+    @MainActor
+    func test_trackerBlockerModuleToggleAction_withToggleOn_returnsExpectedState() {
+        setFeatureFlag(.homepageTrackerBlockerModule, isEnabled: true)
+        let initialState = createSubject()
+        let reducer = homepageReducer()
+
+        let newState = reducer.legacyReducer(
+            initialState,
+            TrackerBlockerModuleAction(
+                isEnabled: true,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TrackerBlockerModuleActionType.toggleShowSectionSetting
+            )
+        )
+
+        XCTAssertTrue(newState.trackerBlockerModuleState.shouldShowSection)
+    }
+
+    func test_trackerBlockerModuleState_withFeatureDisabledAndPreferenceEnabled_returnsExpectedState() {
+        let profile = MockProfile()
+        let mockNimbusLayer = MockNimbusFeatureFlagLayer()
+        let userPreferences = UserFeaturePreferenceManager(prefs: profile.prefs, backendLayer: mockNimbusLayer)
+        userPreferences.setPreferenceFor(.homepageTrackerBlockerModule, to: true)
+        let featureFlagsProvider = FeatureFlagsProvider(prefs: profile.prefs, backendLayer: mockNimbusLayer)
+
+        let state = TrackerBlockerModuleState(
+            userPreferences: userPreferences,
+            featureFlagsProvider: featureFlagsProvider,
+            windowUUID: .XCTestDefaultUUID
+        )
+
+        XCTAssertFalse(state.shouldShowSection)
+    }
+
+    @MainActor
+    func test_trackerBlockerModuleToggleAction_withToggleOff_returnsExpectedState() {
+        setFeatureFlag(.homepageTrackerBlockerModule, isEnabled: true)
+        let initialState = createSubject()
+        let reducer = homepageReducer()
+
+        let newState = reducer.legacyReducer(
+            initialState,
+            TrackerBlockerModuleAction(
+                isEnabled: false,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TrackerBlockerModuleActionType.toggleShowSectionSetting
+            )
+        )
+
+        XCTAssertFalse(newState.trackerBlockerModuleState.shouldShowSection)
     }
 
     // MARK: - Private
@@ -173,5 +167,13 @@ final class HomepageStateTests: XCTestCase {
 
     private func homepageReducer() -> Reducer<HomepageState> {
         return HomepageState.reducer
+    }
+
+    private func setFeatureFlag(_ flag: FeatureFlagID, isEnabled: Bool) {
+        if isEnabled {
+            mockNimbusLayer.enabledFlags.insert(flag)
+        } else {
+            mockNimbusLayer.enabledFlags.remove(flag)
+        }
     }
 }

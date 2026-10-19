@@ -11,6 +11,11 @@ protocol TabScrollHandlerProtocol: AnyObject {
     var tabProvider: TabProviderProtocol? { get set }
     var contentOffset: CGPoint { get }
 
+    /// `true` only when the toolbar is fully expanded and settled, `false` while collapsed
+    /// or mid-transition from a user scroll gesture. Callers that want to restore the address
+    /// bar (keyboard dismissal) should check this value since a scroll gesture may still be resolving.
+    var isToolbarFullyExpanded: Bool { get }
+
     func showToolbars(animated: Bool)
     func hideToolbars(animated: Bool)
     func configureRefreshControl()
@@ -38,10 +43,6 @@ final class TabScrollHandler: NSObject,
     private struct UX {
         static let abruptScrollEventOffset: CGFloat = 200
         static let minimumScrollThreshold: CGFloat = 20
-    }
-
-    private var isMinimalAddressBarEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.toolbarMinimalAddressBar, checking: .buildAndUser)
     }
 
     enum ScrollDirection {
@@ -89,6 +90,7 @@ final class TabScrollHandler: NSObject,
     private var scrollDirection: ScrollDirection = .down
     var toolbarDisplayState = ToolbarDisplayState()
     var lastValidState: ToolbarDisplayState = .expanded
+    var isToolbarFullyExpanded: Bool { toolbarDisplayState.isExpanded }
     private var isStatusBarScrollToTop = false
     var didTapChangePreventScrollToTop = false
 
@@ -299,9 +301,11 @@ final class TabScrollHandler: NSObject,
                visuals can drift apart (especially under iOS 26 translucency), so a tap that visually hits the
                pill but lands while `displayState` is still `.transitioning` would otherwise no-op.
                `showToolbars` is idempotent — calling it from `.expanded` is harmless.
-            guard isMinimalAddressBarEnabled && toolbarDisplayState.isCollapsed  else { return }
+               The `isMinimalAddressBarEnabled` half is gone as well: 155.1 deleted that flag along with
+               the rest of the minimal-address-bar gating, so the condition was permanently true and what
+               remains is an unconditional call.
+            guard toolbarDisplayState.isCollapsed  else { return }
              */
-            guard isMinimalAddressBarEnabled else { return }
             showToolbars(animated: true)
         }
     }

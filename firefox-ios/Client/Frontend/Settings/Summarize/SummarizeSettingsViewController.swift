@@ -5,17 +5,20 @@
 import Common
 import Shared
 
-final class SummarizeSettingsViewController: SettingsTableViewController, FeatureFlaggable {
+final class SummarizeSettingsViewController: SettingsTableViewController {
     let prefs: Prefs
     private let nimbusUtils: SummarizerNimbusUtils
+    private let settingsTelemetry: SettingsTelemetry
 
     init(
         prefs: Prefs,
         summarizeNimbusUtils: SummarizerNimbusUtils = DefaultSummarizerNimbusUtils(),
+        settingsTelemetry: SettingsTelemetry = SettingsTelemetry(),
         windowUUID: WindowUUID
     ) {
         self.prefs = prefs
         self.nimbusUtils = summarizeNimbusUtils
+        self.settingsTelemetry = settingsTelemetry
         super.init(style: .grouped, windowUUID: windowUUID)
         self.title = .Settings.Summarize.Title
     }
@@ -30,14 +33,21 @@ final class SummarizeSettingsViewController: SettingsTableViewController, Featur
 
     override func generateSettings() -> [SettingSection] {
         let summarizeContentEnabled = prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature) ?? true
-        let shakeFeatureFlag = nimbusUtils.isShakeGestureFeatureFlagEnabled()
 
         // Shows and hides the gesture section
-        // based on the summarize feature being enabled
-        // and shake gesture feature flag is true
-        guard summarizeContentEnabled && shakeFeatureFlag else { return [summarizeSection] }
+        // based on the summarize feature being enabled.
+        guard summarizeContentEnabled else {
+            return [summarizeSection]
+        }
+        var sections = [summarizeSection]
+        if nimbusUtils.isShakeGestureFeatureFlagEnabled() {
+            sections.append(gesturesSection)
+        }
+        if nimbusUtils.isLanguageExpansionEnabled {
+            sections.append(languageSection)
+        }
 
-        return [summarizeSection, gesturesSection]
+        return sections
     }
 
     private var summarizeSection: SettingSection {
@@ -53,6 +63,14 @@ final class SummarizeSettingsViewController: SettingsTableViewController, Featur
             // depending if summarize content setting toggle is On or Off
             self.settings = self.generateSettings()
             self.tableView.reloadData()
+
+            store.dispatch(
+                ToolbarAction(
+                    canSummarize: isOn,
+                    windowUUID: self.windowUUID,
+                    actionType: ToolbarActionType.didSummarizeSettingsChange
+                )
+            )
         }
         return SettingSection(
             title: nil,
@@ -79,6 +97,33 @@ final class SummarizeSettingsViewController: SettingsTableViewController, Featur
                 string: .Settings.Summarize.GesturesSection.FooterTitle
             ),
             children: [shakeGestureSetting]
+        )
+    }
+
+    private var languageSection: SettingSection {
+        let configuration = nimbusUtils.languageExpansionConfiguration(
+            from: FxNimbus.shared.features.summarizerLanguageExpansionFeature.value()
+        )
+        return SettingSection(
+            title: NSAttributedString(string: .Settings.Summarize.LanguageSection.Title),
+            children: [
+                PickerSetting(
+                    selectedValue: configuration.selectedPreference(prefs: prefs),
+                    pickerOptions: configuration.settingOptions.map({ $0.toOption() }),
+                    accessibilityIdentifier: AccessibilityIdentifiers.Settings.Summarize.languageCell,
+                    onOptionSelected: { [weak self] selectedOption in
+                        guard let self else { return }
+                        let previousOption = configuration.selectedPreference(prefs: prefs)
+                        configuration.save(preference: selectedOption, prefs: prefs)
+                        settingsTelemetry.changedSetting(
+                            PrefsKeys.Summarizer.selectedLanguage,
+                            to: selectedOption.saveValue,
+                            from: previousOption.saveValue
+                        )
+                        tableView.reloadData()
+                    }
+                )
+            ]
         )
     }
 }

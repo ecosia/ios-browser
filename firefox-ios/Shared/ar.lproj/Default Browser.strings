@@ -23,7 +23,7 @@
 "DefaultBrowserCard.PeaceOfMind.Title.v108" = "Ecosia تولّى مسألة الخصوصية";
 
 /* Title for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Title" = "بدّل متصفّحك المبدئي";
+"DefaultBrowserCard.Title" = "غيّر متصفحك الافتراضي";
 
 /* Button string to open settings that allows user to switch their default browser to Firefox. */
 "DefaultBrowserOnboarding.Button" = "انتقل إلى الإعدادات";
@@ -39,6 +39,9 @@
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "تطبيق المتصفح الافتراضي";
+
+/* Button title for deferring the default browser onboarding (skip setting Firefox as default for now). */
+"DefaultBrowserOnboarding.SkipButton" = "سأقوم بذلك لاحقاً";
 
 /* Menu option for setting Firefox as default browser. */
 "Settings.DefaultBrowserMenuItem" = "اضبطه ليكون المتصفّح المبدئي";

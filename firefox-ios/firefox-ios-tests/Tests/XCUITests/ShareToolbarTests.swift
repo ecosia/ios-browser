@@ -26,6 +26,7 @@ class ShareToolbarTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2864279
+    // Regression
     func testShareNormalWebsitePrint() {
         app.launch()
         tapToolbarShareButtonAndSelectOption(option: "Print")
@@ -33,6 +34,7 @@ class ShareToolbarTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2864277
+    // Regression
     func testShareNormalWebsiteSendLinkToDevice() {
         app.launch()
         tapToolbarShareButtonAndSelectOption(option: "Send Link to Device")
@@ -53,6 +55,7 @@ class ShareToolbarTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2864276
+    // Regression
     func testShareNormalWebsiteCopyUrl() {
         app.launch()
         tapToolbarShareButtonAndSelectOption(option: "Copy")
@@ -71,13 +74,14 @@ class ShareToolbarTests: FeatureFlaggedTestBase {
             waitForElementsToExist(
                 [
                     app.navigationBars["Reminders"],
-                    app.links.elementContainingText("test-mozilla-book.html")
+                    app.links.elementContainingText(TestPages.mozillaBook)
                 ]
             )
         }
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2864310
+    // Regression
     func testShareWebsiteReaderModePrint() {
         addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
         addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
@@ -88,16 +92,18 @@ class ShareToolbarTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2864307
+    // Regression
     func testShareWebsiteReaderModeCopy() {
         addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
         addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
         app.launchArguments.append(LaunchArguments.SkipAppleIntelligence)
         app.launch()
         reachReaderModeShareMenuLayoutAndSelectOption(option: "Copy")
-        openNewTabAndValidateURLisPaste(url: "test-mozilla-book.html")
+        openNewTabAndValidateURLisPaste(url: TestPages.mozillaBook)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2864308
+    // Regression
     func testShareWebsiteReaderModeSendLink() {
         addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "apple-summarizer-feature")
         addLaunchArgument(jsonFileName: "defaultEnabledOff", featureName: "hosted-summarizer-feature")
@@ -124,6 +130,7 @@ class ShareToolbarTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2864293
+    // Regression
     func testSharePdfFilePrint() {
         app.launch()
         tapToolbarShareButtonAndSelectOption(option: "Print", url: pdfUrl)
@@ -138,16 +145,25 @@ class ShareToolbarTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2864294
+    // Regression
     func testSharePdfFileSaveToFile() {
         app.launch()
         if #available(iOS 17, *) {
             tapToolbarShareButtonAndSelectOption(option: "Save to Files", url: pdfUrl)
-            if !iPad() {
-                mozWaitForElementToExist(app.staticTexts["On My iPhone"])
-            } else {
-                mozWaitForElementToExist(app.staticTexts["On My iPad"])
+            // Anchor on the Files picker's own Save button rather than a location label such as
+            // "On My iPhone": the picker opens on whichever location was last used (iCloud Drive,
+            // On My iPhone, …), so the label is not reliably present, whereas Save always is.
+            // The share-sheet tap does not always open the picker on CI, so re-tap it if needed.
+            let saveButton = app.buttons["Save"]
+            var attempts = 2
+            while !saveButton.mozWaitForElementToExist(timeout: TIMEOUT, failOnTimeout: false) && attempts > 0 {
+                let saveToFilesCell = app.collectionViews.cells["Save to Files"]
+                guard saveToFilesCell.exists else { break }
+                saveToFilesCell.tapOnApp()
+                attempts -= 1
             }
-            app.buttons["Save"].waitAndTap()
+            mozWaitForElementToExist(saveButton, timeout: TIMEOUT_LONG)
+            saveButton.waitAndTap()
             waitForTabsButton()
         }
     }
@@ -173,11 +189,19 @@ class ShareToolbarTests: FeatureFlaggedTestBase {
     private func validateMarkupTool() {
         // The Markup tool opens
         if #available(iOS 26, *) {
-            if iPad() {
-                app.navigationBars.buttons["More"].waitAndTap()
+            if !iPad() {
+                // Share "Markup" sometimes opens QuickLook in preview mode (a "Markup" pen button, no
+                // palette); tap it to enter markup, then verify the PencilKit Drawing-Palette + Pen.
+                let palette = app.otherElements["Drawing-Palette"]
+                if !palette.mozWaitForElementToExist(timeout: TIMEOUT_LONG, failOnTimeout: false) {
+                    app.buttons["Markup"].waitAndTap()
+                }
+                mozWaitForElementToExist(palette, timeout: TIMEOUT_LONG)
+                mozWaitForElementToExist(app.buttons["Pen"], timeout: TIMEOUT_LONG)
+            } else {
+                mozWaitForElementToExist(app.switches["Markup"])
+                mozWaitForElementToExist(app.buttons["close"])
             }
-            // iOS 26: The markup isn't shown in debug description
-            // https://github.com/mozilla-mobile/firefox-ios/issues/31552
         } else {
             mozWaitForElementToExist(app.switches["Markup"])
             mozWaitForElementToExist(app.buttons["Done"])
@@ -185,21 +209,13 @@ class ShareToolbarTests: FeatureFlaggedTestBase {
     }
 
     private func reachReaderModeShareMenuLayoutAndSelectOption(option: String) {
-        navigator.openURL(path(forTestPage: "test-mozilla-book.html"))
+        navigator.openURL(path(forTestPage: TestPages.mozillaBook))
         waitUntilPageLoad()
         navigator.nowAt(BrowserTab)
         mozWaitForElementToNotExist(app.staticTexts["Fennec pasted from XCUITests-Runner"])
         app.buttons["Reader View"].waitAndTap()
         app.buttons[AccessibilityIdentifiers.Toolbar.shareButton].waitAndTap()
-        if #available(iOS 26, *), !app.collectionViews.cells[option].exists {
-            app.cells["actionGroupCell"].staticTexts["More"].waitAndTap(timeout: 10)
-        }
-        if #available(iOS 16, *) {
-            mozWaitForElementToExist(app.collectionViews.cells[option])
-            app.collectionViews.cells[option].tapOnApp()
-        } else {
-            app.buttons[option].waitAndTap()
-        }
+        selectShareSheetOption(option)
     }
 
     private func tapToolbarShareButtonAndSelectOption(option: String, url: String = url_3) {
@@ -210,8 +226,21 @@ class ShareToolbarTests: FeatureFlaggedTestBase {
         navigator.openURL(url)
         waitUntilPageLoad()
         app.buttons[AccessibilityIdentifiers.Toolbar.shareButton].waitAndTap()
-        if #available(iOS 26, *), !app.collectionViews.cells[option].exists {
-            app.cells["actionGroupCell"].staticTexts["More"].waitAndTap(timeout: 10)
+        selectShareSheetOption(option)
+    }
+
+    /// Selects `option` from the system share sheet, expanding via "View More" only when needed.
+    ///
+    /// The instant `.exists` check used previously raced the share-sheet presentation animation:
+    /// when the option was about to appear directly, the check was still false and the helper went
+    /// hunting for a "View More" expander that never showed, timing out. Wait for the option first
+    /// and only fall back to expanding the sheet when it genuinely isn't in the collapsed layout.
+    private func selectShareSheetOption(_ option: String) {
+        if #available(iOS 26, *) {
+            let optionCell = app.collectionViews.cells[option]
+            if !optionCell.mozWaitForElementToExist(timeout: TIMEOUT, failOnTimeout: false) {
+                app.scrollViews.cells["View More"].waitAndTap(timeout: 10)
+            }
         }
         if #available(iOS 16, *) {
             mozWaitForElementToExist(app.collectionViews.cells[option])

@@ -43,13 +43,9 @@ extension Notification.Name {
 
     public static let TopTabsTabClosed = Notification.Name("TopTabsTabClosed")
 
-    public static let ShowHomepage = Notification.Name("ShowHomepage")
-
     public static let StopDownloads = Notification.Name("StopDownloads")
 
     public static let TabsTrayDidClose = Notification.Name("TabsTrayDidClose")
-
-    public static let TabsTrayDidSelectHomeTab = Notification.Name("TabsTrayDidSelectHomeTab")
 
     public static let OpenClearRecentHistory = Notification.Name("OpenClearRecentHistory")
 
@@ -64,8 +60,6 @@ extension Notification.Name {
     public static let SearchSettingsChanged = Notification.Name("SearchSettingsChanged")
 
     public static let SponsoredAndNonSponsoredSuggestionsChanged = Notification.Name("SponsoredAndNonSponsoredSuggestions")
-
-    public static let TabDataUpdated = Notification.Name("TabDataUpdated")
 
     public static let PendingBlobDownloadAddedToQueue = Notification.Name("PendingBlobDownloadAddedToQueue")
 
@@ -103,4 +97,8 @@ extension Notification.Name {
     public static let DefaultSearchEngineUpdated = Notification.Name("DefaultSearchEngineUpdated")
     public static let SearchSettingsDidUpdateDefaultSearchEngine =
     Notification.Name("SearchSettingsDidUpdateDefaultSearchEngine")
+
+    // MARK: Remote Settings
+
+    public static let remoteSettingsDidSync = Notification.Name("remoteSettingsDidSync")
 }

@@ -37,6 +37,7 @@ func registerSettingsNavigation(in map: MMScreenGraph<FxUserState>, app: XCUIApp
         }
         screenState.tap(
             table.cells[AccessibilityIdentifiers.Settings.AppIconSelection.settingsRowTitle], to: AppIconSettings)
+        registerSecretSettingsAccess(on: screenState, table: table, app: app)
         screenState.backAction = navigationControllerBackAction(for: app)
     }
 
@@ -177,8 +178,8 @@ func registerSettingsNavigation(in map: MMScreenGraph<FxUserState>, app: XCUIApp
             let tablesQuery = app.tables
             let customengineurlTextView = tablesQuery.textViews["customEngineUrl"]
             let pasteAction = app.staticTexts["Paste"]
-            sleep(1)
             UIPasteboard.general.string = searchEngineUrl
+            customengineurlTextView.mozWaitForElementToExist()
             customengineurlTextView.pressWithRetry(duration: 1.5, element: pasteAction)
             pasteAction.waitAndTap()
         }
@@ -229,4 +230,41 @@ func registerSettingsNavigation(in map: MMScreenGraph<FxUserState>, app: XCUIApp
     map.addScreenState(AppIconSettings) { screenState in
         screenState.backAction = navigationControllerBackAction(for: app)
     }
+
+    map.addScreenState(FirefoxSuggestSettings) { screenState in
+        screenState.gesture(forAction: Action.IngestNewSuggestionsNow) { userState in
+            app.cells["Ingest new suggestions now"].waitAndTap()
+        }
+        screenState.backAction = navigationControllerBackAction(for: app)
+    }
+
+    map.addScreenState(ExperimentsScreen) { screenState in
+        screenState.gesture(forAction: Action.ListAllExperiments) { userState in
+            app.buttons["Edit"].waitAndTap()
+            app.buttons["Reset"].waitAndTap()
+            app.navigationBars.buttons["BackButton"].waitAndTap()
+        }
+        screenState.gesture(forAction: Action.EnrollExperiment) { userState in
+            app.staticTexts[userState.experimentToEnroll].waitAndTap()
+            app.staticTexts["control"].waitAndTap()
+            app.navigationBars.buttons["BackButton"].waitAndTap()
+        }
+        screenState.backAction = navigationControllerBackAction(for: app)
+    }
+}
+
+@MainActor
+private func registerSecretSettingsAccess(
+    on screenState: MMScreenStateNode<FxUserState>,
+    table: XCUIElement,
+    app: XCUIApplication
+) {
+    screenState.gesture(forAction: Action.OpenSecretSettings) { userState in
+        for _ in 0..<5 {
+            app.cells[AccessibilityIdentifiers.Settings.Version.title].waitAndTap()
+        }
+        userState.secretSettingsRevealed = true
+    }
+    screenState.tap(table.cells["Firefox Suggest"], to: FirefoxSuggestSettings, if: "secretSettingsRevealed == true")
+    screenState.tap(table.cells["Experiments"], to: ExperimentsScreen, if: "secretSettingsRevealed == true")
 }

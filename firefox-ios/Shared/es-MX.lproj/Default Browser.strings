@@ -8,7 +8,7 @@
 "DefaultBrowserCard.Button.v2" = "Aprende a hacerlo";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
-"DefaultBrowserCard.Description" = "Configura enlaces de sitios web, correos electrónicos y mensajes para que se abran automáticamente en Ecosia.";
+"DefaultBrowserCard.Description" = "Abrir vínculos, correos electrónicos y mensajes automáticamente en Ecosia.";
 
 /* Description for small home tab banner that allows the user to switch their default browser to Firefox. */
 "DefaultBrowserCard.NextLevel.Description.v108" = "Elige Ecosia como tu navegador predeterminado para que la velocidad, la seguridad y la privacidad sean automáticas.";
@@ -39,6 +39,9 @@
 
 /* Text for the screenshot of the iOS system settings page for Firefox. */
 "DefaultBrowserOnboarding.Screenshot" = "Aplicación del navegador por defecto";
+
+/* Button title for deferring the default browser onboarding (skip setting Firefox as default for now). */
+"DefaultBrowserOnboarding.SkipButton" = "Lo haré más tarde";
 
 /* Menu option for setting Firefox as default browser. */
 "Settings.DefaultBrowserMenuItem" = "Establecer como navegador predeterminado";

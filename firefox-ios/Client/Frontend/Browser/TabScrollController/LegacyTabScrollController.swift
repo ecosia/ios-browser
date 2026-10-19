@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import SnapKit
 import Shared
 import Common
 
@@ -11,9 +10,14 @@ import Common
 protocol LegacyTabScrollProvider: TabScrollHandlerProtocol {
     var tab: Tab? { get set }
     var zoomPageBar: ZoomPageBar? { get set }
-    var headerTopConstraint: Constraint? { get set }
-    var overKeyboardContainerConstraint: Constraint? { get set }
-    var bottomContainerConstraint: Constraint? { get set }
+    var headerTopConstraint: NSLayoutConstraint? { get set }
+    var overKeyboardContainerConstraint: NSLayoutConstraint? { get set }
+    var bottomContainerConstraint: NSLayoutConstraint? { get set }
+
+    /// `true` when the toolbars are collapsed because the user scrolled the page (not when the
+    /// address bar was minimized for the keyboard accessory). Lets the keyboard-dismiss path keep
+    /// the collapsed/pill state instead of forcing the address bar back to fully shown.
+    var isToolbarStateCollapsed: Bool { get }
 
     func configureToolbarViews(overKeyboardContainer: BaseAlphaStackView?,
                                bottomContainer: BaseAlphaStackView?,
@@ -40,10 +44,6 @@ final class LegacyTabScrollController: NSObject,
     protocol Delegate: AnyObject {
         @MainActor
         func toolbarDisplayStateDidChange()
-    }
-
-    private var isMinimalAddressBarEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.toolbarMinimalAddressBar, checking: .buildOnly)
     }
 
     enum ScrollDirection {
@@ -85,9 +85,9 @@ final class LegacyTabScrollController: NSObject,
     private weak var bottomContainer: BaseAlphaStackView?
 
     // Toolbar Constraints
-    var headerTopConstraint: Constraint?
-    var overKeyboardContainerConstraint: Constraint?
-    var bottomContainerConstraint: Constraint?
+    var headerTopConstraint: NSLayoutConstraint?
+    var overKeyboardContainerConstraint: NSLayoutConstraint?
+    var bottomContainerConstraint: NSLayoutConstraint?
 
     weak var zoomPageBar: ZoomPageBar?
     private var observedScrollViews = WeakList<UIScrollView>()
@@ -95,7 +95,15 @@ final class LegacyTabScrollController: NSObject,
     private var lastPanTranslation: CGFloat = 0
     private var lastContentOffsetY: CGFloat = 0
     private var scrollDirection: ScrollDirection = .down
-    var toolbarState: ToolbarState = .visible
+    private var toolbarState: ToolbarState = .visible
+
+    var isToolbarStateCollapsed: Bool {
+        return toolbarState == .collapsed
+    }
+
+    var isToolbarFullyExpanded: Bool {
+        return toolbarState == .visible
+    }
 
     private let windowUUID: WindowUUID
     private let logger: Logger
@@ -114,7 +122,7 @@ final class LegacyTabScrollController: NSObject,
     // Top Toolbar offset updates related constraints
     private var headerTopOffset: CGFloat = 0 {
         didSet {
-            headerTopConstraint?.update(offset: headerTopOffset)
+            headerTopConstraint?.constant = headerTopOffset
             headerContainer?.superview?.setNeedsLayout()
         }
     }
@@ -129,29 +137,34 @@ final class LegacyTabScrollController: NSObject,
     /// When minimal mode is active, an additional height offset is applied to provide
     /// space for displaying the minimized address bar with the domain/subdomain URL.
     private var headerOffset: CGFloat {
+        // The header should not update its offset when the address bar is at the bottom.
+        // We're using the height instead of `isBottomSearchBar` for edge case when the user rotates the device
+        guard headerHeight > 0 else { return 0 }
+
         let baseOffset = -headerHeight
         let isiPad = UIDevice.current.userInterfaceIdiom == .pad
         let isNavToolbarVisible = if let scrollView {
             ToolbarHelper().shouldShowNavigationToolbar(for: scrollView.traitCollection)
         } else { false }
 
-        guard isMinimalAddressBarEnabled && (isiPad || isNavToolbarVisible) else {
+        guard isiPad || isNavToolbarVisible else {
             return baseOffset
         }
+
         return baseOffset + UX.heightOffset
     }
 
     // Bottom toolbar offset updates related constraints
     private var overKeyboardContainerOffset: CGFloat = 0 {
         didSet {
-            overKeyboardContainerConstraint?.update(offset: overKeyboardContainerOffset)
+            overKeyboardContainerConstraint?.constant = overKeyboardContainerOffset
             overKeyboardContainer?.superview?.setNeedsLayout()
         }
     }
 
     private var bottomContainerOffset: CGFloat = 0 {
         didSet {
-            bottomContainerConstraint?.update(offset: bottomContainerOffset)
+            bottomContainerConstraint?.constant = bottomContainerOffset
             bottomContainer?.superview?.setNeedsLayout()
         }
     }
@@ -159,17 +172,14 @@ final class LegacyTabScrollController: NSObject,
     /// Helper method for testing overKeyboardScrollHeight behavior.
     /// - Parameters:
     ///   - safeAreaInsets: The safe area insets to use (nil treated as .zero).
-    ///   - isMinimalAddressBarEnabled: Whether minimal address bar feature is enabled.
     ///   - isBottomSearchBar: Whether search bar is set to the bottom.
     /// - Returns: The calculated scroll height.
     func calculateOverKeyboardScrollHeight(with safeAreaInsets: UIEdgeInsets?,
-                                           isMinimalAddressBarEnabled: Bool,
                                            isBottomSearchBar: Bool) -> CGFloat {
         guard let containerHeight = overKeyboardContainer?.frame.height else { return .zero }
         let isReaderModeActive = tab?.url?.isReaderModeURL == true
         // Return full height if conditions aren't met for adjustment.
-        let shouldAdjustHeight = isMinimalAddressBarEnabled
-                                  && isBottomSearchBar
+        let shouldAdjustHeight = isBottomSearchBar
                                   && zoomPageBar == nil
                                   && !isReaderModeActive
         guard shouldAdjustHeight else { return containerHeight }
@@ -187,7 +197,6 @@ final class LegacyTabScrollController: NSObject,
     private var overKeyboardScrollHeight: CGFloat {
         return calculateOverKeyboardScrollHeight(
             with: UIWindow.keyWindow?.safeAreaInsets,
-            isMinimalAddressBarEnabled: isMinimalAddressBarEnabled,
             isBottomSearchBar: isBottomSearchBar
         )
     }
@@ -249,7 +258,7 @@ final class LegacyTabScrollController: NSObject,
         }
 
         MainActor.assumeIsolated {
-            observedScrollViews.forEach({ stopObserving(scrollView: $0) })
+            stopObservingAllScrollViews()
         }
     }
 
@@ -294,9 +303,11 @@ final class LegacyTabScrollController: NSObject,
                visuals can drift apart (especially across animations / scroll transitions), so a tap that
                visually hits the pill but lands while `toolbarState` is still `.transitioning` would otherwise
                no-op. `showToolbars` already guards itself against re-entry from `.visible`.
-            guard isMinimalAddressBarEnabled && toolbarState == .collapsed else { return }
+               The `isMinimalAddressBarEnabled` half is gone as well: 155.1 deleted that flag along with
+               the rest of the minimal-address-bar gating, so the condition was permanently true and what
+               remains is an unconditional call.
+            guard toolbarState == .collapsed else { return }
              */
-            guard isMinimalAddressBarEnabled else { return }
             showToolbars(animated: true)
         }
     }
@@ -313,7 +324,7 @@ final class LegacyTabScrollController: NSObject,
     private func applicationWillTerminate() {
         // Ensures that we immediately de-register KVO observations for content size changes in
         // webviews if the app is about to terminate.
-        observedScrollViews.forEach({ stopObserving(scrollView: $0) })
+        stopObservingAllScrollViews()
     }
 
     @objc
@@ -338,7 +349,6 @@ final class LegacyTabScrollController: NSObject,
 
             lastPanTranslation = translation.y
             if checkRubberbanding() && shouldUpdateUIWhenScrolling {
-                scrollWithDelta(delta)
                 updateToolbarState()
             }
         }
@@ -418,6 +428,12 @@ final class LegacyTabScrollController: NSObject,
         scrollView.removeObserver(self, forKeyPath: KVOConstants.contentSize.rawValue)
     }
 
+    /// Copy collection first to avoid mutation during iteration.
+    private func stopObservingAllScrollViews() {
+        let scrollViewsToCleanup = Array(observedScrollViews)
+        scrollViewsToCleanup.forEach { stopObserving(scrollView: $0) }
+    }
+
     override nonisolated func observeValue(
         forKeyPath keyPath: String?,
         of object: Any?,
@@ -426,9 +442,13 @@ final class LegacyTabScrollController: NSObject,
     ) {
         if keyPath == "contentSize" {
             ensureMainThread { [weak self] in
-                guard let self, self.shouldUpdateUIWhenScrolling, self.toolbarsShowing else { return }
+                guard let self else { return }
 
-                self.showToolbars(animated: true)
+                // When the content is no longer scrollable example a page adds an overlay that shrinks the
+                // document, the user can't reveal the toolbars by scrolling, force them visible if collapsed.
+                if !self.hasScrollableContent, self.isToolbarStateCollapsed {
+                    self.showToolbars(animated: false)
+                }
             }
         }
     }
@@ -472,8 +492,8 @@ final class LegacyTabScrollController: NSObject,
     public func handleNotifications(_ notification: Notification) {
         switch notification.name {
         case UIApplication.willTerminateNotification:
-            ensureMainThread {
-                self.applicationWillTerminate
+            Task { @MainActor in
+                self.applicationWillTerminate()
             }
         default:
             return
@@ -489,9 +509,7 @@ private extension LegacyTabScrollController {
     var showDurationRatio: CGFloat {
         var durationRatio: CGFloat
         if isBottomSearchBar {
-            durationRatio = if isMinimalAddressBarEnabled { UX.minimalAddressBarAnimationDuration } else {
-                abs(overKeyboardContainerOffset / overKeyboardScrollHeight)
-            }
+            durationRatio = UX.minimalAddressBarAnimationDuration
         } else {
             durationRatio = abs(headerTopOffset / headerHeight)
         }
@@ -516,21 +534,10 @@ private extension LegacyTabScrollController {
         return contentOffset.y + scrollViewHeight > contentSize.height
     }
 
-    // Scroll alpha is only for header views since status bar has an overlay
-    // Bottom content doesn't have alpha since it's completely hidden
-    // Besides the zoom bar, to hide the gradient
-    var scrollAlpha: CGFloat {
-        if zoomPageBar != nil,
-           isBottomSearchBar {
-            return 1 - abs(overKeyboardContainerOffset / overKeyboardScrollHeight)
-        }
-        return 1 - abs(headerTopOffset / headerHeight)
-    }
-
     @objc
     func reload() {
         guard let tab = tab else { return }
-        tab.reloadPage()
+        tab.reload()
         TelemetryWrapper.recordEvent(category: .action, method: .pull, object: .reload)
     }
 
@@ -608,41 +615,6 @@ private extension LegacyTabScrollController {
         toolbarState = state
     }
 
-    /// Handles synchronized scrolling of the header, bottom container, and over-keyboard container
-    /// in response to a vertical scroll delta.
-    /// Updates all containers offset based in scrolling delta
-    ///
-    /// This function performs the following actions:
-    /// 1. Verifies that scrolling is necessary (i.e., content height exceeds the scroll view height).
-    /// 2. Updates the `headerTopOffset` by applying the delta and clamps it within the allowed range.
-    /// 3. If the header should be displayed at the new offset, updates the scroll view's content offset accordingly.
-    /// 4. Updates the `bottomContainerOffset` and `overKeyboardContainerOffset` with the delta,
-    ///    clamping each within their respective bounds.
-    /// 5. Updates the alpha (transparency) of subviews in `header` and `zoomPageBar` based on scroll position.
-    ///
-    /// - Parameter delta: The amount by which to scroll, where a positive delta scrolls down and
-    ///   a negative delta scrolls up.
-    func scrollWithDelta(_ delta: CGFloat) {
-        guard !isMinimalAddressBarEnabled, hasScrollableContent else { return }
-
-        let updatedOffset = headerTopOffset - delta
-        headerTopOffset = clamp(offset: updatedOffset, min: headerOffset, max: 0)
-        if isHeaderDisplayedForGivenOffset(headerTopOffset) {
-            scrollView?.contentOffset = CGPoint(x: contentOffset.x, y: contentOffset.y - delta)
-        }
-
-        let bottomUpdatedOffset = bottomContainerOffset + delta
-        bottomContainerOffset = clamp(offset: bottomUpdatedOffset, min: 0, max: bottomContainerScrollHeight)
-
-        if !isMinimalAddressBarEnabled {
-            let overKeyboardUpdatedOffset = overKeyboardContainerOffset + delta
-            overKeyboardContainerOffset = clamp(offset: overKeyboardUpdatedOffset, min: 0, max: overKeyboardScrollHeight)
-        }
-
-        headerContainer?.updateAlphaForSubviews(scrollAlpha)
-        zoomPageBar?.updateAlphaForSubviews(scrollAlpha)
-    }
-
     func isHeaderDisplayedForGivenOffset(_ offset: CGFloat) -> Bool {
         return offset > -headerHeight && offset < 0
     }
@@ -701,14 +673,9 @@ private extension LegacyTabScrollController {
             self.headerTopOffset = headerOffset
             self.bottomContainerOffset = bottomContainerOffset
 
-            if isMinimalAddressBarEnabled && tab?.isFindInPageMode == false && tab?.url?.isReaderModeURL == false {
-                store.dispatch(
-                    ToolbarAction(
-                        scrollAlpha: Float(alpha),
-                        windowUUID: windowUUID,
-                        actionType: ToolbarActionType.scrollAlphaNeedsUpdate
-                    )
-                )
+            if tab?.isFindInPageMode == false && tab?.url?.isReaderModeURL == false {
+                let isMinimized = alpha.isZero
+                store.dispatch(ToolbarModernAction.userDidScroll(minimizeAddressBar: isMinimized), forWindowUUID: windowUUID)
             }
 
             overKeyboardContainerOffset = overKeyboardOffset
@@ -718,6 +685,10 @@ private extension LegacyTabScrollController {
 
             zoomPageBar?.updateAlphaForSubviews(alpha)
             zoomPageBar?.superview?.layoutIfNeeded()
+
+            if isBottomSearchBar && overKeyboardOffset == 0 {
+                overKeyboardContainer?.updateAlphaForSubviews(alpha)
+            }
         }
     }
 

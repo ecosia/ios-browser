@@ -1178,7 +1178,7 @@
 "Settings.ClearPrivateData.SectionName" = "清除隱私資料";
 
 /* Button in Data Management that clears private data for the selected items. %1$@ is the number of items to be cleared. */
-"Settings.ClearSelectedWebsiteData.ClearSelected.Button" = "清除項目: %1$@";
+"Settings.ClearSelectedWebsiteData.ClearSelected.Button" = "清除項目：%1$@";
 
 /* Copy app version alert shown in settings. */
 "Settings.CopyAppVersion.Title" = "已複製至剪貼簿";
@@ -1500,6 +1500,9 @@
 
 /* Button label that appears in the settings to prompt the user to sign in to Firefox for iOS sync service to sync and save data. */
 "Settings.Sync.ButtonTitle.v103" = "同步並儲存資料";
+
+/* In the settings account row, shown transiently while the user is being signed out of their account. */
+"Settings.Sync.SigningOut.Title.v154" = "登出中…";
 
 /* Title for the page where the user sign in to their Firefox Sync account. */
 "Settings.Sync.SignInView.Title.v103" = "同步並儲存資料";

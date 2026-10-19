@@ -13,7 +13,6 @@ class HistoryPanelTests: XCTestCase {
     private var notificationCenter: MockNotificationCenter!
     override func setUp() {
         super.setUp()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: MockProfile())
         DependencyHelperMock().bootstrapDependencies()
         notificationCenter = MockNotificationCenter()
     }

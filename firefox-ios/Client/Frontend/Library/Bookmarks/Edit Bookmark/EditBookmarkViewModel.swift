@@ -7,6 +7,8 @@ import Foundation
 import MozillaAppServices
 import Shared
 
+// This typealias should probably move somewhere else possibly its own file since eventually this file
+// will be removed and this alias which is used all over the app will be gone
 typealias VoidReturnCallback = @MainActor () -> Void
 
 protocol ParentFolderSelector: AnyObject {
@@ -123,7 +125,7 @@ class EditBookmarkViewModel: ParentFolderSelector, @unchecked Sendable {
             // so this call will always try to update an existing bookmark
             let result = await self?.bookmarksSaver.save(bookmark: node,
                                                          parentFolderGUID: selectedFolder.guid)
-            // Only update the recent folder pref if it doesn't match whats saved in the pref
+            // Only update the recent folder pref if it doesn't match what's saved in the pref
             if selectedFolder.guid != self?.profile.prefs.stringForKey(PrefsKeys.RecentBookmarkFolder) {
                 switch result {
                 case .success:
@@ -151,17 +153,5 @@ class EditBookmarkViewModel: ParentFolderSelector, @unchecked Sendable {
         selectedFolder = folder
         folderStructures = [folder]
         onFolderStatusUpdate?()
-    }
-}
-
-extension BookmarkItemData {
-    func copy(with title: String, url: String) -> BookmarkItemData {
-        return BookmarkItemData(guid: guid,
-                                dateAdded: dateAdded,
-                                lastModified: lastModified,
-                                parentGUID: parentGUID,
-                                position: position,
-                                url: url,
-                                title: title)
     }
 }

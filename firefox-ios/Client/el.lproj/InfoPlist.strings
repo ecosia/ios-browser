@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "Εικονίδιο εφαρμογής";
+
 /* (No Comment) */
 "New Private Tab" = "Νέα ιδιωτική καρτέλα";
 
@@ -5,10 +8,10 @@
 "New Tab" = "Νέα καρτέλα";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Το Ecosia χρησιμοποιεί την κάμερα για τη σάρωση κωδικών QR και τη λήψη φωτογραφιών και βίντεο.";
+"NSCameraUsageDescription" = "Το Ecosia μπορεί να χρησιμοποιήσει την κάμερα για σάρωση κωδικών QR ή λήψη φωτογραφιών και βίντεο.";
 
 /* Privacy - Face ID Usage Description */
-"NSFaceIDUsageDescription" = "Το Ecosia απαιτεί το Face ID για την πρόσβαση σε αποθηκευμένους κωδικούς πρόσβασης και μεθόδους πληρωμής.";
+"NSFaceIDUsageDescription" = "Το Ecosia απαιτεί το Face ID για την πρόσβαση σε αποθηκευμένα συνθηματικά και μεθόδους πληρωμής.";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Οι ιστότοποι που επισκέπτεστε ενδέχεται να ζητήσουν την τοποθεσία σας.";
@@ -18,6 +21,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Επιτρέπει την αποθήκευση φωτογραφιών.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Το Ecosia χρησιμοποιεί την αναγνώριση ομιλίας για να μετατρέψει τη φωνή σας σε κείμενο για φωνητική αναζήτηση.";
 
 /* (No Comment) */
 "Scan QR Code" = "Σάρωση κωδικού QR";

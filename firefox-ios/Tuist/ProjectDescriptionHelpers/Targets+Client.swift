@@ -42,7 +42,6 @@ public enum ClientTarget {
                         "Client/Frontend/Browser/TranslationToastHandler.swift",
                         "Client/Frontend/Settings/Main/Support/StudiesToggleSetting.swift",
                         "Client/Frontend/Browser/Tabs/State/TabViewState.swift",
-                        "Client/Frontend/Browser/MainMenu/Redux/MainMenuDetailState.swift",
                         "Extensions/NotificationService/**/*.swift"
                     ]
                 ),
@@ -82,7 +81,15 @@ public enum ClientTarget {
                 "Client/Assets/CC_Script/LoginManager.shared.sys.mjs",
                 "Client/Assets/CC_Script/Overrides.ios.js",
                 "Client/Assets/CC_Script/bergamot-translator.js",
-                "Client/Assets/**/*.{css,html,png,jpg,jpeg,pdf,otf,ttf}",
+                // Ecosia: 155.1 added `Client/Assets/reader-mode/` (fonts + Reader.css) alongside the
+                // existing `Client/Assets/Fonts/` and `Client/Frontend/Reader/Resources/`. Every file in it
+                // is byte-identical to one already bundled, and app resources land flat in Client.app, so
+                // this glob picking up both makes the build fail with "Multiple commands produce ...".
+                // Upstream doesn't hit this because their Xcode project lists resources explicitly.
+                .glob(
+                    pattern: "Client/Assets/**/*.{css,html,png,jpg,jpeg,pdf,otf,ttf}",
+                    excluding: ["Client/Assets/reader-mode/**"]
+                ),
                 "Client/Assets/*.js",
                 "Client/Assets/RemoteSettingsData/**/*.json",
                 "Client/ContentBlocker/TrackingProtectionStats.js",
@@ -110,6 +117,7 @@ public enum ClientTarget {
                 .sdk(name: "AdServices", type: .framework, status: .optional),
                 .sdk(name: "AdSupport", type: .framework),
                 .sdk(name: "AuthenticationServices", type: .framework),
+                .package(product: "AppAttestKit"),
                 .package(product: "Common"),
                 .package(product: "ComponentLibrary"),
                 .package(product: "Fuzi"),
@@ -120,9 +128,12 @@ public enum ClientTarget {
                 .package(product: "Kingfisher"),
                 .target(name: "Localizations"),
                 .package(product: "Lottie"),
+                .package(product: "MLPAKit"),
                 .package(product: "MenuKit"),
+                .package(product: "ModifiedCopy"),
                 .package(product: "OnboardingKit"),
                 .sdk(name: "PassKit", type: .framework),
+                .package(product: "QuickAnswersKit"),
                 .package(product: "Redux"),
                 .target(name: "RustMozillaAppServices"),
                 .sdk(name: "SafariServices", type: .framework),
@@ -135,6 +146,7 @@ public enum ClientTarget {
                 .package(product: "TabDataStore"),
                 .package(product: "ToolbarKit"),
                 .package(product: "UnifiedSearchKit"),
+                .package(product: "WebCompatReporterKit"),
                 .sdk(name: "xml2", type: .library),
                 .sdk(name: "z", type: .library),
                 .package(product: "X509"),

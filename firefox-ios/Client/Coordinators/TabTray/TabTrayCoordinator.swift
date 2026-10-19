@@ -17,25 +17,22 @@ protocol TabTrayNavigationHandler: AnyObject {
 class TabTrayCoordinator: BaseCoordinator,
                           ParentCoordinatorDelegate,
                           TabTrayViewControllerDelegate,
-                          TabTrayNavigationHandler,
-                          FeatureFlaggable {
+                          TabTrayNavigationHandler {
     var tabTrayViewController: TabTrayViewController?
     weak var parentCoordinator: TabTrayCoordinatorDelegate?
     private let profile: Profile
     private let tabManager: TabManager
-
-    private var isTabTrayUIExperimentsEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.tabTrayUIExperiments, checking: .buildOnly)
-        && UIDevice.current.userInterfaceIdiom != .pad
-    }
+    private let tabTrayUtils: TabTrayUtils
 
     init(router: Router,
          tabTraySection: TabTrayPanelType,
          profile: Profile,
-         tabManager: TabManager
+         tabManager: TabManager,
+         tabTrayUtils: TabTrayUtils = DefaultTabTrayUtils()
     ) {
         self.profile = profile
         self.tabManager = tabManager
+        self.tabTrayUtils = tabTrayUtils
         super.init(router: router)
         initializeTabTrayViewController(panelType: tabTraySection)
     }
@@ -74,7 +71,7 @@ class TabTrayCoordinator: BaseCoordinator,
 
         let panels: [UIViewController]
         // Panels order is different for the experiment
-        if isTabTrayUIExperimentsEnabled {
+        if tabTrayUtils.shouldDisplayExperimentUI() {
             /* Ecosia: Remove syncedTabs from tab tray
             panels = [privateTabsPanel, regularTabsPanel, syncTabs]
             */

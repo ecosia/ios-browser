@@ -13,4 +13,12 @@ public protocol Theme {
     var colors: ThemeColourPalette { get }
      */
     var colors: EcosiaThemeColourPalette { get }
+
+    /// Checks if the theme is a Nova type. The theme manager only returns a Nova theme
+    ///  when the novaDesign feature flag is on.
+    var isNova: Bool { get }
+}
+
+public extension Theme {
+    var isNova: Bool { false }
 }

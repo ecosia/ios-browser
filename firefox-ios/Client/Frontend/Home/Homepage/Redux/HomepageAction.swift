@@ -17,36 +17,33 @@ struct HomepageAction: Action {
     let windowUUID: WindowUUID
     let actionType: ActionType
     let isSearchBarEnabled: Bool?
-    let shouldShowPrivacyNotice: Bool?
     let shouldShowSpacer: Bool?
-    let showiPadSetup: Bool?
     let numberOfTopSitesPerRow: Int?
     let telemetryExtras: HomepageTelemetryExtras?
     let isZeroSearch: Bool?
     let availableContentHeight: CGFloat?
+    let availableWallpaperHeight: CGFloat?
 
     init(
         isSearchBarEnabled: Bool? = nil,
-        shouldShowPrivacyNotice: Bool? = nil,
         shouldShowSpacer: Bool? = nil,
         numberOfTopSitesPerRow: Int? = nil,
-        showiPadSetup: Bool? = nil,
         telemetryExtras: HomepageTelemetryExtras? = nil,
         isZeroSearch: Bool? = nil,
         availableContentHeight: CGFloat? = nil,
+        availableWallpaperHeight: CGFloat? = nil,
         windowUUID: WindowUUID,
         actionType: any ActionType
     ) {
         self.windowUUID = windowUUID
         self.actionType = actionType
         self.isSearchBarEnabled = isSearchBarEnabled
-        self.shouldShowPrivacyNotice = shouldShowPrivacyNotice
         self.shouldShowSpacer = shouldShowSpacer
         self.numberOfTopSitesPerRow = numberOfTopSitesPerRow
-        self.showiPadSetup = showiPadSetup
         self.telemetryExtras = telemetryExtras
         self.isZeroSearch = isZeroSearch
         self.availableContentHeight = availableContentHeight
+        self.availableWallpaperHeight = availableWallpaperHeight
     }
 }
 
@@ -56,6 +53,7 @@ enum HomepageActionType: ActionType {
     case viewWillTransition
     case viewWillAppear
     case viewDidAppear
+    case viewWillDisappear
     case viewDidLayoutSubviews
     case didSelectItem
     case embeddedHomepage
@@ -69,8 +67,8 @@ enum HomepageMiddlewareActionType: ActionType {
     case jumpBackInLocalTabsUpdated
     case jumpBackInRemoteTabsUpdated
     case bookmarksUpdated
-    case enteredForeground
+    case didBecomeActive
+    case didEnterBackground
     case configuredPrivacyNotice
     case configuredSearchBar
-    case configuredSpacer
 }

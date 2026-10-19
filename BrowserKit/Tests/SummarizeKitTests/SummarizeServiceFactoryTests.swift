@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import XCTest
+import Shared
 @testable import SummarizeKit
 
 final class MockSummarizerServiceLifecycle: SummarizerServiceLifecycle, @unchecked Sendable {
@@ -36,24 +37,48 @@ final class SummarizeServiceFactoryTests: XCTestCase {
         super.tearDown()
     }
 
-    #if canImport(FoundationModels)
     func test_make_whenAppleIntelligenceAvailable() throws {
         guard #available(iOS 26, *) else {
             throw XCTSkip("Skipping iOS 26-only test on earlier OS versions")
         }
         let subject = createSubject()
 
-        let result = subject.make(isAppleSummarizerEnabled: true, isHostedSummarizerEnabled: false, config: nil)
+        let result = subject.make(
+            isAppleSummarizerEnabled: true,
+            isHostedSummarizerEnabled: false,
+            isAppAttestAuthEnabled: false,
+            prefs: MockProfilePrefs(),
+            config: nil
+        )
         let service = try XCTUnwrap(result as? DefaultSummarizerService)
 
         XCTAssertNotNil(service.summarizerLifecycle)
     }
-    #endif
 
     func test_make_whenHostedSummarizerTrue_returnsNilForLLMConfigNotAvailable() throws {
         let subject = createSubject()
 
-        let result = subject.make(isAppleSummarizerEnabled: false, isHostedSummarizerEnabled: true, config: nil)
+        let result = subject.make(
+            isAppleSummarizerEnabled: false,
+            isHostedSummarizerEnabled: true,
+            isAppAttestAuthEnabled: false,
+            prefs: MockProfilePrefs(),
+            config: nil
+        )
+
+        XCTAssertNil(result)
+    }
+
+    func test_make_whenAppAttestAuthEnabled_returnsNilForAppAttestConfigNotAvailable() throws {
+        let subject = createSubject()
+
+        let result = subject.make(
+            isAppleSummarizerEnabled: false,
+            isHostedSummarizerEnabled: true,
+            isAppAttestAuthEnabled: true,
+            prefs: MockProfilePrefs(),
+            config: nil
+        )
 
         XCTAssertNil(result)
     }
@@ -61,7 +86,13 @@ final class SummarizeServiceFactoryTests: XCTestCase {
     func test_make_returnsNilWhenSummarizerAvailable() throws {
         let subject = createSubject()
 
-        let result = subject.make(isAppleSummarizerEnabled: false, isHostedSummarizerEnabled: false, config: nil)
+        let result = subject.make(
+            isAppleSummarizerEnabled: false,
+            isHostedSummarizerEnabled: false,
+            isAppAttestAuthEnabled: false,
+            prefs: MockProfilePrefs(),
+            config: nil
+        )
 
         XCTAssertNil(result)
     }

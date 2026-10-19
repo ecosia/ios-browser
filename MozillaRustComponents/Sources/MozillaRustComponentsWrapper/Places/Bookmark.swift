@@ -88,7 +88,8 @@ public class BookmarkNodeData {
                      dateAdded: Int64,
                      lastModified: Int64,
                      parentGUID: String?,
-                     position: UInt32) {
+                     position: UInt32)
+    {
         self.type = type
         self.guid = guid
         self.dateAdded = dateAdded
@@ -204,7 +205,8 @@ public class BookmarkItemData: BookmarkNodeData {
                 parentGUID: String?,
                 position: UInt32,
                 url: String,
-                title: String) {
+                title: String)
+    {
         self.url = url
         self.title = title
         super.init(
@@ -256,7 +258,8 @@ public class BookmarkFolderData: BookmarkNodeData {
                 position: UInt32,
                 title: String,
                 childGUIDs: [String],
-                children: [BookmarkNodeData]?) {
+                children: [BookmarkNodeData]?)
+    {
         self.title = title
         self.childGUIDs = childGUIDs
         self.children = children

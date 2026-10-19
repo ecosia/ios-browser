@@ -29,7 +29,13 @@ final class PasswordGeneratorMiddleware {
         PasswordGeneratorMiddleware.loadPasswordRules()
     }
 
-    lazy var passwordGeneratorProvider: Middleware<AppState> = { state, action in
+    lazy var passwordGeneratorProvider: Middleware<AppState> = (legacyProvider, modernProvider)
+
+    lazy var modernProvider: MiddlewareClosure<AppState> = { [self] state, action, windowUUID in
+        // Does not test any modern actions
+    }
+
+    lazy var legacyProvider: LegacyMiddlewareClosure<AppState> = { [self] state, action in
         let windowUUID = action.windowUUID
 
         switch action.actionType {
@@ -39,9 +45,9 @@ final class PasswordGeneratorMiddleware {
 
         case PasswordGeneratorActionType.userTappedUsePassword:
             guard let frameContext = (action as? PasswordGeneratorAction)?.frameContext else { return }
-            guard let password = state.screenState(PasswordGeneratorState.self,
-                                                   for: .passwordGenerator,
-                                                   window: action.windowUUID)?.password else {return}
+            guard let password = state.componentState(PasswordGeneratorState.self,
+                                                      for: .passwordGenerator,
+                                                      window: action.windowUUID)?.password else {return}
             self.userTappedUsePassword(frameContext: frameContext, password: password)
 
         case PasswordGeneratorActionType.userTappedRefreshPassword:

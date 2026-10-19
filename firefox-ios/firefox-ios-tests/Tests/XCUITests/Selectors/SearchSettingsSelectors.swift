@@ -10,6 +10,10 @@ protocol SearchSettingsSelectorsSet {
     var BACK_BUTTON: Selector { get }
     var TRENDING_SEARCH_SWITCH: Selector { get }
     var RECENT_SEARCH_SWITCH: Selector { get }
+    var DEFAULT_SEARCH_ENGINE_NAVBAR: Selector { get }
+    var DEFAULT_SEARCH_ENGINE_SECTION_TITLE: Selector { get }
+    var ALTERNATIVE_SEARCH_ENGINES_SECTION_TITLE: Selector { get }
+    func searchEngineRow(named engineName: String) -> Selector
     var all: [Selector] { get }
 }
 
@@ -20,6 +24,9 @@ struct SearchSettingsSelectors: SearchSettingsSelectorsSet {
         static let recentSearchesSwitch     = AccessibilityIdentifiers.Settings.Search.showRecentSearchesSwitch
         static let backButtoniOS26          = AccessibilityIdentifiers.Settings.Search.backButtoniOS26
         static let backButton               = AccessibilityIdentifiers.Settings.Search.backButton
+        static let defaultSearchEngineNavBar = "Default Search Engine"
+        static let defaultSearchEngineSectionTitle = "Default Search Engine"
+        static let alternativeSearchEnginesSectionTitle = "Alternative Search Engines"
     }
 
     let NAVBAR = Selector.navigationBarId(
@@ -52,7 +59,36 @@ struct SearchSettingsSelectors: SearchSettingsSelectorsSet {
         groups: ["settings", "search", "recent searches"]
     )
 
+    let DEFAULT_SEARCH_ENGINE_NAVBAR = Selector.navigationBarId(
+        IDs.defaultSearchEngineNavBar,
+        description: "Default Search Engine navigation bar (appears when selecting engine)",
+        groups: ["settings", "search"]
+    )
+
+    let DEFAULT_SEARCH_ENGINE_SECTION_TITLE = Selector.staticTextByExactLabel(
+        IDs.defaultSearchEngineSectionTitle,
+        description: "Section title for the default search engine on Settings → Search",
+        groups: ["settings", "search"]
+    )
+
+    let ALTERNATIVE_SEARCH_ENGINES_SECTION_TITLE = Selector.staticTextByExactLabel(
+        IDs.alternativeSearchEnginesSectionTitle,
+        description: "Section title for alternative search engines on Settings → Search",
+        groups: ["settings", "search"]
+    )
+
+    func searchEngineRow(named engineName: String) -> Selector {
+        Selector.staticTextInTablesByLabel(
+            engineName,
+            description: "Row for '\(engineName)' search engine on Settings → Search",
+            groups: ["settings", "search"]
+        )
+    }
+
     var all: [Selector] {
-        [NAVBAR, BACK_BUTTON_iOS26, BACK_BUTTON, TRENDING_SEARCH_SWITCH, RECENT_SEARCH_SWITCH]
+        [
+            NAVBAR, BACK_BUTTON_iOS26, BACK_BUTTON, TRENDING_SEARCH_SWITCH, RECENT_SEARCH_SWITCH,
+            DEFAULT_SEARCH_ENGINE_NAVBAR, DEFAULT_SEARCH_ENGINE_SECTION_TITLE, ALTERNATIVE_SEARCH_ENGINES_SECTION_TITLE
+        ]
     }
 }

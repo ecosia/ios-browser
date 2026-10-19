@@ -9,11 +9,12 @@
 // increased startup times which may lead to termination by the OS.
 
 import Common
-import Account
 import Shared
 import Storage
 import AuthenticationServices
 
+import class Account.Autopush
+import class Account.RustFirefoxAccounts
 import class MozillaAppServices.RemoteSettingsService
 import struct MozillaAppServices.RemoteSettingsContext
 import enum MozillaAppServices.Level
@@ -28,7 +29,7 @@ import struct MozillaAppServices.SyncParams
 import struct MozillaAppServices.SyncResult
 import struct MozillaAppServices.VisitObservation
 import struct MozillaAppServices.PendingCommand
-import struct MozillaAppServices.RemoteSettingsConfig2
+import struct MozillaAppServices.RemoteSettingsConfig
 
 // TODO: FXIOS-14225 - SyncManager shouldn't be Sendable
 public protocol SyncManager: Sendable {
@@ -141,7 +142,6 @@ protocol Profile: AnyObject, Sendable {
     func storeAndSyncTabs(_ tabs: [RemoteTab]) -> Deferred<Maybe<Int>>
 
     func addTabToCommandQueue(_ deviceId: String, url: URL)
-    func removeTabFromCommandQueue(_ deviceId: String, url: URL)
     func flushTabCommands(toDeviceId: String?)
 
     func sendItem(_ item: ShareItem, toDevices devices: [RemoteDevice]) -> Success
@@ -225,9 +225,10 @@ open class BrowserProfile: Profile,
         do {
             return try self.files.getAndEnsureDirectory()
         } catch {
-            logger.log("Could not create directory at root path: \(error)",
+            logger.log("Could not create directory at root path",
                        level: .fatal,
-                       category: .setup)
+                       category: .setup,
+                       extra: ["error": "\(error)"])
             fatalError("Could not create directory at root path: \(error)")
         }
     }()
@@ -255,10 +256,16 @@ open class BrowserProfile: Profile,
      * A SentTabDelegate can be provided in this initializer, or once the profile is initialized.
      * However, if we provide it here, it's assumed that we're initializing it from the application.
      */
+    typealias RemoteSettingsServiceFactory = (String, RemoteSettingsConfig) -> RemoteSettingsService
+    private let remoteSettingsServiceFactory: RemoteSettingsServiceFactory
+
     init(localName: String,
          fxaCommandsDelegate: FxACommandsDelegate? = nil,
          clear: Bool = false,
-         logger: Logger = DefaultLogger.shared) {
+         logger: Logger = DefaultLogger.shared,
+         remoteSettingsServiceFactory: @escaping RemoteSettingsServiceFactory = { storageDir, config in
+            RemoteSettingsService(storageDir: storageDir, config: config)
+         }) {
         logger.log("Initing profile \(localName) on thread \(Thread.current).",
                    level: .debug,
                    category: .setup)
@@ -267,6 +274,7 @@ open class BrowserProfile: Profile,
         self.keychain = KeychainManager.shared
         self.logger = logger
         self.fxaCommandsDelegate = fxaCommandsDelegate
+        self.remoteSettingsServiceFactory = remoteSettingsServiceFactory
 
         if clear {
             do {
@@ -544,10 +552,6 @@ open class BrowserProfile: Profile,
         tabs.addRemoteCommand(deviceId: deviceId, url: url)
     }
 
-    func removeTabFromCommandQueue(_ deviceId: String, url: URL) {
-        tabs.removeRemoteCommand(deviceId: deviceId, url: url)
-    }
-
     public func sendItem(_ item: ShareItem, toDevices devices: [RemoteDevice]) -> Success {
         let deferred = Success()
         if let accountManager = RustFirefoxAccounts.shared.accountManager {
@@ -659,9 +663,11 @@ open class BrowserProfile: Profile,
         let remoteSettingsEnvironment = RemoteSettingsEnvironment(rawValue: remoteSettingsEnvironmentKey) ?? .prod
         let remoteSettingsServer = remoteSettingsEnvironment.toRemoteSettingsServer()
         let bucketName = (remoteSettingsServer == .prod ? "main" : "main-preview")
-        let config = RemoteSettingsConfig2(server: remoteSettingsServer,
-                                           bucketName: bucketName,
-                                           appContext: remoteSettingsAppContext())
+        let config = RemoteSettingsConfig(
+            server: remoteSettingsServer,
+            bucketName: bucketName,
+            appContext: remoteSettingsAppContext()
+        )
 
         let url = URL(fileURLWithPath: directory, isDirectory: true).appendingPathComponent("remote-settings")
         let path = url.path
@@ -670,8 +676,9 @@ open class BrowserProfile: Profile,
         if !FileManager.default.fileExists(atPath: path) {
             try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         }
-        let service = RemoteSettingsService(storageDir: path, config: config)
+        let service = remoteSettingsServiceFactory(path, config)
         #if !MOZ_TARGET_NOTIFICATIONSERVICE && !MOZ_TARGET_SHARETO && !MOZ_TARGET_CREDENTIAL_PROVIDER
+        service.setTelemetry(telemetry: RemoteSettingsGleanTelemetry())
         serviceSyncCoordinator = RemoteSettingsServiceSyncCoordinator(service: service, prefs: prefs)
         #endif
         return service

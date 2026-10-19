@@ -415,17 +415,12 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
 
  Ecosia: InvisibleTabAutoCloseManager.closeTab calls the
  removeTab(_ tabUUID: TabUUID) API (no completion), so that is the
- variant we must override; the (Tab, completion:) variant is no
- longer exercised by production.
+ variant we must override. The `(Tab, completion:)` variant that used to be overridden here as well
+ was removed from `TabManager` in 155.1, so the override is gone with it.
  */
 class TabAutoCloseTestMockTabManager: MockTabManager {
     override func removeTab(_ tabUUID: TabUUID) {
         tabs.removeAll { $0.tabUUID == tabUUID }
-    }
-
-    override func removeTab(_ tab: Tab, completion: (() -> Void)?) {
-        tabs.removeAll { $0.tabUUID == tab.tabUUID }
-        completion?()
     }
 }
 

@@ -23,8 +23,18 @@ final class HomepageSettingsScreen {
         return settingTable.cells.switches[toggle]
     }
 
+    private var jumpBackInSwitch: XCUIElement {
+        let settingTable = sel.HOMEPAGE_SETTINGS_TABLE.element(in: app)
+        let toggle = sel.JUMP_BACK_IN_TOGGLE.value
+        return settingTable.cells.switches[toggle]
+    }
+
     func assertBookmarkToggleExists(timeout: TimeInterval = TIMEOUT) {
         BaseTestCase().mozWaitForElementToExist(bookmarkSwitch)
+    }
+
+    func assertJumpBackInToggleExists(timeout: TimeInterval = TIMEOUT) {
+        BaseTestCase().mozWaitForElementToExist(jumpBackInSwitch)
     }
 
     func disableBookmarkToggle() {
@@ -41,6 +51,20 @@ final class HomepageSettingsScreen {
         }
     }
 
+    func disableJumpBackInToggle() {
+        let switchElement = jumpBackInSwitch
+        if switchElement.value as? String == "1" {
+            switchElement.waitAndTap()
+        }
+    }
+
+    func enableJumpBackInToggle() {
+        let switchElement = jumpBackInSwitch
+        if switchElement.value as? String == "0" {
+            switchElement.waitAndTap()
+        }
+    }
+
     func assertBookmarkToggleIsEnabled() {
         let switchElement = bookmarkSwitch
         XCTAssertEqual(switchElement.value as? String, "1", "Bookmark toggle is not enabled")
@@ -49,5 +73,10 @@ final class HomepageSettingsScreen {
     func assertBookmarkToggleIsDisabled() {
         let switchElement = bookmarkSwitch
         XCTAssertEqual(switchElement.value as? String, "0", "Bookmark toggle is not disabled")
+    }
+
+    func assertJumpBackInToggleIsDisabled() {
+        let switchElement = jumpBackInSwitch
+        XCTAssertEqual(switchElement.value as? String, "0", "Jump Back In toggle is not disabled")
     }
 }

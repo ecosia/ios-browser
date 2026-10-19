@@ -10,63 +10,57 @@ protocol TabTraySelectorDelegate: AnyObject {
     func didSelectSection(panelType: TabTrayPanelType)
 }
 
-// MARK: - UX Constants
-struct TabTraySelectorUX {
-    static let horizontalSpacing: CGFloat = 12
-    static let cornerRadius: CGFloat = 12
-    static let verticalInsets: CGFloat = 8
-    static let horizontalInsets: CGFloat = 10
-    static let fontScaleDelta: CGFloat = 0.055
-    static let stackViewLeadingTrailingPadding: CGFloat = 8
-    static let containerHorizontalSpacing: CGFloat = 16
-    static let topSpacing: CGFloat = 8
-    static let bottomSpacingIOS26: CGFloat = 16
-}
+class TabTraySelectorView: UIView, ThemeApplicable {
+    // MARK: - UX Constants
+    struct UX {
+        static let horizontalSpacing: CGFloat = 12
+        static let cornerRadius: CGFloat = 12
+        static let verticalInsets: CGFloat = 8
+        static let horizontalInsets: CGFloat = 10
+        static let fontScaleDelta: CGFloat = 0.055
+        static let stackViewLeadingTrailingPadding: CGFloat = 8
+        static let containerHorizontalSpacing: CGFloat = 16
+        static let topSpacing: CGFloat = 8
+        static let bottomSpacingIOS26: CGFloat = 16
+    }
 
-class TabTraySelectorView: UIView,
-                           ThemeApplicable,
-                           FeatureFlaggable {
     weak var delegate: TabTraySelectorDelegate?
 
-    private var theme: Theme
-    private var selectedIndex: Int
-    private var buttons: [TabTraySelectorButton] = []
-    private var buttonTitles: [String]
+    var theme: Theme
+    var selectedIndex: Int
+    var buttons: [TabTraySelectorButton] = []
+    let buttonTitles: [String]
+    let tabTrayUtils: TabTrayUtils
+
     private var selectionBackgroundWidthConstraint: NSLayoutConstraint?
     private var stackViewOffsetConstraint: NSLayoutConstraint?
     private let edgeFadeGradientLayer = CAGradientLayer()
 
-    private var tabTrayUtils: TabTrayUtils
-
-    private lazy var containerView: UIView = .build { view in
+    lazy var containerView: UIView = .build { view in
         if #available(iOS 26, *) {
             view.clipsToBounds = true
         }
     }
 
-    private lazy var selectionBackgroundView: UIView = .build { view in
+    lazy var selectionBackgroundView: UIView = .build { view in
         if #unavailable(iOS 26) {
-            view.layer.cornerRadius = TabTraySelectorUX.cornerRadius
+            view.layer.cornerRadius = UX.cornerRadius
         }
     }
 
-    private lazy var stackView: UIStackView = .build { stackView in
+    lazy var stackView: UIStackView = .build { stackView in
         stackView.axis = .horizontal
-        stackView.spacing = TabTraySelectorUX.horizontalSpacing
+        stackView.spacing = UX.horizontalSpacing
         stackView.distribution = .fill
         stackView.alignment = .center
     }
 
-    private lazy var visualEffectView: UIVisualEffectView = .build { view in
-#if canImport(FoundationModels)
+    lazy var visualEffectView: UIVisualEffectView = .build { view in
         if #available(iOS 26, *), !DeviceInfo.isRunningLiquidGlassEarlyBeta {
             view.effect = UIGlassEffect(style: .regular)
         } else {
             view.effect = UIBlurEffect(style: .systemUltraThinMaterial)
         }
-#else
-        view.effect = UIBlurEffect(style: .systemUltraThinMaterial)
-#endif
     }
 
     init(selectedIndex: Int,
@@ -106,13 +100,7 @@ class TabTraySelectorView: UIView,
     }
 
     private func setup() {
-        if #available(iOS 26, *) {
-            addSubview(visualEffectView)
-        }
-        addSubview(containerView)
-        containerView.addSubview(selectionBackgroundView)
-        containerView.addSubview(stackView)
-        containerView.layer.mask = edgeFadeGradientLayer
+        setupViewHierarchy()
 
         for (index, title) in buttonTitles.enumerated() {
             let button = createButton(with: index, title: title)
@@ -121,20 +109,37 @@ class TabTraySelectorView: UIView,
             applyButtonWidthAnchor(on: button, with: title as NSString)
         }
 
+        setupConstraints()
+        applyInitialConstraints()
+        setupGestures()
+        applyTheme(theme: theme)
+    }
+
+    func setupViewHierarchy() {
+        if #available(iOS 26, *) {
+            addSubview(visualEffectView)
+        }
+        addSubview(containerView)
+        containerView.addSubview(selectionBackgroundView)
+        containerView.addSubview(stackView)
+        containerView.layer.mask = edgeFadeGradientLayer
+    }
+
+    func setupConstraints() {
         let bottomSpacing: CGFloat = if #available(iOS 26.0, *) {
-            -TabTraySelectorUX.bottomSpacingIOS26
+            -UX.bottomSpacingIOS26
         } else {
             0
         }
 
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: topAnchor,
-                                               constant: TabTraySelectorUX.topSpacing),
+                                               constant: UX.topSpacing),
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: bottomSpacing),
             containerView.leadingAnchor.constraint(equalTo: leadingAnchor,
-                                                   constant: TabTraySelectorUX.containerHorizontalSpacing),
+                                                   constant: UX.containerHorizontalSpacing),
             containerView.trailingAnchor.constraint(equalTo: trailingAnchor,
-                                                    constant: -TabTraySelectorUX.containerHorizontalSpacing),
+                                                    constant: -UX.containerHorizontalSpacing),
 
             stackView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
             selectionBackgroundView.heightAnchor.constraint(equalTo: stackView.heightAnchor),
@@ -150,14 +155,14 @@ class TabTraySelectorView: UIView,
                 visualEffectView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
             ])
         }
-
-        applyInitialConstraints()
-        addSwipeGestureRecognizer(direction: .right)
-        addSwipeGestureRecognizer(direction: .left)
-        applyTheme(theme: theme)
     }
 
-    private func createButton(with index: Int, title: String) -> TabTraySelectorButton {
+    func setupGestures() {
+        addSwipeGestureRecognizer(direction: .right)
+        addSwipeGestureRecognizer(direction: .left)
+    }
+
+    func createButton(with index: Int, title: String) -> TabTraySelectorButton {
         let button = TabTraySelectorButton()
         let hint = String(format: .TabsTray.TabTraySelectorAccessibilityHint,
                           NSNumber(value: index + 1),
@@ -166,10 +171,10 @@ class TabTraySelectorView: UIView,
             ? FXFontStyles.Bold.body.systemFont()
             : FXFontStyles.Regular.body.systemFont()
         let contentInsets = NSDirectionalEdgeInsets(
-            top: TabTraySelectorUX.verticalInsets,
-            leading: TabTraySelectorUX.horizontalInsets,
-            bottom: TabTraySelectorUX.verticalInsets,
-            trailing: TabTraySelectorUX.horizontalInsets
+            top: UX.verticalInsets,
+            leading: UX.horizontalInsets,
+            bottom: UX.verticalInsets,
+            trailing: UX.horizontalInsets
         )
         let viewModel = TabTraySelectorButtonModel(
             title: title,
@@ -177,7 +182,7 @@ class TabTraySelectorView: UIView,
             a11yHint: hint,
             font: font,
             contentInsets: contentInsets,
-            cornerRadius: TabTraySelectorUX.cornerRadius
+            cornerRadius: UX.cornerRadius
         )
         button.configure(viewModel: viewModel)
         button.applyTheme(theme: theme)
@@ -188,7 +193,7 @@ class TabTraySelectorView: UIView,
         return button
     }
 
-    private func applyInitialConstraints() {
+    func applyInitialConstraints() {
         guard buttons.indices.contains(selectedIndex) else { return }
         layoutIfNeeded()
 
@@ -213,14 +218,14 @@ class TabTraySelectorView: UIView,
     ///
     /// This prevents visual layout shifts during font weight transitions (e.g., from regular to bold),
     /// ensuring consistent spacing and avoiding jitter in horizontally stacked button layouts.
-    private func applyButtonWidthAnchor(on button: UIButton, with title: NSString) {
+    func applyButtonWidthAnchor(on button: UIButton, with title: NSString) {
         if let existingConstraint = button.constraints.first(where: { $0.firstAttribute == .width }) {
             existingConstraint.isActive = false
         }
 
         let boldFont = FXFontStyles.Bold.body.systemFont()
         let boldWidth = ceil(title.size(withAttributes: [.font: boldFont]).width)
-        let horizontalInsets = TabTraySelectorUX.horizontalInsets * 2
+        let horizontalInsets = UX.horizontalInsets * 2
         button.widthAnchor.constraint(equalToConstant: boldWidth + horizontalInsets).isActive = true
     }
 
@@ -256,7 +261,7 @@ class TabTraySelectorView: UIView,
         selectNewSection(from: oldValue, to: selectedIndex, sender: sender)
     }
 
-    private func selectNewSection(from fromIndex: Int, to toIndex: Int, sender: UIButton) {
+    func selectNewSection(from fromIndex: Int, to toIndex: Int, sender: UIButton) {
         guard buttons.indices.contains(fromIndex),
               buttons.indices.contains(toIndex) else { return }
 
@@ -289,7 +294,7 @@ class TabTraySelectorView: UIView,
         })
     }
 
-    private func adjustSelectedButtonFont(toIndex: Int) {
+    func adjustSelectedButtonFont(toIndex: Int) {
         for (index, button) in buttons.enumerated() {
             button.transform = .identity
             let isSelected = index == toIndex
@@ -302,18 +307,18 @@ class TabTraySelectorView: UIView,
         }
     }
 
-    private func simulateFontWeightTransition(from fromIndex: Int, to toIndex: Int, progress: CGFloat) {
+    func simulateFontWeightTransition(from fromIndex: Int, to toIndex: Int, progress: CGFloat) {
         guard buttons.indices.contains(fromIndex), buttons.indices.contains(toIndex) else { return }
 
         let easedProgress = 1 - pow(1 - progress, 2)
         for (index, button) in buttons.enumerated() {
             if index == fromIndex {
                 // Scale down as we move away
-                let scale = 1.0 - TabTraySelectorUX.fontScaleDelta * easedProgress
+                let scale = 1.0 - UX.fontScaleDelta * easedProgress
                 button.transform = CGAffineTransform(scaleX: scale, y: scale)
             } else if index == toIndex {
                 // Scale up as we approach
-                let scale = 1.0 + TabTraySelectorUX.fontScaleDelta * easedProgress
+                let scale = 1.0 + UX.fontScaleDelta * easedProgress
                 button.transform = CGAffineTransform(scaleX: scale, y: scale)
             } else {
                 // Reset others
@@ -375,11 +380,23 @@ class TabTraySelectorView: UIView,
         self.theme = theme
 
         if #unavailable(iOS 26) {
-            let backgroundAlpha: CGFloat = tabTrayUtils.backgroundAlpha()
-            backgroundColor = theme.colors.layer1.withAlphaComponent(backgroundAlpha)
+            let trackColor = theme.isNova ? theme.colors.layerSurfaceLow : theme.colors.layer1
+            backgroundColor = trackColor.withAlphaComponent(tabTrayUtils.backgroundAlpha())
+        } else if theme.isNova, !DeviceInfo.isRunningLiquidGlassEarlyBeta, !(theme is TabTrayPanelSwipeTheme) {
+            let glass = UIGlassEffect(style: .regular)
+            glass.tintColor = theme.colors.layerGlassTintNova
+            visualEffectView.effect = glass
         }
 
-        selectionBackgroundView.backgroundColor = theme.colors.layerEmphasis
+        if #available(iOS 26, *) {
+            selectionBackgroundView.backgroundColor = theme.isNova
+                ? theme.colors.layerGlassSelectedFill
+                : theme.colors.layerEmphasis
+        } else {
+            selectionBackgroundView.backgroundColor = theme.isNova
+                ? theme.colors.layer2
+                : theme.colors.layerEmphasis
+        }
 
         for button in buttons {
             button.applyTheme(theme: theme)

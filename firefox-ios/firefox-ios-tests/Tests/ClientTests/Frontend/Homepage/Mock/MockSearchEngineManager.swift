@@ -24,7 +24,7 @@ final class MockSearchEnginesManager: SearchEnginesManagerProvider, @unchecked S
     }
 
     func getOrderedEngines(completion: @escaping SearchEngineCompletion) {
-        MainActor.assumeIsolated {
+        ensureMainThread {
             completion(
                 SearchEnginePrefs(
                     engineIdentifiers: self.searchEngines.map {

@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "Ikona aplikace";
+
 /* (No Comment) */
 "New Private Tab" = "Nový anonymní panel";
 
@@ -5,19 +8,22 @@
 "New Tab" = "Nový panel";
 
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Ecosia používá váš fotoaparát ke skenování QR kódů a pořizování fotografií a videí.";
+"NSCameraUsageDescription" = "Ecosia může použít váš fotoaparát ke skenování QR kódů a pořizování fotografií a videí.";
 
 /* Privacy - Face ID Usage Description */
 "NSFaceIDUsageDescription" = "Ecosia vyžaduje Face ID pro přístup k uloženým heslům a platebním metodám.";
 
 /* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "Servery, které navštěvujete, mohou chtít znát vaše umístění.";
+"NSLocationWhenInUseUsageDescription" = "Stránky, které navštěvujete, mohou chtít znát vaše umístění.";
 
 /* Privacy - Microphone Usage Description */
 "NSMicrophoneUsageDescription" = "Ecosia používá váš mikrofon k zaznamenávání a odesílání zvuku.";
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Toto vám umožní ukládat fotografie.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Ecosia používá rozpoznávání řeči, aby převedl váš hlas na text pro hlasové vyhledávání.";
 
 /* (No Comment) */
 "Scan QR Code" = "Skenovat QR kód";

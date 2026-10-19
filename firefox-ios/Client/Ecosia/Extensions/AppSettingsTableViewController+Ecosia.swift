@@ -57,14 +57,15 @@ extension AppSettingsTableViewController {
             HomepageSettings(settings: self, settingsDelegate: settingsDelegate)
         ]
 
-        /* Ecosia: inactiveTabs / TabsSetting removed in Firefox upgrade; re-add if Nimbus adds flag
-        let inactiveTabsAreBuildActive = featureFlags.isFeatureEnabled(.inactiveTabs, checking: .buildOnly)
-        if inactiveTabsAreBuildActive {
-            customizationSettings.append(TabsSetting(theme: ..., settingsDelegate: parentCoordinator))
-        }
-        */
+        /* Ecosia: inactiveTabs / TabsSetting were removed from Firefox; both the NimbusFeatureFlagID
+           case and the TabsSetting type are gone as of 155.1, so there is nothing left to gate on.
+           Re-add if Firefox reintroduces the section. */
 
-        if isSearchBarLocationFeatureEnabled, let profile {
+        // Ecosia: `isSearchBarLocationFeatureEnabled` was deleted upstream in 155.1 along with the
+        // `.bottomSearchBar` build flag. It meant `flag && !isPad`; with the flag permanently on,
+        // upstream's replacement in this same screen is the plain iPad check below.
+        // Toolbar position cannot be changed on iPad
+        if let profile, UIDevice.current.userInterfaceIdiom != .pad {
             customizationSettings.append(SearchBarSetting(settings: self, profile: profile, settingsDelegate: parentCoordinator))
         }
 

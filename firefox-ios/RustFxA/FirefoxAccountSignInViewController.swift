@@ -21,8 +21,6 @@ enum FxASignInParentType {
 }
 
 public enum NotificationPermissionRequestBehavior {
-    /// Automatically determine based on the telemetry object (parent type)
-    case automatic
     /// Explicitly request notification permission
     case request
     /// Explicitly do not request notification permission
@@ -39,7 +37,6 @@ class FirefoxAccountSignInViewController: UIViewController, Themeable {
     }
 
     // MARK: - Properties
-    var shouldReload: (() -> Void)?
     /// Callback invoked when sync flow is started (when user presses scan or email button)
     var onSyncFlowStarted: (() -> Void)?
 
@@ -142,7 +139,7 @@ class FirefoxAccountSignInViewController: UIViewController, Themeable {
          parentType: FxASignInParentType,
          deepLinkParams: FxALaunchParams,
          windowUUID: WindowUUID,
-         notificationPermissionBehavior: NotificationPermissionRequestBehavior = .automatic,
+         notificationPermissionBehavior: NotificationPermissionRequestBehavior = .request,
          logger: Logger = DefaultLogger.shared,
          notificationCenter: NotificationProtocol = NotificationCenter.default,
          themeManager: ThemeManager = AppContainer.shared.resolve()) {
@@ -170,10 +167,6 @@ class FirefoxAccountSignInViewController: UIViewController, Themeable {
             self.fxaDismissStyle = .dismiss
         }
         switch notificationPermissionBehavior {
-        case .automatic:
-            self.shouldAskForNotificationPermission = OnboardingNotificationCardHelper().shouldAskForNotificationsPermission(
-                telemetryObj: self.telemetryObject
-            )
         case .request:
             self.shouldAskForNotificationPermission = true
         case .skip:
@@ -294,10 +287,6 @@ class FirefoxAccountSignInViewController: UIViewController, Themeable {
                                             dismissalStyle: fxaDismissStyle,
                                             deepLinkParams: deepLinkParams,
                                             shouldAskForNotificationPermission: shouldAskForNotificationPermission)
-        fxaWebVC.shouldDismissFxASignInViewController = { [weak self] in
-            self?.shouldReload?()
-            self?.dismissVC()
-        }
         TelemetryWrapper.recordEvent(category: .firefoxAccount, method: .tap, object: .syncSignInUseEmail)
         navigationController?.pushViewController(fxaWebVC, animated: true)
     }
@@ -370,7 +359,7 @@ extension FirefoxAccountSignInViewController {
         referringPage: ReferringPage,
         profile: Profile,
         windowUUID: WindowUUID,
-        notificationPermissionBehavior: NotificationPermissionRequestBehavior = .automatic
+        notificationPermissionBehavior: NotificationPermissionRequestBehavior = .request
     ) -> UIViewController {
         // Show the settings page if we have already signed in. If we haven't then show the signin page
         let parentType: FxASignInParentType

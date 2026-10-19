@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import SnapKit
 
 @MainActor
 protocol ToolbarViewProtocol: AnyObject {
@@ -13,9 +12,9 @@ protocol ToolbarViewProtocol: AnyObject {
     var bottomBlurView: UIVisualEffectView { get }
     var overKeyboardContainer: BaseAlphaStackView { get }
     var isBottomSearchBar: Bool { get }
-    var headerTopConstraint: Constraint? { get }
-    var bottomContainerConstraint: Constraint? { get }
-    var overKeyboardContainerConstraint: Constraint? { get }
+    var headerTopConstraint: NSLayoutConstraint? { get }
+    var bottomContainerConstraint: NSLayoutConstraint? { get }
+    var overKeyboardContainerConstraint: NSLayoutConstraint? { get }
 }
 
 struct ToolbarContext {
@@ -117,7 +116,7 @@ final class ToolbarAnimator {
     private func updateTopToolbarConstraints(topContainerOffset: CGFloat) {
         guard let view else { return }
 
-        view.headerTopConstraint?.update(offset: topContainerOffset)
+        view.headerTopConstraint?.constant = topContainerOffset
         view.header.superview?.setNeedsLayout()
     }
 
@@ -132,6 +131,10 @@ final class ToolbarAnimator {
         updateBottomToolbarConstraints(bottomContainerOffset: bottomContainerOffset,
                                        overKeyboardContainerOffset: overKeyboardContainerOffset)
 
+        if overKeyboardContainerOffset == 0 {
+            view?.overKeyboardContainer.updateAlphaForSubviews(alpha)
+        }
+
         delegate?.dispatchScrollAlphaChange(alpha: alpha)
     }
 
@@ -139,8 +142,8 @@ final class ToolbarAnimator {
                                                 overKeyboardContainerOffset: CGFloat) {
         guard let view else { return }
 
-        view.overKeyboardContainerConstraint?.update(offset: overKeyboardContainerOffset)
-        view.bottomContainerConstraint?.update(offset: bottomContainerOffset)
+        view.overKeyboardContainerConstraint?.constant = overKeyboardContainerOffset
+        view.bottomContainerConstraint?.constant = bottomContainerOffset
         // Both view shared the same parent so layoutIfNeeded is called only once
         view.overKeyboardContainer.superview?.layoutIfNeeded()
     }
@@ -168,7 +171,7 @@ final class ToolbarAnimator {
         guard let view else { return }
 
         let isShowing = alpha == 1
-        let bottomOffset = isShowing ? 0 :  context.bottomContainerHeight
+        let bottomOffset = isShowing ? 0 : context.bottomContainerHeight
         let overkeyboardOffset = isShowing ? 0 : context.overKeyboardContainerHeight
         UIView.animate(withDuration: UX.bottomToolbarDuration,
                        delay: 0,
@@ -176,7 +179,7 @@ final class ToolbarAnimator {
             if !isShowing {
                 view.bottomContainer.transform = .identity.translatedBy(x: 0, y: bottomOffset)
                 view.overKeyboardContainer.transform = .identity.translatedBy(x: 0, y: overkeyboardOffset)
-                view.bottomBlurView.transform = .identity.translatedBy(x: 0, y: overkeyboardOffset)
+                view.bottomBlurView.transform = .identity.translatedBy(x: 0, y: bottomOffset)
             } else {
                 view.bottomContainer.transform = .identity
                 view.overKeyboardContainer.transform = .identity
@@ -184,6 +187,9 @@ final class ToolbarAnimator {
             }
             self.updateBottomToolbarConstraints(bottomContainerOffset: bottomOffset,
                                                 overKeyboardContainerOffset: overkeyboardOffset)
+            if overkeyboardOffset == 0 {
+                view.overKeyboardContainer.updateAlphaForSubviews(alpha)
+            }
         }
 
         self.delegate?.dispatchScrollAlphaChange(alpha: alpha)

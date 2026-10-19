@@ -3,17 +3,16 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Redux
+import ModifiedCopy
 import Common
 
+@Copyable
 struct NativeErrorPageState: ScreenState {
     var windowUUID: WindowUUID
-    var title: String
-    var description: String
-    var foxImage: String
-    var url: URL?
+    var model: ErrorPageModel?
 
     init(appState: AppState, uuid: WindowUUID) {
-        guard let nativeErrorPageState = appState.screenState(
+        guard let nativeErrorPageState = appState.componentState(
             NativeErrorPageState.self,
             for: .nativeErrorPage,
             window: uuid
@@ -24,28 +23,27 @@ struct NativeErrorPageState: ScreenState {
 
         self.init(
             windowUUID: nativeErrorPageState.windowUUID,
-            title: nativeErrorPageState.title,
-            description: nativeErrorPageState.description,
-            foxImage: nativeErrorPageState.foxImage,
-            url: nativeErrorPageState.url
+            model: nativeErrorPageState.model
         )
     }
 
-    init(
-        windowUUID: WindowUUID,
-        title: String = "",
-        description: String = "",
-        foxImage: String = "",
-        url: URL? = nil
-    ) {
-        self.windowUUID = windowUUID
-        self.title = title
-        self.description = description
-        self.foxImage = foxImage
-        self.url = url
+    init(windowUUID: WindowUUID) {
+        self.init(windowUUID: windowUUID, model: nil)
     }
 
-    static let reducer: Reducer<Self> = { state, action in
+    init(windowUUID: WindowUUID, model: ErrorPageModel?) {
+        self.windowUUID = windowUUID
+        self.model = model
+    }
+
+    static let reducer: Reducer<Self> = (legacyReducer, modernReducer)
+
+    static let modernReducer: ReducerMethod<Self> = { state, action, actionWindowUUID in
+        // Does not handle any modern actions
+        return defaultState(from: state)
+    }
+
+    static let legacyReducer: LegacyReducerMethod<Self> = { state, action in
         guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else {
             return defaultState(from: state)
         }
@@ -55,13 +53,7 @@ struct NativeErrorPageState: ScreenState {
             guard let action = action as? NativeErrorPageAction, let model = action.nativePageErrorModel else {
                 return defaultState(from: state)
             }
-            return NativeErrorPageState(
-                windowUUID: state.windowUUID,
-                title: model.errorTitle,
-                description: model.errorDescription,
-                foxImage: model.foxImageName,
-                url: model.url
-            )
+            return state.copy(model: model)
         default:
             return defaultState(from: state)
         }
@@ -70,10 +62,7 @@ struct NativeErrorPageState: ScreenState {
     static func defaultState(from state: NativeErrorPageState) -> NativeErrorPageState {
         return NativeErrorPageState(
             windowUUID: state.windowUUID,
-            title: state.title,
-            description: state.description,
-            foxImage: state.foxImage,
-            url: state.url
+            model: state.model
         )
     }
 }

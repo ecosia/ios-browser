@@ -130,6 +130,9 @@
 /* Button to turn on notifications in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.Notification.TurnOn.Action.v148" = "Ενεργοποίηση ειδοποιήσεων";
 
+/* Description for the sync card in the v148 brand refresh onboarding flow. */
+"Onboarding.Modern.BrandRefresh.Sync.Description.v148" = "Λάβετε αστραπιαία σελιδοδείκτες, κωδικούς πρόσβασης και πολλά άλλα σε οποιαδήποτε συσκευή. Τα προσωπικά σας δεδομένα παραμένουν ασφαλή με την κρυπτογράφηση.";
+
 /* Button to start the sync setup process in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.Sync.SignIn.Action.v148" = "Έναρξη συγχρονισμού";
 
@@ -145,6 +148,9 @@
 /* Button title for agreeing to Terms of Use in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.TermsOfUse.AgreementButtonTitle.v148.v2" = "Συνέχεια";
 
+/* Description for the Terms of Use card in the v148 brand refresh onboarding flow. */
+"Onboarding.Modern.BrandRefresh.TermsOfUse.Description.v148" = "Είναι γρήγορο, ασφαλές και δεν θα σας ξεπουλήσει. Η περιήγηση μόλις έγινε καλύτερη.";
+
 /* The text for the manage settings link button in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.TermsOfUse.ManageLink.v148" = "Διαχείριση ρυθμίσεων";
 
@@ -155,7 +161,7 @@
 "Onboarding.Modern.BrandRefresh.TermsOfUse.PrivacyNoticeAgreement.v148" = "Το %1$@ νοιάζεται για το απόρρητό σας. Διαβάστε περισσότερα στη %2$@ μας";
 
 /* The text for the Privacy Notice link button in the v148 brand refresh onboarding flow. */
-"Onboarding.Modern.BrandRefresh.TermsOfUse.PrivacyNoticeLink.v148" = "Σημείωση απορρήτου";
+"Onboarding.Modern.BrandRefresh.TermsOfUse.PrivacyNoticeLink.v148" = "Δήλωση απορρήτου";
 
 /* Agreement text for Terms of Use in the v148 brand refresh onboarding flow. %@ is the Terms of Use link button that redirects the user to the Terms of Use page. */
 "Onboarding.Modern.BrandRefresh.TermsOfUse.TermsOfUseAgreement.v148" = "Συνεχίζοντας, συμφωνείτε με τους %@";
@@ -163,14 +169,26 @@
 /* The text for the Terms of Use link button in the v148 brand refresh onboarding flow. %@ is the app name (e.g. Firefox). */
 "Onboarding.Modern.BrandRefresh.TermsOfUse.TermsOfUseLink.v148" = "Όρους χρήσης του %@";
 
+/* Title for the Terms of Use card in the v148 brand refresh onboarding flow. */
+"Onboarding.Modern.BrandRefresh.TermsOfUse.Title.v148" = "Ετοιμαστείτε για ελεύθερη περιήγηση";
+
 /* Action button to set the app as the default browser in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.Welcome.ActionTreatmentA.v148" = "Ορισμός ως προεπιλογή";
+
+/* Description for the welcome card in the v148 brand refresh onboarding flow. */
+"Onboarding.Modern.BrandRefresh.Welcome.Description.v148" = "Προστατεύουμε τα δεδομένα σας και εμποδίζουμε αυτόματα τις εταιρείες από το να κατασκοπεύουν τα κλικ σας.";
 
 /* Button to skip the welcome card in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.Welcome.Skip.v148" = "Όχι τώρα";
 
 /* Title for the welcome card in the v148 brand refresh onboarding flow. */
 "Onboarding.Modern.BrandRefresh.Welcome.Title.v148" = "Πείτε αντίο στους παρεμβατικούς ιχνηλάτες";
+
+/* Title for the welcome card in the v148 brand refresh onboarding flow. */
+"Onboarding.Modern.BrandRefresh.Welcome.Title.v148.v2" = "Ανοίξτε τους συνδέσμους σας με ενσωματωμένο απόρρητο";
+
+/* Title for the welcome card in the v149 brand refresh onboarding flow. */
+"Onboarding.Modern.BrandRefresh.Welcome.TitleV3.v149" = "Ανοίξτε όλους τους συνδέσμους σας με ενσωματωμένο απόρρητο";
 
 /* Option for the automatic theme. */
 "Onboarding.Modern.Customization.Theme.Automatic.v145" = "Αυτόματο";
@@ -269,10 +287,10 @@
 "Onboarding.Modern.TermsOfService.PrivacyNoticeAgreement.v145" = "Το %1$@ νοιάζεται για το απόρρητό σας. Διαβάστε περισσότερα στη %2$@ μας.";
 
 /* Title for the Privacy Notice button link, in the Terms of Service screen for redirecting the user to the Privacy Notice page. */
-"Onboarding.Modern.TermsOfService.PrivacyNoticeLink.v140" = "Σημείωση απορρήτου";
+"Onboarding.Modern.TermsOfService.PrivacyNoticeLink.v140" = "Δήλωση απορρήτου";
 
 /* The text for the Privacy Notice link button. */
-"Onboarding.Modern.TermsOfService.PrivacyNoticeLink.v145" = "Πολιτική Απορρήτου.";
+"Onboarding.Modern.TermsOfService.PrivacyNoticeLink.v145" = "Δήλωση απορρήτου";
 
 /* A text that indicate to the user, a link button is available to be clicked for reading more information about the option that is going to choose in Manage Privacy Preferences screen, where user can choose from the option to send data to Firefox or not. */
 "Onboarding.Modern.TermsOfService.PrivacyPreferences.LearnMore.v140" = "Μάθετε περισσότερα";
@@ -377,7 +395,7 @@
 "Onboarding.TermsOfService.PrivacyNoticeAgreement.v135" = "Το %1$@ νοιάζεται για το απόρρητό σας. Διαβάστε περισσότερα στη %2$@ μας.";
 
 /* Title for the Privacy Notice button link, in the Terms of Service screen for redirecting the user to the Privacy Notice page. */
-"Onboarding.TermsOfService.PrivacyNoticeLink.v135" = "Σημείωση απορρήτου";
+"Onboarding.TermsOfService.PrivacyNoticeLink.v135" = "Δήλωση απορρήτου";
 
 /* A text that indicate to the user, a link button is available to be clicked for reading more information about the option that is going to choose in Manage Privacy Preferences screen, where user can choose from the option to send data to Firefox or not. */
 "Onboarding.TermsOfService.PrivacyPreferences.LearnMore.v136" = "Μάθετε περισσότερα";
@@ -443,7 +461,7 @@
 "Onboarding.Welcome.Description.v120" = "Η εφαρμογή περιήγησης του μη κερδοσκοπικού μας οργανισμού σταματά τις εταιρείες από το να σας ακολουθούν κρυφά σε όλο το διαδίκτυο.";
 
 /* String used to describe the title of link button is on the welcome onboarding page for current version in our Onboarding screens. */
-"Onboarding.Welcome.Link.Action.v114" = "Μάθετε περισσότερα στη Σημείωση απορρήτου μας";
+"Onboarding.Welcome.Link.Action.v114" = "Μάθετε περισσότερα στη δήλωση απορρήτου μας";
 
 /* Describes the action on the first onboarding page in our Onboarding screen. This string will be on a button so user can skip this onboarding card. */
 "Onboarding.Welcome.Skip.v114" = "Παράλειψη";

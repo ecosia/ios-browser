@@ -4,19 +4,25 @@
 
 import Foundation
 
+/// Provider for all feature flags related to native error pages. We should only
+/// use this to check if a native error page feature is enabled.
 struct NativeErrorPageFeatureFlag: FeatureFlaggable {
     var isNativeErrorPageEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.nativeErrorPage, checking: .buildOnly)
+        return featureFlagsProvider.isEnabled(.nativeErrorPage)
     }
 
-    /// Temporary flag for showing no internet connection native error page only.
     var isNICErrorPageEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.nativeErrorPage, checking: .buildOnly) &&
-            featureFlags.isFeatureEnabled(.noInternetConnectionErrorPage, checking: .buildOnly)
+        return featureFlagsProvider.isEnabled(.nativeErrorPage) &&
+               featureFlagsProvider.isEnabled(.noInternetConnectionErrorPage)
     }
 
-    /// Flag for showing other native error pages 
-    var isOtherErrorPagesEnabled: Bool {
-        return featureFlags.isFeatureEnabled(.otherErrorPages, checking: .buildOnly)
+    var isBadCertDomainErrorPageEnabled: Bool {
+        return featureFlagsProvider.isEnabled(.nativeErrorPage) &&
+               featureFlagsProvider.isEnabled(.badCertDomainErrorPage)
+    }
+
+    var isWaybackEnabled: Bool {
+        return featureFlagsProvider.isEnabled(.nativeErrorPage) &&
+               featureFlagsProvider.isEnabled(.waybackMachine)
     }
 }

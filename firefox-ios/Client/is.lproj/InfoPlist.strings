@@ -1,3 +1,6 @@
+/* iOS Home screen shortcut menu: Option to launch the app to the app icon customization screen */
+"App Icon" = "Forritstákn";
+
 /* (No Comment) */
 "New Private Tab" = "Nýr huliðsflipi";
 
@@ -18,6 +21,9 @@
 
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Hér getur þú vistað myndir.";
+
+/* Privacy - Speech Recognition Usage Description */
+"NSSpeechRecognitionUsageDescription" = "Ecosia notar talgreiningu til að breyta rödd þinni í texta fyrir raddleit.";
 
 /* (No Comment) */
 "Scan QR Code" = "Skanna QR-kóða";

@@ -3,9 +3,12 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Glean
 import Storage
+import UIKit
 import WebKit
 import SummarizeKit
+import QuickAnswersKit
 
 import struct MozillaAppServices.CreditCard
 import enum MozillaAppServices.VisitType
@@ -22,6 +25,10 @@ protocol BrowserNavigationHandler: AnyObject, QRCodeNavigationHandler {
     /// enhancedTrackingProtection page or a child page
     @MainActor
     func showEnhancedTrackingProtection(sourceView: UIView)
+
+    /// Presents the tracker blocker modal half sheet from the homepage tracker blocker view.
+    @MainActor
+    func showTrackerBlockerSheet()
 
     /// Shows the specified section of the home panel.
     ///
@@ -51,6 +58,7 @@ protocol BrowserNavigationHandler: AnyObject, QRCodeNavigationHandler {
                                 decryptedCard: UnencryptedCreditCardFields?,
                                 viewType state: CreditCardBottomSheetState,
                                 frame: WKFrameInfo?,
+                                viewController: UIViewController,
                                 alertContainer: UIView)
 
     /// Displays an autofill interface for saved logins, allowing the user to select from stored login credentials
@@ -121,16 +129,30 @@ protocol BrowserNavigationHandler: AnyObject, QRCodeNavigationHandler {
     func showShortcutsLibrary()
 
     @MainActor
-    func showStoriesFeed()
+    func showGoogleLensPhotoPicker()
 
     @MainActor
-    func showStoriesWebView(url: URL?)
+    func showGoogleLensCamera()
+
+    @MainActor
+    func searchGoogleLens(with image: UIImage,
+                          source: GoogleLensTelemetry.Source,
+                          searchTimerId: GleanTimerId?)
+
+    @MainActor
+    func showQuickAnswers(transitionType: QuickAnswersTransitionType)
 
     @MainActor
     func showPrivacyNoticeLink(url: URL)
 
     @MainActor
     func showTermsOfUse(context: TriggerContext)
+
+    @MainActor
+    func showCertificatesFromErrorPage(errorPageURL: URL, originalURL: URL, title: String)
+
+    @MainActor
+    func openLearnMoreFromNativeErrorPage(url: URL)
 
     @MainActor
     func popToBVC()

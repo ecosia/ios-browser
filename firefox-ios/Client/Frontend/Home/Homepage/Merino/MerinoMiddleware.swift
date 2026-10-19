@@ -23,14 +23,18 @@ final class MerinoMiddleware {
         self.logger = logger
     }
 
-    lazy var pocketSectionProvider: Middleware<AppState> = { state, action in
+    lazy var pocketSectionProvider: Middleware<AppState> = (legacyProvider, modernProvider)
+
+    lazy var modernProvider: MiddlewareClosure<AppState> = { [self] state, action, windowUUID in
+        // Does not test any modern actions
+    }
+
+    lazy var legacyProvider: LegacyMiddlewareClosure<AppState> = { [self] state, action in
         switch action.actionType {
         case HomepageActionType.initialize,
-            HomepageMiddlewareActionType.enteredForeground,
+            HomepageMiddlewareActionType.didBecomeActive,
             MerinoActionType.toggleShowSectionSetting:
             self.getHomepageStoriesAndUpdateState(for: action)
-        case StoriesFeedActionType.initialize:
-            self.getStoriesFeedStoriesAndUpdateState(for: action)
         case MerinoActionType.tapOnHomepageMerinoCell:
             self.sendOpenPocketItemTelemetry(for: action)
         case MerinoActionType.viewedSection:
@@ -47,22 +51,9 @@ final class MerinoMiddleware {
             let merinoStories = await merinoManager.getMerinoItems(source: .homepage)
             store.dispatch(
                 MerinoAction(
-                    merinoStories: merinoStories,
+                    merinoStoryResponse: merinoStories,
                     windowUUID: action.windowUUID,
                     actionType: MerinoMiddlewareActionType.retrievedUpdatedHomepageStories
-                )
-            )
-        }
-    }
-
-    private func getStoriesFeedStoriesAndUpdateState(for action: Action) {
-        Task {
-            let merinoStories = await merinoManager.getMerinoItems(source: .storiesFeed)
-            store.dispatch(
-                MerinoAction(
-                    merinoStories: merinoStories,
-                    windowUUID: action.windowUUID,
-                    actionType: MerinoMiddlewareActionType.retrievedUpdatedStoriesFeedStories
                 )
             )
         }

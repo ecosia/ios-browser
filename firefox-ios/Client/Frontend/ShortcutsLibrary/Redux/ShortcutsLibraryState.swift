@@ -3,15 +3,18 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import ModifiedCopy
 import Redux
 
+@Copyable
 struct ShortcutsLibraryState: ScreenState, Equatable {
     var windowUUID: WindowUUID
     let shortcuts: [TopSiteConfiguration]
+    let shouldShowAddShortcutTile: Bool
     let shouldRecordImpressionTelemetry: Bool
 
     init(appState: AppState, uuid: WindowUUID) {
-        guard let shortcutsLibraryState = appState.screenState(
+        guard let shortcutsLibraryState = appState.componentState(
             ShortcutsLibraryState.self,
             for: .shortcutsLibrary,
             window: uuid
@@ -23,6 +26,7 @@ struct ShortcutsLibraryState: ScreenState, Equatable {
         self.init(
             windowUUID: shortcutsLibraryState.windowUUID,
             shortcuts: shortcutsLibraryState.shortcuts,
+            shouldShowAddShortcutTile: shortcutsLibraryState.shouldShowAddShortcutTile,
             shouldRecordImpressionTelemetry: shortcutsLibraryState.shouldRecordImpressionTelemetry
         )
     }
@@ -31,6 +35,7 @@ struct ShortcutsLibraryState: ScreenState, Equatable {
         self.init(
             windowUUID: windowUUID,
             shortcuts: [],
+            shouldShowAddShortcutTile: false,
             shouldRecordImpressionTelemetry: false
         )
     }
@@ -38,14 +43,23 @@ struct ShortcutsLibraryState: ScreenState, Equatable {
     private init(
         windowUUID: WindowUUID,
         shortcuts: [TopSiteConfiguration],
+        shouldShowAddShortcutTile: Bool,
         shouldRecordImpressionTelemetry: Bool
     ) {
         self.windowUUID = windowUUID
         self.shortcuts = shortcuts
+        self.shouldShowAddShortcutTile = shouldShowAddShortcutTile
         self.shouldRecordImpressionTelemetry = shouldRecordImpressionTelemetry
     }
 
-    static let reducer: Reducer<Self> = { state, action in
+    static let reducer: Reducer<Self> = (legacyReducer, modernReducer)
+
+    static let modernReducer: ReducerMethod<Self> = { state, action, actionWindowUUID in
+        // Does not handle any modern actions
+        return defaultState(from: state)
+    }
+
+    static let legacyReducer: LegacyReducerMethod<Self> = { state, action in
         guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID
         else {
             return defaultState(from: state)
@@ -64,17 +78,13 @@ struct ShortcutsLibraryState: ScreenState, Equatable {
     }
 
     private static func handleInitializeAction(state: Self) -> ShortcutsLibraryState {
-        return ShortcutsLibraryState(
-            windowUUID: state.windowUUID,
-            shortcuts: state.shortcuts,
+        return state.copy(
             shouldRecordImpressionTelemetry: true
         )
     }
 
     private static func handleImpressionTelemetryRecordedAction(state: Self) -> ShortcutsLibraryState {
-        return ShortcutsLibraryState(
-            windowUUID: state.windowUUID,
-            shortcuts: state.shortcuts,
+        return state.copy(
             shouldRecordImpressionTelemetry: false
         )
     }
@@ -86,17 +96,16 @@ struct ShortcutsLibraryState: ScreenState, Equatable {
             return defaultState(from: state)
         }
 
-        return ShortcutsLibraryState(
-            windowUUID: state.windowUUID,
-            shortcuts: sites,
-            shouldRecordImpressionTelemetry: state.shouldRecordImpressionTelemetry
-        )
+        return state
+            .copy(shortcuts: sites)
+            .copy(shouldShowAddShortcutTile: topSitesAction.shouldShowAddShortcutTile ?? state.shouldShowAddShortcutTile)
     }
 
     static func defaultState(from state: ShortcutsLibraryState) -> ShortcutsLibraryState {
         return ShortcutsLibraryState(
             windowUUID: state.windowUUID,
             shortcuts: state.shortcuts,
+            shouldShowAddShortcutTile: state.shouldShowAddShortcutTile,
             shouldRecordImpressionTelemetry: state.shouldRecordImpressionTelemetry
         )
     }

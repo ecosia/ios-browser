@@ -14,19 +14,18 @@ final class SceneCoordinatorTests: XCTestCase {
     override func setUp() {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: AppContainer.shared.resolve())
         self.mockRouter = MockRouter(navigationController: MockNavigationController())
     }
 
     override func tearDown() {
         super.tearDown()
         mockRouter = nil
-        AppContainer.shared.reset()
+        DependencyHelperMock().reset()
     }
 
     func testInitialState() {
         let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        let subject = SceneCoordinator(scene: scene!, introManager: MockSceneIntroScreenManager())
+        let subject = SceneCoordinator(scene: scene!, introManager: MockIntroScreenManager(isModernEnabled: false))
         trackForMemoryLeaks(subject)
 
         XCTAssertNotNil(subject.window)
@@ -144,7 +143,7 @@ final class SceneCoordinatorTests: XCTestCase {
     private func createSubject(file: StaticString = #file,
                                line: UInt = #line) -> SceneCoordinator {
         let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        let subject = SceneCoordinator(scene: scene!, introManager: MockSceneIntroScreenManager())
+        let subject = SceneCoordinator(scene: scene!, introManager: MockIntroScreenManager(isModernEnabled: false))
         // Replace created router from scene with a mock router so we don't trigger real navigation in our tests
         subject.router = mockRouter
         trackForMemoryLeaks(subject, file: file, line: line)
@@ -156,12 +155,4 @@ final class SceneCoordinatorTests: XCTestCase {
         subject.handle(route: route)
         return result
     }
-}
-
-// MARK: - MockSceneIntroScreenManager
-private final class MockSceneIntroScreenManager: IntroScreenManagerProtocol {
-    var shouldShowIntroScreen = false
-    var isModernOnboardingEnabled = false
-    var onboardingVariant: OnboardingVariant = .legacy
-    func didSeeIntroScreen() {}
 }

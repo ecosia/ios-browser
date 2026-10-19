@@ -5,6 +5,7 @@
 import SwiftUI
 import WidgetKit
 import Combine
+import Common
 // Ecosia: Additional imports for Ecosia framework and suggested sites updates
 import Ecosia
 import Storage
@@ -15,6 +16,7 @@ struct TopSitesWidget: Widget {
      var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: TopSitesProvider()) { entry in
             TopSitesView(entry: entry)
+                .widgetTheme()
         }
         .supportedFamilies([.systemMedium])
         .configurationDisplayName(String.TopSitesGalleryTitleV2)
@@ -25,16 +27,19 @@ struct TopSitesWidget: Widget {
 
 struct TopSitesView: View {
     private struct UX {
-        /* Ecosia: Update color
-        static let widgetBackgroundColor = Color("backgroundColor")
-         */
-        static let emptySquareFillColor = Color(red: 0.85, green: 0.85, blue: 0.85, opacity: 0.3)
         static let itemCornerRadius: CGFloat = 5.0
         static let iconScale: CGFloat = 1.0
         static let minimumRowSpacing: CGFloat = 12.0
     }
 
     let entry: TopSitesEntry
+
+    /* Ecosia: `import Ecosia` brings a second `Environment` into scope, so SwiftUI's property
+       wrapper must be qualified. 155.1 added this theme environment value.
+    @Environment(\.theme) private var theme
+     */
+    @SwiftUI.Environment(\.theme)
+    private var theme
 
     var body: some View {
         VStack {
@@ -49,7 +54,9 @@ struct TopSitesView: View {
                           content: {
                     ForEach(0..<8) { index in
                         if let site = entry.sites[safe: index] {
-                            topSitesItem(site, iconSize: itemSize)
+                            topSitesItem(site,
+                                         iconSize: itemSize,
+                                         emptyColor: Color(uiColor: theme.colors.layer3).opacity(0.3))
                                 .frame(height: rowSize)
                         } else {
                             /* Ecosia: Update rectangle and color
@@ -57,15 +64,12 @@ struct TopSitesView: View {
                                 .fill(Color.clear)
                              */
                             RoundedRectangle(cornerRadius: UX.itemCornerRadius)
-                                /* Ecosia: Update color
-                                .fill(UX.emptySquareFillColor)
-                                 */
                                 .fill(Color.ecosiaBundledColorWithName("TertiaryBackground"))
                                 .frame(height: rowSize)
                                 .overlay {
                                     RoundedRectangle(cornerRadius: UX.itemCornerRadius)
                                         /* Ecosia: Update color
-                                        .fill(UX.emptySquareFillColor)
+                                        .fill(Color(uiColor: theme.colors.layer3))
                                          */
                                         .fill(Color.ecosiaBundledColorWithName("TertiaryBackground"))
                                         .frame(width: itemSize, height: itemSize)
@@ -78,28 +82,41 @@ struct TopSitesView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         /* Ecosia: Update color
-        .widgetBackground(UX.widgetBackgroundColor)
+        .widgetBackground(Color(uiColor: theme.colors.layer1))
          */
         .widgetBackground(Color.ecosiaBundledColorWithName("PrimaryBackground"))
     }
 
     @ViewBuilder
-    private func topSitesItem(_ site: WidgetTopSite, iconSize: CGFloat) -> some View {
-        let url = site.url
-        Link(destination: linkToContainingApp("?url=\(url)", query: "widget-medium-topsites-open-url")) {
-            Group {
-                if let image = entry.favicons[site.faviconImageCacheKey] {
+    private func topSitesItem(_ site: WidgetTopSite, iconSize: CGFloat, emptyColor: Color) -> some View {
+        let destination = linkToContainingApp("?url=\(site.url)", query: "widget-medium-topsites-open-url")
+        let rectangleShape = Rectangle().fill(emptyColor)
+        Group {
+            if let image = entry.favicons[site.faviconImageCacheKey] {
+                if #available(iOSApplicationExtension 18.0, *) {
+                    image
+                        .resizable()
+                        .widgetAccentedRenderingMode(.accentedDesaturated)
+                        .scaledToFit()
+                } else {
                     image
                         .resizable()
                         .scaledToFit()
-                } else {
-                    Rectangle()
-                        .fill(UX.emptySquareFillColor)
                 }
+            } else {
+                rectangleShape
             }
-            .frame(width: iconSize, height: iconSize)
-            .clipShape(RoundedRectangle(cornerRadius: UX.itemCornerRadius))
         }
+        .frame(width: iconSize, height: iconSize)
+        /// Fixes https://mozilla-hub.atlassian.net/browse/FXIOS-15052
+        /// iOS bug: `widgetAccentedRenderingMode` inside a `Link` breaks the link destination,
+        /// causing taps to open the app without navigating to the URL.
+        /// Workaround: overlay a `Link` as the tap target instead. See
+        /// https://developer.apple.com/forums/thread/795408
+        .overlay {
+            Link(destination: destination) { rectangleShape }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: UX.itemCornerRadius))
     }
 
     private func calculateIconSize(provider: GeometryProxy, rowSize: CGFloat) -> CGFloat {

@@ -44,15 +44,18 @@ func registerUrlBarNavigation(in map: MMScreenGraph<FxUserState>, app: XCUIAppli
             // Workaround BB iOS13 be sure tap happens on url bar
             searchTextField.waitAndTap()
             searchTextField.waitAndTap()
-            searchTextField.typeText(url)
+            // Tapping doesn't reliably select the existing text (seen on iPad), so typing can insert
+            // into rather than replace it. Clear explicitly before typing.
+            app.buttons["Clear text"].tapIfExists()
+            // On CI the field is occasionally focus-less after tapping, which makes typeText abort;
+            // wait for keyboard focus (re-tapping if needed) before typing.
+            searchTextField.tapAndTypeTextWhenFocused(url)
             searchTextField.typeText("\r")
         }
 
         screenState.gesture(forAction: Action.SetURLByTyping, Action.SetURL) { userState in
             let url = userState.url ?? defaultURL
             let textsField = app.textFields.firstMatch
-            // Workaround BB iOS13 be sure tap happens on url bar
-            sleep(1)
             textsField.waitAndTap()
             textsField.waitAndTap()
             textsField.typeText("\(url)")

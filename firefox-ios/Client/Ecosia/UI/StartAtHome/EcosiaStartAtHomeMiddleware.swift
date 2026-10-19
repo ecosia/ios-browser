@@ -23,7 +23,13 @@ final class EcosiaStartAtHomeMiddleware {
         self.dateProvider = dateProvider
     }
 
-    lazy var startAtHomeProvider: Middleware<AppState> = { state, action in
+    lazy var startAtHomeProvider: Middleware<AppState> = (legacyProvider, modernProvider)
+
+    /// Ecosia: no `ModernAction` is handled — the override only ever answers the legacy
+    /// `didBrowserBecomeActive` action, and answers it the same way regardless of state.
+    lazy var modernProvider: MiddlewareClosure<AppState> = { _, _, _ in }
+
+    lazy var legacyProvider: LegacyMiddlewareClosure<AppState> = { state, action in
         switch action.actionType {
         case StartAtHomeActionType.didBrowserBecomeActive:
             store.dispatch(

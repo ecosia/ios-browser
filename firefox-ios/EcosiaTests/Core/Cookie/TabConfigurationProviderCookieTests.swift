@@ -14,15 +14,19 @@ import WebKit
 final class TabConfigurationProviderCookieTests: XCTestCase {
 
     private var provider: TabConfigurationProvider?
+    private var tabManager: MockTabManager?
 
     override func setUp() async throws {
         try await super.setUp()
         Cookie.setURLProvider(.production)
-        provider = TabConfigurationProvider(prefs: MockProfile().prefs)
+        let tabManager = MockTabManager()
+        self.tabManager = tabManager
+        provider = TabConfigurationProvider(profile: MockProfile(), tabManager: tabManager)
     }
 
     override func tearDown() async throws {
         provider = nil
+        tabManager = nil
         Cookie.resetURLProvider()
         try await super.tearDown()
     }

@@ -282,7 +282,8 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // are picked up when returning from the settings screen.
         dataSource?.updateSnapshot(
             state: homepageState,
-            jumpBackInDisplayConfig: getJumpBackInDisplayConfig()
+            jumpBackInDisplayConfig: getJumpBackInDisplayConfig(),
+            animatingDifferences: false
         )
     }
 
@@ -386,7 +387,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         dataSource.updateSnapshot(
             state: homepageState,
             jumpBackInDisplayConfig: getJumpBackInDisplayConfig(),
-            animated: animated
+            animatingDifferences: animated
         )
         homepageCollectionView?.collectionViewLayout.invalidateLayout()
     }
@@ -403,14 +404,19 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 }
 
 // MARK: - UIGestureRecognizerDelegate
-// Ecosia: Tap-outside must not steal touches from the suggestions overlay —
-// scrolling the list was dismissing the overlay and leaving a stale omnibox.
+// Ecosia: 155.1 added `UIGestureRecognizerDelegate` conformance and its own
+// `gestureRecognizer(_:shouldReceive:)` to HomepageViewController itself, so this extension no
+// longer declares either — the Ecosia condition is folded into upstream's implementation there
+// (it needs the file-private `collectionView`). Only the helper stays here.
+/* Ecosia: superseded — see HomepageViewController.gestureRecognizer(_:shouldReceive:)
 extension HomepageViewController: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         !isTouchOnOmniboxSessionChrome(touch)
     }
-
-    private func isTouchOnOmniboxSessionChrome(_ touch: UITouch) -> Bool {
+}
+ */
+extension HomepageViewController {
+    func isTouchOnOmniboxSessionChrome(_ touch: UITouch) -> Bool {
         var responder: UIResponder? = touch.view
         while let current = responder {
             if current === ntpSearchBar || current === ntpSearchBarBackdrop {

@@ -15,7 +15,7 @@ private let URLBeforePathRegex = try? NSRegularExpression(pattern: "^https?://([
  * Since both of these use the same SQL query, we can perform the query once and dispatch the results.
  */
 /// FIXME: FXIOS-14129 SearchLoader is not thread safe
-final class SearchLoader: Loader<Cursor<Site>, SearchViewModel>, FeatureFlaggable, @unchecked Sendable {
+final class SearchLoader: Loader<Cursor<Site>, SearchViewModel>, @unchecked Sendable {
     fileprivate let profile: Profile
     /* Ecosia: Allow the autocomplete sink to be swapped while the NTP omnibox
        is editing (omnibox becomes the sink, then we restore the URL bar on hide).
@@ -96,31 +96,17 @@ final class SearchLoader: Loader<Cursor<Site>, SearchViewModel>, FeatureFlaggabl
 
             getBookmarksAsSites(matchingSearchQuery: query, limit: 5) { bookmarks in
                 ensureMainThread { [weak self] in
-                    guard let query = self?.query else { return }
-
-                    /* Ecosia: Mark queries nonisolated(unsafe) so @Sendable closures can safely capture it;
-                       all access is on the main thread via ensureMainThread and group.notify
-                    var queries = [bookmarks]
-                    */
-                    nonisolated(unsafe) var queries = [bookmarks]
-
-                    let group = DispatchGroup()
-                    group.enter()
-
-                    self?.getHistoryAsSites(matchingSearchQuery: query, limit: 100) { history in
-                        ensureMainThread {
-                            // Mutate local variable on the main thread for thread safety
-                            queries.append(history)
-                            group.leave()
+                    guard let self else { return }
+                    let query = self.query
+                    self.getHistoryAsSites(matchingSearchQuery: query, limit: 100) { history in
+                        ensureMainThread { [self] in
+                            let queries = [bookmarks, history]
+                            self.updateUIWithBookmarksAsSitesResults(
+                                queries: queries,
+                                timerid: timerid,
+                                oldValue: oldValue
+                            )
                         }
-                    }
-
-                    group.notify(queue: .main) {
-                        self?.updateUIWithBookmarksAsSitesResults(
-                            queries: queries,
-                            timerid: timerid,
-                            oldValue: oldValue
-                        )
                     }
                 }
             }

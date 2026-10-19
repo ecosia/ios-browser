@@ -47,6 +47,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerSurfaceLow: UIColor { ecosia.backgroundPrimaryDecorative }
     var layerSurfaceMedium: UIColor { ecosia.backgroundElevation1 }
     var layerSurfaceMediumAlt: UIColor { fallbackTheme.colors.layerSurfaceMediumAlt }
+    var layerSurfaceMediumAlpha: UIColor { fallbackTheme.colors.layerSurfaceMediumAlpha }
     var layerGradientSummary: Gradient { fallbackTheme.colors.layerGradientSummary }
 
     // MARK: - Actions
@@ -96,6 +97,7 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
 
     // MARK: - Border
     var borderPrimary: UIColor { ecosia.borderDecorative }
+    var borderSecondary: UIColor { fallbackTheme.colors.borderSecondary }
     var borderAccent: UIColor { actionPrimary }
     var borderAccentNonOpaque: UIColor { actionPrimary }
     var borderAccentPrivate: UIColor { actionPrimary }
@@ -113,6 +115,37 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var gradientOnboardingStop2: UIColor { fallbackTheme.colors.gradientOnboardingStop2 }
     var gradientOnboardingStop3: UIColor { fallbackTheme.colors.gradientOnboardingStop3 }
     var gradientOnboardingStop4: UIColor { fallbackTheme.colors.gradientOnboardingStop4 }
+    var gradientAIStrongStop1: UIColor { fallbackTheme.colors.gradientAIStrongStop1 }
+    var gradientAIStrongStop2: UIColor { fallbackTheme.colors.gradientAIStrongStop2 }
+    var gradientAIStrongStop3: UIColor { fallbackTheme.colors.gradientAIStrongStop3 }
+
+    var faviconLetterColorSet: FaviconLetterColorSet { fallbackTheme.colors.faviconLetterColorSet }
+
+    // MARK: - Nova tokens
+    // Ecosia: Nova is suppressed, so no Ecosia theme is ever a Nova theme and these tokens are never
+    // rendered. They are required by ThemeColourPalette as of Firefox 155.1, so each one delegates to
+    // the Firefox fallback theme rather than inventing an Ecosia brand value.
+    var layerAccentSubtle: UIColor { fallbackTheme.colors.layerAccentSubtle }
+    var layerInverse: UIColor { fallbackTheme.colors.layerInverse }
+    var layerGlassTintNova: UIColor { fallbackTheme.colors.layerGlassTintNova }
+    var layerGlassSelectedFill: UIColor { fallbackTheme.colors.layerGlassSelectedFill }
+    var textToast: UIColor { fallbackTheme.colors.textToast }
+    var iconInverted: UIColor { fallbackTheme.colors.iconInverted }
+    var iconOnColorDisabled: UIColor { fallbackTheme.colors.iconOnColorDisabled }
+    var iconPrivate: UIColor { fallbackTheme.colors.iconPrivate }
+    var borderStrong: UIColor { fallbackTheme.colors.borderStrong }
+    var borderAccentToast: UIColor { fallbackTheme.colors.borderAccentToast }
+    var borderRadioButtonDefault: UIColor { fallbackTheme.colors.borderRadioButtonDefault }
+    var gradient: Gradient { fallbackTheme.colors.gradient }
+    var gradientAccent: Gradient { fallbackTheme.colors.gradientAccent }
+    var gradientAccentSubtle: Gradient { fallbackTheme.colors.gradientAccentSubtle }
+    var gradientAIStrong: Gradient { fallbackTheme.colors.gradientAIStrong }
+    var gradientBorder: Gradient { fallbackTheme.colors.gradientBorder }
+    var gradientPrivacy: Gradient { fallbackTheme.colors.gradientPrivacy }
+    var gradientPrivacyMask: Gradient { fallbackTheme.colors.gradientPrivacyMask }
+    var gradientWidgetSurface: Gradient { fallbackTheme.colors.gradientWidgetSurface }
+    var gradientWidgetSurfaceStandard: Gradient { fallbackTheme.colors.gradientWidgetSurfaceStandard }
+    var gradientWidgetSurfacePrivate: Gradient { fallbackTheme.colors.gradientWidgetSurfacePrivate }
 }
 
 private struct EcosiaLightSemanticColors: EcosiaSemanticColors {

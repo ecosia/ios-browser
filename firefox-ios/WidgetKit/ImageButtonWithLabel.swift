@@ -51,6 +51,12 @@ import Ecosia
 // +-------------------------------------------------------+
 
 struct ImageButtonWithLabel: View {
+    /* Ecosia: `import Ecosia` brings a second `Environment` into scope, so SwiftUI's property
+       wrapper must be qualified. 155.1 added this theme environment value.
+    @Environment(\.theme) private var theme
+     */
+    @SwiftUI.Environment(\.theme)
+    private var theme
     var isSmall: Bool
     var link: QuickLink
 
@@ -80,7 +86,7 @@ struct ImageButtonWithLabel: View {
                     }
                 }
                 /* Ecosia: Update color
-                .foregroundColor(Color("widgetLabelColors"))
+                .foregroundColor(link.foregroundColor(for: theme))
                  */
                 .foregroundColor(Color.ecosiaBundledColorWithName("widgetLabelColors"))
                 .padding([.horizontal, .vertical], paddingValue)
@@ -88,6 +94,26 @@ struct ImageButtonWithLabel: View {
         }
     }
 
+    /* Ecosia: Widget colours come from the Ecosia bundle, not the Firefox theme. 155.1 replaced this
+       with a theme-driven background plus a new `BackgroundContent` view (commented out at the bottom
+       of this file); both need `QuickLink.gradient(for:)` / `tintedBackgroundColor(for:)`, which are
+       commented out in QuickLink.swift for the same reason.
+    @ViewBuilder
+    private var background: some View {
+        if #available(iOS 16.0, *) {
+            BackgroundContent(link: link)
+        } else {
+            ContainerRelativeShape()
+                .fill(
+                    LinearGradient(
+                        gradient: link.gradient(for: theme),
+                        startPoint: .bottomLeading,
+                        endPoint: .topTrailing
+                    )
+                )
+        }
+    }
+     */
     private var background: some View {
         return ContainerRelativeShape()
             .fill(
@@ -122,12 +148,16 @@ struct ImageButtonWithLabel: View {
 
     private var logo: some View {
         /* Ecosia: Update image and color — use Ecosia bundle images
-        if link == .search && isSmall {
-            return Image(decorative: StandardImageIdentifiers.Large.search)
+        let isSearchSmall = (link == .search && isSmall)
+        let imageName = isSearchSmall ? StandardImageIdentifiers.Large.search : link.imageName
+
+        if #available(iOSApplicationExtension 18.0, *) {
+            Image(decorative: imageName)
+                .widgetAccentedRenderingMode(.accentedDesaturated)
                 .scaledToFit()
                 .frame(height: 24.0)
         } else {
-            return Image(decorative: link.imageName)
+            Image(decorative: imageName)
                 .scaledToFit()
                 .frame(height: 24.0)
         }
@@ -142,7 +172,16 @@ struct ImageButtonWithLabel: View {
         return HStack(alignment: .bottom) {
             Spacer()
             /* Ecosia: Replace fox icon with Ecosia app icon from Ecosia bundle
-            Image(decorative: "faviconFox")
+            if #available(iOSApplicationExtension 18.0, *) {
+                Image(decorative: "faviconFox")
+                    .widgetAccentedRenderingMode(.accentedDesaturated)
+                    .scaledToFit()
+                    .frame(height: 24.0)
+            } else {
+                Image(decorative: "faviconFox")
+                    .scaledToFit()
+                    .frame(height: 24.0)
+            }
              */
             Image(decorative: "iconLogo", bundle: .ecosia)
                 .scaledToFit()
@@ -151,4 +190,29 @@ struct ImageButtonWithLabel: View {
         }
     }
 }
+
+/* Ecosia: New in 155.1 and unused here — see the `background` comment above.
+@available(iOS 16.0, *)
+struct BackgroundContent: View {
+    @Environment(\.widgetRenderingMode) private var renderingMode
+    @Environment(\.theme) private var theme
+    var link: QuickLink
+
+    var body: some View {
+        if renderingMode == .accented {
+            ContainerRelativeShape()
+                .fill(link.tintedBackgroundColor(for: theme))
+        } else {
+            ContainerRelativeShape()
+                .fill(
+                    LinearGradient(
+                        gradient: link.gradient(for: theme),
+                        startPoint: .bottomLeading,
+                        endPoint: .topTrailing
+                    )
+                )
+        }
+    }
+}
+ */
 #endif

@@ -3,7 +3,6 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Storage
 import Shared
 import Common
 
@@ -27,7 +26,6 @@ class PasswordManagerListViewController: SensitiveViewController,
     private let searchController = UISearchController(searchResultsController: nil)
     private let loadingView: SettingsLoadingView = .build()
     private var deleteAlert: UIAlertController?
-    private var selectedIndexPaths = [IndexPath]()
     private let tableView: UITableView
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { return windowUUID }
@@ -42,11 +40,6 @@ class PasswordManagerListViewController: SensitiveViewController,
     */
     fileprivate lazy var selectionButton: UIButton = .build { button in
         button.titleLabel?.font = PasswordManagerViewModel.UX.selectionButtonFont
-    }
-
-    static func shouldShowAppMenuShortcut(forPrefs prefs: Prefs) -> Bool {
-        // default to on
-        return prefs.boolForKey(PrefsKeys.LoginsShowShortcutMenuItem) ?? true
     }
 
     init(profile: Profile,
@@ -384,10 +377,10 @@ private extension PasswordManagerListViewController {
 
                         /* Ecosia: Add [weak self] to avoid sending non-Sendable self across @Sendable closure boundary
                         self.viewModel.profile.logins.deleteLogins(ids: guidsToDelete) { _ in
-                            DispatchQueue.main.async {
-                                self.cancelSelection()
-                                self.loadLogins()
-                                self.sendLoginsDeletedTelemetry()
+                            DispatchQueue.main.async { [weak self] in
+                                self?.cancelSelection()
+                                self?.loadLogins()
+                                self?.sendLoginsDeletedTelemetry()
                             }
                         }
                         */

@@ -68,6 +68,7 @@ private struct DarkColourPalette: EcosiaThemeColourPalette {
     ])
     var layerSurfaceLow = FXColors.DarkGrey60
     var layerSurfaceMedium = FXColors.DarkGrey80
+    var layerSurfaceMediumAlpha = FXColors.DarkGrey80.withAlphaComponent(0.8)
     var layerSurfaceMediumAlt = FXColors.DarkGrey40
     var layerGradientSummary = Gradient(colors: [
         FXColors.Red70,
@@ -121,6 +122,7 @@ private struct DarkColourPalette: EcosiaThemeColourPalette {
 
     // MARK: - Border
     var borderPrimary: UIColor = FXColors.DarkGrey05
+    var borderSecondary: UIColor = FXColors.DarkGrey10
     var borderAccent: UIColor = FXColors.Blue30
     var borderAccentNonOpaque: UIColor = FXColors.Blue20.withAlphaComponent(0.2)
     var borderAccentPrivate: UIColor = FXColors.Purple60
@@ -137,6 +139,34 @@ private struct DarkColourPalette: EcosiaThemeColourPalette {
     var gradientOnboardingStop2: UIColor = FXColors.Blue50
     var gradientOnboardingStop3: UIColor = FXColors.Red60
     var gradientOnboardingStop4: UIColor = FXColors.Orange50
+    var gradientAIStrongStop1: UIColor = FXColors.Violet50
+    var gradientAIStrongStop2: UIColor = FXColors.Pink40
+    var gradientAIStrongStop3: UIColor = FXColors.Yellow50
 
     var shadowBorder: UIColor = FXColors.DarkGrey50.withAlphaComponent(0.50)
+
+    var faviconLetterColorSet: FaviconLetterColorSet = StandardFaviconColorSet()
+
+    // MARK: - Nova tokens
+    var layerAccentSubtle: UIColor { NovaMissingToken.color("layerAccentSubtle") }
+    var layerInverse: UIColor { NovaMissingToken.color("layerInverse") }
+    var layerGlassTintNova: UIColor { NovaMissingToken.color("layerGlassTintNova") }
+    var layerGlassSelectedFill: UIColor { NovaMissingToken.color("layerGlassSelectedFill") }
+    var textToast: UIColor { NovaMissingToken.color("textToast") }
+    var iconInverted: UIColor { NovaMissingToken.color("iconInverted") }
+    var iconOnColorDisabled: UIColor { NovaMissingToken.color("iconOnColorDisabled") }
+    var iconPrivate: UIColor { NovaMissingToken.color("iconPrivate") }
+    var borderStrong: UIColor { NovaMissingToken.color("borderStrong") }
+    var borderAccentToast: UIColor { NovaMissingToken.color("borderAccentToast") }
+    var borderRadioButtonDefault: UIColor { NovaMissingToken.color("borderRadioButtonDefault") }
+    var gradient: Gradient { NovaMissingToken.gradient("gradient") }
+    var gradientAccent: Gradient { NovaMissingToken.gradient("gradientAccent") }
+    var gradientAccentSubtle: Gradient { NovaMissingToken.gradient("gradientAccentSubtle") }
+    var gradientAIStrong: Gradient { NovaMissingToken.gradient("gradientAIStrong") }
+    var gradientBorder: Gradient { NovaMissingToken.gradient("gradientBorder") }
+    var gradientPrivacy: Gradient { NovaMissingToken.gradient("gradientPrivacy") }
+    var gradientPrivacyMask: Gradient { NovaMissingToken.gradient("gradientPrivacyMask") }
+    var gradientWidgetSurface: Gradient { NovaMissingToken.gradient("gradientWidgetSurface") }
+    var gradientWidgetSurfaceStandard: Gradient { NovaMissingToken.gradient("gradientWidgetSurfaceStandard") }
+    var gradientWidgetSurfacePrivate: Gradient { NovaMissingToken.gradient("gradientWidgetSurfacePrivate") }
 }

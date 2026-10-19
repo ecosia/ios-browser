@@ -3,17 +3,65 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 import Redux
 import Common
+import ModifiedCopy
 
+@Copyable
 struct WallpaperState: ScreenState, Equatable {
     var windowUUID: WindowUUID
     let wallpaperConfiguration: WallpaperConfiguration
 
-    init(windowUUID: WindowUUID, wallpaperConfiguration: WallpaperConfiguration = WallpaperConfiguration()) {
-        self.windowUUID = windowUUID
-        self.wallpaperConfiguration = wallpaperConfiguration
+    /// `availableContentHeight` represents the height available for the homepage content to occupy when the address is not
+    /// being edited. This is used to keep the homepage layout constant, such that it doesn't shift when the homepage's
+    /// view size changes eg when the address bar is tapped and the keyboard is presented. This value is kept in state
+    /// because it is determined by BVC
+    let availableContentHeight: CGFloat
+
+    /// `availableWallpaperHeight` is the height to apply to the homepage wallpaper background so it can remain pinned to
+    /// the top of the window while still extending to the same visual bottom as the homepage content.
+    let availableWallpaperHeight: CGFloat
+
+    init(windowUUID: WindowUUID) {
+        self.init(
+            windowUUID: windowUUID,
+            wallpaperConfiguration: WallpaperConfiguration(),
+            availableContentHeight: 0,
+            availableWallpaperHeight: 0
+        )
     }
 
-    static let reducer: Reducer<Self> = { state, action in
+    // Ecosia: The NTP background configuration comes from EcosiaHomepageAdapter, so state has to be
+    // seeded with it. 155.1 made the memberwise initializer private and added the two height fields,
+    // which removed the `init(windowUUID:wallpaperConfiguration:)` Ecosia was calling; this mirrors
+    // upstream's own convenience initializer above.
+    init(windowUUID: WindowUUID, wallpaperConfiguration: WallpaperConfiguration) {
+        self.init(
+            windowUUID: windowUUID,
+            wallpaperConfiguration: wallpaperConfiguration,
+            availableContentHeight: 0,
+            availableWallpaperHeight: 0
+        )
+    }
+
+    private init(
+        windowUUID: WindowUUID,
+        wallpaperConfiguration: WallpaperConfiguration,
+        availableContentHeight: CGFloat,
+        availableWallpaperHeight: CGFloat
+    ) {
+        self.windowUUID = windowUUID
+        self.wallpaperConfiguration = wallpaperConfiguration
+        self.availableContentHeight = availableContentHeight
+        self.availableWallpaperHeight = availableWallpaperHeight
+    }
+
+    static let reducer: Reducer<Self> = (legacyReducer, modernReducer)
+
+    static let modernReducer: ReducerMethod<Self> = { state, action, actionWindowUUID in
+        // Does not handle any modern actions
+        return defaultState(from: state)
+    }
+
+    static let legacyReducer: LegacyReducerMethod<Self> = { state, action in
         guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else {
             return defaultState(from: state)
         }
@@ -22,6 +70,8 @@ struct WallpaperState: ScreenState, Equatable {
         case WallpaperMiddlewareActionType.wallpaperDidInitialize,
                 WallpaperMiddlewareActionType.wallpaperDidChange:
             return handleWallpaperAction(action: action, state: state)
+        case HomepageActionType.availableContentHeightDidChange:
+            return handleAvailableContentHeightChangeAction(action: action, state: state)
         default:
             return defaultState(from: state)
         }
@@ -29,15 +79,27 @@ struct WallpaperState: ScreenState, Equatable {
 
     private static func handleWallpaperAction(action: Action, state: WallpaperState) -> WallpaperState {
         guard let wallpaperAction = action as? WallpaperAction else { return defaultState(from: state) }
-        return WallpaperState(
-            windowUUID: state.windowUUID,
+        return state.copy(
             wallpaperConfiguration: wallpaperAction.wallpaperConfiguration
         )
     }
 
+    private static func handleAvailableContentHeightChangeAction(action: Action,
+                                                                 state: WallpaperState) -> WallpaperState {
+        guard let homepageAction = action as? HomepageAction else { return defaultState(from: state) }
+
+        // Height updates can arrive with only one field populated; keep the other value stable.
+        return state
+            .copy(availableContentHeight: homepageAction.availableContentHeight ?? state.availableContentHeight)
+            .copy(availableWallpaperHeight: homepageAction.availableWallpaperHeight ?? state.availableWallpaperHeight)
+    }
+
    static func defaultState(from state: WallpaperState) -> WallpaperState {
         return WallpaperState(
-            windowUUID: state.windowUUID, wallpaperConfiguration: state.wallpaperConfiguration
+            windowUUID: state.windowUUID,
+            wallpaperConfiguration: state.wallpaperConfiguration,
+            availableContentHeight: state.availableContentHeight,
+            availableWallpaperHeight: state.availableWallpaperHeight
         )
    }
 }

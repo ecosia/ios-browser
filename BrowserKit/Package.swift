@@ -29,16 +29,27 @@ let package = Package(
         .library(
             name: "WebEngine",
             targets: ["WebEngine"]),
+        .library(name: "TestKit",
+                 targets: ["TestKit"]),
         .library(
             name: "ToolbarKit",
             targets: ["ToolbarKit"]),
         .library(
             name: "MenuKit",
             targets: ["MenuKit"]),
+        .library(
+            name: "AppAttestKit",
+            targets: ["AppAttestKit"]),
+        .library(
+            name: "MLPAKit",
+            targets: ["MLPAKit"]),
         .library(name: "SummarizeKit",
                  targets: ["SummarizeKit"]),
         .library(name: "JWTKit",
                  targets: ["JWTKit"]),
+        .library(
+            name: "LLMKit",
+            targets: ["LLMKit"]),
         .library(
             name: "UnifiedSearchKit",
             targets: ["UnifiedSearchKit"]),
@@ -51,6 +62,12 @@ let package = Package(
         .library(
             name: "ActionExtensionKit",
             targets: ["ActionExtensionKit"]),
+        .library(
+            name: "QuickAnswersKit",
+            targets: ["QuickAnswersKit"]),
+        .library(
+            name: "WebCompatReporterKit",
+            targets: ["WebCompatReporterKit"]),
         .executable(
             name: "ExecutableContentBlockingGenerator",
             targets: ["ExecutableContentBlockingGenerator"]),
@@ -61,13 +78,13 @@ let package = Package(
             branch: "master"),
         .package(
             url: "https://github.com/onevcat/Kingfisher.git",
-            exact: "8.2.0"),
+            exact: "8.11.0"),
         .package(
             url: "https://github.com/AliSoftware/Dip.git",
             exact: "7.1.1"),
         .package(
             url: "https://github.com/SwiftyBeaver/SwiftyBeaver.git",
-            exact: "2.0.0"),
+            exact: "2.1.1"),
         .package(
             url: "https://github.com/getsentry/sentry-cocoa.git",
             exact: "9.10.0"),
@@ -76,7 +93,7 @@ let package = Package(
             branch: "master"),
         .package(
             url: "https://github.com/swhitty/SwiftDraw",
-            exact: "0.18.3"),
+            exact: "0.29.0"),
         .package(
             url: "https://github.com/johnxnguyen/Down.git",
             exact: "0.11.0"),
@@ -111,7 +128,11 @@ let package = Package(
             ]),
         .testTarget(
             name: "SiteImageViewTests",
-            dependencies: ["SiteImageView", .product(name: "GCDWebServers", package: "GCDWebServer")],
+            dependencies: [
+                "SiteImageView",
+                "TestKit",
+                .product(name: "GCDWebServers", package: "GCDWebServer")
+            ],
             resources: [
                 .copy("Resources/mozilla.ico"),
                 .copy("Resources/inf-nan.svg"),
@@ -142,7 +163,7 @@ let package = Package(
             ]),
         .testTarget(
             name: "TabDataStoreTests",
-            dependencies: ["TabDataStore"],
+            dependencies: ["TabDataStore", "TestKit"],
             swiftSettings: [
             ]
         ),
@@ -167,9 +188,13 @@ let package = Package(
             ]),
         .testTarget(
             name: "WebEngineTests",
-            dependencies: ["WebEngine"],
+            dependencies: ["WebEngine", "TestKit"],
             swiftSettings: [
             ]
+        ),
+        .target(
+            name: "TestKit",
+            dependencies: ["Shared", "Redux", "AppAttestKit"]
         ),
         .target(
             name: "ToolbarKit",
@@ -182,7 +207,7 @@ let package = Package(
             ]),
         .testTarget(
             name: "ToolbarKitTests",
-            dependencies: ["ToolbarKit"],
+            dependencies: ["ToolbarKit", "TestKit"],
             swiftSettings: [
         ]),
         .target(
@@ -198,18 +223,54 @@ let package = Package(
             ]
         ),
         .target(
+            name: "WebCompatReporterKit",
+            dependencies: ["Common", "ComponentLibrary"],
+            swiftSettings: [
+                .unsafeFlags(["-enable-testing"]),
+            ]),
+        .testTarget(
+            name: "WebCompatReporterKitTests",
+            dependencies: ["WebCompatReporterKit", "TestKit"],
+            swiftSettings: [
+            ]
+        ),
+        .target(
+            name: "AppAttestKit",
+            dependencies: [],
+            swiftSettings: [
+                .unsafeFlags(["-enable-testing"]),
+            ]),
+        .testTarget(
+            name: "AppAttestKitTests",
+            dependencies: ["AppAttestKit", "TestKit"],
+            swiftSettings: []
+        ),
+        .target(
+            name: "MLPAKit",
+            dependencies: ["AppAttestKit", "Common", "JWTKit", "Shared"],
+            swiftSettings: [
+                .unsafeFlags(["-enable-testing"]),
+            ]),
+        .testTarget(
+            name: "MLPAKitTests",
+            dependencies: ["MLPAKit", "AppAttestKit", "TestKit"],
+            swiftSettings: []
+        ),
+        .target(
             name: "SummarizeKit",
             dependencies: [
+                "AppAttestKit",
                 "Common",
                 "ComponentLibrary",
-                "Down"
+                "Down",
+                "LLMKit"
             ],
             swiftSettings: [
                 .unsafeFlags(["-enable-testing"]),
             ]
         ),
         .testTarget(name: "SummarizeKitTests",
-                    dependencies: ["SummarizeKit"],
+                    dependencies: ["SummarizeKit", "TestKit"],
                     swiftSettings: [
                         .unsafeFlags(["-enable-testing"]),
                     ]),
@@ -227,11 +288,34 @@ let package = Package(
             ]
         ),
         .target(
+            name: "LLMKit",
+            dependencies: ["MLPAKit", "AppAttestKit"],
+            swiftSettings: [
+                .unsafeFlags(["-enable-testing"]),
+            ]
+        ),
+        .testTarget(
+            name: "LLMKitTests",
+            dependencies: ["LLMKit", "MLPAKit", "AppAttestKit", "TestKit"],
+            swiftSettings: []
+        ),
+        .target(
             name: "UnifiedSearchKit",
-            dependencies: ["Common", "ComponentLibrary", "MenuKit"],
+            dependencies: ["Common", "ComponentLibrary"],
             swiftSettings: [
                 .unsafeFlags(["-enable-testing"]),
             ]),
+        .target(
+            name: "QuickAnswersKit",
+            dependencies: ["Common", "Shared", "MLPAKit", "LLMKit", "SiteImageView"],
+            swiftSettings: [
+                .unsafeFlags(["-enable-testing"])
+            ]
+        ),
+        .testTarget(
+            name: "QuickAnswersKitTests",
+            dependencies: ["QuickAnswersKit", "Shared", "TestKit"]
+        ),
         .target(
             name: "ContentBlockingGenerator",
             swiftSettings: [
@@ -248,9 +332,10 @@ let package = Package(
             // Ecosia: Xcode 26 bug - auto-discovered xcassets produce conflicting
             // "create directory" and "Ld link" commands for the same bundle path.
             // Declaring resources explicitly avoids the issue.
-            // Shaders/AnimatedGradient.metal is unused by Swift code; excluded until needed.
-            exclude: ["Shaders"],
-            resources: [.process("Media.xcassets")],
+            resources: [
+                .process("Media.xcassets"),
+                .process("IntroVideo.mp4")
+            ],
             swiftSettings: [
                 .unsafeFlags(["-enable-testing"]),
             ]),

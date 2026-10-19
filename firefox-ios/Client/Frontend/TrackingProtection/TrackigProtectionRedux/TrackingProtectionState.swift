@@ -2,10 +2,12 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
+import Common
+import ModifiedCopy
 import Foundation
 import Redux
-import Common
 
+@Copyable
 struct TrackingProtectionState: ScreenState {
     enum NavType {
         case home
@@ -32,7 +34,7 @@ struct TrackingProtectionState: ScreenState {
 
     init(appState: AppState,
          uuid: WindowUUID) {
-        guard let trackingProtectionState = appState.screenState(
+        guard let trackingProtectionState = appState.componentState(
             TrackingProtectionState.self,
             for: .trackingProtection,
             window: uuid
@@ -75,8 +77,8 @@ struct TrackingProtectionState: ScreenState {
         shouldClearCookies: Bool,
         shouldUpdateBlockedTrackerStats: Bool,
         shouldUpdateConnectionStatus: Bool,
-        navigateTo: NavType? = nil,
-        displayView: DisplayType? = nil
+        navigateTo: NavType?,
+        displayView: DisplayType?
     ) {
         self.windowUUID = windowUUID
         self.trackingProtectionEnabled = trackingProtectionEnabled
@@ -88,7 +90,14 @@ struct TrackingProtectionState: ScreenState {
         self.displayView = displayView
     }
 
-    static let reducer: Reducer<TrackingProtectionState> = { state, action in
+    static let reducer: Reducer<TrackingProtectionState> = (legacyReducer, modernReducer)
+
+    static let modernReducer: ReducerMethod<TrackingProtectionState> = { state, action, actionWindowUUID in
+        // Does not handle any modern actions
+        return defaultState(from: state)
+    }
+
+    static let legacyReducer: LegacyReducerMethod<TrackingProtectionState> = { state, action in
         guard action.windowUUID == .unavailable || action.windowUUID == state.windowUUID else {
             return defaultState(from: state)
         }
@@ -120,143 +129,75 @@ struct TrackingProtectionState: ScreenState {
     }
 
     private static func handleClearCookiesAction(from state: TrackingProtectionState) -> TrackingProtectionState {
-        return TrackingProtectionState(
-            windowUUID: state.windowUUID,
-            trackingProtectionEnabled: !state.trackingProtectionEnabled,
-            connectionSecure: state.connectionSecure,
-            shouldClearCookies: true,
-            shouldUpdateBlockedTrackerStats: false,
-            shouldUpdateConnectionStatus: false,
-            navigateTo: .home,
-            displayView: nil
-        )
+        return state
+            .resetTransientState()
+            .copy(trackingProtectionEnabled: !state.trackingProtectionEnabled)
+            .copy(shouldClearCookies: true)
+            .copy(navigateTo: .home)
     }
 
     private static func handleNavigateToSettingsAction(from state: TrackingProtectionState) -> TrackingProtectionState {
-        return TrackingProtectionState(
-            windowUUID: state.windowUUID,
-            trackingProtectionEnabled: state.trackingProtectionEnabled,
-            connectionSecure: state.connectionSecure,
-            shouldClearCookies: false,
-            shouldUpdateBlockedTrackerStats: false,
-            shouldUpdateConnectionStatus: false,
-            navigateTo: .settings,
-            displayView: nil
-        )
+        return state
+            .resetTransientState()
+            .copy(navigateTo: .settings)
     }
 
     private static func handleShowTrackingProtectionDetailsAction(
         from state: TrackingProtectionState
     ) -> TrackingProtectionState {
-        return TrackingProtectionState(
-            windowUUID: state.windowUUID,
-            trackingProtectionEnabled: state.trackingProtectionEnabled,
-            connectionSecure: state.connectionSecure,
-            shouldClearCookies: false,
-            shouldUpdateBlockedTrackerStats: false,
-            shouldUpdateConnectionStatus: false,
-            navigateTo: nil,
-            displayView: .trackingProtectionDetails
-        )
+        return state
+            .resetTransientState()
+            .copy(displayView: .trackingProtectionDetails)
     }
 
     private static func handleShowBlockedTrackersDetailsAction(
         from state: TrackingProtectionState
     ) -> TrackingProtectionState {
-        return TrackingProtectionState(
-            windowUUID: state.windowUUID,
-            trackingProtectionEnabled: state.trackingProtectionEnabled,
-            connectionSecure: state.connectionSecure,
-            shouldClearCookies: false,
-            shouldUpdateBlockedTrackerStats: false,
-            shouldUpdateConnectionStatus: false,
-            navigateTo: nil,
-            displayView: .blockedTrackersDetails
-        )
+        return state
+            .resetTransientState()
+            .copy(displayView: .blockedTrackersDetails)
     }
 
     private static func handleGoBackAction(from state: TrackingProtectionState) -> TrackingProtectionState {
-        return TrackingProtectionState(
-            windowUUID: state.windowUUID,
-            trackingProtectionEnabled: state.trackingProtectionEnabled,
-            connectionSecure: state.connectionSecure,
-            shouldClearCookies: false,
-            shouldUpdateBlockedTrackerStats: false,
-            shouldUpdateConnectionStatus: false,
-            navigateTo: .back,
-            displayView: nil
-        )
+        return state
+            .resetTransientState()
+            .copy(navigateTo: .back)
     }
 
     private static func handleUpdateBlockedTrackerStatsAction(
         from state: TrackingProtectionState
     ) -> TrackingProtectionState {
-        return TrackingProtectionState(
-            windowUUID: state.windowUUID,
-            trackingProtectionEnabled: state.trackingProtectionEnabled,
-            connectionSecure: state.connectionSecure,
-            shouldClearCookies: state.shouldClearCookies,
-            shouldUpdateBlockedTrackerStats: true,
-            shouldUpdateConnectionStatus: false,
-            navigateTo: nil,
-            displayView: nil
-        )
+        return state
+            .resetTransientState()
+            .copy(shouldUpdateBlockedTrackerStats: true)
     }
 
     private static func handleUpdateConnectionStatusAction(from state: TrackingProtectionState) -> TrackingProtectionState {
-        return TrackingProtectionState(
-            windowUUID: state.windowUUID,
-            trackingProtectionEnabled: state.trackingProtectionEnabled,
-            connectionSecure: state.connectionSecure,
-            shouldClearCookies: false,
-            shouldUpdateBlockedTrackerStats: false,
-            shouldUpdateConnectionStatus: true,
-            navigateTo: nil,
-            displayView: nil
-        )
+        return state
+            .resetTransientState()
+            .copy(shouldUpdateConnectionStatus: true)
     }
 
     private static func handleShowAlertAction(from state: TrackingProtectionState) -> TrackingProtectionState {
-        return TrackingProtectionState(
-            windowUUID: state.windowUUID,
-            trackingProtectionEnabled: state.trackingProtectionEnabled,
-            connectionSecure: state.connectionSecure,
-            shouldClearCookies: false,
-            shouldUpdateBlockedTrackerStats: false,
-            shouldUpdateConnectionStatus: false,
-            navigateTo: nil,
-            displayView: .clearCookiesAlert
-        )
+        return state
+            .resetTransientState()
+            .copy(displayView: .clearCookiesAlert)
     }
 
     private static func handleToggleTrackingProtectionStatusAction(
         from state: TrackingProtectionState
     ) -> TrackingProtectionState {
-        return TrackingProtectionState(
-            windowUUID: state.windowUUID,
-            trackingProtectionEnabled: !state.trackingProtectionEnabled,
-            connectionSecure: state.connectionSecure,
-            shouldClearCookies: false,
-            shouldUpdateBlockedTrackerStats: false,
-            shouldUpdateConnectionStatus: false,
-            navigateTo: nil,
-            displayView: nil
-        )
+        return state
+            .resetTransientState()
+            .copy(trackingProtectionEnabled: !state.trackingProtectionEnabled)
     }
 
     private static func handleDismissTrackingProtectionAction(
         from state: TrackingProtectionState
     ) -> TrackingProtectionState {
-        return TrackingProtectionState(
-            windowUUID: state.windowUUID,
-            trackingProtectionEnabled: state.trackingProtectionEnabled,
-            connectionSecure: state.connectionSecure,
-            shouldClearCookies: false,
-            shouldUpdateBlockedTrackerStats: false,
-            shouldUpdateConnectionStatus: false,
-            navigateTo: .close,
-            displayView: nil
-        )
+        return state
+            .resetTransientState()
+            .copy(navigateTo: .close)
     }
 
     static func defaultState(from state: TrackingProtectionState) -> TrackingProtectionState {

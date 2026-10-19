@@ -114,8 +114,8 @@ closure_body_length:
   error: 34
 
 function_body_length:
-  warning: 122
-  error: 122
+  warning: 108
+  error: 108
 
 custom_rules:
   reassign_analytics_instance:
@@ -147,6 +147,7 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   # Firefox specific
   - build/
   - .build/
+  - "**/.build"
   - firefox-ios/Client/Assets/Search/get_supported_locales.swift
   - firefox-ios/Client/Generated
   # Ecosia: Include persisted generated
@@ -164,14 +165,10 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - firefox-ios/firefox-ios-tests/Tests/UITests/
   - l10n-screenshots-dd/
   - DerivedData/
-  # Package.swift files need a custom header for swift-tools-version
-  # so must be excluded due to file_header rule
-  - firefox-ios/Package.swift
-  - BrowserKit/Package.swift
+  # Package.swift files need a custom header for swift-tools-version so must be excluded due to file_header rule. Ignore at all levels.
+  - "**/Package.swift"
   - BrowserKit/Sources/Shared/Deferred/
   - BrowserKit/.build/
-  - firefox-ios/Client/ContentBlocker/ContentBlockerGenerator/Package.swift
-  - Package.swift
   - firefox-ios/Build/Intermediates.noindex/Client.build/Fennec-iphoneos/WidgetKitExtension.build/DerivedSources/IntentDefinitionGenerated/WidgetIntents/*
   # Temporarly ignore focus-ios folder
   - focus-ios/
@@ -179,6 +176,8 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - MozillaRustComponents/
   - LocalizationTools
   - firefoxios-l10n
+  # Local git worktrees checked out alongside the repo, not part of the tracked source tree
+  - .claude/worktrees
   # Ecosia: Exclude Swift Packages
   - firefox-ios/SourcePackages
   # Ecosia: Remove Metrics.swift as part of Glean
@@ -187,7 +186,6 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - firefox-ios/Derived/
   - firefox-ios/Project.swift
   - firefox-ios/Tuist/
-  
 included:
   - /Users/vagrant/git
   - .

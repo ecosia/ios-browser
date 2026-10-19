@@ -2,29 +2,37 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
-import Common
 import XCTest
 
 // swiftlint:disable empty_count
 // Tests for both platforms
 class DesktopModeTestsIpad: IpadOnlyTestCase {
+    var browserScreen: BrowserScreen!
+
     // https://mozilla.testrail.io/index.php?/cases/view/2306852
-    // smoketest
+    // Smoketest
     func testLongPressReload() {
+        browserScreen = BrowserScreen(app: app)
+
         if skipPlatform { return }
+        // Navigate and  verify the User Agent for DESKTOP
         navigator.nowAt(NewTabScreen)
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
+        browserScreen.assertDesktopUserAgentIsDisplayed()
+
+        // Activate the Desktop Site (Mobile User Agent)
         navigator.goto(ReloadLongPressMenu)
         navigator.performAction(Action.ToggleRequestDesktopSite)
         waitUntilPageLoad()
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
 
+        // Check the User Agent is Mobile
+        browserScreen.assertMobileUserAgentIsDisplayed()
         // Covering scenario that when reloading the page should preserve Desktop site
         navigator.performAction(Action.ReloadURL)
         waitUntilPageLoad()
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
+
+        browserScreen.assertMobileUserAgentIsDisplayed()
 
         navigator.performAction(Action.OpenNewTabFromTabTray)
         navigator.performAction(Action.CloseURLBarOpen)
@@ -38,21 +46,38 @@ class DesktopModeTestsIpad: IpadOnlyTestCase {
         navigator.createNewTab()
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
+
+        browserScreen.assertMobileUserAgentIsDisplayed()
     }
 }
 
-class DesktopModeTestsIphone: IphoneOnlyTestCase {
+class DesktopModeTestsIphone: BaseTestCase {
+    var browserScreen: BrowserScreen!
+    var toolbarScreen: ToolbarScreen!
+    var mainMenuScreen: MainMenuScreen!
+
+    override func setUp() async throws {
+        specificForPlatform = .phone
+        if !iPad() {
+            try await super.setUp()
+        }
+        browserScreen = BrowserScreen(app: app)
+        toolbarScreen = ToolbarScreen(app: app)
+        mainMenuScreen = MainMenuScreen(app: app)
+    }
+
     // https://mozilla.testrail.io/index.php?/cases/view/2306853
     func testClearPrivateData() {
         if skipPlatform { return }
-
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
+        navigator.nowAt(BrowserTab)
+        mozWaitForElementToExist(app.webViews.staticTexts["MOBILE_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
         navigator.goto(BrowserTabMenu)
         navigator.goto(RequestDesktopSite)
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["DESKTOP_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
 
         // Go to Clear Data
@@ -63,164 +88,275 @@ class DesktopModeTestsIphone: IphoneOnlyTestCase {
         // Tab #2
         navigator.nowAt(BrowserTab)
         navigator.performAction(Action.OpenNewTabLongPressTabsButton)
+        navigator.nowAt(BrowserTab)
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["MOBILE_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306855
+    // Regression
     func testSameHostInMultipleTabs() {
         if skipPlatform { return }
-
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
+        navigator.nowAt(BrowserTab)
+        mozWaitForElementToExist(app.webViews.staticTexts["MOBILE_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
         navigator.goto(BrowserTabMenu)
         navigator.goto(RequestDesktopSite)
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["DESKTOP_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
 
         // Tab #2
         navigator.nowAt(BrowserTab)
         navigator.performAction(Action.OpenNewTabLongPressTabsButton)
+        navigator.nowAt(BrowserTab)
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["DESKTOP_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
+        navigator.nowAt(BrowserTab)
         navigator.goto(BrowserTabMenu)
         navigator.goto(RequestMobileSite)
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["MOBILE_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
 
         // Tab #3
         navigator.nowAt(BrowserTab)
         navigator.performAction(Action.OpenNewTabLongPressTabsButton)
+        navigator.nowAt(BrowserTab)
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["MOBILE_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306854
     // Smoketest
+    // Regression
     func testChangeModeInSameTab() {
         if skipPlatform { return }
-
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
-        mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton])
-        navigator.goto(BrowserTabMenu)
-        mozWaitForElementToExist(app.tables["Context Menu"].otherElements[StandardImageIdentifiers.Large.deviceDesktop])
+
+        browserScreen.assertMobileUserAgentIsDisplayed()
+
+        toolbarScreen.assertSettingsButtonExists()
+        navigateToBrowserTabMenu()
+        mainMenuScreen.assertDesktopSiteExists()
         navigator.goto(RequestDesktopSite)
         waitUntilPageLoad()
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
+        browserScreen.assertDesktopUserAgentIsDisplayed()
 
-        navigator.nowAt(BrowserTab)
-        navigator.goto(BrowserTabMenu)
-        mozWaitForElementToExist(app.tables["Context Menu"].otherElements[StandardImageIdentifiers.Large.deviceMobile])
+        navigateToBrowserTabMenu()
+        mainMenuScreen.assertDesktopSiteExists()
         // Select Mobile site here, the identifier is the same but the Text is not
         navigator.goto(RequestMobileSite)
         waitUntilPageLoad()
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
+        browserScreen.assertMobileUserAgentIsDisplayed()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306856
     func testPrivateModeOffAlsoRemovesFromNormalMode() {
         if skipPlatform { return }
-
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
+        navigator.nowAt(BrowserTab)
+        mozWaitForElementToExist(app.webViews.staticTexts["MOBILE_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
         navigator.goto(BrowserTabMenu)
         navigator.goto(RequestDesktopSite) // toggle on
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["DESKTOP_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
 
         // is now on in normal mode
 
         navigator.nowAt(BrowserTab)
-        navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
+        navigator.toggleOn(userState.isPrivate, withAction: Action.ToggleExperimentPrivateMode)
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
-        // Workaround to be sure the snackbar disappears
         waitUntilPageLoad()
-        app.buttons[AccessibilityIdentifiers.Toolbar.reloadButton].waitAndTap()
+        navigator.nowAt(BrowserTab)
         navigator.goto(BrowserTabMenu)
         navigator.goto(RequestDesktopSite) // toggle off
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["DESKTOP_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
 
         // is now off in private, mode, confirm it is off in normal mode
 
         navigator.nowAt(BrowserTab)
-        navigator.toggleOff(userState.isPrivate, withAction: Action.TogglePrivateMode)
+        navigator.toggleOff(userState.isPrivate, withAction: Action.ToggleExperimentPrivateMode)
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["DESKTOP_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306857
     func testPrivateModeOnHasNoAffectOnNormalMode() {
         if skipPlatform { return }
-
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["MOBILE_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
 
-        navigator.toggleOn(userState.isPrivate, withAction: Action.TogglePrivateMode)
+        navigator.toggleOn(userState.isPrivate, withAction: Action.ToggleExperimentPrivateMode)
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
-        // Workaround
-        app.buttons[AccessibilityIdentifiers.Toolbar.reloadButton].tap()
+        navigator.nowAt(BrowserTab)
         navigator.goto(BrowserTabMenu)
         navigator.goto(RequestDesktopSite)
         waitUntilPageLoad()
+        mozWaitForElementToExist(app.webViews.staticTexts["DESKTOP_UA"])
         XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
 
         navigator.nowAt(BrowserTab)
-        navigator.toggleOff(userState.isPrivate, withAction: Action.ToggleRegularMode)
+        navigator.toggleOff(userState.isPrivate, withAction: Action.ToggleExperimentRegularMode)
+        navigator.nowAt(TabTray)
+        navigator.goto(NewTabScreen)
+        navigator.goto(URLBarOpen)
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
         if #available(iOS 16, *) {
+            mozWaitForElementToExist(app.webViews.staticTexts["MOBILE_UA"])
             XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
         }
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306852
-    // smoketest
+    // Smoketest
     func testLongPressReload() {
         if skipPlatform { return }
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
         mozWaitForElementToExist(app.webViews.staticTexts.firstMatch)
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "MOBILE_UA").count > 0)
+        browserScreen.assertMobileUserAgentIsDisplayed()
 
         navigator.nowAt(BrowserTab)
-        if #unavailable(iOS 16) {
-            // iOS 15 displays a toast that covers the reload button
-            sleep(2)
-        }
-        navigator.goto(ReloadLongPressMenu)
-        navigator.performAction(Action.ToggleRequestDesktopSite)
-        waitUntilPageLoad()
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
+        switchToDesktopSite()
+        browserScreen.assertDesktopUserAgentIsDisplayed()
 
         // Covering scenario that when reloading the page should preserve Desktop site
         navigator.nowAt(BrowserTab)
         navigator.performAction(Action.ReloadURL)
         waitUntilPageLoad()
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
+        browserScreen.assertDesktopUserAgentIsDisplayed()
 
         navigator.performAction(Action.OpenNewTabFromTabTray)
-        navigator.performAction(Action.CloseURLBarOpen)
+        // The experiment is not opening the keyboard on a new tab
         navigator.nowAt(NewTabScreen)
 
         navigator.performAction(Action.AcceptRemovingAllTabs)
         waitUntilPageLoad()
-        navigator.nowAt(NewTabScreen)
         // Covering scenario that when closing a tab and re-opening should preserve Desktop mode
         navigator.createNewTab()
         navigator.openURL(path(forTestPage: "test-user-agent.html"))
         waitUntilPageLoad()
-        XCTAssert(app.webViews.staticTexts.matching(identifier: "DESKTOP_UA").count > 0)
+        browserScreen.assertDesktopUserAgentIsDisplayed()
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/view/2306850
+    // Smoketest
+    func testRequestDesktopSitePersistsAcrossDomainAndRestart() {
+        if skipPlatform { return }
+
+        // We use localtest.mc and lvh.me instead of news.google.com, google.com and amazon.com
+        // described in TestRail. localtest.me and lvh.me are public "wildcard loopback"
+        // domains that resolve to 127.0.0.1 via DNS.
+        let newsLocaltestURL = "http://news.localtest.me:\(serverPort)/test-fixture/test-user-agent.html"
+        let localtestURL = "http://localtest.me:\(serverPort)/test-fixture/test-user-agent.html"
+        let lvhURL = "http://lvh.me:\(serverPort)/test-fixture/test-user-agent.html"
+
+        // Visit news.google.com
+        browserScreen.navigateToURL(newsLocaltestURL)
+        waitUntilPageLoad()
+        browserScreen.assertMobileUserAgentIsDisplayed()
+
+        // Step 1: Open the hamburger menu -> the dot menu is opened.
+        navigateToBrowserTabMenu()
+        mainMenuScreen.waitForMenuOptionsToExist()
+        mainMenuScreen.assertDesktopSiteExists()
+
+        // Step 2: Tap 'Request Desktop Site' -> the desktop version of the site is loaded.
+        navigator.goto(RequestDesktopSite)
+        waitUntilPageLoad()
+        browserScreen.assertDesktopUserAgentIsDisplayed()
+
+        // Step 3: Visit google.com -> the desktop version is loaded, since this site shares
+        // the same eTLD+1 domain (google.com) as news.google.com.
+        browserScreen.navigateToURL(localtestURL)
+        waitUntilPageLoad()
+        browserScreen.addressToolbarContainValue(value: "localtest.me")
+        browserScreen.assertDesktopUserAgentIsDisplayed()
+
+        // Step 4: Visit amazon.com -> different domain, no desktop pref, mobile version loads.
+        // NOTE: Amazon may show a region-redirect interstitial (e.g. "Deliver to Canada") on
+        // top of the mobile page - do not deal with anything locale related here.
+        browserScreen.navigateToURL(lvhURL)
+        waitUntilPageLoad()
+        browserScreen.addressToolbarContainValue(value: "lvh.me")
+        browserScreen.assertMobileUserAgentIsDisplayed()
+
+        // Step 5: Tap "Back" -> news.google.com is loaded, desktop version preserved.
+        // Two taps: history is news.google.com -> google.com -> amazon.com, so one tap
+        // only returns to google.com.
+        toolbarScreen.tapBackButton()
+        waitUntilPageLoad()
+        browserScreen.addressToolbarContainValue(value: "localtest.me")
+        toolbarScreen.tapBackButton()
+        waitUntilPageLoad()
+        browserScreen.addressToolbarContainValue(value: "news.localtest.me")
+        browserScreen.assertDesktopUserAgentIsDisplayed()
+
+        // (Removed real-site "stop loading" workaround: local fixtures load instantly.)
+
+        // Step 6 + 7: Close the app from the app switcher, then re-launch it
+        closeFromAppSwitcherAndRelaunch()
+        browserScreen.addressToolbarContainValue(value: "news.localtest.me")
+        browserScreen.assertDesktopUserAgentIsDisplayed()
+
+        // Step 8: Settings -> Data Management -> Website Data -> "Clear All Website Data",
+        // then return to the news.google.com tab -> desktop version still preserved.
+        navigator.nowAt(BrowserTab)
+        navigator.goto(WebsiteDataSettings)
+        mozWaitForElementToExist(app.tables.otherElements["Website Data"])
+        navigator.performAction(Action.AcceptClearAllWebsiteData)
+        navigator.goto(BrowserTab)
+        browserScreen.addressToolbarContainValue(value: "news.localtest.me")
+        browserScreen.assertDesktopUserAgentIsDisplayed()
+
+        // Step 9: Long-press "Refresh", tap "Request Desktop Site" ->
+        // the desktop version of news.google.com is open.
+        navigator.performAction(Action.AcceptClearPrivateData)
+        navigator.goto(BrowserTab)
+        browserScreen.assertMobileUserAgentIsDisplayed()
+        switchToDesktopSite()
+
+        // Step 10: Open the hamburger menu -> the menu is open.
+        navigateToBrowserTabMenu()
+        mainMenuScreen.waitForMenuOptionsToExist()
+
+        // Step 11: Tap 'Request Mobile Site' -> the mobile version of the site is loaded.
+        navigator.goto(RequestMobileSite)
+        waitUntilPageLoad()
+        browserScreen.assertMobileUserAgentIsDisplayed()
+    }
+
+    // HELPERS
+    private func navigateToBrowserTabMenu() {
+        navigator.nowAt(BrowserTab)
+        navigator.goto(BrowserTabMenu)
+    }
+
+    public func switchToDesktopSite() {
+        navigator.goto(ReloadLongPressMenu)
+        navigator.performAction(Action.ToggleRequestDesktopSite)
+        waitUntilPageLoad()
     }
 }
 // swiftlint:enable empty_count
