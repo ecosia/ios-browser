@@ -20,3 +20,4 @@ It names the Firefox release that this branch's Firefox code is built on. The up
 base=$(cut -f1 firefox-ios/EcosiaUpgrade/UPSTREAM_BASE)
 git merge-tree --write-tree --merge-base="$base" HEAD <new-tag>
 ```
+
