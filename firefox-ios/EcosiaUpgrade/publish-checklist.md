@@ -4,12 +4,7 @@ Remote actions to take when Dario decides to publish M0. Everything up to here h
 
 ## Before pushing
 
-- [ ] **Disable two Mozilla workflows in GitHub's Actions settings** (Actions → workflow → "Disable workflow"); the files stay byte-identical to upstream so future Firefox upgrades merge their changes without conflicts:
-  - `assign-tech-lead-review.yml` (`pull_request_target`): on non-draft PRs over 800 changed lines it adds a label and requests Mozilla's tech leads as reviewers, which fails on Ecosia's repo; the sync PR is often that big.
-  - `check-kingfisher-dependency.yml` (weekly cron): inert while `upgrade/firefox` is not the default branch; disable it before `main` migrates in M5 at the latest, or it tries to open Kingfisher update PRs.
-  - Unverified: GitHub may only list a workflow for disabling after it has run or once it is on the default branch, so the first large PR into `upgrade/firefox` may trigger `assign-tech-lead-review` once.
-  - `contribution-guardrails.yml` and `security-pr-reminder.yml` can stay enabled: they only act on labels Ecosia does not use or on PRs that mention Bugzilla.
-- [x] **Add `-skipMacroValidation` to every CI `xcodebuild` that builds the app** (done on `upgrade/firefox` 2026-10-20) on `upgrade/firefox`: `.github/actions/perform_unit_tests/action.yml` (`build-for-testing`) and `perform_snapshot_tests.sh` (`build-for-testing`, around line 422), both of which now run on PRs into the branch. The upgrade brings the `ModifiedCopy` macro package, and an unattended Xcode stops with `Macro "ModifiedCopyMacros" … must be enabled before it can be used`. `verify.sh` already passes the flag.
+- [x] **Add `-skipMacroValidation` to every CI `xcodebuild` that builds the app** (done on `upgrade/firefox` 2026-10-20): `.github/actions/perform_unit_tests/action.yml` (`build-for-testing`) and `perform_snapshot_tests.sh` (`build-for-testing`, around line 422), both of which now run on PRs into the branch. The upgrade brings the `ModifiedCopy` macro package, and an unattended Xcode stops with `Macro "ModifiedCopyMacros" … must be enabled before it can be used`. `verify.sh` already passes the flag.
 
 ## Push and protect
 
@@ -20,6 +15,12 @@ Remote actions to take when Dario decides to publish M0. Everything up to here h
   - the same required status checks as `main` (copy the check names from `main`'s protection in GitHub settings at publish time; `merge_tests.yml`, `swift_lint.yml`, `snapshot_tests.yml` and `snapshot_update_check.yml` now run on PRs into `upgrade/firefox`). **Leave the snapshot checks out of the required checks until M2** (Dario, 2026-10-19): snapshot differences on 155.1 are expected until ticket 11 triages them, and requiring them would block every PR, including the automatic sync PR, whose auto-merge would then never fire;
   - allowed merge methods: merge commit only (squash or rebase would break the shared history with `main`);
   - linear history **not** required (the branch takes merge commits from `main`).
+- [ ] **Disable `assign-tech-lead-review.yml` right after pushing.** It is a Mozilla workflow kept byte-identical to upstream, so future Firefox upgrades merge its changes without conflicts. On non-draft, human-authored PRs into `upgrade/firefox` over 800 changed lines, it adds a label and requests Mozilla's tech leads as reviewers, which fails on Ecosia's repo. Sync PRs opened by the GitHub App are skipped (bot author).
+  - GitHub cannot disable it yet: it lists a workflow only once it exists on the default branch or has run (checked 2026-10-20: not found).
+  - To register it without effect, open a **draft** PR into `upgrade/firefox` (any one-line change). The workflow runs and skips its job, because it ignores drafts. Close the PR.
+  - Then disable it: Actions → "Assign Tech Lead Review" in the sidebar → "…" → **Disable workflow**, or `gh workflow disable assign-tech-lead-review.yml --repo ecosia/ios-browser`.
+- [ ] **`check-kingfisher-dependency.yml`: nothing to do until M5.** It only runs on a schedule or by hand, and both work only from the default branch, so it cannot run while `main` lacks the file. Disable it the same way right after the M5 migration brings it onto `main`.
+- `contribution-guardrails.yml` and `security-pr-reminder.yml` can stay enabled: they only act on labels Ecosia does not use or on PRs that mention Bugzilla.
 
 ## CircleCI
 
