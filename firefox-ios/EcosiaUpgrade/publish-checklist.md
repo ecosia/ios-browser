@@ -1,6 +1,6 @@
 # M0 publish checklist
 
-Remote actions to take when Dario decides to publish M0. Everything up to here happened locally on `upgrade/firefox`; nothing has been pushed.
+Remote actions to take when Dario decides to publish M0. `upgrade/firefox` was built locally and pushed on 2026-10-20.
 
 ## Before pushing
 
@@ -8,19 +8,15 @@ Remote actions to take when Dario decides to publish M0. Everything up to here h
 
 ## Push and protect
 
-- [ ] Push `upgrade/firefox` to `origin`.
+- [x] Push `upgrade/firefox` to `origin` (2026-10-20, at `d1a89b7803`).
 - [ ] A ruleset for `upgrade/firefox` (not classic protection, which cannot exempt the sync app), otherwise matching `main`:
   - no direct pushes;
   - PRs need an approving review, with the sync GitHub App as a bypass actor (bypass mode "pull requests only"), so clean syncs merge without a person. Unverified: whether auto-merge honours a bypass actor; the first clean sync shows it. If it waits, a person approves the sync PR (the app is its author, so anyone can);
   - the same required status checks as `main` (copy the check names from `main`'s protection in GitHub settings at publish time; `merge_tests.yml`, `swift_lint.yml`, `snapshot_tests.yml` and `snapshot_update_check.yml` now run on PRs into `upgrade/firefox`). **Leave the snapshot checks out of the required checks until M2** (Dario, 2026-10-19): snapshot differences on 155.1 are expected until ticket 11 triages them, and requiring them would block every PR, including the automatic sync PR, whose auto-merge would then never fire;
   - allowed merge methods: merge commit only (squash or rebase would break the shared history with `main`);
   - linear history **not** required (the branch takes merge commits from `main`).
-- [ ] **Disable `assign-tech-lead-review.yml` right after pushing.** It is a Mozilla workflow kept byte-identical to upstream, so future Firefox upgrades merge its changes without conflicts. On non-draft, human-authored PRs into `upgrade/firefox` over 800 changed lines, it adds a label and requests Mozilla's tech leads as reviewers, which fails on Ecosia's repo. Sync PRs opened by the GitHub App are skipped (bot author).
-  - GitHub cannot disable it yet: it lists a workflow only once it exists on the default branch or has run (checked 2026-10-20: not found).
-  - To register it without effect, open a **draft** PR into `upgrade/firefox` (any one-line change). The workflow runs and skips its job, because it ignores drafts. Close the PR.
-  - Then disable it: Actions → "Assign Tech Lead Review" in the sidebar → "…" → **Disable workflow**, or `gh workflow disable assign-tech-lead-review.yml --repo ecosia/ios-browser`.
-- [ ] **`check-kingfisher-dependency.yml`: nothing to do until M5.** It only runs on a schedule or by hand, and both work only from the default branch, so it cannot run while `main` lacks the file. Disable it the same way right after the M5 migration brings it onto `main`.
-- `contribution-guardrails.yml` and `security-pr-reminder.yml` can stay enabled: they only act on labels Ecosia does not use or on PRs that mention Bugzilla.
+- [x] **Mozilla workflows: nothing to disable before M5** (checked 2026-10-20). `assign-tech-lead-review.yml`, `contribution-guardrails.yml` and `security-pr-reminder.yml` use `pull_request_target`, which GitHub now runs only from the default branch's copy of a workflow file, and `check-kingfisher-dependency.yml` runs only on a schedule or by hand, both of which also need the default branch. None of them is on `main`, so none can run on `upgrade/firefox`. Evidence: draft PR #1345 into `upgrade/firefox` started only the `pull_request` checks, and GitHub does not list the four workflows. The files stay byte-identical to upstream, so future Firefox upgrades merge their changes without conflicts.
+- [ ] **At M5, right after the migration brings these files onto `main`:** disable `assign-tech-lead-review.yml` (it requests Mozilla's tech leads on human PRs over 800 lines) and `check-kingfisher-dependency.yml` (it opens Kingfisher update PRs): Actions → workflow → "…" → **Disable workflow**, or `gh workflow disable <file> --repo ecosia/ios-browser`. `contribution-guardrails.yml` and `security-pr-reminder.yml` can stay enabled: they only act on labels Ecosia does not use or on PRs that mention Bugzilla.
 
 ## CircleCI
 
