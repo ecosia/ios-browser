@@ -392,15 +392,35 @@ extension EcosiaAuthenticationService {
      - User must be logged in (`isLoggedIn` must be `true`)
      - The auth provider must support SSO credential retrieval
      */
-    public func getSessionTransferToken() async {
+    @discardableResult
+    public func getSessionTransferToken() async -> SessionTransferTokenResult {
         guard isLoggedIn else {
             EcosiaLogger.auth.notice("Cannot get session transfer token - user not logged in")
-            return
+            return .unavailable
         }
-        ssoCredentials = await retrieveSSOCredentials()
-        if ssoCredentials != nil {
+        guard let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider else {
+            ssoCredentials = nil
+            return .unavailable
+        }
+        do {
+            ssoCredentials = try await authProvider.getSSOCredentials()
             EcosiaLogger.session.info("Retrieved session transfer token for SSO")
+            return .retrieved
+        } catch {
+            ssoCredentials = nil
+            // Expected once the refresh token is revoked or the user is deleted, so not a Sentry error
+            if Self.isRefreshTokenRejection(error) {
+                EcosiaLogger.auth.notice("Refresh token rejected by the SSO exchange: \(error)")
+                return .refreshTokenRejected
+            }
+            EcosiaLogger.auth.sentry("Failed to retrieve SSO credentials: \(error)")
+            return .unavailable
         }
+    }
+
+    static func isRefreshTokenRejection(_ error: Error) -> Bool {
+        let cause = (error as? CredentialsManagerError)?.cause ?? error
+        return (cause as? AuthenticationError)?.code == "invalid_grant"
     }
 
     /**
@@ -426,29 +446,6 @@ extension EcosiaAuthenticationService {
             return nil
         }
         return makeSessionTokenCookieWithSSOCredentials(ssoCredentials)
-    }
-
-    /**
-     Retrieves SSO credentials from the authentication provider if supported.
-     
-     This method checks if the current authentication provider supports SSO credential retrieval
-     (specifically `NativeToWebSSOAuth0Provider`) and requests the session transfer token.
-     
-     - Returns: `SSOCredentials` containing the session transfer token and expiration information,
-     or `nil` if the provider doesn't support SSO or if the request fails.
-     
-     - Note: This method performs a type check to ensure the provider supports SSO operations
-     before attempting to retrieve credentials.
-     */
-    private func retrieveSSOCredentials() async -> SSOCredentials? {
-        if let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider {
-            do {
-                return try await authProvider.getSSOCredentials()
-            } catch {
-                EcosiaLogger.auth.sentry("Failed to retrieve SSO credentials: \(error)")
-            }
-        }
-        return nil
     }
 
     /**
