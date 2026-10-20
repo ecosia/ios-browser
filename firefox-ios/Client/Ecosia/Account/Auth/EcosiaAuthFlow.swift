@@ -213,42 +213,42 @@ final class EcosiaAuthFlow {
             throw AuthError.authFlowConfigurationError("BrowserViewController not available")
         }
 
-        // Get session transfer URL.
+        EcosiaLogger.session.info("Retrieving session transfer token for SSO")
+        await authService.getSessionTransferToken()
+
+        let success = try await runSessionTransferTab(in: browserViewController)
+        EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
+        if !success {
+            await logOutNativelyAfterFailedSessionTransfer()
+        }
+        onFlowCompleted?(success)
+    }
+
+    /// Installs the transfer cookie and waits for the invisible tab to land.
+    /// - Returns: Whether the tab landed on a success page
+    private func runSessionTransferTab(in browserViewController: BrowserViewController) async throws -> Bool {
         // Debug hook: loads /accounts/error directly instead of the real sign-up URL.
         let signUpURL = SimulateSessionTransferFailureSetting.isEnabled
             ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
             : EcosiaEnvironment.current.urlProvider.signUpURL
 
-        EcosiaLogger.session.info("Retrieving session transfer token for SSO")
-        await authService.getSessionTransferToken()
         await InvisibleTabSession.installSessionCookie(from: authService)
 
-        // Create invisible tab session (must be on main thread for UI operations)
-        EcosiaLogger.invisibleTabs.info("Creating invisible tab session for login")
-        let session = try await MainActor.run {
-            try InvisibleTabSession(
-                url: signUpURL,
-                browserViewController: browserViewController,
-                timeout: 10.0
-            )
-        }
+        EcosiaLogger.invisibleTabs.info("Creating invisible tab session for \(type)")
+        let session = try InvisibleTabSession(
+            url: signUpURL,
+            browserViewController: browserViewController,
+            timeout: 10.0
+        )
 
         // Retain session until completion
         activeSession = session
 
-        // Wait for session completion (startMonitoring is main-actor isolated)
-        await withCheckedContinuation { continuation in
-            Task { @MainActor in
-                session.startMonitoring { [weak self] success in
-                    Task { @MainActor in
-                        self?.activeSession = nil // Release session
-                        EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
-                        if !success {
-                            await self?.logOutNativelyAfterFailedSessionTransfer()
-                        }
-                        onFlowCompleted?(success)
-                        continuation.resume()
-                    }
+        return await withCheckedContinuation { continuation in
+            session.startMonitoring { [weak self] success in
+                Task { @MainActor in
+                    self?.activeSession = nil
+                    continuation.resume(returning: success)
                 }
             }
         }
