@@ -131,6 +131,7 @@ extension AppSettingsTableViewController {
             DebugForceLevelUp(settings: self),
             SimulateAuthErrorSetting(settings: self),
             SimulateSessionTransferFailureSetting(settings: self),
+            TriggerWebSessionRetransferSetting(settings: self),
             SimulateImpactAPIErrorSetting(settings: self)
         ]
 
