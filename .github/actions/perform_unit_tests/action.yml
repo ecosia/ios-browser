@@ -18,6 +18,8 @@ runs:
 
     - name: Run tests with xcodebuild and xcpretty
       shell: bash
+      # -skipMacroValidation: Firefox 155.1 brings the ModifiedCopy macro package, which an unattended
+      # xcodebuild refuses to run until someone trusts it in Xcode.
       run: |
         set -o pipefail && xcodebuild -scheme Ecosia \
           -project firefox-ios/Client.xcodeproj \
@@ -27,6 +29,7 @@ runs:
           -clonedSourcePackagesDirPath firefox-ios/SourcePackages \
           -derivedDataPath DerivedData \
           -showBuildTimingSummary \
+          -skipMacroValidation \
           COMPILATION_CACHE_ENABLE_CACHING=YES \
           build-for-testing | tee raw_build_for_testing.log | xcpretty --color
 

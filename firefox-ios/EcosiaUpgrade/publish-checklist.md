@@ -9,7 +9,7 @@ Remote actions to take when Dario decides to publish M0. Everything up to here h
   - `check-kingfisher-dependency.yml` (weekly cron): inert while `upgrade/firefox` is not the default branch; disable it before `main` migrates in M5 at the latest, or it tries to open Kingfisher update PRs.
   - Unverified: GitHub may only list a workflow for disabling after it has run or once it is on the default branch, so the first large PR into `upgrade/firefox` may trigger `assign-tech-lead-review` once.
   - `contribution-guardrails.yml` and `security-pr-reminder.yml` can stay enabled: they only act on labels Ecosia does not use or on PRs that mention Bugzilla.
-- [ ] **Add `-skipMacroValidation` to every CI `xcodebuild` that builds the app** on `upgrade/firefox`: `.github/actions/perform_unit_tests/action.yml` (`build-for-testing`) and `perform_snapshot_tests.sh` (`build-for-testing`, around line 422), both of which now run on PRs into the branch. The upgrade brings the `ModifiedCopy` macro package, and an unattended Xcode stops with `Macro "ModifiedCopyMacros" … must be enabled before it can be used`. `verify.sh` already passes the flag.
+- [x] **Add `-skipMacroValidation` to every CI `xcodebuild` that builds the app** (done on `upgrade/firefox` 2026-10-20) on `upgrade/firefox`: `.github/actions/perform_unit_tests/action.yml` (`build-for-testing`) and `perform_snapshot_tests.sh` (`build-for-testing`, around line 422), both of which now run on PRs into the branch. The upgrade brings the `ModifiedCopy` macro package, and an unattended Xcode stops with `Macro "ModifiedCopyMacros" … must be enabled before it can be used`. `verify.sh` already passes the flag.
 
 ## Push and protect
 

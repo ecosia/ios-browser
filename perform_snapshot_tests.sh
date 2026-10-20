@@ -419,6 +419,8 @@ rm -rf "$results_dir"
 mkdir -p "$results_dir"
 
 echo "Building snapshot test bundle once..."
+# -skipMacroValidation: Firefox 155.1 brings the ModifiedCopy macro package, which an unattended
+# xcodebuild refuses to run until someone trusts it in Xcode.
 xcodebuild build-for-testing \
   -project Client.xcodeproj \
   -scheme "$scheme" \
@@ -426,6 +428,7 @@ xcodebuild build-for-testing \
   -derivedDataPath "../DerivedData" \
   -destination "$destination" \
   -showBuildTimingSummary \
+  -skipMacroValidation \
   COMPILATION_CACHE_ENABLE_CACHING=YES
 
 # Iterate over each device set group and run the already-built test bundle.
