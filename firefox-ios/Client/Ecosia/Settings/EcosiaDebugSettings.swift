@@ -542,6 +542,36 @@ final class SimulateSessionTransferFailureSetting: HiddenSetting {
     }
 }
 
+final class TriggerWebSessionRetransferSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Trigger Silent Web Session Transfer", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Re-runs the session transfer in an invisible tab (logged in only)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+        if isLoggedIn {
+            WebSessionRecoveryCoordinator.shared.retransferWebSession(reason: "debug")
+        }
+
+        let alert = AlertController(
+            title: isLoggedIn ? "Web Session Transfer Requested ✅" : "Not Logged In",
+            message: isLoggedIn ? "Check the auth logs for the outcome." : "Please log in first to use this feature",
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+}
+
 final class SimulateImpactAPIErrorSetting: HiddenSetting {
     /// UserDefaults key for storing impact API error simulation state
     /// Note: Persists across app restarts - toggle again to disable
