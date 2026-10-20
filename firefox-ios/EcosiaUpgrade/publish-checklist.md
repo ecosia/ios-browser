@@ -33,6 +33,13 @@ Remote actions to take when Dario decides to publish M0. Everything up to here h
 
 ## Main sync (step 6)
 
+- [ ] **Until the app exists:** create a fine-grained personal access token and store it as the repository secret `UPGRADE_SYNC_TOKEN`. The workflow uses it whenever the variable `UPGRADE_SYNC_APP_ID` is not set.
+  - Resource owner `ecosia`; repository access: only `ecosia/ios-browser`.
+  - Repository permissions: Contents read and write, Pull requests read and write, Workflows read and write, Metadata read; nothing else.
+  - Short expiry (30 days), so a forgotten token stops working on its own.
+  - The organisation may have to approve the token before it works.
+  - With this token the owner authors the sync PR and cannot approve it. Clean syncs then merge only through the `upgrade/firefox` ruleset's bypass, if the owner is a bypass actor (repository admins), or after a teammate's approval.
+  - Delete the secret once the app is set up.
 - [ ] Create a GitHub App for the sync (organisation owner, Settings → Developer settings → GitHub Apps):
   - repository permissions: Contents read and write, Pull requests read and write, Workflows read and write, Metadata read; nothing else;
   - no webhook; installable only on this account;

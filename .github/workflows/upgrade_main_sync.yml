@@ -56,8 +56,10 @@ jobs:
       # on the sync PR. A GitHub App token does, and makes the app the PR's author, so people can
       # approve it. Minted after the script has run, so code from upgrade/firefox never sees it.
       # workflows: write lets the app merge syncs that change files in .github/workflows.
+      # Until the app exists, the fine-grained personal token UPGRADE_SYNC_TOKEN stands in; its owner
+      # then authors the sync PR and cannot approve it.
       - name: Create the sync app token
-        if: steps.target.outputs.exists == 'true'
+        if: steps.target.outputs.exists == 'true' && vars.UPGRADE_SYNC_APP_ID != ''
         id: app-token
         uses: actions/create-github-app-token@v3
         with:
@@ -71,7 +73,7 @@ jobs:
         if: steps.target.outputs.exists == 'true'
         env:
           SYNC_CODE: ${{ steps.check.outputs.code }}
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token || secrets.UPGRADE_SYNC_TOKEN }}
         run: |
           pr=$(gh pr list --base "$TARGET" --head main --state open --json number --jq '.[0].number')
           if [ -z "$pr" ]; then
