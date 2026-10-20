@@ -2,7 +2,7 @@
 
 **Audience:** iOS engineers working on the upgrade
 **Owner:** Dario Carlomagno, plus one engineer at best effort
-**Read alongside:** [milestones.md](milestones.md) (the shared overview), [ADR 0007](../../adr/0007-graft-firefox-upgrades-onto-main-via-upgrade-branch.md) (why we graft), [the upgrade glossary](../../firefox-ios/EcosiaUpgrade/GLOSSARY.md) (vocabulary used below)
+**Read alongside:** [milestones.md](milestones.md) (the shared overview), [upgrade ADR 0001](../../firefox-ios/EcosiaUpgrade/adr/0001-graft-firefox-upgrades-onto-main-via-upgrade-branch.md) (why we graft), [the upgrade glossary](../../firefox-ios/EcosiaUpgrade/GLOSSARY.md) (vocabulary used below)
 
 This document turns the milestones into tickets that two people can split. Every ticket lives in [`issues/`](issues/) as its own file, with a `Milestone:`, `Status:` and `Blocked by:` line.
 
