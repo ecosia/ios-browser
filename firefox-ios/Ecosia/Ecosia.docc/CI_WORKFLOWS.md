@@ -48,6 +48,14 @@ flowchart TB
 - Commits merged during the day reach `main`'s cache that night. Until then pull requests restore the previous cache, which costs well under a minute of extra build time on average.
 - Snapshot change detection diffs from the point where the branch left `main`, so commits merged into `main` afterwards never count as the branch's changes.
 
+## Firefox upgrade branch
+
+- Pull requests into `upgrade/firefox` get the same checks as pull requests into `main` (Merge Tests, Snapshot Tests, Snapshot Update Check, SwiftLint) until the branch replaces `main`. They restore `main`'s caches like any other pull request.
+- On every push to `main`, the main sync merges `main` into `upgrade/firefox` through a pull request opened by the "Ecosia iOS Upgrade Sync" GitHub App:
+  - a clean sync auto-merges with a merge commit once Merge Tests pass;
+  - a conflicting one becomes a draft with the conflicting files in a comment.
+- `upgrade/firefox`'s `CODEOWNERS` asks `@ecosia/ios` to review every pull request into it, sync pull requests included.
+
 ## Where it lives
 
 | What | File |
@@ -59,5 +67,6 @@ flowchart TB
 | Version-only bump detection (shared) | `.github/scripts/only_marketing_version_changed.sh` |
 | Compilation cache restore and save | `.github/actions/xcode_compilation_cache/action.yml` |
 | Cache purge | `.github/workflows/purge_caches.yml`, `.github/scripts/purge_caches.sh` |
+| Main sync into `upgrade/firefox` | `.github/workflows/upgrade_main_sync.yml`; the merge script `firefox-ios/EcosiaUpgrade/tools/sync-main.sh` is on `upgrade/firefox` |
 
 Manual runs of the purge default to a dry run that only lists what would be deleted.
