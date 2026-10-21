@@ -37,9 +37,10 @@ Remote actions to take when Dario decides to publish M0. `upgrade/firefox` was b
   - generate a private key.
   Pull requests opened with the default `GITHUB_TOKEN` do not trigger other workflows, so CI would never run on the sync PR; an app token does. Workflows write is needed because sync PRs often change `.github/workflows/`.
 - [x] Store the app's ID as the repository variable `UPGRADE_SYNC_APP_ID` and its private key as the repository secret `UPGRADE_SYNC_APP_PRIVATE_KEY`.
-- [x] No named owner: every sync PR requests a review from `@ecosia/ios` (Dario, 2026-10-21). GitHub cannot assign a team; the team has write access through `native-apps-team`.
+- [x] No named owner: GitHub requests a review from `@ecosia/ios` on every PR into `upgrade/firefox`, sync PRs included, through the root `CODEOWNERS` on that branch (2026-10-21). The app cannot request team reviews itself without the organisation permission Members: read.
+- [ ] **At M5:** decide whether `main` keeps the root `CODEOWNERS` (`* @ecosia/ios`) when `upgrade/firefox` becomes `main`.
 - [x] "Allow auto-merge" is on in the repository settings (checked 2026-10-20).
-- [ ] Merge `.github/workflows/upgrade_main_sync.yml` into `main` through a normal PR (#1346, opened 2026-10-21), byte-identical to the copy on `upgrade/firefox` (any review change goes to both branches, or the first sync conflicts on this file) (it only runs on pushes to `main` when it lives there; it touches no app code). Push `upgrade/firefox` first: the workflow calls `firefox-ios/EcosiaUpgrade/tools/sync-main.sh` from that branch and does nothing while the branch is missing.
+- [x] Merge `.github/workflows/upgrade_main_sync.yml` into `main` through a normal PR (#1346, merged 2026-10-21; first sync #1348), byte-identical to the copy on `upgrade/firefox` (any review change goes to both branches, or the first sync conflicts on this file) (it only runs on pushes to `main` when it lives there; it touches no app code). Push `upgrade/firefox` first: the workflow calls `firefox-ios/EcosiaUpgrade/tools/sync-main.sh` from that branch and does nothing while the branch is missing.
 
 ## Jira
 

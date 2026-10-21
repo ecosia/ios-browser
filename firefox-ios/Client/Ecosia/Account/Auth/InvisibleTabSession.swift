@@ -187,7 +187,12 @@ final class InvisibleTabSession: TabEventHandler {
     /// Classifies the invisible tab's final URL as success or failure: landing on the accounts error page, or being redirected
     /// back to sign-in, means the transfer didn't actually authenticate the web session, even though the tab closed normally.
     private func isSessionTransferSuccessful() -> Bool {
-        guard let finalURL = lastKnownURL, finalURL.isEcosia(urlProvider) else { return true }
+        guard let finalURL = lastKnownURL else { return true }
+
+        // Ending on Auth0 means it stopped on a page (e.g. Universal Login) instead of completing the transfer
+        if finalURL.host == urlProvider.auth0Domain { return false }
+
+        guard finalURL.isEcosia(urlProvider) else { return true }
 
         let path = finalURL.path.lowercased()
         let signInPath = urlProvider.signInURL.relativePath.lowercased()

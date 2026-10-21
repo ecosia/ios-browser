@@ -1,0 +1,5 @@
+# Ecosia: lives only on upgrade/firefox, at the root rather than in .github/ where Firefox keeps its
+# own CODEOWNERS (removed in this fork), so upgrades never conflict on it. GitHub reads CODEOWNERS
+# from a pull request's base branch, so every PR into upgrade/firefox, including the automatic sync
+# PRs from main, asks @ecosia/ios for a review. Reviews are requested, not required.
+* @ecosia/ios
