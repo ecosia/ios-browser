@@ -22,7 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TARGET: upgrade/firefox
-      OWNER: d4r1091
+      # A person, set in the repository's Actions variables, so handing over needs no code change.
+      OWNER: ${{ vars.UPGRADE_SYNC_OWNER }}
+      # Always mentioned on conflicts, so they reach someone even when OWNER is empty or outdated.
+      TEAM: ecosia/ios
     steps:
       - uses: actions/checkout@v4
         with:
@@ -86,15 +89,21 @@ jobs:
           if [ "$SYNC_CODE" = "2" ]; then
             gh pr ready "$pr" --undo || true
             marker="<!-- upgrade-main-sync-conflicts -->"
+            mentions="@$TEAM"
+            if [ -n "$OWNER" ]; then mentions="@$OWNER $mentions"; fi
             # The backticks are literal Markdown code spans around each path.
             # shellcheck disable=SC2016
-            { echo "$marker"; echo "@$OWNER conflicts with $TARGET:"; echo; sed 's/^/- `/; s/$/`/' "$RUNNER_TEMP/conflicts.txt"; } > "$RUNNER_TEMP/comment.md"
+            { echo "$marker"; echo "$mentions conflicts with $TARGET:"; echo; sed 's/^/- `/; s/$/`/' "$RUNNER_TEMP/conflicts.txt"; } > "$RUNNER_TEMP/comment.md"
             # Post only when the conflict list changed, not on every push to main.
             last=$(gh pr view "$pr" --json comments --jq "[.comments[].body | select(contains(\"$marker\"))] | last // \"\"")
             if [ "$last" != "$(cat "$RUNNER_TEMP/comment.md")" ]; then
               gh pr comment "$pr" --body-file "$RUNNER_TEMP/comment.md"
             fi
-            gh pr edit "$pr" --add-assignee "$OWNER"
+            # Not fatal: the comment above already reached people, and GitHub refuses assignees who
+            # left the organisation.
+            if [ -n "$OWNER" ] && ! gh pr edit "$pr" --add-assignee "$OWNER"; then
+              echo "::warning::Could not assign $OWNER; check the UPGRADE_SYNC_OWNER variable."
+            fi
           else
             gh pr ready "$pr" || true
             gh pr merge "$pr" --auto --merge

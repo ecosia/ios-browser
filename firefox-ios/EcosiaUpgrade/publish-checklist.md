@@ -37,6 +37,7 @@ Remote actions to take when Dario decides to publish M0. `upgrade/firefox` was b
   - generate a private key.
   Pull requests opened with the default `GITHUB_TOKEN` do not trigger other workflows, so CI would never run on the sync PR; an app token does. Workflows write is needed because sync PRs often change `.github/workflows/`.
 - [x] Store the app's ID as the repository variable `UPGRADE_SYNC_APP_ID` and its private key as the repository secret `UPGRADE_SYNC_APP_PRIVATE_KEY`.
+- [x] Set the repository variable `UPGRADE_SYNC_OWNER` to the upgrade owner's GitHub login (`d4r1091`, 2026-10-21). Conflicting syncs assign the PR to that person and mention them together with `@ecosia/ios`; change the variable to hand over, no code change needed.
 - [x] "Allow auto-merge" is on in the repository settings (checked 2026-10-20).
 - [ ] Merge `.github/workflows/upgrade_main_sync.yml` into `main` through a normal PR (#1346, opened 2026-10-21), byte-identical to the copy on `upgrade/firefox` (any review change goes to both branches, or the first sync conflicts on this file) (it only runs on pushes to `main` when it lives there; it touches no app code). Push `upgrade/firefox` first: the workflow calls `firefox-ios/EcosiaUpgrade/tools/sync-main.sh` from that branch and does nothing while the branch is missing.
 
