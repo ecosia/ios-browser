@@ -1,0 +1,33 @@
+name: Purge Stale Caches
+
+on:
+  # After the 02:00 nightly cache refreshes of Merge Unit Tests and Snapshot Tests.
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Only list the caches that would be deleted'
+        type: boolean
+        default: true
+
+jobs:
+  purge_caches:
+    runs-on: ubuntu-latest
+    name: Purge Stale Caches
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Purge stale caches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ inputs.dry-run && '1' || '0' }}
+        run: .github/scripts/purge_caches.sh
