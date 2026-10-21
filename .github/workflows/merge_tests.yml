@@ -14,17 +14,9 @@ name: Merge Unit Tests
 on:
   pull_request:
     branches: [main, 'patch/**', 'develop']
-    paths-ignore:
-      - '**/*.md'
-      - '.cursor/**'
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/actions/perform_snapshot_tests/**'
-      - '.github/workflows/snapshot_tests.yml'
-      - 'firefox-ios/Ecosia/Ecosia.docc/**'
-      - 'firefox-ios/EcosiaTests/SnapshotTests/**'
-      - 'check_snapshot_updates.sh'
-      - 'generate_snapshot_coverage_docs.sh'
-      - 'perform_snapshot_tests.sh'
+    # No paths-ignore: a workflow that never starts leaves a required "Execute Merge Tests" check
+    # pending forever, while a skipped job counts as passing. Irrelevant changes are skipped in
+    # classify_changes instead.
   # Pull requests only restore compilation caches, so main refreshes its own cache overnight.
   schedule:
     - cron: '0 2 * * *'
@@ -86,8 +78,30 @@ jobs:
         run: |
           xcconfig=firefox-ios/Client/Ecosia/BuildSettingsConfigurations/EcosiaCommon.xcconfig
           changed_files=$(git diff --no-renames --name-only "$BASE_SHA...$HEAD_SHA")
+
+          # Files the unit tests never read: docs, snapshot-test tooling, and workflows other than
+          # this one (its own changes must be tested).
+          needs_tests() {
+            case "$1" in
+              .github/workflows/merge_tests.yml) return 0 ;;
+              *.md | .cursor/* | .github/ISSUE_TEMPLATE/* | .github/actions/perform_snapshot_tests/* | \
+              .github/workflows/* | firefox-ios/Ecosia/Ecosia.docc/* | firefox-ios/EcosiaTests/SnapshotTests/* | \
+              check_snapshot_updates.sh | generate_snapshot_coverage_docs.sh | perform_snapshot_tests.sh | \
+              CODEOWNERS) return 1 ;;
+              *) return 0 ;;
+            esac
+          }
+
+          relevant=""
+          while IFS= read -r file; do
+            if [ -n "$file" ] && needs_tests "$file"; then relevant=$file; break; fi
+          done <<< "$changed_files"
+
           should_run=true
-          if [ "$changed_files" = "$xcconfig" ] &&
+          if [ -z "$relevant" ]; then
+            should_run=false
+            echo "Only docs, snapshot tooling or other workflows changed; skipping merge tests."
+          elif [ "$changed_files" = "$xcconfig" ] &&
              .github/scripts/only_marketing_version_changed.sh "$BASE_SHA" "$HEAD_SHA"; then
             should_run=false
             echo "Only MARKETING_VERSION changed; skipping merge tests."

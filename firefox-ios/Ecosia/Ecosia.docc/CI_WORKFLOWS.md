@@ -6,8 +6,8 @@ How Merge Unit Tests, Snapshot Tests, Snapshot Update Check and the cache purge 
 flowchart TB
   subgraph PR["Pull request opened or updated (a newer push cancels the older run)"]
     direction TB
-    pr([PR push]) --> mtFilter{"Docs or snapshot-only files?<br/>(paths-ignore)"}
-    mtFilter -- yes --> mtNone[Merge Tests not started]
+    pr([PR push]) --> mtFilter{"Only docs, snapshot tooling<br/>or workflows other than<br/>merge_tests.yml?"}
+    mtFilter -- yes --> mtSkip
     mtFilter -- no --> mtClass{"Only MARKETING_VERSION<br/>changed?"}
     mtClass -- yes --> mtSkip[Merge Tests skipped]
     mtClass -- no --> mtRun["Merge Tests run<br/>restore main's cache, never save"]
@@ -40,6 +40,7 @@ flowchart TB
 
 ## Notes
 
+- Merge Tests always start on pull requests and decide in their first job whether to run, so a change that needs no tests reports "Execute Merge Tests" as skipped, which counts as passing for a required check. A `paths-ignore` filter would not start the workflow at all, and a required check would then wait forever.
 - Merge Tests and Snapshot Tests each keep their own compilation cache on `main` (`unit-tests` and `snapshot-tests`).
 - A new push to a pull request cancels that pull request's running Merge Tests and Snapshot Tests. Runs on `main` (nightly and manual) are never cancelled, only queued.
 - The purge runs two hours after the nightly refresh, so it keeps the cache just saved and deletes the previous night's.
