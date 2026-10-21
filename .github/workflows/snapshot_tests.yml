@@ -2,7 +2,7 @@ name: Snapshot Tests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, 'upgrade/firefox']
   # Pull requests only restore compilation caches, so main refreshes its own cache overnight.
   schedule:
     - cron: '0 2 * * *'

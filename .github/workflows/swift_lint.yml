@@ -1,7 +1,7 @@
 name: SwiftLint
 on:
   pull_request:
-    branches: [main, 'patch/**', 'develop']
+    branches: [main, 'patch/**', 'develop', 'upgrade/firefox']
   push:
     branches: [tuist-implementation]
 jobs:

@@ -13,7 +13,7 @@ name: Merge Unit Tests
 # the not-yet-shipped wallpaper-header feature).
 on:
   pull_request:
-    branches: [main, 'patch/**', 'develop']
+    branches: [main, 'patch/**', 'develop', 'upgrade/firefox']
     # No paths-ignore: a workflow that never starts leaves a required "Execute Merge Tests" check
     # pending forever, while a skipped job counts as passing. Irrelevant changes are skipped in
     # classify_changes instead.
