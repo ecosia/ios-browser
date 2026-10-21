@@ -1,4 +1,4 @@
-# 7. Graft Firefox Upgrades onto Main via a Long-Lived Upgrade Branch
+# 1. Graft Firefox Upgrades onto Main via a Long-Lived Upgrade Branch
 
 Date: 2026-10-01
 

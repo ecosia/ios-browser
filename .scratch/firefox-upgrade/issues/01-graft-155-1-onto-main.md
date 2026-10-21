@@ -7,7 +7,7 @@
 
 ## What to build
 
-The long-lived `upgrade/firefox` branch, created from `main`'s history, carrying the 155.1 upgrade as a single commit (see [ADR 0007](../../../adr/0007-graft-firefox-upgrades-onto-main-via-upgrade-branch.md) and the graft recipe in [spec.md](../spec.md#the-graft-m0)).
+The long-lived `upgrade/firefox` branch, created from `main`'s history, carrying the 155.1 upgrade as a single commit (see [upgrade ADR 0001](../../../firefox-ios/EcosiaUpgrade/adr/0001-graft-firefox-upgrades-onto-main-via-upgrade-branch.md) and the graft recipe in [spec.md](../spec.md#the-graft-m0)).
 
 Start from the squash commit's tree (`c162a7c953` on `origin/firefox-upgrade-155.1`), not the branch tip: the tip also carries 7 CI experiment commits (`.circleci/config.yml`, `Gemfile.lock`, `fastlane/Fastfile`) and a docs commit (`a9bd75f175`) that also touched `version.xcconfig`, `swiftlint_baseline.json`, `webpack.config.js`, `tuist-commands.sh` and `tuist-setup.sh`. Review each of those changes and carry over only what the upgrade needs.
 

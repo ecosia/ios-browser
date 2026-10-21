@@ -9,7 +9,7 @@ Remote actions to take when Dario decides to publish M0. `upgrade/firefox` was b
 ## Push and protect
 
 - [x] Push `upgrade/firefox` to `origin` (2026-10-20, at `d1a89b7803`).
-- [ ] A ruleset for `upgrade/firefox` (not classic protection, which cannot exempt the sync app), otherwise matching `main`:
+- [x] A ruleset for `upgrade/firefox` (created 2026-10-20: "upgrade/firefox: merge commits, reviewed PRs", id 25503494; the sync app `Ecosia iOS Upgrade Sync` (id 5408346) bypasses its review rule for pull requests since 2026-10-21. "Execute Merge Tests" is required by a separate ruleset, "upgrade/firefox: required checks" (id 25534429), which only admins can bypass, so clean syncs wait for CI. Up to date is not required, because a sync PR's head is `main`. Documentation-only PRs never start the merge tests (`paths-ignore`), so their required check stays pending; an admin merges those with the bypass). Not classic protection, which cannot exempt the sync app; otherwise matching `main`:
   - no direct pushes;
   - PRs need an approving review, with the sync GitHub App as a bypass actor (bypass mode "pull requests only"), so clean syncs merge without a person. Unverified: whether auto-merge honours a bypass actor; the first clean sync shows it. If it waits, a person approves the sync PR (the app is its author, so anyone can);
   - the same required status checks as `main` (copy the check names from `main`'s protection in GitHub settings at publish time; `merge_tests.yml`, `swift_lint.yml`, `snapshot_tests.yml` and `snapshot_update_check.yml` now run on PRs into `upgrade/firefox`). **Leave the snapshot checks out of the required checks until M2** (Dario, 2026-10-19): snapshot differences on 155.1 are expected until ticket 11 triages them, and requiring them would block every PR, including the automatic sync PR, whose auto-merge would then never fire;
@@ -26,19 +26,20 @@ Remote actions to take when Dario decides to publish M0. `upgrade/firefox` was b
 
 - [x] Fix `firefox-ios/EcosiaTests/Account/Auth/AuthTests.swift:332`: done on `main` in #1342 (`322db779bf`), identical to `upgrade/firefox`'s `96cbca736c`.
 - [x] Allow merge commits in the repository settings (done 2026-10-20). `main` stays squash-only through the ruleset "main: squash merges only" (id 25501329; repository admins can bypass, as with the classic protection) and its classic "Require linear history".
-- [ ] Decide on the ruleset's `require_extra_approval_for_unattributed_changes`, which GitHub turned on by default when the ruleset was created; switching it off was not done (Settings → Rules → Rulesets).
+- [x] The `main` ruleset's `require_extra_approval_for_unattributed_changes` is off, so the ruleset adds nothing to `main`'s protection beyond squash-only (2026-10-20).
 
 ## Main sync (step 6)
 
-- [ ] Create a GitHub App for the sync (organisation owner, Settings → Developer settings → GitHub Apps):
+- [x] Create a GitHub App for the sync (2026-10-21: `Ecosia iOS Upgrade Sync`, app id 5408346, owned by `ecosia`) (organisation owner, Settings → Developer settings → GitHub Apps):
   - repository permissions: Contents read and write, Pull requests read and write, Workflows read and write, Metadata read; nothing else;
   - no webhook; installable only on this account;
   - install it on `ecosia/ios-browser` only;
   - generate a private key.
   Pull requests opened with the default `GITHUB_TOKEN` do not trigger other workflows, so CI would never run on the sync PR; an app token does. Workflows write is needed because sync PRs often change `.github/workflows/`.
-- [ ] Store the app's ID as the repository variable `UPGRADE_SYNC_APP_ID` and its private key as the repository secret `UPGRADE_SYNC_APP_PRIVATE_KEY`.
+- [x] Store the app's ID as the repository variable `UPGRADE_SYNC_APP_ID` and its private key as the repository secret `UPGRADE_SYNC_APP_PRIVATE_KEY`.
+- [x] No named owner: every sync PR requests a review from `@ecosia/ios` (Dario, 2026-10-21). GitHub cannot assign a team; the team has write access through `native-apps-team`.
 - [x] "Allow auto-merge" is on in the repository settings (checked 2026-10-20).
-- [ ] Merge `.github/workflows/upgrade_main_sync.yml` into `main` through a normal PR, byte-identical to the copy on `upgrade/firefox` (any review change goes to both branches, or the first sync conflicts on this file) (it only runs on pushes to `main` when it lives there; it touches no app code). Push `upgrade/firefox` first: the workflow calls `firefox-ios/EcosiaUpgrade/tools/sync-main.sh` from that branch and does nothing while the branch is missing.
+- [ ] Merge `.github/workflows/upgrade_main_sync.yml` into `main` through a normal PR (#1346, opened 2026-10-21), byte-identical to the copy on `upgrade/firefox` (any review change goes to both branches, or the first sync conflicts on this file) (it only runs on pushes to `main` when it lives there; it touches no app code). Push `upgrade/firefox` first: the workflow calls `firefox-ios/EcosiaUpgrade/tools/sync-main.sh` from that branch and does nothing while the branch is missing.
 
 ## Jira
 
