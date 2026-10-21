@@ -6,8 +6,8 @@ How Merge Unit Tests, Snapshot Tests, Snapshot Update Check and the cache purge 
 flowchart TB
   subgraph PR["Pull request opened or updated (a newer push cancels the older run)"]
     direction TB
-    pr([PR push]) --> mtFilter{"Docs or snapshot-only files?<br/>(paths-ignore)"}
-    mtFilter -- yes --> mtNone[Merge Tests not started]
+    pr([PR push]) --> mtFilter{"Only docs, snapshot tooling<br/>or workflows other than<br/>merge_tests.yml?"}
+    mtFilter -- yes --> mtSkip
     mtFilter -- no --> mtClass{"Only MARKETING_VERSION<br/>changed?"}
     mtClass -- yes --> mtSkip[Merge Tests skipped]
     mtClass -- no --> mtRun["Merge Tests run<br/>restore main's cache, never save"]
@@ -40,6 +40,7 @@ flowchart TB
 
 ## Notes
 
+- Merge Tests always start on pull requests and decide in their first job whether to run, so a change that needs no tests reports "Execute Merge Tests" as skipped, which counts as passing for a required check. A `paths-ignore` filter would not start the workflow at all, and a required check would then wait forever.
 - Merge Tests and Snapshot Tests each keep their own compilation cache on `main` (`unit-tests` and `snapshot-tests`).
 - A new push to a pull request cancels that pull request's running Merge Tests and Snapshot Tests. Runs on `main` (nightly and manual) are never cancelled, only queued.
 - The purge runs two hours after the nightly refresh, so it keeps the cache just saved and deletes the previous night's.
@@ -47,6 +48,14 @@ flowchart TB
 - Pull requests only restore caches. Each compilation cache is close to 1 GB, and per-commit pull request saves used to fill the repository's 10 GB cache limit, evicting `main`'s cache and causing cold builds of around 11 minutes instead of around 7.
 - Commits merged during the day reach `main`'s cache that night. Until then pull requests restore the previous cache, which costs well under a minute of extra build time on average.
 - Snapshot change detection diffs from the point where the branch left `main`, so commits merged into `main` afterwards never count as the branch's changes.
+
+## Firefox upgrade branch
+
+- Pull requests into `upgrade/firefox` get the same checks as pull requests into `main` (Merge Tests, Snapshot Tests, Snapshot Update Check, SwiftLint) until the branch replaces `main`. They restore `main`'s caches like any other pull request.
+- On every push to `main`, the main sync merges `main` into `upgrade/firefox` through a pull request opened by the "Ecosia iOS Upgrade Sync" GitHub App:
+  - a clean sync auto-merges with a merge commit once Merge Tests pass;
+  - a conflicting one becomes a draft with the conflicting files in a comment.
+- `upgrade/firefox`'s `CODEOWNERS` asks `@ecosia/ios` to review every pull request into it, sync pull requests included.
 
 ## Where it lives
 
@@ -59,5 +68,6 @@ flowchart TB
 | Version-only bump detection (shared) | `.github/scripts/only_marketing_version_changed.sh` |
 | Compilation cache restore and save | `.github/actions/xcode_compilation_cache/action.yml` |
 | Cache purge | `.github/workflows/purge_caches.yml`, `.github/scripts/purge_caches.sh` |
+| Main sync into `upgrade/firefox` | `.github/workflows/upgrade_main_sync.yml`; the merge script `firefox-ios/EcosiaUpgrade/tools/sync-main.sh` is on `upgrade/firefox` |
 
 Manual runs of the purge default to a dry run that only lists what would be deleted.

@@ -36,7 +36,7 @@ Remote actions to take when Dario decides to publish M0. `upgrade/firefox` was b
   - install it on `ecosia/ios-browser` only;
   - generate a private key.
   Pull requests opened with the default `GITHUB_TOKEN` do not trigger other workflows, so CI would never run on the sync PR; an app token does. Workflows write is needed because sync PRs often change `.github/workflows/`.
-- [x] Store the app's ID as the repository variable `UPGRADE_SYNC_APP_ID` and its private key as the repository secret `UPGRADE_SYNC_APP_PRIVATE_KEY`.
+- [x] Store the app's client ID as the repository variable `UPGRADE_SYNC_APP_CLIENT_ID` and its private key as the repository secret `UPGRADE_SYNC_APP_PRIVATE_KEY` (the earlier `UPGRADE_SYNC_APP_ID` was replaced on 2026-10-21, because `create-github-app-token` deprecated `app-id`).
 - [x] No named owner: GitHub requests a review from `@ecosia/ios` on every PR into `upgrade/firefox`, sync PRs included, through the root `CODEOWNERS` on that branch (2026-10-21). The app cannot request team reviews itself without the organisation permission Members: read.
 - [ ] **At M5:** decide whether `main` keeps the root `CODEOWNERS` (`* @ecosia/ios`) when `upgrade/firefox` becomes `main`.
 - [x] "Allow auto-merge" is on in the repository settings (checked 2026-10-20).
