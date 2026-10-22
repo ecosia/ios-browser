@@ -376,17 +376,17 @@ final class UnleashCustomSearchProviderSetting: UnleashVariantResetSetting {
     }
 }
 
-final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
+final class UnleashAIChatSetting: UnleashVariantResetSetting {
     override var titleName: String? {
-        "AI Chat MVP"
+        "AI Chat Enabled"
     }
 
     override var variant: Unleash.Variant? {
-        Unleash.getVariant(.aiChatMVP)
+        Unleash.getVariant(.aiChat)
     }
 
     override var unleashEnabled: Bool? {
-        Unleash.isEnabled(.aiChatMVP)
+        Unleash.isEnabled(.aiChat)
     }
 }
 
