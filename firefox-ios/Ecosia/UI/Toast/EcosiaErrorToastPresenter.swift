@@ -50,13 +50,6 @@ public final class EcosiaErrorToastPresenter {
         present(subtitle: subtitle)
     }
 
-    public func presentRegisterVisitError() {
-        present(
-            subtitle: String.localized(.couldNotLoadSeedCounterMessage),
-            title: String.localized(.couldNotLoadSeedCounter)
-        )
-    }
-
     private func flushPendingMessagesIfNeeded() {
         guard let delegate, !pendingMessages.isEmpty else { return }
         let messages = pendingMessages

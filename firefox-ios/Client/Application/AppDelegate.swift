@@ -127,6 +127,9 @@ class AppDelegate: UIResponder,
         // Then setup dependency container as it's needed for everything else
         DependencyHelper().bootstrapDependencies()
 
+        // Ecosia: Swap in the debug-aware accounts provider before `EcosiaAuthUIStateProvider.shared` is first read.
+        EcosiaAuthUIStateProvider.accountsProviderFactory = { AccountsProviderWrapper() }
+
         appLaunchUtil = AppLaunchUtil(profile: profile)
         appLaunchUtil?.setUpPreLaunchDependencies()
 
