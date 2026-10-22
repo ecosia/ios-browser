@@ -570,7 +570,7 @@ final class SimulateImpactAPIErrorSetting: HiddenSetting {
         let alert = AlertController(
             title: !currentValue ? "Impact API Error Enabled ✅" : "Impact API Error Disabled ✅",
             message: !currentValue
-                ? "Next impact API call will fail and show the seed counter error toast."
+                ? "Next impact API call will fail and show the seed counter error state."
                 : "Impact API errors disabled.",
             preferredStyle: .alert
         )
