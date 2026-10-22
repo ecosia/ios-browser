@@ -5,8 +5,8 @@
 import Foundation
 
 enum BrazeCoreMarketVariant: String {
-    case holdout
-    case treatment
+    case holdout = "st_braze_features_holdout"
+    case treatment = "st_braze_features_treatment"
     case control
     case disabled
 }

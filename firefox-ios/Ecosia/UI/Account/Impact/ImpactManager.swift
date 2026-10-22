@@ -205,9 +205,6 @@ public final class ImpactManager: ObservableObject {
 
                 await MainActor.run {
                     hasRegisterVisitError = true
-                    if #available(iOS 16.0, *) {
-                        EcosiaErrorToastPresenter.shared.presentRegisterVisitError()
-                    }
                 }
             }
         }
