@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import WebKit
 import Ecosia
 
 /// Result of authentication flow operations
@@ -20,6 +21,14 @@ final class EcosiaAuthFlow {
         case login
         case signUp
         case logout
+        case webSessionRetransfer
+    }
+
+    enum WebSessionRetransferResult: Equatable {
+        case retransferred
+        case loggedOut
+        /// Nothing changed (e.g. no network), worth retrying later
+        case deferred
     }
 
     // MARK: - Core Properties
@@ -109,6 +118,43 @@ final class EcosiaAuthFlow {
         )
     }
 
+    /// Re-runs the session transfer for a user who is already logged in natively, without any visible UI.
+    /// A failed transfer logs out natively, like login does, so both sides stay in sync.
+    func startWebSessionRetransfer() async -> WebSessionRetransferResult {
+        EcosiaLogger.auth.info("Starting \(type) flow")
+
+        guard let browserViewController else {
+            return .deferred
+        }
+
+        switch await authService.getSessionTransferToken() {
+        case .retrieved:
+            break
+        case .unavailable:
+            return .deferred
+        case .refreshTokenRejected:
+            await logOutNativelyAfterFailedSessionTransfer()
+            return .loggedOut
+        }
+
+        let landedOnSuccess: Bool
+        do {
+            landedOnSuccess = try await runSessionTransferTab(in: browserViewController)
+        } catch {
+            EcosiaLogger.auth.error("Could not start the web session re-transfer tab: \(error)")
+            return .deferred
+        }
+
+        guard landedOnSuccess, await hasAuthSessionCookie() else {
+            EcosiaLogger.auth.sentry("Silent web session re-transfer failed (landed on success: \(landedOnSuccess))")
+            await logOutNativelyAfterFailedSessionTransfer()
+            return .loggedOut
+        }
+
+        EcosiaLogger.auth.info("Silent web session re-transfer completed")
+        return .retransferred
+    }
+
     // MARK: - Private Implementation
 
     private func performAuthentication(type: FlowType,
@@ -119,6 +165,10 @@ final class EcosiaAuthFlow {
     ) async -> EcosiaAuthFlowResult {
 
         EcosiaLogger.auth.info("Starting \(type) flow")
+
+        let retransferGate = WebSessionRecoveryCoordinator.shared.gate
+        retransferGate.beginBlockingOperation()
+        defer { retransferGate.endBlockingOperation() }
 
         do {
             switch type {
@@ -157,6 +207,9 @@ final class EcosiaAuthFlow {
 
                 // Step 3: Session cleanup and invisible tab flow
                 try await performSessionCleanup(onFlowCompleted: onFlowCompleted)
+
+            case .webSessionRetransfer:
+                throw AuthError.authFlowConfigurationError("Web session re-transfer runs through startWebSessionRetransfer()")
             }
 
             return .success
@@ -213,45 +266,52 @@ final class EcosiaAuthFlow {
             throw AuthError.authFlowConfigurationError("BrowserViewController not available")
         }
 
-        // Get session transfer URL.
+        EcosiaLogger.session.info("Retrieving session transfer token for SSO")
+        await authService.getSessionTransferToken()
+
+        let success = try await runSessionTransferTab(in: browserViewController)
+        EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
+        if !success {
+            await logOutNativelyAfterFailedSessionTransfer()
+        }
+        onFlowCompleted?(success)
+    }
+
+    /// Installs the transfer cookie and waits for the invisible tab to land.
+    /// - Returns: Whether the tab landed on a success page
+    private func runSessionTransferTab(in browserViewController: BrowserViewController) async throws -> Bool {
         // Debug hook: loads /accounts/error directly instead of the real sign-up URL.
         let signUpURL = SimulateSessionTransferFailureSetting.isEnabled
             ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
             : EcosiaEnvironment.current.urlProvider.signUpURL
 
-        EcosiaLogger.session.info("Retrieving session transfer token for SSO")
-        await authService.getSessionTransferToken()
         await InvisibleTabSession.installSessionCookie(from: authService)
 
-        // Create invisible tab session (must be on main thread for UI operations)
-        EcosiaLogger.invisibleTabs.info("Creating invisible tab session for login")
-        let session = try await MainActor.run {
-            try InvisibleTabSession(
-                url: signUpURL,
-                browserViewController: browserViewController,
-                timeout: 10.0
-            )
-        }
+        EcosiaLogger.invisibleTabs.info("Creating invisible tab session for \(type)")
+        let session = try InvisibleTabSession(
+            url: signUpURL,
+            browserViewController: browserViewController,
+            timeout: 10.0
+        )
 
         // Retain session until completion
         activeSession = session
 
-        // Wait for session completion (startMonitoring is main-actor isolated)
-        await withCheckedContinuation { continuation in
-            Task { @MainActor in
-                session.startMonitoring { [weak self] success in
-                    Task { @MainActor in
-                        self?.activeSession = nil // Release session
-                        EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
-                        if !success {
-                            await self?.logOutNativelyAfterFailedSessionTransfer()
-                        }
-                        onFlowCompleted?(success)
-                        continuation.resume()
-                    }
+        return await withCheckedContinuation { continuation in
+            session.startMonitoring { [weak self] success in
+                Task { @MainActor in
+                    self?.activeSession = nil
+                    continuation.resume(returning: success)
                 }
             }
         }
+    }
+
+    /// A transfer can land on a page that looks fine without the web having set a session.
+    private func hasAuthSessionCookie() async -> Bool {
+        let cookieStore: CookieStoreProtocol = WKWebsiteDataStore.default().httpCookieStore
+        let cookies = await cookieStore.allCookies()
+        return cookies.contains { $0.name == Cookie.authSession.rawValue }
     }
 
     /// A failed session transfer means the web session was never actually authenticated,
