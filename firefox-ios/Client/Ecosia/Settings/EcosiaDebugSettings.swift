@@ -381,10 +381,6 @@ final class UnleashAIChatSetting: UnleashVariantResetSetting {
         "AI Chat Enabled"
     }
 
-    override var variant: Unleash.Variant? {
-        Unleash.getVariant(.aiChat)
-    }
-
     override var unleashEnabled: Bool? {
         Unleash.isEnabled(.aiChat)
     }

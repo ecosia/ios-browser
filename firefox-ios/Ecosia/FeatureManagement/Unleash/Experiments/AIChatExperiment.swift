@@ -11,8 +11,4 @@ public struct AIChatExperiment {
     public static var isEnabled: Bool {
         Unleash.isEnabled(.aiChat)
     }
-
-    private static var variant: Unleash.Variant {
-        Unleash.getVariant(.aiChat)
-    }
 }
