@@ -402,3 +402,5 @@ Merge Unit Tests and Snapshot Tests only run when a pull request's own changes n
 ## Accounts / Signing in
 
 [See our documentation here](https://ecosia.atlassian.net/wiki/spaces/MOB/pages/4800118791/iOS+-+Accounts+integration+setup)
+
+For how sign-in, session transfer, re-auth and sign-out work end to end, see [Auth Flows](AUTH_FLOWS.md).
