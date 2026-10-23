@@ -22,6 +22,9 @@ final class AppDelegateMMPIntegrationTests: XCTestCase, @unchecked Sendable {
         MainActor.assumeIsolated {
             appDelegate = AppDelegate()
             DependencyHelperMock().bootstrapDependencies()
+            // Ecosia: becomeActive reaches the default-browser check; keep it off the system API and
+            // standard defaults.
+            DefaultBrowserStatusChecker.shared = .inert()
         }
         savedUser = User.shared
         User.shared.sendAnonymousUsageData = true
