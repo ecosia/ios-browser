@@ -12,6 +12,8 @@ firefox-v155.1	04df3bd66b34441c6b97ee3958535c5bf4633ca4
 
 It names the Firefox release that this branch's Firefox code is built on. The upgrade was grafted onto `main` ([upgrade ADR 0001](adr/0001-graft-firefox-upgrades-onto-main-via-upgrade-branch.md)), so `git merge-base` with a Firefox tag no longer finds this point, and the file records it instead.
 
+**It must match the tree:** the recorded tag is the Firefox release whose code is actually on this branch. A wrong base makes the next Firefox merge compare against the wrong release.
+
 **Who updates it:** whoever completes a move to a new upgrade target, in the same commit that completes the move.
 
 **How it is used:** as the merge base when bringing in a newer Firefox release, for example:
