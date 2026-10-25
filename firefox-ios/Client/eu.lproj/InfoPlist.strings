@@ -22,9 +22,6 @@
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Honekin argazkiak gorde ditzakezu.";
 
-/* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Ecosiak hizketaren ezagutza erabiltzen du zure ahotsa testura bihurtzeko ahots bidezko bilaketarako.";
-
 /* (No Comment) */
 "Scan QR Code" = "Eskaneatu QR kodea";
 

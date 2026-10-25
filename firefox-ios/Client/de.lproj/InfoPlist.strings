@@ -22,9 +22,6 @@
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Damit können Sie Ihre Fotos speichern.";
 
-/* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Ecosia verwendet Spracherkennung, um Ihre Stimme in Text für die Sprachsuche umzuwandeln.";
-
 /* (No Comment) */
 "Scan QR Code" = "QR-Code scannen";
 

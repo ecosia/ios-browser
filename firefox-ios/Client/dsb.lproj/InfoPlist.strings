@@ -22,9 +22,6 @@
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Z tym móžośo fota składowaś.";
 
-/* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Ecosia powědańske spóznaśe wužywa, aby waš głos do teksta za głosowe pytanje pśetwórił.";
-
 /* (No Comment) */
 "Scan QR Code" = "QR-kod scannowaś";
 
