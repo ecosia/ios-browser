@@ -20,13 +20,22 @@ features:
         type: Boolean
         default: false
     defaults:
+      # Ecosia: Summaries run on-device only (Apple Intelligence), so no page content is ever sent
+      # to Mozilla's hosted summarizer. Off on every channel, with `release` listed explicitly rather
+      # than inheriting the upstream variable default. `isHostedSummarizerEnabled()` in
+      # `SummarizerNimbusUtils` is also overridden to return false.
+      - channel: release
+        value:
+          enabled: false
+          toolbarEntrypoint: false
+          shakeGesture: false
       - channel: beta
         value:
-          enabled: true
-          toolbarEntrypoint: true
-          shakeGesture: true
+          enabled: false
+          toolbarEntrypoint: false
+          shakeGesture: false
       - channel: developer
         value:
-          enabled: true
-          toolbarEntrypoint: true
-          shakeGesture: true
+          enabled: false
+          toolbarEntrypoint: false
+          shakeGesture: false
