@@ -15,6 +15,13 @@ features:
         type: QuickAnswersModel
         default: exa
     defaults:
+      # Ecosia: Quick Answers (voice questions answered by Mozilla's AI providers) is not part of the
+      # Ecosia product; off on every channel, with `release` listed explicitly rather than inheriting
+      # the upstream variable default.
+      - channel: release
+        value:
+          enabled: false
+          model: exa
       - channel: beta
         value:
           enabled: false
