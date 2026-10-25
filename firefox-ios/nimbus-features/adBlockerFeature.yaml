@@ -16,19 +16,20 @@ features:
         type: Boolean
         default: false
     defaults:
-      # Ecosia: Promotional suppression. The Block Ads toggle in Browsing settings ships
-      # (`enabled: true`), but the Site Menu badge advertising it does not
-      # (`badge-enabled: false`). Applies to every channel, so `release` is listed explicitly
-      # rather than inheriting the upstream variable default of `enabled: false`.
+      # Ecosia: The ad blocker is off for now: its EasyList-based block list hides the ads on
+      # Ecosia's own search results, which fund tree planting. Both the Block Ads toggle and the
+      # Site Menu badge are off on every channel, with `release` listed explicitly. While the flag
+      # is off, `ContentBlocker.reloadAdBlockerList()` also skips downloading and compiling the
+      # list. Whether it can come back is investigated in MOB-5052 (upgrade ticket 26).
       - channel: release
         value:
-          enabled: true
+          enabled: false
           badge-enabled: false
       - channel: beta
         value:
-          enabled: true
+          enabled: false
           badge-enabled: false
       - channel: developer
         value:
-          enabled: true
+          enabled: false
           badge-enabled: false
