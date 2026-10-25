@@ -490,6 +490,15 @@ extension ContentBlocker {
     }
 
     func reloadAdBlockerList() async {
+        // Ecosia: The ad blocker is off (adBlockerFeature.yaml), so don't download Mozilla's
+        // tracking-protection-lists-ios collection or compile its list on safelist changes,
+        // clearing private data or Remote Settings syncs. resolveOptional() keeps this safe when
+        // AppContainer is reset between unit tests; no provider means off.
+        let featureFlags: FeatureFlagProviding? = AppContainer.shared.resolveOptional()
+        guard featureFlags?.isEnabled(.adBlocker) == true else {
+            logger.log("Skipping ad-blocker list, ad blocker is off.", level: .info, category: .adblock)
+            return
+        }
         guard let encoded = await fetchAdBlockerRuleJSON() else {
             logger.log("Skipping ad-blocker list, none available.", level: .info, category: .adblock)
             return
