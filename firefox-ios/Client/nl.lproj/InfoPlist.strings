@@ -22,9 +22,6 @@
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Hiermee kunt u foto’s opslaan.";
 
-/* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Ecosia gebruikt spraakherkenning om uw spraak naar tekst te converteren voor gesproken zoekopdrachten.";
-
 /* (No Comment) */
 "Scan QR Code" = "QR-code scannen";
 

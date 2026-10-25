@@ -22,9 +22,6 @@
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Dette gjer det mogleg å lagre bilde.";
 
-/* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Ecosia brukar talegjenkjenning for å konvertere stemma di til tekst for talesøk.";
-
 /* (No Comment) */
 "Scan QR Code" = "Skann QR-kode";
 
