@@ -17,6 +17,8 @@ final class ContentBlockerTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         featureFlags = MockNimbusFeatureFlags()
+        // Ecosia: reloadAdBlockerList() only runs with the ad blocker flag on; tests that need it off set it.
+        featureFlags.enabledFlags = [.adBlocker]
         profile = MockProfile()
         DependencyHelperMock().bootstrapDependencies(injectedFeatureFlagProvider: featureFlags)
         originalFetcher = ContentBlocker.shared.adBlockerListFetcher
@@ -54,6 +56,31 @@ final class ContentBlockerTests: XCTestCase {
         await ContentBlocker.shared.reloadAdBlockerList()
 
         XCTAssertEqual(mock.fetchCallCount, 1)
+    }
+
+    // Ecosia: With the ad blocker off, nothing is downloaded from Mozilla or compiled.
+    func testReloadAdBlockerList_whenAdBlockerFlagOff_doesNotFetchList() async {
+        featureFlags.enabledFlags = []
+        let mock = MockAdBlockerListFetcher(jsonToReturn: Self.validRuleJSON)
+        ContentBlocker.shared.adBlockerListFetcher = mock
+
+        await ContentBlocker.shared.reloadAdBlockerList()
+
+        XCTAssertEqual(mock.fetchCallCount, 0)
+        XCTAssertNil(UserDefaults.standard.string(forKey: ASAdBlockerListFetcher.adBlockerRecordID))
+    }
+
+    // Ecosia: Clearing the safelist (Clear Private Data) must not download the list either.
+    func testClearSafelist_whenAdBlockerFlagOff_doesNotFetchList() async {
+        featureFlags.enabledFlags = []
+        let mock = MockAdBlockerListFetcher(jsonToReturn: Self.validRuleJSON)
+        ContentBlocker.shared.adBlockerListFetcher = mock
+
+        let clearExpectation = XCTestExpectation(description: "clearSafelist completed")
+        ContentBlocker.shared.clearSafelist { clearExpectation.fulfill() }
+        await fulfillment(of: [clearExpectation], timeout: 5)
+
+        XCTAssertEqual(mock.fetchCallCount, 0)
     }
 
     func testReloadAdBlockerList_whenNoListAvailable_completes() async {
