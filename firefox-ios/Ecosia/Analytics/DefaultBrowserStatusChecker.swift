@@ -10,6 +10,8 @@ public final class DefaultBrowserStatusChecker {
     static let nextCheckDateKey = "ecosiaDefaultBrowserStatusNextCheckDateKey"
     static let retryAvailabilityDateKey = "UIApplicationCategoryDefaultRetryAvailabilityDateErrorKey"
     static let checkInterval = DateComponents(month: 6)
+    /// iOS 18.2 betas on which Firefox skips the API too (see `DefaultBrowserUtility.isRunningOnBlockListBetaOS`).
+    static let blockedBetaBuilds = ["22C5109p", "22C5125e", "22C5131e", "22C5142a"]
 
     /// Mutable so tests can swap in a checker that never touches the system API or standard defaults.
     public static var shared = DefaultBrowserStatusChecker()
@@ -67,6 +69,8 @@ public final class DefaultBrowserStatusChecker {
 
     private static func querySystem() throws -> Bool? {
         guard #available(iOS 18.2, *) else { return nil }
+        let systemVersion = ProcessInfo.processInfo.operatingSystemVersionString
+        guard !blockedBetaBuilds.contains(where: systemVersion.contains) else { return nil }
         return try UIApplication.shared.isDefault(.webBrowser)
     }
 }
