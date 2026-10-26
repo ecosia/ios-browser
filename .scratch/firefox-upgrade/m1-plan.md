@@ -3,7 +3,7 @@
 **Written:** 2026-10-25, against `origin/upgrade/firefox` at `f0bb5fa14a` (PR #1362, M0 sign-off docs, still open).
 **Milestone:** M1 of the Firefox 157.x upgrade, Jira epic MOB-5026. Tickets 07 to 10 (MOB-5033 to MOB-5036).
 **Goal:** the app exposes exactly the Firefox features in [milestones.md](milestones.md#product-decisions), each decision is locked by a test, and each is confirmed on a device.
-**Updated:** 2026-10-26, Q2 to Q5 answered (the AI controls hub is replaced by Ecosia's AI-free searching toggle); section 4 and step 4 rewritten.
+**Updated:** 2026-10-26, Q1 reframed, Q2 to Q6 answered (the AI controls hub is replaced by Ecosia's AI-free searching toggle); section 4 and step 4 rewritten.
 
 This file is written so that an agent with no memory of the planning conversation can execute it. Read section 1 before running anything. The M0 plan ([m0-plan.md](m0-plan.md)) is done; its worktree, `verify.sh` and diary format carry over.
 
@@ -127,9 +127,9 @@ Resolved values on `f0bb5fa14a`, generated that way:
 
 Written into the progress file's `## Waiting on Dario`. Steps that do not need the answer go ahead.
 
-- **Q1 (step 2, blocks merging PR A, not writing it). Speech purpose string.** Removing `NSSpeechRecognitionUsageDescription` while `QuickAnswersKit` stays linked means the binary references `SFSpeechRecognizer` with no purpose string. App Store Connect flags that at upload (ITMS-90683, "Missing purpose string"). Options: (a) remove it as ticket 08 says, and prove it with one TestFlight upload of PR A's build before merging (recommended: cheapest check, keeps production's permission set); (b) keep the key, and change ticket 08's criterion; (c) remove it and stop linking `QuickAnswersKit` (code change across ~10 Firefox files, against "configuration over code").
+- **Q1: reframed on 2026-10-26, no longer blocks PR A.** Removing `NSSpeechRecognitionUsageDescription` while `QuickAnswersKit` stays compiled in leaves the app linking `Speech.framework` and referencing `SFSpeechRecognizer` with no purpose string (confirmed with `otool -L` / `nm -u` on the built `Client.debug.dylib`). Only App Store Connect's processing of an uploaded build can say whether it flags that (ITMS-90683); no local tool reproduces its scan, and Firebase distribution (ticket 22) does not go through App Store Connect. `upgrade/firefox` ships nowhere, so the answer is not needed to merge PR A. It is needed before the first App Store Connect upload of the upgrade: one internal TestFlight upload, at the latest before release (ticket 24). If it is flagged, either restore the key or stop compiling `QuickAnswersKit`.
 - **Q2 to Q5: answered on 2026-10-26.** Dario: the hub does not come to Ecosia's Settings. Ecosia's "AI-free searching" toggle replaces it and switches off **both page summaries and translations**. Where that toggle is not offered, **page summaries get their own Settings row** (Firefox's Summarize row). The hub's links, master switch and artwork are therefore moot. Ticket 09 rewritten accordingly (`issues/09-ai-controls-hub.md`); the Jira ticket still has the old text.
-- **Q6 (open, from Q2's answer). Translations without the toggle:** where AI-free searching is not offered, translations are always on with no way to switch them off (Firefox's Translation settings row is not in Ecosia's Settings either). Add Firefox's Translation row next to the Summarize row there too?
+- **Q6: answered on 2026-10-26.** Firefox treats translations as a switchable AI feature (its own Translation settings row, and the hub's "AI-powered features" list), so Dario: treat it like summaries. Where AI-free searching is not offered, Firefox's Translation row appears next to the Summarize row.
 
 Pre-decided, Dario can veto:
 
@@ -183,7 +183,7 @@ Run `verify.sh` on the branch point in the background if it has not been run on 
 
 1. Run `verify.sh` (background). Must be green.
 2. Commit this plan with the progress file: `[MOB-5033] M1 plan`.
-3. Ask Dario to push and open PR A: title `[MOB-5033] [MOB-5034] Summaries on-device only; Lens, Quick Answers and ad blocker off`, base `upgrade/firefox`, merge with a merge commit, description lists the device checks owed and Q1.
+3. Ask Dario to push and open PR A: title `[MOB-5033] [MOB-5034] Summaries on-device only; Lens, Quick Answers and ad blocker off`, base `upgrade/firefox`, merge with a merge commit, description lists the device checks owed and the App Store Connect check from Q1.
 
 ### Step 4 (ticket 09, MOB-5035): AI controls hub
 

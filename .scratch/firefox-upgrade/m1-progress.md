@@ -8,8 +8,8 @@ Base: origin/upgrade/firefox 3b9c862a57 (rebased 2026-10-28; was f0bb5fa14a)
 - [x] 0 Branch and baseline
 - [x] 1 Summaries on-device only (MOB-5033): 8c078a133d, diary 581e76c537
 - [x] 2 Lens, Quick Answers, ad blocker off (MOB-5034): c840022f08, 5eefefdb37, fa28866949, diary 581e76c537
-- [ ] 3 PR A: verify.sh OK; waiting on Dario to push and open the PR
-- [x] 4 AI-free searching replaces the AI controls hub (MOB-5035): bf62e7a7e8, 890e2abd90, 8ccb7d7d89, diary (next commit); PR B: waiting on Dario to push (branch dc-mob-5035-ai-free-gates-firefox-ai, on top of PR A)
+- [ ] 3 PR A: verify.sh OK; ready, not pushed (Dario: no pushing yet)
+- [x] 4 AI-free searching replaces the AI controls hub (MOB-5035): bf62e7a7e8, 890e2abd90, 8ccb7d7d89, 7081259561, diary f8831c69cc and the next commit; PR B: waiting on Dario to push (branch dc-mob-5035-ai-free-gates-firefox-ai, on top of PR A)
 - [ ] 5 Feature configuration tests (MOB-5036): <commits>
 - [ ] 6 Close-out; PR C: <number>
 
@@ -22,12 +22,13 @@ In progress: nothing (PR A and PR B ready locally; step 5 next)
 - [ ] 08: no Lens or Quick Answers entry point on the new tab page, address bar, image context menu
 - [ ] 08: no "Block Ads" anywhere; Ecosia search ads show normally
 - [ ] 09: AI-free on: no summaries or translations entry point; off: both work (supported device)
-- [ ] 09: non-Ecosia provider: Summarize row in General settings; nothing hidden by an earlier AI-free value
+- [ ] 09: non-Ecosia provider: Summarize row (supported device) and Translation row in General settings; nothing hidden by an earlier AI-free value
+- [ ] Before the first App Store Connect upload of the upgrade (latest ticket 24): check for ITMS-90683 (speech purpose string, Q1)
 - [ ] 10: VPN off, Nova off
 
 ## Waiting on Dario
 
-Q1 (speech purpose string, blocks merging PR A) and Q6 (translations off switch where AI-free is not offered) in m1-plan.md section 4. Q2 to Q5 answered 2026-10-26. D1 to D3 are pre-decided unless vetoed.
+Nothing blocking. Q1 reframed (check at the first App Store Connect upload, not before merging PR A), Q2 to Q6 answered 2026-10-26. D1 to D3 are pre-decided unless vetoed. Dario: no pushing yet.
 
 ## Log
 
@@ -38,3 +39,5 @@ Q1 (speech purpose string, blocks merging PR A) and Q6 (translations off switch 
 - 2026-10-25 18:19 verify.sh on 581e76c537: OK (5001 tests, 4991 passed, 0 failed, 10 skipped; both new ContentBlockerTests pass; lint clean). While waiting, the agent wrote "completed" notices into its own replies before the run had finished; it did not act on them. Trust only the log's `exit` line.
 - 2026-10-26 15:28 Dario: no AI controls hub; Ecosia's AI-free searching toggle switches off summaries and translations; where the toggle is hidden, a summaries row instead. Plan section 4 and step 4 rewritten, ticket 09 and milestones.md updated.
 - 2026-10-26 15:55 Step 4 on dc-mob-5035-ai-free-gates-firefox-ai: verify.sh OK (5012 tests, 5002 passed, 0 failed, 10 skipped; lint clean). A first run at 15:38 failed lint only (implicitly unwrapped optional in the new test), fixed.
+- 2026-10-26 16:21 Dario: translations treated like summaries (Translation row where AI-free is not offered); keep models on disk; asked why a TestFlight build is needed: Q1 reframed, no longer blocks PR A. No pushing yet.
+- 2026-10-26 (after 16:21) verify.sh hit ENOSPC (disk full, 155 MB free); Dario killed the run and freed space (Xcode's global DerivedData, simulators, build/m1-*): 41 GB free. A re-run failed in project generation (half-written SPM cache in Xcode's DerivedData for this worktree); once that cache was gone, verify.sh at 17:06: OK (5012 tests, 5002 passed, 0 failed, 10 skipped; lint clean). Run folders under build/ are now deleted after each result.

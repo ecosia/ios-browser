@@ -28,7 +28,7 @@ Upgrades have so far happened about twice a year, as large one-off projects. Our
 | --- | --- |
 | Translations | Keep |
 | Page summaries | Keep, on-device only. Hidden entirely on devices that cannot summarize on-device |
-| AI controls settings hub | Not shown. Ecosia's "AI-free searching" setting replaces it and also switches off page summaries and translations. Where that setting is not offered, page summaries get their own Settings row |
+| AI controls settings hub | Not shown. Ecosia's "AI-free searching" setting replaces it and also switches off page summaries and translations. Where that setting is not offered, page summaries and translations get their own Settings rows |
 | Google Lens | Out |
 | Quick Answers (voice) | Out |
 | VPN promotion | Out |
