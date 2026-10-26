@@ -21,6 +21,7 @@ final class AIFreeSearchingSelectionTests: XCTestCase {
         super.tearDown()
         User.shared.aiFreeSearching = nil
         User.shared.aiOverviews = true
+        User.shared.selectedSearchEngineID = SearchProvider.ecosia.rawValue
         Unleash.clearInstanceModel()
         try? FileManager.default.removeItem(at: FileManager.user)
         // Drain here too, or this suite's posts land in whichever suite counts
@@ -113,12 +114,67 @@ final class AIFreeSearchingSelectionTests: XCTestCase {
         XCTAssertEqual(count, 1, "Explicit off must fire searchSettingsChanged so ECNOAI=false is written")
     }
 
+    // MARK: - Browser AI (replaces Firefox's AI controls hub)
+
+    func testIsAvailableRequiresFlag() {
+        setFlagEnabled(false)
+        XCTAssertFalse(AIFreeSearchingSelection.isAvailable)
+
+        setFlagEnabled(true)
+        XCTAssertTrue(AIFreeSearchingSelection.isAvailable)
+    }
+
+    func testIsAvailableIsFalseWithACustomSearchProvider() {
+        setFlags(aiFreeSearching: true, customSearchProvider: true)
+        User.shared.selectedSearchEngineID = SearchProvider.ecosia.rawValue
+        XCTAssertTrue(AIFreeSearchingSelection.isAvailable, "Ecosia is still the provider")
+
+        User.shared.selectedSearchEngineID = SearchProvider.perplexity.rawValue
+        XCTAssertFalse(AIFreeSearchingSelection.isAvailable)
+    }
+
+    func testBlocksBrowserAIRequiresAvailableAndToggleOn() {
+        setFlagEnabled(true)
+        XCTAssertFalse(AIFreeSearchingSelection.blocksBrowserAI, "Never set")
+
+        AIFreeSearchingSelection.setEnabled(false)
+        XCTAssertFalse(AIFreeSearchingSelection.blocksBrowserAI)
+
+        AIFreeSearchingSelection.setEnabled(true)
+        XCTAssertTrue(AIFreeSearchingSelection.blocksBrowserAI)
+
+        setFlagEnabled(false)
+        XCTAssertFalse(AIFreeSearchingSelection.blocksBrowserAI, "Flag off hides the toggle")
+    }
+
+    /// A user who turned AI-free on, then picked another provider, can no longer see the
+    /// toggle, so it must not keep summaries and translations hidden.
+    func testBlocksBrowserAIIsFalseOnceTheToggleIsHidden() {
+        setFlags(aiFreeSearching: true, customSearchProvider: true)
+        AIFreeSearchingSelection.setEnabled(true)
+        XCTAssertTrue(AIFreeSearchingSelection.blocksBrowserAI)
+
+        User.shared.selectedSearchEngineID = SearchProvider.perplexity.rawValue
+
+        XCTAssertTrue(AIFreeSearchingSelection.isActive, "The search preference itself is kept")
+        XCTAssertFalse(AIFreeSearchingSelection.blocksBrowserAI)
+    }
+
     private func setFlagEnabled(_ enabled: Bool) {
-        let toggle = Unleash.Toggle(
-            name: Unleash.Toggle.Name.aiFreeSearching.rawValue,
-            enabled: enabled,
-            variant: Unleash.Variant(name: "", enabled: false, payload: nil)
-        )
-        Unleash.model = Unleash.Model(toggles: Set([toggle]))
+        setFlags(aiFreeSearching: enabled, customSearchProvider: false)
+    }
+
+    private func setFlags(aiFreeSearching: Bool, customSearchProvider: Bool) {
+        let toggles: [(Unleash.Toggle.Name, Bool)] = [
+            (.aiFreeSearching, aiFreeSearching),
+            (.customSearchProvider, customSearchProvider)
+        ]
+        Unleash.model = Unleash.Model(toggles: Set(toggles.map { name, enabled in
+            Unleash.Toggle(
+                name: name.rawValue,
+                enabled: enabled,
+                variant: Unleash.Variant(name: "", enabled: false, payload: nil)
+            )
+        }))
     }
 }
