@@ -499,6 +499,12 @@ class AppSettingsTableViewController: SettingsTableViewController,
         }
         // Ecosia (End).
 
+        // Ecosia: The AI-free searching toggle replaces Firefox's AI controls hub. Where it is not
+        // offered, page summaries get their own row instead, on devices that can summarize.
+        if !AIFreeSearchingSelection.isAvailable, summarizerNimbusUtils.isSummarizeFeatureEnabled {
+            generalSettings.append(SummarizeSetting(settings: self, settingsDelegate: parentCoordinator))
+        }
+
         return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
                                children: generalSettings)]
     }
