@@ -191,12 +191,15 @@ public final class ImpactManager: ObservableObject {
                 EcosiaLogger.accounts.info("Registering user visit for balance update")
                 let response = try await accountsProvider.registerVisit(accessToken: accessToken)
 
-                // The account can change (logout, or a different account logging in) while this
-                // request is in flight; applying a response addressed to that earlier account
-                // would store its balance under whichever account is current when it lands.
-                // Compared by account, not token: a renew-on-401 inside the request replaces the token.
-                guard let currentUserID = auth.userID, currentUserID == userID else {
-                    EcosiaLogger.accounts.notice("Discarding register visit response - session changed while in flight")
+                guard let currentUserID = auth.userID else {
+                    EcosiaLogger.accounts.notice("Discarding register visit response - no signed-in account")
+                    return
+                }
+
+                // A response for an earlier account would land under the current one. Compared by account,
+                // not token, because a renew-on-401 inside the request replaces the token.
+                guard currentUserID == userID else {
+                    EcosiaLogger.accounts.notice("Discarding register visit response - account changed while in flight")
                     return
                 }
 
