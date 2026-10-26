@@ -149,13 +149,15 @@ public final class ImpactManager: ObservableObject {
 
     /// Registers a visit when logged in, collects the daily local seed when logged out.
     public func refreshSeedState() {
+        // Catch up: the resolution notification only reaches registered browser windows, so auth
+        // may have resolved without this object hearing it.
         if !hasResolvedAuthState {
-            // The resolution notification only reaches registered browser windows, so it can resolve unheard.
             isLoggedIn = auth.isLoggedIn
             hasResolvedAuthState = auth.hasResolvedAuthState
         }
 
-        // Branching on an unresolved isLoggedIn could treat a logged-in user as a guest.
+        // Defer: a separate check from the catch-up above, because auth can still be resolving
+        // after it. Branching on an unresolved isLoggedIn could treat a logged-in user as a guest.
         guard hasResolvedAuthState else {
             EcosiaLogger.accounts.debug("Deferring seed state refresh until auth state resolves")
             pendingSeedStateRefresh = true
