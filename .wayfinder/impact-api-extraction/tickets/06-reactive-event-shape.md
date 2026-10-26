@@ -15,3 +15,4 @@ Shape of the typed auth-event stream for PR 4: Combine publisher vs async stream
 - Dedup: `hasHandledCurrentResolution` and `pendingSeedStateRefresh` stay in `ImpactManager` verbatim in PR 4 (cold launch can still emit `.loggedIn` and `.stateResolved` for one event). Removing them is a separate decision needing proof from PR 2's tests.
 - Late subscribers: no replay. `ImpactManager` subscribes first, then reads `isLoggedIn` / `hasResolvedAuthState` synchronously, as the provider does today.
 - Stays on NotificationCenter in PR 4: `.EcosiaUserProfileUpdated` (provider / avatar) and the seed-progress notification from `UserDefaultsSeedProgressManager` (revisited in the cache-unification effort).
+- Seed-progress observer: `ImpactManager` observes the seed-progress notification itself, so `EcosiaAuthUIStateProvider` no longer handles any impact event.
