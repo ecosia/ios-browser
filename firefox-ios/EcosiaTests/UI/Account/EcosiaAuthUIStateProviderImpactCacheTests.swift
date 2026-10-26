@@ -5,31 +5,6 @@
 @testable import Ecosia
 import XCTest
 
-/// Records calls instead of touching real `UserDefaults`, so tests don't depend on
-/// `EcosiaAuthenticationService.shared`'s live (unmockable) singleton state.
-private final class MockLoggedInImpactCache: LoggedInImpactCacheProtocol {
-    nonisolated(unsafe) static var stored: ImpactSnapshot?
-    nonisolated(unsafe) static var clearCallCount = 0
-
-    static func load() -> ImpactSnapshot? {
-        stored
-    }
-
-    static func save(_ snapshot: ImpactSnapshot) {
-        stored = snapshot
-    }
-
-    static func clear() {
-        clearCallCount += 1
-        stored = nil
-    }
-
-    static func reset() {
-        stored = nil
-        clearCallCount = 0
-    }
-}
-
 @MainActor
 final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
 
