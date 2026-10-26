@@ -75,7 +75,7 @@ flowchart TD
   subgraph M1[M1 Feature configuration]
     T07[07 Summaries on-device only]
     T08[08 Lens, Quick Answers, ad blocker off]
-    T09[09 AI controls hub]
+    T09[09 AI-free replaces AI hub]
     T07 --> T10[10 Feature config tests]
     T08 --> T10
     T09 --> T10
@@ -137,7 +137,7 @@ All tickets live under the Jira epic [MOB-5026: Firefox 157.x Upgrade (Ecosia 13
 | 06 | [Start the upgrade diary](issues/06-start-upgrade-diary.md) | M0 | S | 01 | ready-for-agent |
 | 07 | [Summaries on-device only](issues/07-summaries-on-device-only.md) | M1 | O | 02 | ready-for-agent |
 | 08 | [Google Lens, Quick Answers and ad blocker off](issues/08-google-lens-quick-answers-off.md) | M1 | S | 02 | ready-for-agent |
-| 09 | [AI controls hub shows only kept features](issues/09-ai-controls-hub.md) | M1 | O | 02 | ready-for-human |
+| 09 | [AI-free searching replaces the AI controls hub](issues/09-ai-controls-hub.md) | M1 | O | 02 | ready-for-agent |
 | 10 | [Lock the feature configuration with tests](issues/10-feature-configuration-tests.md) | M1 | O | 07, 08, 09 | ready-for-agent |
 | 11 | [Run snapshot tests against production references](issues/11-snapshot-baselines.md) | M2 | S | 02 | ready-for-human |
 | 12 | [Symbol-dependency and missing-file checks](issues/12-symbol-and-missing-file-checks.md) | M2 | S | 02 | ready-for-agent |

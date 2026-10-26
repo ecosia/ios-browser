@@ -3,6 +3,7 @@
 **Written:** 2026-10-25, against `origin/upgrade/firefox` at `f0bb5fa14a` (PR #1362, M0 sign-off docs, still open).
 **Milestone:** M1 of the Firefox 157.x upgrade, Jira epic MOB-5026. Tickets 07 to 10 (MOB-5033 to MOB-5036).
 **Goal:** the app exposes exactly the Firefox features in [milestones.md](milestones.md#product-decisions), each decision is locked by a test, and each is confirmed on a device.
+**Updated:** 2026-10-26, Q2 to Q5 answered (the AI controls hub is replaced by Ecosia's AI-free searching toggle); section 4 and step 4 rewritten.
 
 This file is written so that an agent with no memory of the planning conversation can execute it. Read section 1 before running anything. The M0 plan ([m0-plan.md](m0-plan.md)) is done; its worktree, `verify.sh` and diary format carry over.
 
@@ -41,7 +42,7 @@ Three PRs into `upgrade/firefox`, so the agent-ready work is not held up by the 
 | PR | Branch | Tickets | Steps |
 | --- | --- | --- | --- |
 | A | `dc-mob-5033-m1-feature-flags` | 07 (MOB-5033), 08 (MOB-5034), plus this plan | 0, 1, 2, 3 |
-| B | `dc-mob-5035-ai-controls-hub` | 09 (MOB-5035) | 4 |
+| B | `dc-mob-5035-ai-free-gates-firefox-ai` | 09 (MOB-5035) | 4 |
 | C | `dc-mob-5036-feature-config-tests` | 10 (MOB-5036), M1 close-out | 5, 6 |
 
 B starts from `origin/upgrade/firefox` once A is merged (or from A if A is still in review, then merges `origin/upgrade/firefox` after A lands). C starts after A and B are merged.
@@ -127,10 +128,8 @@ Resolved values on `f0bb5fa14a`, generated that way:
 Written into the progress file's `## Waiting on Dario`. Steps that do not need the answer go ahead.
 
 - **Q1 (step 2, blocks merging PR A, not writing it). Speech purpose string.** Removing `NSSpeechRecognitionUsageDescription` while `QuickAnswersKit` stays linked means the binary references `SFSpeechRecognizer` with no purpose string. App Store Connect flags that at upload (ITMS-90683, "Missing purpose string"). Options: (a) remove it as ticket 08 says, and prove it with one TestFlight upload of PR A's build before merging (recommended: cheapest check, keeps production's permission set); (b) keep the key, and change ticket 08's criterion; (c) remove it and stop linking `QuickAnswersKit` (code change across ~10 Firefox files, against "configuration over code").
-- **Q2 (step 4). Where the hub goes in Ecosia's Settings,** and whether Firefox's standalone Translation and Summarize rows come back too. Firefox has all three in General. Suggested: only the AI Controls row, in Ecosia's General section after the Siri row, with the summaries shake toggle reachable from the hub's Page Summaries row (needs code), or keep the standalone Summarize row. Design or product decides (ticket 09 is `ready-for-human`).
-- **Q3 (step 4). The two "Learn more" links:** hide them, or point them to an Ecosia help page (which URL?). Default if no page exists: hide both.
-- **Q4 (step 4). The "Block AI Enhancements" master switch:** keep (it only toggles Translations and Summaries once Quick Answers is off) or hide. Default: keep.
-- **Q5 (step 4). The fox artwork in the hub's header card:** hide it, or replace it with an Ecosia illustration (which asset?). Default: hide.
+- **Q2 to Q5: answered on 2026-10-26.** Dario: the hub does not come to Ecosia's Settings. Ecosia's "AI-free searching" toggle replaces it and switches off **both page summaries and translations**. Where that toggle is not offered, **page summaries get their own Settings row** (Firefox's Summarize row). The hub's links, master switch and artwork are therefore moot. Ticket 09 rewritten accordingly (`issues/09-ai-controls-hub.md`); the Jira ticket still has the old text.
+- **Q6 (open, from Q2's answer). Translations without the toggle:** where AI-free searching is not offered, translations are always on with no way to switch them off (Firefox's Translation settings row is not in Ecosia's Settings either). Add Firefox's Translation row next to the Summarize row there too?
 
 Pre-decided, Dario can veto:
 
@@ -188,14 +187,15 @@ Run `verify.sh` on the branch point in the background if it has not been run on 
 
 ### Step 4 (ticket 09, MOB-5035): AI controls hub
 
-Needs Q2 to Q5. Then:
+Rewritten after Q2 to Q5 (2026-10-26). Branch `dc-mob-5035-ai-free-gates-firefox-ai`, started from PR A's branch because A is not pushed yet.
 
-1. Add the agreed row(s) to Ecosia's General list in `AppSettingsTableViewController.getGeneralSettings()`, gated the same way Firefox gates them (`.aiKillSwitch`, `.translation`, `isSummarizeFeatureEnabled`), inside `// Ecosia:` comments. If the Summarize settings screen comes back, fix its `canSummarize` leak (3.2) in the same PR.
-2. Hide or replace the two links (Q3) and the fox artwork (Q5) in `AIControlsModel` / `AIControlsSettingsView`, inside `// Ecosia:` comments. Keep upstream's code commented, not deleted. Update the `AIControlsModelTests` that assert the SUMO URL.
-3. Unit tests next to `AIControlsModelTests` or in `EcosiaTests`: with Quick Answers off, the model exposes Translations and (on a supported device) Page Summaries only; links hidden (or Ecosia URL).
-4. Run `python3 ecosify-strings.py firefox-ios` if any string changed; grep the hub keys for Firefox/Mozilla in all `Settings.strings`.
-5. Simulator screenshots: supported (Translations + Summaries) and `SKIP_APPLE_INTELLIGENCE` (Translations only), light and dark, for design or product sign-off.
-6. Diary entry, `verify.sh`, ask Dario to push PR B.
+1. `AIFreeSearchingSelection` (Ecosia module) gets `isAvailable` (the toggle is offered: flag on, and Ecosia is the provider) and `blocksBrowserAI` (`isAvailable` and the user value is on). `isActive` stays as it is for search; it ignores the provider, so it cannot be the browser-AI rule.
+2. Summaries: `DefaultSummarizerNimbusUtils.isSummarizeFeatureToggledOn` also requires `!blocksBrowserAI` (`/* Ecosia: */`). Every summaries entry point reads it (3.2).
+3. Translations: `FeatureFlagsProvider.isEnabled(.translation)` returns false while `blocksBrowserAI` (`// Ecosia:`). Every translations gate reads that flag, and `FeatureFlagsProvider` is the only production `FeatureFlagProviding`.
+4. `AIFreeSearchingSearchSettings` hides on `!isAvailable` and, on change, dispatches `ToolbarAction(.didSummarizeSettingsChange)` and `TranslationsAction(.didTranslationSettingsChange)` for the window, as Firefox's own settings screens do.
+5. Ecosia's General settings add Firefox's `SummarizeSetting` when `!isAvailable` and the device can summarize. Its screen's `canSummarize` leak (3.2) cannot trigger, because the row only shows on supported devices.
+6. Tests: `AIFreeSearchingSelectionTests` (the rule, including a provider change after AI-free was turned on) and `EcosiaTests/AIFreeSearchingBrowserAITests.swift` (both gates; other flags untouched).
+7. Diary entry, `verify.sh`, ask Dario to push PR B. Device checks per the ticket's criteria.
 
 ### Step 5 (ticket 10, MOB-5036): lock the configuration
 
