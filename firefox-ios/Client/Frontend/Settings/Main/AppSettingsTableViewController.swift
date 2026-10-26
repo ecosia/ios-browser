@@ -466,7 +466,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                    ])]
         }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        let generalSettings: [Setting] = [
+        var generalSettings: [Setting] = [
             OpenWithSetting(settings: self, settingsDelegate: parentCoordinator),
             ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
             SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
@@ -489,6 +489,12 @@ class AppSettingsTableViewController: SettingsTableViewController,
                 statusText: .SettingsShowLinkPreviewsStatus
             )
         ]
+
+        // Ecosia: The AI-free searching toggle replaces Firefox's AI controls hub. Where it is not
+        // offered, page summaries get their own row instead, on devices that can summarize.
+        if !AIFreeSearchingSelection.isAvailable, summarizerNimbusUtils.isSummarizeFeatureEnabled {
+            generalSettings.append(SummarizeSetting(settings: self, settingsDelegate: parentCoordinator))
+        }
 
         return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
                                children: generalSettings)]
