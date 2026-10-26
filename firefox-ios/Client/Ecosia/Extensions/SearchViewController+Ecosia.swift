@@ -132,7 +132,7 @@ extension SearchViewController {
 
     /// Whether the AI Chat row should be rendered in the suggestions section.
     var shouldShowAIChatRow: Bool {
-        AIChatMVPExperiment.isEnabled
+        AIChatExperiment.isEnabled
             && SearchProviderSelection.showsAIAutocompleteRow
             && !viewModel.searchQuery.isEmpty
             && suggestionsCount() != nil

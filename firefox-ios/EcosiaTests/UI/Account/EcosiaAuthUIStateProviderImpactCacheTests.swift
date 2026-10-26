@@ -5,43 +5,18 @@
 @testable import Ecosia
 import XCTest
 
-/// Records calls instead of touching real `UserDefaults`, so tests don't depend on
-/// `EcosiaAuthenticationService.shared`'s live (unmockable) singleton state.
-private final class MockLoggedInImpactCache: LoggedInImpactCacheProtocol {
-    nonisolated(unsafe) static var stored: ImpactSnapshot?
-    nonisolated(unsafe) static var clearCallCount = 0
-
-    static func load() -> ImpactSnapshot? {
-        stored
-    }
-
-    static func save(_ snapshot: ImpactSnapshot) {
-        stored = snapshot
-    }
-
-    static func clear() {
-        clearCallCount += 1
-        stored = nil
-    }
-
-    static func reset() {
-        stored = nil
-        clearCallCount = 0
-    }
-}
-
 @MainActor
 final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
         MockLoggedInImpactCache.reset()
-        EcosiaAuthUIStateProvider.loggedInImpactCacheType = MockLoggedInImpactCache.self
+        ImpactManager.loggedInImpactCacheType = MockLoggedInImpactCache.self
         EcosiaAuthenticationService.wasLoggedIn = false
     }
 
     override func tearDown() {
-        EcosiaAuthUIStateProvider.loggedInImpactCacheType = LoggedInImpactCache.self
+        ImpactManager.loggedInImpactCacheType = LoggedInImpactCache.self
         MockLoggedInImpactCache.reset()
         EcosiaAuthenticationService.wasLoggedIn = false
         super.tearDown()
@@ -53,7 +28,7 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
         let snapshot = ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8)
         MockLoggedInImpactCache.save(snapshot)
 
-        let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: true)
+        let resolved = ImpactManager.resolveInitialImpactSnapshot(isLoggedIn: true)
 
         XCTAssertEqual(resolved, snapshot)
     }
@@ -66,7 +41,7 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
         let snapshot = ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8)
         MockLoggedInImpactCache.save(snapshot)
 
-        let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: false)
+        let resolved = ImpactManager.resolveInitialImpactSnapshot(isLoggedIn: false)
 
         XCTAssertEqual(resolved, snapshot)
     }
@@ -75,14 +50,14 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
         UserDefaultsSeedProgressManager.resetLocalSeedProgress()
         UserDefaultsSeedProgressManager.addSeeds(2)
 
-        let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: false)
+        let resolved = ImpactManager.resolveInitialImpactSnapshot(isLoggedIn: false)
 
         XCTAssertEqual(resolved?.seedCount, 2)
         XCTAssertEqual(resolved?.currentLevelNumber, 1)
     }
 
     func test_resolveInitialSnapshot_returnsNil_whenLoggedInButNoCacheEntry() {
-        let resolved = EcosiaAuthUIStateProvider.resolveInitialImpactSnapshot(isLoggedIn: true)
+        let resolved = ImpactManager.resolveInitialImpactSnapshot(isLoggedIn: true)
 
         XCTAssertNil(resolved)
     }

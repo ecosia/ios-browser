@@ -376,17 +376,13 @@ final class UnleashCustomSearchProviderSetting: UnleashVariantResetSetting {
     }
 }
 
-final class UnleashAIChatMVPSetting: UnleashVariantResetSetting {
+final class UnleashAIChatSetting: UnleashVariantResetSetting {
     override var titleName: String? {
-        "AI Chat MVP"
-    }
-
-    override var variant: Unleash.Variant? {
-        Unleash.getVariant(.aiChatMVP)
+        "AI Chat Enabled"
     }
 
     override var unleashEnabled: Bool? {
-        Unleash.isEnabled(.aiChatMVP)
+        Unleash.isEnabled(.aiChat)
     }
 }
 
@@ -570,7 +566,7 @@ final class SimulateImpactAPIErrorSetting: HiddenSetting {
         let alert = AlertController(
             title: !currentValue ? "Impact API Error Enabled ✅" : "Impact API Error Disabled ✅",
             message: !currentValue
-                ? "Next impact API call will fail and show the seed counter error toast."
+                ? "Next impact API call will fail and show the seed counter error state."
                 : "Impact API errors disabled.",
             preferredStyle: .alert
         )

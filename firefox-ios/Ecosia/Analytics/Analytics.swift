@@ -61,11 +61,11 @@ open class Analytics {
         Analytics.shared.privateTracker = makePrivateTracker()
     }
 
-    private static func getTestContext(from toggle: Unleash.Toggle.Name) -> SelfDescribingJson? {
+    private static func getTestContext(from toggle: Unleash.Toggle.Name, named contextName: String) -> SelfDescribingJson? {
         let variant = Unleash.getVariant(toggle)
         guard variant.name != "disabled" else { return nil }
 
-        let variantContext: [String: String] = [toggle.rawValue: variant.payload?.value ?? variant.name]
+        let variantContext: [String: String] = [contextName: variant.name]
         let abTestContext: [String: AnyHashable] = [abTestRoot: variantContext]
         return SelfDescribingJson(schema: abTestSchema, andDictionary: abTestContext)
     }
@@ -82,10 +82,14 @@ open class Analytics {
                              payload: ["app_v": Bundle.version as NSObject]))
     }
 
-    public func activity(_ action: Action.Activity) {
+    /// `isDefaultBrowser` is `nil` unless the rate-limited system check ran for this launch/resume.
+    public func activity(_ action: Action.Activity, isDefaultBrowser: Bool?) {
         let event = Structured(category: Category.activity.rawValue,
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
+        if isDefaultBrowser == true {
+            event.property = Property.defaultBrowserSet.rawValue
+        }
 
         appendActivityContextIfNeeded(action, event) { [weak self] in
             self?.track(event)
@@ -638,25 +642,16 @@ extension Analytics {
     func appendActivityContextIfNeeded(_ action: Analytics.Action.Activity, _ event: Structured, completion: @escaping () -> Void) {
         switch action {
         case .resume, .launch:
-            addABTestContexts(to: event, toggles: reportedABTestToggles())
+            addABTestContexts(to: event)
             addCookieConsentContext(to: event)
             addUserStateContext(to: event, completion: completion)
         }
     }
 
-    private func reportedABTestToggles() -> [Unleash.Toggle.Name] {
-        var toggles: [Unleash.Toggle.Name] = []
-        if BrazeIntegration.isReportedToAnalytics {
-            toggles.append(.brazeCoreMarkets)
-        }
-        return toggles
-    }
-
-    private func addABTestContexts(to event: Structured, toggles: [Unleash.Toggle.Name]) {
-        toggles.forEach { toggle in
-            if let context = Self.getTestContext(from: toggle) {
-                event.entities.append(context)
-            }
+    private func addABTestContexts(to event: Structured) {
+        if BrazeIntegration.isReportedToAnalytics,
+            let brazeContext = Self.getTestContext(from: .brazeCoreMarkets, named: "braze_features_holdout_group") {
+            event.entities.append(brazeContext)
         }
     }
 

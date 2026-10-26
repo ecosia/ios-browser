@@ -113,7 +113,7 @@ extension AppSettingsTableViewController {
             UnleashBrazeIntegrationSetting(settings: self),
             UnleashNativeSRPVAnalyticsSetting(settings: self),
             UnleashCustomSearchProviderSetting(settings: self),
-            UnleashAIChatMVPSetting(settings: self),
+            UnleashAIChatSetting(settings: self),
             UnleashAIFreeSearchingSetting(settings: self),
             UnleashIdentifierSetting(settings: self),
             UnleashRefreshSetting(settings: self)

@@ -35,9 +35,9 @@ final class AnalyticsSpy: Analytics, @unchecked Sendable {
     }
 
     var activityActionCalled: Analytics.Action.Activity?
-    override func activity(_ action: Analytics.Action.Activity) {
+    override func activity(_ action: Analytics.Action.Activity, isDefaultBrowser: Bool?) {
         activityActionCalled = action
-        super.activity(action)
+        super.activity(action, isDefaultBrowser: isDefaultBrowser)
     }
 
     var bookmarksImportExportPropertyCalled: Analytics.Property.Bookmarks?
@@ -207,6 +207,9 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         // network is already neutralised by the seed above) was a cross-test contaminator that starved
         // later timing-sensitive tests under CI load — the same vector fixed for the MMP tests. (MOB-4384)
         MMP.provider = MockMMPProvider()
+        // Ecosia: the lifecycle tests reach the default-browser check; keep it off the system API and
+        // standard defaults.
+        DefaultBrowserStatusChecker.shared = .inert()
     }
 
     override func tearDown() {
@@ -807,27 +810,25 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     }
 
     func testAddBrazeABTestContext_forTreatmentVariant_reportsThePayloadValue() {
-        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.treatment.rawValue,
-                                               payloadValue: "st_braze_features_treatment")
+        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.treatment.rawValue)
 
         XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
-                       ["braze-core-markets": "st_braze_features_treatment"])
+                       ["braze_features_holdout_group": "st_braze_features_treatment"])
     }
 
     func testAddBrazeABTestContext_forHoldoutVariant_reportsThePayloadValue() {
-        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.holdout.rawValue,
-                                               payloadValue: "st_braze_features_holdout")
+        let context = resumeEventABTestContext(brazeVariant: BrazeCoreMarketVariant.holdout.rawValue)
 
         XCTAssertEqual(context?.data["ab_tests"] as? [String: String],
-                       ["braze-core-markets": "st_braze_features_holdout"])
+                       ["braze_features_holdout_group": "st_braze_features_holdout"])
     }
 
     func testAddBrazeABTestContext_forVariantWithoutPayload_reportsTheVariantName() {
         let variant = BrazeCoreMarketVariant.treatment.rawValue
 
-        let context = resumeEventABTestContext(brazeVariant: variant, payloadValue: nil)
+        let context = resumeEventABTestContext(brazeVariant: variant)
 
-        XCTAssertEqual(context?.data["ab_tests"] as? [String: String], ["braze-core-markets": variant])
+        XCTAssertEqual(context?.data["ab_tests"] as? [String: String], ["braze_features_holdout_group": variant])
     }
 
     func testAddBrazeABTestContext_forControlVariant_isNotAppended() {
@@ -836,11 +837,11 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     }
 
     func testAddBrazeABTestContext_forUnknownVariant_isNotAppended() {
-        XCTAssertNil(resumeEventABTestContext(brazeVariant: "unknown-variant", payloadValue: nil))
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: "unknown-variant"))
     }
 
     func testAddBrazeABTestContext_whenFlagCannotBeEvaluated_isNotAppended() {
-        XCTAssertNil(resumeEventABTestContext(brazeVariant: nil, payloadValue: nil))
+        XCTAssertNil(resumeEventABTestContext(brazeVariant: nil))
     }
 
     func testAddUserSeedCountContextToAllEvents() {
@@ -1101,7 +1102,7 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
 // MARK: - Helper SUTs
 extension AnalyticsSpyTests {
 
-    private func resumeEventABTestContext(brazeVariant: String?, payloadValue: String?) -> SelfDescribingJson? {
+    private func resumeEventABTestContext(brazeVariant: String?, payloadValue: String? = nil) -> SelfDescribingJson? {
         var model = Unleash.Model()
         if let brazeVariant {
             let payload = payloadValue.map { Unleash.Payload(type: "string", value: $0) }
@@ -1275,6 +1276,46 @@ final class AnalyticsContextTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(event?.category, Analytics.Category.ntp.rawValue)
         XCTAssertEqual(event?.action, Analytics.Action.view.rawValue)
         XCTAssertNil(event?.label)
+    }
+
+    // MARK: - Default browser status
+
+    func testActivityWhenDefaultBrowserTracksDefaultBrowserSetProperty() {
+        // Arrange
+        let sut = makeAnalyticsContextSUT()
+
+        // Act
+        sut.activity(.launch, isDefaultBrowser: true)
+
+        // Assert
+        let event = sut.trackedEvents.first as? Structured
+        XCTAssertEqual(event?.action, Analytics.Action.Activity.launch.rawValue)
+        XCTAssertEqual(event?.property, Analytics.Property.defaultBrowserSet.rawValue)
+    }
+
+    func testActivityWhenNotDefaultBrowserHasNoProperty() {
+        // Arrange
+        let sut = makeAnalyticsContextSUT()
+
+        // Act
+        sut.activity(.launch, isDefaultBrowser: false)
+
+        // Assert
+        let event = sut.trackedEvents.first as? Structured
+        XCTAssertNil(event?.property)
+    }
+
+    func testActivityWithoutDefaultBrowserStatusHasNoProperty() {
+        // Arrange
+        let sut = makeAnalyticsContextSUT()
+
+        // Act
+        sut.activity(.resume, isDefaultBrowser: nil)
+
+        // Assert
+        let event = sut.trackedEvents.first as? Structured
+        XCTAssertEqual(event?.action, Analytics.Action.Activity.resume.rawValue)
+        XCTAssertNil(event?.property)
     }
 
     // MARK: - Helpers

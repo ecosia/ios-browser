@@ -36,7 +36,9 @@ final class AppLaunchUtil: Sendable {
             logger.copyLogsToDocuments()
         }
 
+        /* Ecosia: Querying on every launch exhausts Apple's rate limit; see `ecosiaCheckDefaultBrowserStatusIfDue`
         DefaultBrowserUtility().processUserDefaultState(isFirstRun: introScreenManager.shouldShowIntroScreen)
+         */
         DefaultBrowserUtility().migrateDefaultBrowserStatusIfNeeded(isFirstRun: introScreenManager.shouldShowIntroScreen)
         if #available(iOS 26, *) {
             #if canImport(FoundationModels)

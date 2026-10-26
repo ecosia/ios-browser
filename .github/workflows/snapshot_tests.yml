@@ -2,19 +2,51 @@ name: Snapshot Tests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, 'upgrade/firefox']
+  # Pull requests only restore compilation caches, so main refreshes its own cache overnight.
+  schedule:
+    - cron: '0 2 * * *'
   workflow_dispatch:
+
+# A new push to a pull request makes its running snapshot tests outdated.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   classify_snapshot_changes:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     name: Check Snapshot Test Relevance
+    permissions:
+      actions: read
+      contents: read
     outputs:
-      should_run: ${{ steps.classify.outputs.should_run }}
+      should_run: ${{ steps.classify.outputs.should_run || steps.main_cache.outputs.should_run }}
 
     steps:
+      # Matches the week and commit parts of the cache key. The toolchain part needs macOS to compute,
+      # but Xcode is pinned in prepare_environment, so a new version arrives with a new commit, and
+      # the weekly refresh bounds how long an unannounced runner image change can go unnoticed.
+      - name: Check for a main cache at the latest commit this week
+        id: main_cache
+        if: github.event_name == 'schedule'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          keys=$(gh api "repos/$GITHUB_REPOSITORY/actions/caches?ref=refs/heads/main&key=xcode-compilation-snapshot-tests-&per_page=100" \
+            --jq '.actions_caches[].key')
+          week=$(date -u +%G-%V)
+          should_run=true
+          if grep -q -- "-$week-$GITHUB_SHA\$" <<< "$keys"; then
+            should_run=false
+            echo "main already has a cache for this week and commit; skipping snapshot tests."
+          fi
+          echo "should_run=$should_run" >> "$GITHUB_OUTPUT"
+
       - name: Checkout
+        if: github.event_name == 'pull_request'
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
@@ -22,6 +54,7 @@ jobs:
 
       - name: Classify changed files
         id: classify
+        if: github.event_name == 'pull_request'
         shell: bash
         run: |
           should_run=$(./check_snapshot_updates.sh \
@@ -35,7 +68,6 @@ jobs:
     if: >-
       always() &&
       (
-        github.event_name != 'pull_request' ||
         needs.classify_snapshot_changes.result != 'success' ||
         needs.classify_snapshot_changes.outputs.should_run == 'true'
       )
