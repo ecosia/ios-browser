@@ -9,7 +9,7 @@ import XCTest
 @MainActor
 final class ImpactManagerTests: XCTestCase {
 
-    private let auth = MockAuthSessionProvider(isLoggedIn: true, hasResolvedAuthState: true, accessToken: "token")
+    private let auth = MockAuthSessionProvider(isLoggedIn: true, hasResolvedAuthState: true, accessToken: "token", userID: "user")
     private lazy var accountsProvider = MockAccountsProvider(result: .success(makeVisitResponse()))
     private lazy var manager = ImpactManager(accountsProvider: accountsProvider, auth: auth)
     private var cancellables: Set<AnyCancellable> = []
@@ -117,9 +117,37 @@ final class ImpactManagerTests: XCTestCase {
 
     // MARK: - Session changes while in flight
 
-    func test_registerVisitResponse_isDiscarded_whenAccessTokenChangesInFlight() async {
+    func test_registerVisitResponse_isApplied_whenAccessTokenRenewsInFlight() async {
         accountsProvider.result = .success(makeVisitResponse(seedBalance: 42, levelNumber: 3))
-        accountsProvider.onRegisterVisit = { [auth] in auth.accessToken = "other-account-token" }
+        accountsProvider.onRegisterVisit = { [auth] in auth.accessToken = "renewed-token" }
+        let finished = expectRegisterVisitToFinish()
+
+        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        await fulfillment(of: [finished], timeout: 1)
+
+        XCTAssertEqual(manager.currentLevelNumber, 3)
+        XCTAssertEqual(MockLoggedInImpactCache.stored?.seedCount, 42)
+    }
+
+    func test_registerVisitResponse_isDiscarded_whenAccountChangesInFlight() async {
+        accountsProvider.result = .success(makeVisitResponse(seedBalance: 42, levelNumber: 3))
+        accountsProvider.onRegisterVisit = { [auth] in
+            auth.accessToken = "other-account-token"
+            auth.userID = "other-user"
+        }
+        let finished = expectRegisterVisitToFinish()
+        finished.isInverted = true
+
+        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        await fulfillment(of: [finished], timeout: 0.5)
+
+        XCTAssertEqual(manager.currentLevelNumber, 1)
+        XCTAssertNil(MockLoggedInImpactCache.stored)
+    }
+
+    func test_registerVisitResponse_isDiscarded_whenUserIDIsUnavailable() async {
+        auth.userID = nil
+        accountsProvider.result = .success(makeVisitResponse(seedBalance: 42, levelNumber: 3))
         let finished = expectRegisterVisitToFinish()
         finished.isInverted = true
 
@@ -132,7 +160,10 @@ final class ImpactManagerTests: XCTestCase {
 
     func test_registerVisitResponse_isDiscarded_whenLoggedOutInFlight() async {
         accountsProvider.result = .success(makeVisitResponse(seedBalance: 42, levelNumber: 3))
-        accountsProvider.onRegisterVisit = { [auth] in auth.accessToken = nil }
+        accountsProvider.onRegisterVisit = { [auth] in
+            auth.accessToken = nil
+            auth.userID = nil
+        }
         let finished = expectRegisterVisitToFinish()
         finished.isInverted = true
 
