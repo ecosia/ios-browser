@@ -82,10 +82,14 @@ open class Analytics {
                              payload: ["app_v": Bundle.version as NSObject]))
     }
 
-    public func activity(_ action: Action.Activity) {
+    /// `isDefaultBrowser` is `nil` unless the rate-limited system check ran for this launch/resume.
+    public func activity(_ action: Action.Activity, isDefaultBrowser: Bool?) {
         let event = Structured(category: Category.activity.rawValue,
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
+        if isDefaultBrowser == true {
+            event.property = Property.defaultBrowserSet.rawValue
+        }
 
         appendActivityContextIfNeeded(action, event) { [weak self] in
             self?.track(event)
