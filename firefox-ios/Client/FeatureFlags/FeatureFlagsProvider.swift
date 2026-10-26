@@ -4,6 +4,8 @@
 
 import Common
 import Shared
+// Ecosia: AI-free searching switches translations off.
+import Ecosia
 
 /// Protocol for checking whether a feature is enabled via Nimbus remote config.
 protocol FeatureFlagProviding: Sendable {
@@ -27,6 +29,12 @@ final class FeatureFlagsProvider: FeatureFlagProviding, @unchecked Sendable {
 
     /// Used for checking the status of a feature flag from the feature flag backend
     func isEnabled(_ flag: FeatureFlagID) -> Bool {
+        // Ecosia: Ecosia's AI-free searching toggle replaces Firefox's AI controls hub and also
+        // switches translations off. Every translations gate (toolbar icon, menu, middleware,
+        // contextual hint, model download at launch) checks `.translation` here.
+        if flag == .translation, AIFreeSearchingSelection.blocksBrowserAI {
+            return false
+        }
         return backendLayer.checkNimbusConfigFor(flag, with: prefs)
     }
 
