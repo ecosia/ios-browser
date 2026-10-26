@@ -35,7 +35,7 @@ final class AnalyticsSpy: Analytics, @unchecked Sendable {
     }
 
     var activityActionCalled: Analytics.Action.Activity?
-    override func activity(_ action: Analytics.Action.Activity, isDefaultBrowser: Bool? = nil) {
+    override func activity(_ action: Analytics.Action.Activity, isDefaultBrowser: Bool?) {
         activityActionCalled = action
         super.activity(action, isDefaultBrowser: isDefaultBrowser)
     }
@@ -1310,7 +1310,7 @@ final class AnalyticsContextTests: XCTestCase, @unchecked Sendable {
         let sut = makeAnalyticsContextSUT()
 
         // Act
-        sut.activity(.resume)
+        sut.activity(.resume, isDefaultBrowser: nil)
 
         // Assert
         let event = sut.trackedEvents.first as? Structured

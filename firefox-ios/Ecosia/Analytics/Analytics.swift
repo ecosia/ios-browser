@@ -82,8 +82,8 @@ open class Analytics {
                              payload: ["app_v": Bundle.version as NSObject]))
     }
 
-    /// `isDefaultBrowser` is only passed right after the rate-limited system check succeeded.
-    public func activity(_ action: Action.Activity, isDefaultBrowser: Bool? = nil) {
+    /// `isDefaultBrowser` is `nil` unless the rate-limited system check ran for this launch/resume.
+    public func activity(_ action: Action.Activity, isDefaultBrowser: Bool?) {
         let event = Structured(category: Category.activity.rawValue,
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
