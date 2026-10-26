@@ -9,4 +9,6 @@ public protocol AuthSessionProviderProtocol: Sendable {
     var isLoggedIn: Bool { get }
     var hasResolvedAuthState: Bool { get }
     var accessToken: String? { get }
+    /// The signed-in account's Auth0 `sub`; unlike `accessToken`, it stays the same across credential renewals.
+    var userID: String? { get }
 }

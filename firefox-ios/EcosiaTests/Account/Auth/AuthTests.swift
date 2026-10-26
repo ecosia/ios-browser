@@ -335,6 +335,33 @@ final class AuthTests: XCTestCase {
         XCTAssertTrue(auth.hasOptedOutOfChatThreads)
     }
 
+    // MARK: - Auth Session Provider Tests
+
+    func testAuthSessionProvider_userID_isKeptAcrossCredentialRenewal() async throws {
+        let sessionProvider = EcosiaAuthSessionProvider(authenticationService: auth)
+        mockProvider.mockCredentials = try credentials(accessToken: "first-access-token", sub: "auth0|12345")
+        _ = try await auth.login()
+        XCTAssertEqual(sessionProvider.userID, "auth0|12345")
+
+        mockProvider.canRenewCredentialsResult = true
+        mockProvider.hasStoredCredentials = true
+        mockProvider.mockCredentials = try credentials(accessToken: "renewed-access-token", sub: "auth0|12345")
+        try await auth.renewCredentials()
+
+        XCTAssertEqual(sessionProvider.accessToken, "renewed-access-token")
+        XCTAssertEqual(sessionProvider.userID, "auth0|12345")
+    }
+
+    func testAuthSessionProvider_userID_isNilAfterLogout() async throws {
+        let sessionProvider = EcosiaAuthSessionProvider(authenticationService: auth)
+        mockProvider.mockCredentials = try credentials(accessToken: "first-access-token", sub: "auth0|12345")
+        _ = try await auth.login()
+
+        try await auth.logout(triggerWebLogout: false)
+
+        XCTAssertNil(sessionProvider.userID)
+    }
+
     // MARK: - Logout Tests
 
     func testLogout_withTriggerWebLogout_clearsSessionAndCredentials() async {
@@ -854,6 +881,17 @@ final class AuthTests: XCTestCase {
         }
 
         return "\(base64URLEncode(header)).\(base64URLEncode(payload)).mock-signature"
+    }
+
+    private func credentials(accessToken: String, sub: String) throws -> Credentials {
+        Credentials(
+            accessToken: accessToken,
+            tokenType: "Bearer",
+            idToken: try makeJWT(claims: ["sub": sub, "iat": Date().timeIntervalSince1970]),
+            refreshToken: "test-refresh-token",
+            expiresIn: Date().addingTimeInterval(3600),
+            scope: "openid profile email"
+        )
     }
 
     private func credentials(chatThreadsOptOut: Bool) throws -> Credentials {
