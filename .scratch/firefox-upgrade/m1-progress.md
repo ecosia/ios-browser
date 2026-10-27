@@ -17,12 +17,12 @@ In progress: nothing (PR A and PR B ready locally; step 5 next)
 
 ## Device checks owed
 
-- [ ] 07: supported device: summaries work; proxy shows no request to Mozilla's summarizer (mlpa-*.mozilla.global.ssl.fastly.net) or App Attest endpoints
+- [ ] 07: supported device: summaries work (✓ (simulator 2026-10-27, EcosiaBeta BetaDebug, c806b0acbb): "Summarised by Apple Intelligence" via reader mode; menu "Summarise Page"); still open: proxy shows no request to Mozilla's summarizer (mlpa-*.mozilla.global.ssl.fastly.net) or App Attest endpoints
 - [ ] 07: unsupported device (or SKIP_APPLE_INTELLIGENCE): no summaries entry point anywhere
-- [ ] 08: no Lens or Quick Answers entry point on the new tab page, address bar, image context menu
-- [ ] 08: no "Block Ads" anywhere; Ecosia search ads show normally
-- [ ] 09: AI-free on: no summaries or translations entry point; off: both work (supported device)
-- [ ] 09: non-Ecosia provider: Summarize row (supported device) and Translation row in General settings; nothing hidden by an earlier AI-free value
+- [x] 08: no Lens or Quick Answers entry point on the new tab page, address bar, image context menu (simulator 2026-10-27, EcosiaBeta BetaDebug, c806b0acbb)
+- [x] 08: no "Block Ads" anywhere; Ecosia search ads show normally (simulator 2026-10-27, EcosiaBeta BetaDebug, c806b0acbb)
+- [x] 09: AI-free on: no summaries or translations entry point; off: both work (supported device) (simulator 2026-10-27, EcosiaBeta BetaDebug, c806b0acbb). Bug found: switching the search engine back to Ecosia while AI-free is on leaves the toolbar's translate and summarize buttons until the next page load (menus correct); the toggle refreshes the toolbar, the engine change does not
+- [x] 09: non-Ecosia provider: Summarize row (supported device) and Translation row in General settings; nothing hidden by an earlier AI-free value (simulator 2026-10-27, EcosiaBeta BetaDebug, c806b0acbb)
 - [ ] Before the first App Store Connect upload of the upgrade (latest ticket 24): check for ITMS-90683 (speech purpose string, Q1)
 - [ ] 10: VPN off, Nova off
 
@@ -46,3 +46,4 @@ Nothing blocking. Q1 reframed (check at the first App Store Connect upload, not 
 - 2026-10-27 12:44 verify.sh on PR B: 2 failures. AuthTests clearsLoggedInImpactCache (known flaky, M0) and the new non-Ecosia-provider settings test (Settings resyncs the provider from the default engine). That test was removed; the case is covered by AIFreeSearchingSelectionTests.
 - 2026-10-27 12:52 verify.sh on PR B: OK (5018 tests, 5008 passed, 0 failed, 10 skipped; lint clean).
 - 2026-10-27 13:00 verify.sh on PR A alone (2d76eb4744): OK (5004 tests, 4994 passed, 0 failed, 10 skipped; lint clean).
+- 2026-10-27 19:40 Simulator checks (Claude Desktop iOS Simulator pane, dedicated simulator "iPhone 17 M1 checks", EcosiaBeta BetaDebug of c806b0acbb). The simulator counts as a supported device (on-device summaries via the Mac's Apple Intelligence), so 07's unsupported-device check still needs an older device or SKIP_APPLE_INTELLIGENCE; the proxy checks still need Proxyman. Side effects: one ad click (sportler.com) from a tap during page load; search region briefly changed to Latvia (not by Claude) and restored to Italy; end state Ecosia, Italy, AI-free off.
