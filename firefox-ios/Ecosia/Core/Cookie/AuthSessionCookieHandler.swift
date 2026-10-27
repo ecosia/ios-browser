@@ -16,6 +16,10 @@ final class AuthSessionCookieHandler: BaseCookieHandler {
         HTTPCookieStorage.shared.setCookie(cookie)
     }
 
+    override func removed(in cookieStore: CookieStoreProtocol) {
+        NotificationCenter.default.post(name: .EcosiaAuthSessionCookieRemoved, object: nil)
+    }
+
     /// Removes any `EASC` cookie previously copied into `HTTPCookieStorage.shared`.
     ///
     /// We copy `EASC` cookie out of the WKWebView cookie jar so native `URLSession` calls can see it, but that copy lives
