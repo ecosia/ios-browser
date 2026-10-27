@@ -211,27 +211,9 @@ final class AIFreeSearchingSearchSettings: BoolSetting {
             AIFreeSearchingSelection.setEnabled(value)
             settings?.tableView.reloadData()
             if let settings {
-                Self.refreshBrowserAI(prefs: prefs, windowUUID: settings.windowUUID)
+                BrowserAIRefresh.dispatch(prefs: prefs, windowUUID: settings.windowUUID)
             }
         })
-    }
-
-    /// Page summaries and translations follow `AIFreeSearchingSelection.blocksBrowserAI`.
-    /// Tells the open window, as Firefox's own settings screens do, so its toolbar
-    /// buttons update without waiting for the next page load.
-    private static func refreshBrowserAI(prefs: Prefs, windowUUID: WindowUUID) {
-        store.dispatch(ToolbarAction(
-            canSummarize: DefaultSummarizerNimbusUtils().isSummarizeFeatureToggledOn,
-            windowUUID: windowUUID,
-            actionType: ToolbarActionType.didSummarizeSettingsChange
-        ))
-        let isTranslationsEnabled = prefs.boolForKey(PrefsKeys.Settings.translationsFeature) ?? true
-        store.dispatch(TranslationsAction(
-            isTranslationsEnabled: isTranslationsEnabled,
-            translationConfiguration: TranslationConfiguration(prefs: prefs, isUserSettingEnabled: isTranslationsEnabled),
-            windowUUID: windowUUID,
-            actionType: TranslationsActionType.didTranslationSettingsChange
-        ))
     }
 
     override func displayBool(_ control: UISwitch) {

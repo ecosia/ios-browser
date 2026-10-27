@@ -1007,8 +1007,11 @@ extension SearchSettingsTableViewController: SearchEnginePickerDelegate {
         if let engine = searchEngine {
             let previousEngine = model.defaultEngine
             model.defaultEngine = engine
-            // Ecosia: Mirror the choice into the provider selection.
-            SearchProviderSelection.syncSelectedEngineID(engine.engineID)
+            // Ecosia: Mirror the choice into the provider selection. AI-free searching applies
+            // only with Ecosia, so the switch can turn page summaries and translations on or off.
+            BrowserAIRefresh.dispatchIfChanged(prefs: profile.prefs, windowUUID: windowUUID) {
+                SearchProviderSelection.syncSelectedEngineID(engine.engineID)
+            }
             NotificationCenter.default.post(name: .SearchSettingsDidUpdateDefaultSearchEngine)
             self.tableView.reloadData()
 
