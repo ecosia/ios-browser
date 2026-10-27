@@ -19,6 +19,7 @@ final class WebSessionRecoveryCoordinator {
     private let authService: EcosiaAuthenticationService
     private let browserViewControllers = NSHashTable<BrowserViewController>.weakObjects()
     private var pendingRetry: Task<Void, Never>?
+    private var inFlightRetransfer: Task<EcosiaAuthFlow.WebSessionRetransferResult, Never>?
     private var observers: [NSObjectProtocol] = []
 
     init(gate: WebSessionRetransferGate = WebSessionRetransferGate(),
@@ -30,6 +31,8 @@ final class WebSessionRecoveryCoordinator {
 
     func register(_ browserViewController: BrowserViewController) {
         browserViewControllers.add(browserViewController)
+        // Auth state can resolve before any window registers, in which case its launch notification reaches nobody
+        Task { await retransferIfWebSessionMissing(trigger: "launch") }
     }
 
     /// Re-transfers when the user is logged in natively but the web session cookie is gone.
@@ -44,40 +47,63 @@ final class WebSessionRecoveryCoordinator {
     }
 
     func retransferWebSession(reason: String) {
+        _ = startRetransfer(reason: reason)
+    }
+
+    /// Starts a re-transfer, or joins the one already running, and waits for its result.
+    /// - Returns: `nil` when no re-transfer could run now (blocked by another auth flow, backing off or capped)
+    func startOrJoinRetransfer(reason: String) async -> EcosiaAuthFlow.WebSessionRetransferResult? {
+        if let inFlightRetransfer {
+            return await inFlightRetransfer.value
+        }
+        return await startRetransfer(reason: reason)?.value
+    }
+
+    private func startRetransfer(reason: String) -> Task<EcosiaAuthFlow.WebSessionRetransferResult, Never>? {
         // A direct `logout()` (e.g. from the account impact view) doesn't block the gate
-        guard authService.isLoggedIn, !authService.isLoggingOut else { return }
+        guard authService.isLoggedIn, !authService.isLoggingOut else { return nil }
 
         switch gate.requestStart() {
         case .start:
             pendingRetry?.cancel()
             pendingRetry = nil
-            Task { await runRetransfer(reason: reason) }
-        case .alreadyRunning, .blocked:
+            let retransfer = Task { await runRetransfer(reason: reason) }
+            inFlightRetransfer = retransfer
+            return retransfer
+        case .alreadyRunning:
+            return inFlightRetransfer
+        case .blocked:
             EcosiaLogger.auth.info("Web session re-transfer (\(reason)) skipped: another auth flow is running")
         case .retryAfter(let delay):
             scheduleRetry(after: delay, reason: reason)
         case .limitReached:
             EcosiaLogger.auth.sentry("Web session re-transfer (\(reason)) skipped: attempt limit reached")
         }
+        return nil
     }
 
-    private func runRetransfer(reason: String) async {
+    private func runRetransfer(reason: String) async -> EcosiaAuthFlow.WebSessionRetransferResult {
+        let result = await performRetransfer(reason: reason)
+        gate.finish(succeeded: result == .retransferred)
+        inFlightRetransfer = nil
+
+        if result == .deferred {
+            await retransferIfWebSessionMissing(trigger: reason)
+        }
+        return result
+    }
+
+    private func performRetransfer(reason: String) async -> EcosiaAuthFlow.WebSessionRetransferResult {
         guard let browserViewController = activeBrowserViewController else {
             EcosiaLogger.auth.notice("Web session re-transfer (\(reason)) skipped: no browser window available")
-            gate.finish(succeeded: false)
-            return
+            return .deferred
         }
 
         EcosiaLogger.auth.info("Starting silent web session re-transfer (\(reason))")
         let flow = EcosiaAuthFlow(type: .webSessionRetransfer,
                                   authService: authService,
                                   browserViewController: browserViewController)
-        let result = await flow.startWebSessionRetransfer()
-        gate.finish(succeeded: result == .retransferred)
-
-        if result == .deferred {
-            await retransferIfWebSessionMissing(trigger: reason)
-        }
+        return await flow.startWebSessionRetransfer()
     }
 
     private func scheduleRetry(after delay: TimeInterval, reason: String) {
