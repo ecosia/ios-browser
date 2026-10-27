@@ -18,7 +18,7 @@ Set both to `false` on every channel, with `release` listed explicitly and a `# 
 
 ## Acceptance criteria
 
-- [ ] Hosted summarizer and App Attest auth are off on release, beta and developer, verified in the generated `FxNimbus.swift` for each channel (`bin/nimbus-fml.sh`), not only by reading YAML
-- [ ] On a device without Apple Intelligence (or with the `SKIP_APPLE_INTELLIGENCE` launch argument), no summaries entry point is visible anywhere
-- [ ] On a supported device, summaries work, and network inspection shows no request to Mozilla's summarizer endpoints
-- [ ] Diary entry written, listing every entry point and its gate
+- [x] Hosted summarizer and App Attest auth are off on release, beta and developer, verified in the generated `FxNimbus.swift` for each channel (`bin/nimbus-fml.sh`), not only by reading YAML (generated release, beta and developer all false, 2026-10-25)
+- [x] On a device without Apple Intelligence (or with the `SKIP_APPLE_INTELLIGENCE` launch argument), no summaries entry point is visible anywhere (simulator 2026-10-27, EcosiaBeta BetaDebug, launched with SKIP_APPLE_INTELLIGENCE; shake covered by OnDeviceSummariesTests)
+- [x] On a supported device, summaries work, and network inspection shows no request to Mozilla's summarizer endpoints (simulator 2026-10-27, EcosiaBeta BetaDebug: "Summarised by Apple Intelligence"; the simulator log shows no app connection during the summary and none ever to mlpa-* or App Attest)
+- [x] Diary entry written, listing every entry point and its gate

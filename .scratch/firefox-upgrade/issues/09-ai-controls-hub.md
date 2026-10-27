@@ -20,8 +20,8 @@ Follow the `// Ecosia:` / `/* Ecosia: */` convention in [ARCHITECTURE.md](../../
 
 ## Acceptance criteria
 
-- [ ] With AI-free searching on, no summaries or translations entry point anywhere, checked on a supported device
-- [ ] With AI-free searching off, summaries (on supported devices) and translations work
-- [ ] With a non-Ecosia search provider (or the AI-free flag off), the Summarize row (supported device) and the Translation row are in General settings, and neither feature is hidden by an earlier AI-free value
-- [ ] Unit tests for the rule, both gates and the fallback settings rows
-- [ ] Diary entry written
+- [x] With AI-free searching on, no summaries or translations entry point anywhere, checked on a supported device (simulator 2026-10-27, EcosiaBeta BetaDebug)
+- [x] With AI-free searching off, summaries (on supported devices) and translations work (simulator 2026-10-27, EcosiaBeta BetaDebug)
+- [x] With a non-Ecosia search provider (or the AI-free flag off), the Summarize row (supported device) and the Translation row are in General settings, and neither feature is hidden by an earlier AI-free value (simulator 2026-10-27, EcosiaBeta BetaDebug)
+- [x] Unit tests for the rule, both gates and the fallback settings rows (AIFreeSearchingSelectionTests, AIFreeSearchingBrowserAITests, AppSettingsTableViewController+EcosiaTests, BrowserAIRefreshTests)
+- [x] Diary entry written

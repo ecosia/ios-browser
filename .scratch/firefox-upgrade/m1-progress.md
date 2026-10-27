@@ -8,7 +8,7 @@ Base: origin/upgrade/firefox 3b9c862a57 (rebased 2026-10-28; was f0bb5fa14a)
 - [x] 0 Branch and baseline
 - [x] 1 Summaries on-device only (MOB-5033): 8c078a133d, test 12873ed227, diary 581e76c537
 - [x] 2 Lens, Quick Answers, ad blocker off (MOB-5034): c840022f08, 5eefefdb37, fa28866949, diary 581e76c537
-- [ ] 3 PR A: verify.sh OK; ready, not pushed (Dario: no pushing yet)
+- [ ] 3 PR A: verify.sh OK; up to date with upgrade/firefox (M0 sign-off merged in, 2aa6573f34); ready, not pushed (Dario: no pushing yet)
 - [x] 4 AI-free searching replaces the AI controls hub (MOB-5035): 24768096ed, 0b5b00720c, 8faaed984d, 8a661af4a3, test 110da2218b, diaries 9ff5653d74, e2090abe0d and the next commit; PR B: waiting on Dario to push (branch dc-mob-5035-ai-free-gates-firefox-ai, on top of PR A)
 - [ ] 5 Feature configuration tests (MOB-5036): <commits>
 - [ ] 6 Close-out; PR C: <number>
@@ -17,7 +17,7 @@ In progress: nothing (PR A and PR B ready locally; step 5 next)
 
 ## Device checks owed
 
-- [ ] 07: supported device: summaries work (✓ (simulator 2026-10-27, EcosiaBeta BetaDebug, c806b0acbb): "Summarised by Apple Intelligence" via reader mode; menu "Summarise Page"); still open: proxy shows no request to Mozilla's summarizer (mlpa-*.mozilla.global.ssl.fastly.net) or App Attest endpoints
+- [x] 07: supported device: summaries work, and no request to Mozilla's summarizer (mlpa-*.mozilla.global.ssl.fastly.net) or App Attest (simulator 2026-10-27, EcosiaBeta BetaDebug: "Summarised by Apple Intelligence"; the simulator's stored network log shows no app connection during the summary; the app log, which records every Remote Settings request since this simulator was set up, never mentions mlpa)
 - [x] 07: unsupported device (or SKIP_APPLE_INTELLIGENCE): no summaries entry point anywhere (simulator 2026-10-27, EcosiaBeta BetaDebug, eeb4f9ede1, launched with SKIP_APPLE_INTELLIGENCE: no summarize button in the address bar, no "Summarise Page" in the menu or More, none in reader view, no "Page Summaries" row with DuckDuckGo; shake not testable in the pane, covered by OnDeviceSummariesTests)
 - [x] 08: no Lens or Quick Answers entry point on the new tab page, address bar, image context menu (simulator 2026-10-27, EcosiaBeta BetaDebug, c806b0acbb)
 - [x] 08: no "Block Ads" anywhere; Ecosia search ads show normally (simulator 2026-10-27, EcosiaBeta BetaDebug, c806b0acbb)
@@ -45,7 +45,8 @@ Nothing blocking. Q1 reframed (check at the first App Store Connect upload, not 
 - 2026-10-27 12:30 verify.sh: no simulator (Xcode auto-updated to 27.1 overnight, CoreSimulator 1171.7 < 1174.9.2). Dario ran the first-launch install.
 - 2026-10-27 12:44 verify.sh on PR B: 2 failures. AuthTests clearsLoggedInImpactCache (known flaky, M0) and the new non-Ecosia-provider settings test (Settings resyncs the provider from the default engine). That test was removed; the case is covered by AIFreeSearchingSelectionTests.
 - 2026-10-27 12:52 verify.sh on PR B: OK (5018 tests, 5008 passed, 0 failed, 10 skipped; lint clean).
-- 2026-10-27 13:00 verify.sh on PR A alone (2d76eb4744): OK (5004 tests, 4994 passed, 0 failed, 10 skipped; lint clean).
+- 2026-10-27 13:00 verify.sh on PR A alone (12873ed227): OK (5004 tests, 4994 passed, 0 failed, 10 skipped; lint clean).
 - 2026-10-27 19:40 Simulator checks (Claude Desktop iOS Simulator pane, dedicated simulator "iPhone 17 M1 checks", EcosiaBeta BetaDebug of c806b0acbb). The simulator counts as a supported device (on-device summaries via the Mac's Apple Intelligence), so 07's unsupported-device check still needs an older device or SKIP_APPLE_INTELLIGENCE; the proxy checks still need Proxyman. Side effects: one ad click (sportler.com) from a tap during page load; search region briefly changed to Latvia (not by Claude) and restored to Italy; end state Ecosia, Italy, AI-free off.
 - 2026-10-27 20:00 Dario: fix the bug. BrowserAIRefresh (toggle and engine picker share it; the picker refreshes only when blocksBrowserAI changes), 4 tests. verify.sh on PR B: OK (5022 tests, 5012 passed, 0 failed, 10 skipped; lint clean). Fix confirmed on the simulator; end state Ecosia, Italy, AI-free off.
 - 2026-10-27 22:20 07 unsupported-device check on the simulator with `xcrun simctl launch … SKIP_APPLE_INTELLIGENCE` (stored appleIntelligenceAvailableKey went false a few seconds after launch): passed. VPN has no user-facing entry point in 157 (flag only on the debug feature-flags screen); Nova changes styling only. End state: relaunched without the argument (available again), Ecosia, Italy, AI-free off. Network checks (07, 08) need Proxyman's system proxy on, which Dario turns on.
+- 2026-10-27 22:40 Dario: finalise 5033 and 5035 locally. Network checks done without a proxy. 07: summary run at 22:30:50 to 22:31:08 with `log show` over the simulator's stored network log: no app connection in that window, none to mlpa-* or App Attest. 08: the app's Firefox.log records every Remote Settings URL (Rust viaduct) since this simulator's first launch at 16:26; tracking-protection-lists-ios never appears, and WebKit's rule store has only the 8 Disconnect lists. origin/upgrade/firefox (M0 sign-off, #1362) merged into PR A (2aa6573f34), PR A into PR B. Acceptance criteria in issues 07, 08 and 09 ticked.

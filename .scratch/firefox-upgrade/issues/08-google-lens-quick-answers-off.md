@@ -23,9 +23,9 @@ Check what still runs while the feature is off: whether `ASAdBlockerListFetcher`
 
 ## Acceptance criteria
 
-- [ ] Google Lens, Quick Answers and the ad blocker (and its badge) resolve to off on release, beta and developer in the generated `FxNimbus.swift`
-- [ ] `NSSpeechRecognitionUsageDescription` is gone from `Info.plist` and every `InfoPlist.strings`, and no code path requests speech-recognition permission
-- [ ] No Lens or Quick Answers entry point on the new tab page, address bar or context menus, and no "Block Ads" row in Browsing settings, checked on device
-- [ ] Ecosia's search ads display normally on the upgrade build
-- [ ] With the ad blocker off, no ad-block list is downloaded or compiled, or the remaining work is explained in the diary
-- [ ] Diary entry written
+- [x] Google Lens, Quick Answers and the ad blocker (and its badge) resolve to off on release, beta and developer in the generated `FxNimbus.swift` (generated release, beta and developer all off, 2026-10-25)
+- [x] `NSSpeechRecognitionUsageDescription` is gone from `Info.plist` and every `InfoPlist.strings`, and no code path requests speech-recognition permission (only QuickAnswersKit requests it and Quick Answers is off; the App Store Connect check stays open as Q1)
+- [x] No Lens or Quick Answers entry point on the new tab page, address bar or context menus, and no "Block Ads" row in Browsing settings, checked on device (simulator 2026-10-27, EcosiaBeta BetaDebug)
+- [x] Ecosia's search ads display normally on the upgrade build (simulator 2026-10-27, EcosiaBeta BetaDebug)
+- [x] With the ad blocker off, no ad-block list is downloaded or compiled, or the remaining work is explained in the diary (simulator 2026-10-27, EcosiaBeta BetaDebug: the app log never requests tracking-protection-lists-ios and no ad-block rule list is compiled; the bundled ad-block.json is left to ticket 26 in the diary)
+- [x] Diary entry written
