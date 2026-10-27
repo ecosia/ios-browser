@@ -168,7 +168,12 @@ final class EcosiaAuthFlow {
             return .deferred
         }
 
-        EcosiaLogger.auth.sentry("Silent web session re-transfer failed (landed on success: \(tabResult.landedOnSuccess))")
+        // A failure page is already reported by InvisibleTabSession
+        if tabResult.landedOnSuccess {
+            EcosiaLogger.auth.sentry("Silent web session re-transfer landed without a web session")
+        } else {
+            EcosiaLogger.auth.error("Silent web session re-transfer failed")
+        }
         await logOutNativelyAfterFailedSessionTransfer()
         return .loggedOut
     }
@@ -307,6 +312,7 @@ final class EcosiaAuthFlow {
     /// Installs the transfer cookie and waits for the invisible tab to land or time out.
     private func runSessionTransferTab(in browserViewController: BrowserViewController) async throws -> SessionTransferTabResult {
         // Debug hook: loads /accounts/error directly instead of the real sign-up URL.
+        logIfSimulatingSessionTransferFailure()
         let signUpURL = SimulateSessionTransferFailureSetting.isEnabled
             ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
             : EcosiaEnvironment.current.urlProvider.signUpURL
@@ -343,6 +349,12 @@ final class EcosiaAuthFlow {
         await cookieStore.deleteCookie(authSessionCookie)
     }
 
+    /// The setting persists across launches, so make a forgotten one obvious in the logs
+    private func logIfSimulatingSessionTransferFailure() {
+        guard SimulateSessionTransferFailureSetting.isEnabled else { return }
+        EcosiaLogger.auth.notice("🐛 [DEBUG] Simulate Session Transfer Failure is on: loading the accounts error page")
+    }
+
     /// A transfer can land on a page that looks fine without the web having set a session.
     private func hasAuthSessionCookie() async -> Bool {
         let cookieStore: CookieStoreProtocol = WKWebsiteDataStore.default().httpCookieStore
@@ -369,6 +381,7 @@ final class EcosiaAuthFlow {
 
         // Get logout URL
         // Debug hook: loads /accounts/error directly instead of the real sign-up URL.
+        logIfSimulatingSessionTransferFailure()
         let logoutURL = SimulateSessionTransferFailureSetting.isEnabled
             ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
             : EcosiaEnvironment.current.urlProvider.logoutURL
