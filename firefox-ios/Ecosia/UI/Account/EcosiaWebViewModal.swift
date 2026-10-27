@@ -201,6 +201,13 @@ private struct WebViewRepresentable: UIViewRepresentable {
                 EcosiaLogger.auth.sentry("🔐 [WEBVIEW] Google OAuth navigation inside profile WebView: \(url.redactedForLogging)")
             }
 
+            // Signing out or deleting the account ends on the web's sign-out page. Let it load so the web clears
+            // its own session, and log out natively before that so the missing web session isn't re-transferred.
+            if navigationAction.targetFrame?.isMainFrame ?? true,
+               EcosiaURLInterceptor().interceptedType(for: url) == .signOut {
+                logOutNativelyForWebSignOut()
+            }
+
             // If this is a back navigation to a page we loaded from a target="_blank" link,
             // prevent it and go back further (to the page before the blank link was clicked)
             if navigationAction.navigationType == .backForward,
@@ -220,6 +227,20 @@ private struct WebViewRepresentable: UIViewRepresentable {
             }
 
             decisionHandler(.allow)
+        }
+
+        private func logOutNativelyForWebSignOut() {
+            let authService = EcosiaAuthenticationService.shared
+            guard authService.isLoggedIn, !authService.isLoggingOut else { return }
+
+            EcosiaLogger.auth.info("🔐 [WEBVIEW] Web sign-out in profile WebView, logging out natively")
+            Task {
+                do {
+                    try await authService.logout(triggerWebLogout: false)
+                } catch {
+                    EcosiaLogger.auth.error("🔐 [WEBVIEW] Native logout after web sign-out failed: \(error)")
+                }
+            }
         }
 
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
