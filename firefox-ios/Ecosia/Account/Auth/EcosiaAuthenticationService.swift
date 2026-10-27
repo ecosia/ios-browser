@@ -53,6 +53,9 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// reader that can't tell the two apart may mistake "not yet checked" for "confirmed logged out".
     public private(set) var hasResolvedAuthState: Bool = false
 
+    /// `logout()` deletes the web session before clearing credentials, so `isLoggedIn` alone can't tell that loss apart from an unexpected one.
+    public private(set) var isLoggingOut: Bool = false
+
     private static let wasLoggedInKey = "EcosiaAuthenticationService.wasLoggedIn"
 
     /// Whether the user was logged in as of the last confirmed transition (login, logout, or a
@@ -182,6 +185,9 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     ///           `AuthError.sessionClearingFailed` if both web session and credential clearing fail,
     ///           `AuthError.credentialsClearingFailed` if only credential clearing fails.
     public func logout(triggerWebLogout: Bool = true) async throws {
+        isLoggingOut = true
+        defer { isLoggingOut = false }
+
         var sessionClearingError: Error?
 
         // First, try to clear the web session if requested

@@ -137,12 +137,24 @@ final class EcosiaAuthFlow {
             return .loggedOut
         }
 
+        guard isStillLoggedIn else {
+            EcosiaLogger.auth.info("Web session re-transfer abandoned: logged out during the exchange")
+            return .loggedOut
+        }
+
         let tabResult: SessionTransferTabResult
         do {
             tabResult = try await runSessionTransferTab(in: browserViewController)
         } catch {
             EcosiaLogger.auth.error("Could not start the web session re-transfer tab: \(error)")
             return .deferred
+        }
+
+        // A logout while the tab loaded would otherwise leave the web signed in on its own
+        guard isStillLoggedIn else {
+            EcosiaLogger.auth.info("Web session re-transfer abandoned: logged out while it ran")
+            try? await authService.auth0Provider.clearSession()
+            return .loggedOut
         }
 
         let hasWebSession = await hasAuthSessionCookie()
@@ -159,6 +171,10 @@ final class EcosiaAuthFlow {
         EcosiaLogger.auth.sentry("Silent web session re-transfer failed (landed on success: \(tabResult.landedOnSuccess))")
         await logOutNativelyAfterFailedSessionTransfer()
         return .loggedOut
+    }
+
+    private var isStillLoggedIn: Bool {
+        authService.isLoggedIn && !authService.isLoggingOut
     }
 
     // MARK: - Private Implementation
