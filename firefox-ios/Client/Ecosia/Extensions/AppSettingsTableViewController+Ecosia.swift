@@ -132,6 +132,8 @@ extension AppSettingsTableViewController {
             SimulateAuthErrorSetting(settings: self),
             SimulateSessionTransferFailureSetting(settings: self),
             TriggerWebSessionRetransferSetting(settings: self),
+            ExpireWebSessionCookieSetting(settings: self),
+            CorruptWebSessionCookieSetting(settings: self),
             SimulateImpactAPIErrorSetting(settings: self)
         ]
 

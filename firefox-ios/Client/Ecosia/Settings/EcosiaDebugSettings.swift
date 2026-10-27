@@ -4,6 +4,7 @@
 
 import Foundation
 import UIKit
+import WebKit
 import Shared
 import Common
 import Ecosia
@@ -571,6 +572,96 @@ final class TriggerWebSessionRetransferSetting: HiddenSetting {
                 alert.dismiss(animated: true)
             }
         }
+    }
+}
+
+/// Shortens the web session cookie's lifetime so QA can watch expiry handling without waiting 90 days.
+final class ExpireWebSessionCookieSetting: HiddenSetting {
+    static let expiryDelay: TimeInterval = 60
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Expire Web Session Cookie (EASC) in 60s", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Rewrites EASC with a short expiry", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        Task { @MainActor in
+            let didRewrite = await Self.rewriteAuthSessionCookie()
+            let alert = AlertController(
+                title: didRewrite ? "EASC Expires in 60s ✅" : "No EASC Cookie",
+                message: didRewrite
+                    ? "Background the app for over a minute, or kill and reopen it, then check the auth logs."
+                    : "Log in first so the web session exists.",
+                preferredStyle: .alert
+            )
+            navigationController?.topViewController?.present(alert, animated: true) {
+                // Task + sleep instead of DispatchQueue for strict concurrency
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
+                    alert.dismiss(animated: true)
+                }
+            }
+        }
+    }
+
+    private static func rewriteAuthSessionCookie() async -> Bool {
+        let cookieStore: CookieStoreProtocol = WKWebsiteDataStore.default().httpCookieStore
+        guard let authSessionCookie = Cookie.authSessionCookie(in: await cookieStore.allCookies()),
+              var properties = authSessionCookie.properties else {
+            return false
+        }
+        // Max-Age takes precedence over Expires, so it has to go for the new expiry to apply
+        properties.removeValue(forKey: .maximumAge)
+        properties[.expires] = Date().addingTimeInterval(expiryDelay)
+        guard let shortLivedCookie = HTTPCookie(properties: properties) else { return false }
+        await cookieStore.setCookie(shortLivedCookie)
+        return true
+    }
+}
+
+/// Makes the web find the session invalid on the next Ecosia page load, so it deletes `EASC` the way it does for a dead session.
+final class CorruptWebSessionCookieSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Corrupt Web Session Cookie (EASC)", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Next Ecosia search makes the web delete EASC", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        Task { @MainActor in
+            let didCorrupt = await Self.corruptAuthSessionCookie()
+            let alert = AlertController(
+                title: didCorrupt ? "EASC Corrupted ✅" : "No EASC Cookie",
+                message: didCorrupt
+                    ? "Search on Ecosia, then check the auth logs for \"cookie removed\"."
+                    : "Log in first so the web session exists.",
+                preferredStyle: .alert
+            )
+            navigationController?.topViewController?.present(alert, animated: true) {
+                // Task + sleep instead of DispatchQueue for strict concurrency
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
+                    alert.dismiss(animated: true)
+                }
+            }
+        }
+    }
+
+    private static func corruptAuthSessionCookie() async -> Bool {
+        let cookieStore: CookieStoreProtocol = WKWebsiteDataStore.default().httpCookieStore
+        guard let authSessionCookie = Cookie.authSessionCookie(in: await cookieStore.allCookies()),
+              var properties = authSessionCookie.properties else {
+            return false
+        }
+        properties[.value] = "corrupted"
+        guard let corruptedCookie = HTTPCookie(properties: properties) else { return false }
+        await cookieStore.setCookie(corruptedCookie)
+        return true
     }
 }
 
