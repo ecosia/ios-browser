@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import JWTDecode
 
 public struct EcosiaAuthSessionProvider: AuthSessionProviderProtocol {
 
@@ -15,4 +16,8 @@ public struct EcosiaAuthSessionProvider: AuthSessionProviderProtocol {
     public var isLoggedIn: Bool { authenticationService.isLoggedIn }
     public var hasResolvedAuthState: Bool { authenticationService.hasResolvedAuthState }
     public var accessToken: String? { authenticationService.accessToken }
+    public var userID: String? {
+        guard let idToken = authenticationService.idToken else { return nil }
+        return try? decode(jwt: idToken).subject
+    }
 }

@@ -9,10 +9,12 @@ final class MockAuthSessionProvider: AuthSessionProviderProtocol, @unchecked Sen
     var isLoggedIn: Bool
     var hasResolvedAuthState: Bool
     var accessToken: String?
+    var userID: String?
 
-    init(isLoggedIn: Bool = false, hasResolvedAuthState: Bool = false, accessToken: String? = nil) {
+    init(isLoggedIn: Bool = false, hasResolvedAuthState: Bool = false, accessToken: String? = nil, userID: String? = nil) {
         self.isLoggedIn = isLoggedIn
         self.hasResolvedAuthState = hasResolvedAuthState
         self.accessToken = accessToken
+        self.userID = userID
     }
 }
