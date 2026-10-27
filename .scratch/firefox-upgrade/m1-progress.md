@@ -45,3 +45,4 @@ Nothing blocking. Q1 reframed (check at the first App Store Connect upload, not 
 - 2026-10-27 12:30 verify.sh: no simulator (Xcode auto-updated to 27.1 overnight, CoreSimulator 1171.7 < 1174.9.2). Dario ran the first-launch install.
 - 2026-10-27 12:44 verify.sh on PR B: 2 failures. AuthTests clearsLoggedInImpactCache (known flaky, M0) and the new non-Ecosia-provider settings test (Settings resyncs the provider from the default engine). That test was removed; the case is covered by AIFreeSearchingSelectionTests.
 - 2026-10-27 12:52 verify.sh on PR B: OK (5018 tests, 5008 passed, 0 failed, 10 skipped; lint clean).
+- 2026-10-27 13:00 verify.sh on PR A alone (2d76eb4744): OK (5004 tests, 4994 passed, 0 failed, 10 skipped; lint clean).
