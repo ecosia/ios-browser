@@ -37,6 +37,21 @@ final class CookieTests: XCTestCase {
         XCTAssertNil(Cookie(invalidNameCookie))
     }
 
+    func testAuthSessionCookie_ignoresOtherEnvironmentsCookies() {
+        let otherEnvironment = HTTPCookie(properties: [.name: "EASC", .domain: ".ecosia-staging.xyz", .path: "/", .value: "other"])!
+        let currentEnvironment = HTTPCookie(properties: [.name: "EASC", .domain: ".ecosia.org", .path: "/", .value: "current"])!
+
+        XCTAssertEqual(Cookie.authSessionCookie(in: [otherEnvironment, currentEnvironment])?.value, "current")
+        XCTAssertNil(Cookie.authSessionCookie(in: [otherEnvironment]))
+    }
+
+    func testAuthSessionCookie_ignoresExpiredCookie() {
+        let expired = HTTPCookie(properties: [.name: "EASC", .domain: ".ecosia.org", .path: "/", .value: "session",
+                                              .expires: Date().addingTimeInterval(-10)])!
+
+        XCTAssertNil(Cookie.authSessionCookie(in: [expired]))
+    }
+
     func testCookieInitFromString() {
         XCTAssertEqual(Cookie("ECFG"), .main)
         XCTAssertEqual(Cookie("ECCC"), .consent)

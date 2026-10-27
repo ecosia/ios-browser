@@ -311,7 +311,7 @@ final class EcosiaAuthFlow {
     private func hasAuthSessionCookie() async -> Bool {
         let cookieStore: CookieStoreProtocol = WKWebsiteDataStore.default().httpCookieStore
         let cookies = await cookieStore.allCookies()
-        return cookies.contains { $0.name == Cookie.authSession.rawValue }
+        return Cookie.authSessionCookie(in: cookies) != nil
     }
 
     /// A failed session transfer means the web session was never actually authenticated,
