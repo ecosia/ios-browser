@@ -8,6 +8,6 @@ public enum SessionTransferTokenResult: Equatable, Sendable {
     case retrieved
     /// Transient failure (e.g. network), worth retrying later
     case unavailable
-    /// Auth0 answered `invalid_grant`: the refresh token is revoked or expired, or the user was deleted
+    /// Auth0 answered `invalid_grant` (refresh token revoked or expired, or user deleted), or there's no refresh token to exchange
     case refreshTokenRejected
 }

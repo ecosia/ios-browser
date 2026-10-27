@@ -408,7 +408,7 @@ extension EcosiaAuthenticationService {
             return .retrieved
         } catch {
             ssoCredentials = nil
-            // Expected once the refresh token is revoked or the user is deleted, so not a Sentry error
+            // Expected once the refresh token is revoked or gone, or the user is deleted, so not a Sentry error
             if Self.isRefreshTokenRejection(error) {
                 EcosiaLogger.auth.notice("Refresh token rejected by the SSO exchange: \(error)")
                 return .refreshTokenRejected
@@ -419,6 +419,10 @@ extension EcosiaAuthenticationService {
     }
 
     static func isRefreshTokenRejection(_ error: Error) -> Bool {
+        if let managerError = error as? CredentialsManagerError,
+           managerError == .noCredentials || managerError == .noRefreshToken {
+            return true
+        }
         let cause = (error as? CredentialsManagerError)?.cause ?? error
         return (cause as? AuthenticationError)?.code == "invalid_grant"
     }

@@ -68,6 +68,23 @@ final class SessionTransferTokenTests: XCTestCase {
         XCTAssertEqual(credentialsManager.ssoCredentialsCallCount, 0)
     }
 
+    func testGetSessionTransferToken_withNoRefreshToken_returnsRefreshTokenRejected() async {
+        credentialsManager.shouldFailSSOCredentials = true
+        credentialsManager.mockError = CredentialsManagerError.noRefreshToken
+
+        let result = await auth.getSessionTransferToken()
+
+        XCTAssertEqual(result, .refreshTokenRejected)
+    }
+
+    func testIsRefreshTokenRejection_withNoCredentials_isTrue() {
+        XCTAssertTrue(EcosiaAuthenticationService.isRefreshTokenRejection(CredentialsManagerError.noCredentials))
+    }
+
+    func testIsRefreshTokenRejection_withOtherCredentialsManagerError_isFalse() {
+        XCTAssertFalse(EcosiaAuthenticationService.isRefreshTokenRejection(CredentialsManagerError.renewFailed))
+    }
+
     func testIsRefreshTokenRejection_withNonAuthenticationError_isFalse() {
         XCTAssertFalse(EcosiaAuthenticationService.isRefreshTokenRejection(URLError(.timedOut)))
     }
