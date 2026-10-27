@@ -1293,7 +1293,7 @@ final class AnalyticsContextTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(event?.property, Analytics.Property.defaultBrowserSet.rawValue)
     }
 
-    func testActivityWhenNotDefaultBrowserHasNoProperty() {
+    func testActivityWhenNotDefaultBrowserTracksDefaultBrowserNotSetProperty() {
         // Arrange
         let sut = makeAnalyticsContextSUT()
 
@@ -1302,7 +1302,7 @@ final class AnalyticsContextTests: XCTestCase, @unchecked Sendable {
 
         // Assert
         let event = sut.trackedEvents.first as? Structured
-        XCTAssertNil(event?.property)
+        XCTAssertEqual(event?.property, Analytics.Property.defaultBrowserNotSet.rawValue)
     }
 
     func testActivityWithoutDefaultBrowserStatusHasNoProperty() {
