@@ -92,10 +92,15 @@ final class HistoryDeletionUtility: HistoryDeletionProtocol, Sendable {
     ) {
         guard let date = dateFor(dateOption, requiringAllTimeAsPresent: false) else { return }
 
+        // Ecosia: Restore the web session once the wipe is done, so clearing recent history keeps the user signed in
+        WebSessionRecoveryCoordinator.shared.beginClearingWebsiteData()
         WKWebsiteDataStore.default().removeData(
             ofTypes: types,
             modifiedSince: date,
+            /* Ecosia: Restore the web session once the wipe is done
             completionHandler: { }
+             */
+            completionHandler: { WebSessionRecoveryCoordinator.shared.endClearingWebsiteData() }
         )
     }
 

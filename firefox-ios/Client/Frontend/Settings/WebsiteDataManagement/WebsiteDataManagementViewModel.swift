@@ -69,7 +69,16 @@ final class WebsiteDataManagementViewModel: @unchecked Sendable {
         onViewModelChanged()
 
         let types = WKWebsiteDataStore.allWebsiteDataTypes()
+        // Ecosia: Restore the web session once the wipe is done, so removing Ecosia's website data keeps the user signed in
+        let clearsWebSession = WebSessionRecoveryCoordinator.includesWebSession(Array(selectedRecords))
+        if clearsWebSession {
+            WebSessionRecoveryCoordinator.shared.beginClearingWebsiteData()
+        }
         WKWebsiteDataStore.default().removeData(ofTypes: types, for: Array(selectedRecords)) { [weak self] in
+            // Ecosia: Restore the web session once the wipe is done
+            if clearsWebSession {
+                WebSessionRecoveryCoordinator.shared.endClearingWebsiteData()
+            }
             self?.state = previousState
             self?.siteRecords.removeAll { self?.selectedRecords.contains($0) ?? false }
             self?.selectedRecords = []
@@ -84,7 +93,11 @@ final class WebsiteDataManagementViewModel: @unchecked Sendable {
         onViewModelChanged()
 
         let types = WKWebsiteDataStore.allWebsiteDataTypes()
+        // Ecosia: Restore the web session once the wipe is done, so removing website data keeps the user signed in
+        WebSessionRecoveryCoordinator.shared.beginClearingWebsiteData()
         WKWebsiteDataStore.default().removeData(ofTypes: types, modifiedSince: .distantPast) { [weak self] in
+            // Ecosia: Restore the web session once the wipe is done
+            WebSessionRecoveryCoordinator.shared.endClearingWebsiteData()
             self?.siteRecords = []
             self?.selectedRecords = []
             self?.state = previousState
