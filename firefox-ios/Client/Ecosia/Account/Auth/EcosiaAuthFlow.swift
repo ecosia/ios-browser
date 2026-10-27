@@ -295,6 +295,8 @@ final class EcosiaAuthFlow {
             ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
             : EcosiaEnvironment.current.urlProvider.signUpURL
 
+        // The web reuses a still-valid session on sign-in, keeping its original 90-day lifetime
+        await clearAuthSessionCookie()
         await InvisibleTabSession.installSessionCookie(from: authService)
 
         EcosiaLogger.invisibleTabs.info("Creating invisible tab session for \(type)")
@@ -316,6 +318,13 @@ final class EcosiaAuthFlow {
                 }
             }
         }
+    }
+
+    private func clearAuthSessionCookie() async {
+        let cookieStore = WKWebsiteDataStore.default().httpCookieStore
+        let cookies = await (cookieStore as CookieStoreProtocol).allCookies()
+        guard let authSessionCookie = Cookie.authSessionCookie(in: cookies) else { return }
+        await cookieStore.deleteCookie(authSessionCookie)
     }
 
     /// A transfer can land on a page that looks fine without the web having set a session.
