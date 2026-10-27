@@ -85,18 +85,12 @@ final class AIFreeSearchingBrowserAITests: XCTestCase {
     // MARK: - Helpers
 
     private func makeFeatureFlags() -> FeatureFlagsProvider {
-        FeatureFlagsProvider(prefs: profile.prefs, backendLayer: AllFlagsOnLayer())
+        FeatureFlagsProvider(prefs: profile.prefs, backendLayer: AllFlagsOnNimbusLayer())
     }
 
     /// A device that can summarize on-device, in English.
     private func makeSummarizerUtils() -> DefaultSummarizerNimbusUtils {
-        let userDefaults = MockUserDefaults()
-        userDefaults.set(true, forKey: PrefsKeys.appleIntelligenceAvailable)
-        return DefaultSummarizerNimbusUtils(
-            profile: profile,
-            localeProvider: EnglishLocaleProvider(),
-            appleIntelligenceUtil: AppleIntelligenceUtil(userDefaults: userDefaults)
-        )
+        .make(profile: profile, appleIntelligenceAvailable: true)
     }
 
     private func setAIFreeSearching(flag: Bool, userValue: Bool) {
@@ -108,16 +102,4 @@ final class AIFreeSearchingBrowserAITests: XCTestCase {
         Unleash.model = Unleash.Model(toggles: Set([toggle]))
         User.shared.aiFreeSearching = userValue
     }
-}
-
-private struct AllFlagsOnLayer: NimbusFeatureFlagLayerProviding {
-    func checkNimbusConfigFor(_ featureID: FeatureFlagID, with prefs: Prefs) -> Bool { true }
-    func checkStartAtHomeConfiguration() -> StartAtHome { .afterFourHours }
-}
-
-private struct EnglishLocaleProvider: LocaleProvider {
-    var current: Locale { Locale(identifier: "en_US") }
-    var preferredLanguages: [String] { ["en-US"] }
-    func languageCode() -> String? { "en" }
-    func regionCode(fallback: String?) -> String { "US" }
 }
