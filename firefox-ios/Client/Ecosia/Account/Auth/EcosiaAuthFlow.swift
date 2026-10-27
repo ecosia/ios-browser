@@ -137,22 +137,28 @@ final class EcosiaAuthFlow {
             return .loggedOut
         }
 
-        let landedOnSuccess: Bool
+        let tabResult: SessionTransferTabResult
         do {
-            landedOnSuccess = try await runSessionTransferTab(in: browserViewController)
+            tabResult = try await runSessionTransferTab(in: browserViewController)
         } catch {
             EcosiaLogger.auth.error("Could not start the web session re-transfer tab: \(error)")
             return .deferred
         }
 
-        guard landedOnSuccess, await hasAuthSessionCookie() else {
-            EcosiaLogger.auth.sentry("Silent web session re-transfer failed (landed on success: \(landedOnSuccess))")
-            await logOutNativelyAfterFailedSessionTransfer()
-            return .loggedOut
+        let hasWebSession = await hasAuthSessionCookie()
+        if hasWebSession, tabResult.landedOnSuccess || tabResult.timedOut {
+            EcosiaLogger.auth.info("Silent web session re-transfer completed")
+            return .retransferred
         }
 
-        EcosiaLogger.auth.info("Silent web session re-transfer completed")
-        return .retransferred
+        if tabResult.timedOut {
+            EcosiaLogger.auth.notice("Silent web session re-transfer timed out")
+            return .deferred
+        }
+
+        EcosiaLogger.auth.sentry("Silent web session re-transfer failed (landed on success: \(tabResult.landedOnSuccess))")
+        await logOutNativelyAfterFailedSessionTransfer()
+        return .loggedOut
     }
 
     // MARK: - Private Implementation
@@ -269,7 +275,7 @@ final class EcosiaAuthFlow {
         EcosiaLogger.session.info("Retrieving session transfer token for SSO")
         await authService.getSessionTransferToken()
 
-        let success = try await runSessionTransferTab(in: browserViewController)
+        let success = try await runSessionTransferTab(in: browserViewController).landedOnSuccess
         EcosiaLogger.auth.info("Ecosia auth flow completed: \(success)")
         if !success {
             await logOutNativelyAfterFailedSessionTransfer()
@@ -277,9 +283,13 @@ final class EcosiaAuthFlow {
         onFlowCompleted?(success)
     }
 
-    /// Installs the transfer cookie and waits for the invisible tab to land.
-    /// - Returns: Whether the tab landed on a success page
-    private func runSessionTransferTab(in browserViewController: BrowserViewController) async throws -> Bool {
+    private struct SessionTransferTabResult {
+        let landedOnSuccess: Bool
+        let timedOut: Bool
+    }
+
+    /// Installs the transfer cookie and waits for the invisible tab to land or time out.
+    private func runSessionTransferTab(in browserViewController: BrowserViewController) async throws -> SessionTransferTabResult {
         // Debug hook: loads /accounts/error directly instead of the real sign-up URL.
         let signUpURL = SimulateSessionTransferFailureSetting.isEnabled
             ? SimulateSessionTransferFailureSetting.forcedErrorPageURL
@@ -301,7 +311,8 @@ final class EcosiaAuthFlow {
             session.startMonitoring { [weak self] success in
                 Task { @MainActor in
                     self?.activeSession = nil
-                    continuation.resume(returning: success)
+                    continuation.resume(returning: SessionTransferTabResult(landedOnSuccess: success,
+                                                                            timedOut: !session.didLand))
                 }
             }
         }

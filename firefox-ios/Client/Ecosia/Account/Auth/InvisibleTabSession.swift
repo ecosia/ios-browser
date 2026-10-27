@@ -21,6 +21,8 @@ final class InvisibleTabSession: TabEventHandler {
 
     // State
     private var isCompleted = false
+    /// False when the tab was closed by the fallback timeout instead of landing on a page
+    private(set) var didLand = false
     private var completion: ((Bool) -> Void)?
     // Tracked live via KVO (see init) instead of read from tab.webView?.url at close time -
     // tabManager.removeTab has usually already torn down the webview by the time handleTabClosed()
@@ -159,6 +161,7 @@ final class InvisibleTabSession: TabEventHandler {
             // Loading again means a redirect started after this page finished
             guard let self, !Task.isCancelled, !self.tab.isLoading else { return }
             EcosiaLogger.invisibleTabs.info("Invisible tab landed on: \(pageURL.redactedForLogging)")
+            self.didLand = true
             InvisibleTabAutoCloseManager.shared.closeTrackedTab(tabUUID)
         }
     }
