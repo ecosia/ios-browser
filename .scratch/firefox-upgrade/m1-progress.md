@@ -6,10 +6,10 @@ Base: origin/upgrade/firefox 3b9c862a57 (rebased 2026-10-28; was f0bb5fa14a)
 ## Steps
 
 - [x] 0 Branch and baseline
-- [x] 1 Summaries on-device only (MOB-5033): 8c078a133d, diary 581e76c537
+- [x] 1 Summaries on-device only (MOB-5033): 8c078a133d, test 12873ed227, diary 581e76c537
 - [x] 2 Lens, Quick Answers, ad blocker off (MOB-5034): c840022f08, 5eefefdb37, fa28866949, diary 581e76c537
 - [ ] 3 PR A: verify.sh OK; ready, not pushed (Dario: no pushing yet)
-- [x] 4 AI-free searching replaces the AI controls hub (MOB-5035): bf62e7a7e8, 890e2abd90, 8ccb7d7d89, 7081259561, diary f8831c69cc and the next commit; PR B: waiting on Dario to push (branch dc-mob-5035-ai-free-gates-firefox-ai, on top of PR A)
+- [x] 4 AI-free searching replaces the AI controls hub (MOB-5035): 24768096ed, 0b5b00720c, 8faaed984d, 8a661af4a3, test 110da2218b, diaries 9ff5653d74, e2090abe0d and the next commit; PR B: waiting on Dario to push (branch dc-mob-5035-ai-free-gates-firefox-ai, on top of PR A)
 - [ ] 5 Feature configuration tests (MOB-5036): <commits>
 - [ ] 6 Close-out; PR C: <number>
 
@@ -41,3 +41,7 @@ Nothing blocking. Q1 reframed (check at the first App Store Connect upload, not 
 - 2026-10-26 15:55 Step 4 on dc-mob-5035-ai-free-gates-firefox-ai: verify.sh OK (5012 tests, 5002 passed, 0 failed, 10 skipped; lint clean). A first run at 15:38 failed lint only (implicitly unwrapped optional in the new test), fixed.
 - 2026-10-26 16:21 Dario: translations treated like summaries (Translation row where AI-free is not offered); keep models on disk; asked why a TestFlight build is needed: Q1 reframed, no longer blocks PR A. No pushing yet.
 - 2026-10-26 (after 16:21) verify.sh hit ENOSPC (disk full, 155 MB free); Dario killed the run and freed space (Xcode's global DerivedData, simulators, build/m1-*): 41 GB free. A re-run failed in project generation (half-written SPM cache in Xcode's DerivedData for this worktree); once that cache was gone, verify.sh at 17:06: OK (5012 tests, 5002 passed, 0 failed, 10 skipped; lint clean). Run folders under build/ are now deleted after each result.
+- 2026-10-27 12:26 Dario: update Jira and add both tests. Jira MOB-5035 rewritten (title, description, acceptance criteria). OnDeviceSummariesTests committed on PR A (12873ed227); PR B rebased onto it (unpushed; hashes in diary and progress updated).
+- 2026-10-27 12:30 verify.sh: no simulator (Xcode auto-updated to 27.1 overnight, CoreSimulator 1171.7 < 1174.9.2). Dario ran the first-launch install.
+- 2026-10-27 12:44 verify.sh on PR B: 2 failures. AuthTests clearsLoggedInImpactCache (known flaky, M0) and the new non-Ecosia-provider settings test (Settings resyncs the provider from the default engine). That test was removed; the case is covered by AIFreeSearchingSelectionTests.
+- 2026-10-27 12:52 verify.sh on PR B: OK (5018 tests, 5008 passed, 0 failed, 10 skipped; lint clean).

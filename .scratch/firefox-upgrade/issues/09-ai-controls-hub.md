@@ -5,7 +5,7 @@
 **Status:** ready-for-agent
 **Blocked by:** 02
 
-> **Changed on 2026-10-26 (Dario).** This ticket first asked for Firefox's AI controls hub to be shown with only Translations and Summaries. The hub is not shown at all: Ecosia's own "AI-free searching" setting takes its place. The Jira ticket still has the old text.
+> **Changed on 2026-10-26 (Dario).** This ticket first asked for Firefox's AI controls hub to be shown with only Translations and Summaries. The hub is not shown at all: Ecosia's own "AI-free searching" setting takes its place. Jira MOB-5035 was updated to match on 2026-10-27.
 
 ## What to build
 
@@ -23,5 +23,5 @@ Follow the `// Ecosia:` / `/* Ecosia: */` convention in [ARCHITECTURE.md](../../
 - [ ] With AI-free searching on, no summaries or translations entry point anywhere, checked on a supported device
 - [ ] With AI-free searching off, summaries (on supported devices) and translations work
 - [ ] With a non-Ecosia search provider (or the AI-free flag off), the Summarize row (supported device) and the Translation row are in General settings, and neither feature is hidden by an earlier AI-free value
-- [ ] Unit tests for the rule and for both gates
+- [ ] Unit tests for the rule, both gates and the fallback settings rows
 - [ ] Diary entry written
