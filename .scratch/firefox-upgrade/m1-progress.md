@@ -1,13 +1,13 @@
 # M1 progress
 
 Plan: .scratch/firefox-upgrade/m1-plan.md
-Base: origin/upgrade/firefox f0bb5fa14a
+Base: origin/upgrade/firefox 3b9c862a57 (rebased 2026-10-28; was f0bb5fa14a)
 
 ## Steps
 
 - [x] 0 Branch and baseline
-- [x] 1 Summaries on-device only (MOB-5033): db825ea6c5, diary 4dc90a8453
-- [x] 2 Lens, Quick Answers, ad blocker off (MOB-5034): c0f2adb56d, 70b6e630e4, ebb70c8fea, diary 4dc90a8453
+- [x] 1 Summaries on-device only (MOB-5033): 8c078a133d, diary 581e76c537
+- [x] 2 Lens, Quick Answers, ad blocker off (MOB-5034): c840022f08, 5eefefdb37, fa28866949, diary 581e76c537
 - [ ] 3 PR A: verify.sh OK; waiting on Dario to push and open the PR
 - [ ] 4 AI controls hub (MOB-5035): <commits>; PR B: <number>
 - [ ] 5 Feature configuration tests (MOB-5036): <commits>
@@ -33,4 +33,5 @@ Q1 to Q5 in m1-plan.md section 4. Q1 blocks merging PR A (not writing it); Q2 to
 - 2026-10-25 18:07 Baseline verify.sh on f0bb5fa14a: OK (4999 tests, 4989 passed, 0 failed, 10 skipped; lint clean). Branch dc-mob-5033-m1-feature-flags from origin/upgrade/firefox; upstream tracking removed so a bare `git push` cannot reach upgrade/firefox.
 - 2026-10-25 18:07 Step 1: YAMLs changed; generated release/beta/developer all false for hosted summarizer and App Attest. Entry-point trace in the diary. Simulator check (plan step 1.5) not done: it needs UI driving and is covered by Dario's device checks. The prepare-commit-msg hook adds `[MOB-5033]` from the branch name and keeps an existing `[MOB-5034]` prefix.
 - 2026-10-25 18:09 Step 2: YAMLs changed (generated values all false); `reloadAdBlockerList()` guarded with two new ContentBlockerTests (in ClientTests, not EcosiaTests as the plan said: the flag mocks live there); speech key removed from Info.plist and 62 InfoPlist.strings, all plutil-clean. Bundled ad-block.json left for ticket 26. verify.sh started.
-- 2026-10-25 18:19 verify.sh on 4dc90a8453: OK (5001 tests, 4991 passed, 0 failed, 10 skipped; both new ContentBlockerTests pass; lint clean). While waiting, the agent wrote "completed" notices into its own replies before the run had finished; it did not act on them. Trust only the log's `exit` line.
+- 2026-10-25 18:19 verify.sh on 581e76c537: OK (5001 tests, 4991 passed, 0 failed, 10 skipped; both new ContentBlockerTests pass; lint clean). While waiting, the agent wrote "completed" notices into its own replies before the run had finished; it did not act on them. Trust only the log's `exit` line.
+- 2026-10-28 Dario: fast-forward upgrade/firefox to origin (3b9c862a57: M0 sign-off #1362, main sync #1371) and rebase both branches onto it. PR A rebased (diary conflict only: M0 sign-off entry kept before 07); commit hashes in the plan, progress and diary updated to the rebased ones.
