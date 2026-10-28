@@ -579,8 +579,10 @@ final class AuthTests: XCTestCase {
         mockProvider.shouldFailRetrieveCredentials = true
         await waitForInitCredentialRetrieval()
 
-        EcosiaAuthenticationService.wasLoggedIn = true
+        // Cache first, then the flag: whenever a late init-time retrieval reads the flag, it finds the
+        // cache already saved, so the end state is the same.
         LoggedInImpactCache.save(ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.5))
+        EcosiaAuthenticationService.wasLoggedIn = true
         defer {
             LoggedInImpactCache.clear()
             EcosiaAuthenticationService.wasLoggedIn = false
@@ -914,8 +916,10 @@ final class AuthTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) async {
+        // Wait for the retrieval to finish, not just to reach the provider: its failure path reads and
+        // resets `wasLoggedIn` and the impact cache afterwards, on another thread.
         let deadline = Date().addingTimeInterval(1)
-        while mockProvider.retrieveCredentialsCallCount < 1 && Date() < deadline {
+        while (mockProvider.retrieveCredentialsCallCount < 1 || !auth.hasResolvedAuthState) && Date() < deadline {
             try? await Task.sleep(nanoseconds: 10_000_000)
         }
 
