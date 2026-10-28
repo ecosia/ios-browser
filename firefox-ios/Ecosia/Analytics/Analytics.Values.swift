@@ -140,7 +140,8 @@ extension Analytics {
             analytics,
             clear,
             searchProvider = "search_provider",
-            toolbar
+            toolbar,
+            app_icon
         }
 
         public enum AIChat: String {

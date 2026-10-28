@@ -362,6 +362,13 @@ open class Analytics {
             .property(enabled ? Property.enable.rawValue : Property.disable.rawValue))
     }
 
+    public func changeAppIcon(to iconName: String) {
+        track(Structured(category: Category.settings.rawValue,
+                         action: Action.change.rawValue)
+            .label(Label.Settings.app_icon.rawValue)
+            .property(iconName))
+    }
+
     public func clearsDataFromSection(_ section: Analytics.Property.SettingsPrivateDataSection) {
         track(Structured(category: Category.settings.rawValue,
                          action: Action.click.rawValue)
