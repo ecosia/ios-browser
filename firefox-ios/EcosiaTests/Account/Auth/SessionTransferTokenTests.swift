@@ -77,22 +77,31 @@ final class SessionTransferTokenTests: XCTestCase {
         XCTAssertEqual(result, .refreshTokenRejected)
     }
 
-    func testIsRefreshTokenRejection_withNoCredentials_isTrue() {
-        XCTAssertTrue(EcosiaAuthenticationService.isRefreshTokenRejection(CredentialsManagerError.noCredentials))
+    func testGetSessionTransferToken_withNoCredentials_returnsRefreshTokenRejected() async {
+        credentialsManager.shouldFailSSOCredentials = true
+        credentialsManager.mockError = CredentialsManagerError.noCredentials
+
+        let result = await auth.getSessionTransferToken()
+
+        XCTAssertEqual(result, .refreshTokenRejected)
     }
 
-    func testIsRefreshTokenRejection_withOtherCredentialsManagerError_isFalse() {
-        XCTAssertFalse(EcosiaAuthenticationService.isRefreshTokenRejection(CredentialsManagerError.renewFailed))
+    func testGetSessionTransferToken_withOtherCredentialsManagerError_returnsUnavailable() async {
+        credentialsManager.shouldFailSSOCredentials = true
+        credentialsManager.mockError = CredentialsManagerError.renewFailed
+
+        let result = await auth.getSessionTransferToken()
+
+        XCTAssertEqual(result, .unavailable)
     }
 
-    func testIsRefreshTokenRejection_withNonAuthenticationError_isFalse() {
-        XCTAssertFalse(EcosiaAuthenticationService.isRefreshTokenRejection(URLError(.timedOut)))
-    }
+    func testGetSessionTransferToken_withOtherAuthenticationErrorCode_returnsUnavailable() async {
+        credentialsManager.shouldFailSSOCredentials = true
+        credentialsManager.mockError = AuthenticationError(info: ["error": "access_denied"], statusCode: 403)
 
-    func testIsRefreshTokenRejection_withOtherAuthenticationErrorCode_isFalse() {
-        let error = AuthenticationError(info: ["error": "access_denied"], statusCode: 403)
+        let result = await auth.getSessionTransferToken()
 
-        XCTAssertFalse(EcosiaAuthenticationService.isRefreshTokenRejection(error))
+        XCTAssertEqual(result, .unavailable)
     }
 }
 // swiftlint:enable implicitly_unwrapped_optional
