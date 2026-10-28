@@ -168,8 +168,8 @@ final class EcosiaAuthFlow {
             return .retransferred
         }
 
-        // Sign-in and Auth0 pages never count as landed, so they always end by timeout: that's a failure, not a slow load
-        if tabResult.timedOut, tabResult.landedOnSuccess {
+        // Sign-in and Auth0 pages never count as landed, so a timeout there is a failure, unless the tab was still loading
+        if tabResult.timedOut, tabResult.landedOnSuccess || tabResult.wasStillLoading {
             EcosiaLogger.auth.notice("Silent web session re-transfer timed out")
             return .deferred
         }
@@ -313,6 +313,7 @@ final class EcosiaAuthFlow {
     private struct SessionTransferTabResult {
         let landedOnSuccess: Bool
         let timedOut: Bool
+        let wasStillLoading: Bool
     }
 
     /// Installs the transfer cookie and waits for the invisible tab to land or time out.
@@ -342,7 +343,8 @@ final class EcosiaAuthFlow {
                 Task { @MainActor in
                     self?.activeSession = nil
                     continuation.resume(returning: SessionTransferTabResult(landedOnSuccess: success,
-                                                                            timedOut: !session.didLand))
+                                                                            timedOut: !session.didLand,
+                                                                            wasStillLoading: session.isLoading))
                 }
             }
         }
