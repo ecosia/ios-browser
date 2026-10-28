@@ -214,7 +214,8 @@ extension BrowserViewController {
     /// Detects Ecosia-specific URLs (auth, profile, etc.) and triggers native flows.
     /// - Returns: `true` if the URL was handled and navigation should be cancelled, `false` otherwise
     func detectAndHandleEcosiaURL(_ url: URL, for tab: Tab) -> Bool {
-        guard !tab.isInvisible else { return false }
+        // Private tabs have their own web session, separate from the native account
+        guard !tab.isInvisible, !tab.isPrivate else { return false }
 
         let interceptor = EcosiaURLInterceptor()
         let interceptedType = interceptor.interceptedType(for: url)
