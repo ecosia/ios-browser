@@ -234,13 +234,7 @@ private struct WebViewRepresentable: UIViewRepresentable {
             guard authService.isLoggedIn, !authService.isLoggingOut else { return }
 
             EcosiaLogger.auth.info("🔐 [WEBVIEW] Web sign-out in profile WebView, logging out natively")
-            Task {
-                do {
-                    try await authService.logout(triggerWebLogout: false)
-                } catch {
-                    EcosiaLogger.auth.error("🔐 [WEBVIEW] Native logout after web sign-out failed: \(error)")
-                }
-            }
+            authService.startLogout(triggerWebLogout: false)
         }
 
         func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

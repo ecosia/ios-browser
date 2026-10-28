@@ -67,6 +67,17 @@ final class AuthSessionCookieHandlerTests: XCTestCase {
         XCTAssertTrue(remaining.isEmpty)
     }
 
+    func testRemoved_clearsMirroredEASCFromSharedStorage() {
+        let storage = HTTPCookieStorage.shared
+        let easc = makeCookie(name: Cookie.authSession.rawValue, value: "dead-session", domain: ".ecosia.org")
+        storage.setCookie(easc)
+        defer { storage.deleteCookie(easc) }
+
+        AuthSessionCookieHandler().removed(in: MockHTTPCookieStore())
+
+        XCTAssertFalse((storage.cookies ?? []).contains { $0.name == Cookie.authSession.rawValue })
+    }
+
     private func makeCookie(name: String, value: String, domain: String) -> HTTPCookie {
         HTTPCookie(properties: [
             .name: name,
