@@ -523,8 +523,8 @@ final class SimulateSessionTransferFailureSetting: HiddenSetting {
         let alert = AlertController(
             title: !currentValue ? "Session Transfer Failure Enabled ✅" : "Session Transfer Failure Disabled ✅",
             message: !currentValue
-                ? "Next login/logout will complete natively but the invisible tab will hit a real " +
-                  "/accounts/error - check Sentry for the event, until you toggle this off."
+                ? "Logins, logouts and web session transfers will complete natively but the invisible tab " +
+                  "will hit a real /accounts/error, until you toggle this off."
                 : "Session transfer failures disabled.",
             preferredStyle: .alert
         )
@@ -559,7 +559,9 @@ final class TriggerWebSessionRetransferSetting: HiddenSetting {
 
         let alert = AlertController(
             title: isLoggedIn ? "Web Session Transfer Requested ✅" : "Not Logged In",
-            message: isLoggedIn ? "Check the auth logs for the outcome." : "Please log in first to use this feature",
+            message: isLoggedIn
+                ? "It runs in an invisible tab: the web stays signed in when it succeeds."
+                : "Please log in first to use this feature",
             preferredStyle: .alert
         )
         navigationController?.topViewController?.present(alert, animated: true) {
