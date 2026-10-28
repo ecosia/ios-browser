@@ -577,37 +577,52 @@ final class TriggerWebSessionRetransferSetting: HiddenSetting {
 
 /// Shortens the web session cookie's lifetime so QA can watch expiry handling without waiting 90 days.
 final class ExpireWebSessionCookieSetting: HiddenSetting {
-    static let expiryDelay: TimeInterval = 60
+    private static let expiryDelays: [(label: String, seconds: TimeInterval)] = [
+        ("5s", 5), ("30s", 30), ("60s", 60), ("5 min", 300)
+    ]
 
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Expire Web Session Cookie (EASC) in 60s", attributes: [:])
+        return NSAttributedString(string: "Debug: Expire Web Session Cookie (EASC)", attributes: [:])
     }
 
     override var status: NSAttributedString? {
-        return NSAttributedString(string: "Rewrites EASC with a short expiry", attributes: [:])
+        return NSAttributedString(string: "Rewrites EASC to expire after 5s, 30s, 60s or 5 min", attributes: [:])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-        Task { @MainActor in
-            let didRewrite = await Self.rewriteAuthSessionCookie()
-            let alert = AlertController(
-                title: didRewrite ? "EASC Expires in 60s ✅" : "No EASC Cookie",
-                message: didRewrite
-                    ? "Background the app for over a minute, or kill and reopen it, then check the auth logs."
-                    : "Log in first so the web session exists.",
-                preferredStyle: .alert
-            )
-            navigationController?.topViewController?.present(alert, animated: true) {
-                // Task + sleep instead of DispatchQueue for strict concurrency
+        let picker = AlertController(title: "Expire EASC after", message: nil, preferredStyle: .alert)
+        Self.expiryDelays.forEach { delay in
+            picker.addAction(UIAlertAction(title: delay.label, style: .default) { _ in
                 Task { @MainActor in
-                    try? await Task.sleep(nanoseconds: 1_500_000_000)
-                    alert.dismiss(animated: true)
+                    await Self.expire(after: delay, from: navigationController)
                 }
+            })
+        }
+        picker.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        navigationController?.topViewController?.present(picker, animated: true)
+    }
+
+    @MainActor
+    private static func expire(after delay: (label: String, seconds: TimeInterval),
+                               from navigationController: UINavigationController?) async {
+        let didRewrite = await rewriteAuthSessionCookie(expiringIn: delay.seconds)
+        let alert = AlertController(
+            title: didRewrite ? "EASC Expires in \(delay.label) ✅" : "No EASC Cookie",
+            message: didRewrite
+                ? "Background the app until it expires, or kill and reopen it."
+                : "Log in first so the web session exists.",
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
             }
         }
     }
 
-    private static func rewriteAuthSessionCookie() async -> Bool {
+    private static func rewriteAuthSessionCookie(expiringIn delay: TimeInterval) async -> Bool {
         let cookieStore: CookieStoreProtocol = WKWebsiteDataStore.default().httpCookieStore
         guard let authSessionCookie = Cookie.authSessionCookie(in: await cookieStore.allCookies()),
               var properties = authSessionCookie.properties else {
@@ -615,7 +630,7 @@ final class ExpireWebSessionCookieSetting: HiddenSetting {
         }
         // Max-Age takes precedence over Expires, so it has to go for the new expiry to apply
         properties.removeValue(forKey: .maximumAge)
-        properties[.expires] = Date().addingTimeInterval(expiryDelay)
+        properties[.expires] = Date().addingTimeInterval(delay)
         guard let shortLivedCookie = HTTPCookie(properties: properties) else { return false }
         await cookieStore.setCookie(shortLivedCookie)
         return true
