@@ -25,7 +25,8 @@ common=(
 # Tests that fail on main as well under Xcode 27 (CI runs Xcode 26.6, where they pass): their Mirror
 # lookup of the `_theme` @State storage finds nothing. Excluded locally only; the scheme keeps them.
 skip_tests=()
-if xcodebuild -version | head -1 | grep -q '^Xcode 27'; then
+# No pipe: under pipefail, `head` closing early can fail the pipeline and drop the skips.
+if [[ "$(xcodebuild -version)" == "Xcode 27"* ]]; then
   skip_tests=(
     -skip-testing:EcosiaTests/EcosiaAIChatButtonThemeTests/testIntegrationWithButton
     -skip-testing:EcosiaTests/FeedbackThemeTests/testIntegrationWithFeedbackView
