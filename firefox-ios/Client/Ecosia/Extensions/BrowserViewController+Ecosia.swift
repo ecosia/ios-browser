@@ -290,7 +290,7 @@ extension BrowserViewController {
     /// continue to where the sign-in would have led.
     private func resolveSignedOutWebSession(_ url: URL, tab: Tab, ecosiaAuth: EcosiaAuth) {
         let interceptor = EcosiaURLInterceptor()
-        guard !interceptor.isForcedReauthentication(url) else {
+        guard !interceptor.isForcedLoginPrompt(url) else {
             reconcileWithLogoutAndLogin(ecosiaAuth)
             return
         }

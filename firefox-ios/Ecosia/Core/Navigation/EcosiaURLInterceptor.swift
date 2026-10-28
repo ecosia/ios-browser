@@ -60,8 +60,8 @@ public struct EcosiaURLInterceptor {
         interceptedType(for: url) != .none
     }
 
-    /// Whether a sign-in asks for a fresh login (e.g. before account deletion), which mustn't be satisfied silently
-    public func isForcedReauthentication(_ url: URL) -> Bool {
+    /// Whether a sign-in asks for an interactive login (`promptLogin=true`, e.g. before account deletion), which mustn't be satisfied silently
+    public func isForcedLoginPrompt(_ url: URL) -> Bool {
         queryItem(named: "promptLogin", in: url) == "true"
     }
 

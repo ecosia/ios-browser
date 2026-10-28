@@ -316,18 +316,18 @@ final class EcosiaURLInterceptorTests: XCTestCase {
         XCTAssertEqual(sut.returnURL(fromSignIn: url), URLProvider.production.root)
     }
 
-    // MARK: - Forced Re-authentication Tests
+    // MARK: - Forced Login Prompt Tests
 
-    func testIsForcedReauthentication_withPromptLogin_isTrue() {
+    func testIsForcedLoginPrompt_withPromptLogin_isTrue() {
         let url = URL(string: "https://www.ecosia.org/accounts/sign-in?promptLogin=true&returnTo=%2Faccounts%2Fprofile")!
 
-        XCTAssertTrue(sut.isForcedReauthentication(url))
+        XCTAssertTrue(sut.isForcedLoginPrompt(url))
     }
 
-    func testIsForcedReauthentication_withoutPromptLogin_isFalse() {
+    func testIsForcedLoginPrompt_withoutPromptLogin_isFalse() {
         let url = URL(string: "https://www.ecosia.org/accounts/sign-in?silent=true")!
 
-        XCTAssertFalse(sut.isForcedReauthentication(url))
+        XCTAssertFalse(sut.isForcedLoginPrompt(url))
     }
 }
 // swiftlint:enable implicitly_unwrapped_optional
