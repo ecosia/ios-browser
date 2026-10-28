@@ -127,6 +127,11 @@ final class EcosiaAuthFlow {
             return .deferred
         }
 
+        guard isStillLoggedIn else {
+            EcosiaLogger.auth.info("Web session re-transfer skipped: not logged in or logging out")
+            return .loggedOut
+        }
+
         switch await authService.getSessionTransferToken() {
         case .retrieved:
             break
@@ -163,7 +168,8 @@ final class EcosiaAuthFlow {
             return .retransferred
         }
 
-        if tabResult.timedOut {
+        // Sign-in and Auth0 pages never count as landed, so they always end by timeout: that's a failure, not a slow load
+        if tabResult.timedOut, tabResult.landedOnSuccess {
             EcosiaLogger.auth.notice("Silent web session re-transfer timed out")
             return .deferred
         }

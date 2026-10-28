@@ -28,7 +28,8 @@ final class WebSessionRecoveryCoordinator {
     }
 
     func retransferWebSession(reason: String) {
-        guard authService.isLoggedIn else { return }
+        // A direct `logout()` (e.g. from the account impact view) doesn't block the gate
+        guard authService.isLoggedIn, !authService.isLoggingOut else { return }
 
         switch gate.requestStart() {
         case .start:
