@@ -60,8 +60,15 @@ final class WebSessionRecoveryCoordinator {
 
     /// Whether removing these website data records takes the web session with it.
     static func includesWebSession(_ records: [WKWebsiteDataRecord]) -> Bool {
-        let domain = EcosiaEnvironment.current.urlProvider.domain.lowercased()
-        return records.contains { $0.displayName.lowercased() == domain }
+        records.contains { isWebSessionRecord(displayName: $0.displayName) }
+    }
+
+    /// Records are usually named after the registrable domain, but a host (e.g. `www.ecosia.org`) holds the session too
+    static func isWebSessionRecord(displayName: String,
+                                   urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
+        let name = displayName.lowercased()
+        let domain = urlProvider.domain.lowercased()
+        return name == domain || name.hasSuffix(".\(domain)")
     }
 
     /// A re-transfer started mid-wipe would have its own cookies wiped, so hold them back until the wipe is done.
