@@ -644,7 +644,7 @@ final class CorruptWebSessionCookieSetting: HiddenSetting {
     }
 
     override var status: NSAttributedString? {
-        return NSAttributedString(string: "Next Ecosia search makes the web delete EASC", attributes: [:])
+        return NSAttributedString(string: "Opening AI chat makes the web delete EASC", attributes: [:])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
@@ -653,7 +653,7 @@ final class CorruptWebSessionCookieSetting: HiddenSetting {
             let alert = AlertController(
                 title: didCorrupt ? "EASC Corrupted ✅" : "No EASC Cookie",
                 message: didCorrupt
-                    ? "Search on Ecosia, then check the auth logs for \"cookie removed\"."
+                    ? "Open AI chat: the web deletes the corrupted cookie and the web session is restored."
                     : "Log in first so the web session exists.",
                 preferredStyle: .alert
             )
