@@ -12,9 +12,9 @@ final class WebSessionRetransferGateTests: XCTestCase {
 
     private func makeGate(maxAttempts: Int = 3) -> WebSessionRetransferGate {
         WebSessionRetransferGate(maxAttempts: maxAttempts,
-                              attemptWindow: 15 * 60,
-                              baseBackoff: 30,
-                              now: { [unowned self] in self.currentDate })
+                                 attemptWindow: 15 * 60,
+                                 baseBackoff: 30,
+                                 now: { [unowned self] in self.currentDate })
     }
 
     func testRequestStart_firstAttempt_starts() {

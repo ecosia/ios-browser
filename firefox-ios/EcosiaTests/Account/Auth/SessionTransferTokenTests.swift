@@ -95,3 +95,4 @@ final class SessionTransferTokenTests: XCTestCase {
         XCTAssertFalse(EcosiaAuthenticationService.isRefreshTokenRejection(error))
     }
 }
+// swiftlint:enable implicitly_unwrapped_optional
