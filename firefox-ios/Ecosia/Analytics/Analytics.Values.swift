@@ -248,6 +248,8 @@ extension Analytics {
         account,
         aiToolsMenu = "ai_tools_menu",
         cancel,
+        defaultBrowserSet = "default_browser_set",
+        defaultBrowserNotSet = "default_browser_not_set",
         enable,
         disable,
         header,

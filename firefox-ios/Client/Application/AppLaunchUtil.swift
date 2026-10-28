@@ -35,10 +35,12 @@ final class AppLaunchUtil: FeatureFlaggable, Sendable {
             logger.copyLogsToDocuments()
         }
 
+        /* Ecosia: Querying on every launch exhausts Apple's rate limit; see `ecosiaCheckDefaultBrowserStatusIfDue`
         // Tests can force a deterministic default-browser state; skip the system API so it isn't overwritten.
         if !ProcessInfo.processInfo.arguments.contains(LaunchArguments.ResetDefaultBrowserStatus) {
             DefaultBrowserUtility().processUserDefaultState(isFirstRun: introScreenManager.shouldShowIntroScreen)
         }
+         */
         DefaultBrowserUtility().migrateDefaultBrowserStatusIfNeeded(isFirstRun: introScreenManager.shouldShowIntroScreen)
 
         SummarizerPrefsMigration(prefs: profile.prefs).migrateSelectedLanguage()

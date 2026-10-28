@@ -82,10 +82,15 @@ open class Analytics {
                              payload: ["app_v": Bundle.version as NSObject]))
     }
 
-    public func activity(_ action: Action.Activity) {
+    /// `isDefaultBrowser` is `nil` unless the rate-limited system check got an answer for this launch/resume,
+    /// so an empty property means "not checked" rather than "not default".
+    public func activity(_ action: Action.Activity, isDefaultBrowser: Bool?) {
         let event = Structured(category: Category.activity.rawValue,
                                action: action.rawValue)
             .label(Analytics.Label.Navigation.inapp.rawValue)
+        if let isDefaultBrowser {
+            event.property = (isDefaultBrowser ? Property.defaultBrowserSet : Property.defaultBrowserNotSet).rawValue
+        }
 
         appendActivityContextIfNeeded(action, event) { [weak self] in
             self?.track(event)
