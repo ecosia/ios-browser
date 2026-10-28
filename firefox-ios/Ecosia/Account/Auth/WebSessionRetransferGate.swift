@@ -6,7 +6,7 @@ import Foundation
 
 /// Decides whether a silent web session re-transfer may start.
 ///
-/// Each re-transfer spends a refresh token on the SSO exchange, so attempts are capped per window with backoff between them.
+/// Each re-transfer spends a refresh token on the SSO exchange, so attempts are capped per window with backoff after failures.
 @MainActor
 public final class WebSessionRetransferGate {
 
@@ -25,6 +25,7 @@ public final class WebSessionRetransferGate {
     private let now: () -> Date
 
     private var attemptDates: [Date] = []
+    private var consecutiveFailures = 0
     private var isRunning = false
     private var blockingOperationCount = 0
 
@@ -50,7 +51,7 @@ public final class WebSessionRetransferGate {
         blockingOperationCount = max(0, blockingOperationCount - 1)
     }
 
-    /// Returns `.start` and records the attempt when a re-transfer may run now; the caller must then call `finish()`.
+    /// Returns `.start` and records the attempt when a re-transfer may run now; the caller must then call `finish(succeeded:)`.
     public func requestStart() -> Decision {
         guard !isRunning else { return .alreadyRunning }
         guard !isBlocked else { return .blocked }
@@ -59,8 +60,9 @@ public final class WebSessionRetransferGate {
         attemptDates.removeAll { currentDate.timeIntervalSince($0) >= attemptWindow }
         guard attemptDates.count < maxAttempts else { return .limitReached }
 
-        if let lastAttempt = attemptDates.last {
-            let backoff = baseBackoff * pow(2, Double(attemptDates.count - 1))
+        // A successful re-transfer means the next loss is a new one, so only failures back off
+        if consecutiveFailures > 0, let lastAttempt = attemptDates.last {
+            let backoff = baseBackoff * pow(2, Double(consecutiveFailures - 1))
             let remaining = backoff - currentDate.timeIntervalSince(lastAttempt)
             if remaining > 0 {
                 return .retryAfter(remaining)
@@ -72,7 +74,8 @@ public final class WebSessionRetransferGate {
         return .start
     }
 
-    public func finish() {
+    public func finish(succeeded: Bool) {
         isRunning = false
+        consecutiveFailures = succeeded ? 0 : consecutiveFailures + 1
     }
 }

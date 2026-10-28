@@ -54,22 +54,55 @@ final class WebSessionRetransferGateTests: XCTestCase {
         XCTAssertEqual(gate.requestStart(), .blocked)
     }
 
-    func testRequestStart_rightAfterAnAttempt_backsOff() {
+    func testRequestStart_rightAfterASuccess_starts() {
         let gate = makeGate()
         _ = gate.requestStart()
-        gate.finish()
+        gate.finish(succeeded: true)
+        currentDate += 10
+
+        XCTAssertEqual(gate.requestStart(), .start)
+    }
+
+    func testRequestStart_successfulAttemptsStillCountTowardsTheLimit() {
+        let gate = makeGate(maxAttempts: 2)
+        _ = gate.requestStart()
+        gate.finish(succeeded: true)
+        _ = gate.requestStart()
+        gate.finish(succeeded: true)
+
+        XCTAssertEqual(gate.requestStart(), .limitReached)
+    }
+
+    func testRequestStart_afterASuccess_resetsBackoff() {
+        let gate = makeGate(maxAttempts: 4)
+        _ = gate.requestStart()
+        gate.finish(succeeded: false)
+        currentDate += 30
+        _ = gate.requestStart()
+        gate.finish(succeeded: true)
+        _ = gate.requestStart()
+        gate.finish(succeeded: false)
         currentDate += 10
 
         XCTAssertEqual(gate.requestStart(), .retryAfter(20))
     }
 
-    func testRequestStart_backoffDoublesWithEachAttempt() {
+    func testRequestStart_rightAfterAFailure_backsOff() {
         let gate = makeGate()
         _ = gate.requestStart()
-        gate.finish()
+        gate.finish(succeeded: false)
+        currentDate += 10
+
+        XCTAssertEqual(gate.requestStart(), .retryAfter(20))
+    }
+
+    func testRequestStart_backoffDoublesWithEachFailure() {
+        let gate = makeGate()
+        _ = gate.requestStart()
+        gate.finish(succeeded: false)
         currentDate += 30
         _ = gate.requestStart()
-        gate.finish()
+        gate.finish(succeeded: false)
 
         XCTAssertEqual(gate.requestStart(), .retryAfter(60))
     }
@@ -77,7 +110,7 @@ final class WebSessionRetransferGateTests: XCTestCase {
     func testRequestStart_afterBackoffElapses_starts() {
         let gate = makeGate()
         _ = gate.requestStart()
-        gate.finish()
+        gate.finish(succeeded: false)
         currentDate += 30
 
         XCTAssertEqual(gate.requestStart(), .start)
@@ -86,10 +119,10 @@ final class WebSessionRetransferGateTests: XCTestCase {
     func testRequestStart_whenAttemptsExhausted_reportsLimitReached() {
         let gate = makeGate(maxAttempts: 2)
         _ = gate.requestStart()
-        gate.finish()
+        gate.finish(succeeded: false)
         currentDate += 30
         _ = gate.requestStart()
-        gate.finish()
+        gate.finish(succeeded: false)
         currentDate += 600
 
         XCTAssertEqual(gate.requestStart(), .limitReached)
@@ -98,7 +131,7 @@ final class WebSessionRetransferGateTests: XCTestCase {
     func testRequestStart_afterAttemptWindowPasses_startsAgain() {
         let gate = makeGate(maxAttempts: 1)
         _ = gate.requestStart()
-        gate.finish()
+        gate.finish(succeeded: false)
         currentDate += 15 * 60
 
         XCTAssertEqual(gate.requestStart(), .start)

@@ -48,7 +48,7 @@ final class WebSessionRecoveryCoordinator {
     private func runRetransfer(reason: String) async {
         guard let browserViewController = activeBrowserViewController else {
             EcosiaLogger.auth.notice("Web session re-transfer (\(reason)) skipped: no browser window available")
-            gate.finish()
+            gate.finish(succeeded: false)
             return
         }
 
@@ -57,7 +57,7 @@ final class WebSessionRecoveryCoordinator {
                                   authService: authService,
                                   browserViewController: browserViewController)
         let result = await flow.startWebSessionRetransfer()
-        gate.finish()
+        gate.finish(succeeded: result == .retransferred)
 
         if result == .deferred {
             retransferWebSession(reason: reason)
