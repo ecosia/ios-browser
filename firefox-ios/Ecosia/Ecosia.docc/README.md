@@ -226,7 +226,7 @@ Our certs and profiles are managed centrally by [fastlane match](https://docs.fa
 
 You might need to set up your Ruby stack:
 ```
-sudo gem install bundler:2.3.4
+sudo gem install bundler:2.7.2
 bundle install
 
 # you may need to link your ruby if you have a ruby from brew
