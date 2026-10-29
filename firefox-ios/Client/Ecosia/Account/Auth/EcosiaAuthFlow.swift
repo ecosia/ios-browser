@@ -325,7 +325,7 @@ final class EcosiaAuthFlow {
             : EcosiaEnvironment.current.urlProvider.signUpURL
 
         // The web reuses a still-valid session on sign-in, keeping its original 90-day lifetime
-        await clearAuthSessionCookie()
+        await clearAuthSessionCookies()
         await InvisibleTabSession.installSessionCookie(from: authService)
 
         EcosiaLogger.invisibleTabs.info("Creating invisible tab session for \(type)")
@@ -350,11 +350,16 @@ final class EcosiaAuthFlow {
         }
     }
 
-    private func clearAuthSessionCookie() async {
+    /// There can be more than one, e.g. on another path or a subdomain, and any left behind would be sent along
+    private func clearAuthSessionCookies() async {
         let cookieStore = WKWebsiteDataStore.default().httpCookieStore
-        let cookies = await (cookieStore as CookieStoreProtocol).allCookies()
-        guard let authSessionCookie = Cookie.authSessionCookie(in: cookies) else { return }
-        await cookieStore.deleteCookie(authSessionCookie)
+        let domain = EcosiaEnvironment.current.urlProvider.domain
+        let authSessionCookies = await (cookieStore as CookieStoreProtocol).allCookies().filter {
+            $0.name == Cookie.authSession.rawValue && ($0.domain == domain || $0.domain.hasSuffix(".\(domain)"))
+        }
+        for cookie in authSessionCookies {
+            await cookieStore.deleteCookie(cookie)
+        }
     }
 
     /// The setting persists across launches, so make a forgotten one obvious in the logs
