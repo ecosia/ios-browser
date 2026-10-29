@@ -555,7 +555,7 @@ final class TriggerWebSessionRetransferSetting: HiddenSetting {
     override func onClick(_ navigationController: UINavigationController?) {
         let isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
         if isLoggedIn {
-            WebSessionRecoveryCoordinator.shared.retransferWebSession(reason: "debug")
+            WebSessionRecoveryCoordinator.shared.retransferWebSession(trigger: .debug)
         }
 
         let alert = AlertController(

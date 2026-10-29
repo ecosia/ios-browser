@@ -298,7 +298,7 @@ extension BrowserViewController {
 
         EcosiaLogger.auth.info("🔐 [WEB-AUTH] Web asked to sign in while native is signed in; re-transferring silently")
         Task { @MainActor [weak self, weak tab] in
-            let result = await WebSessionRecoveryCoordinator.shared.startOrJoinRetransfer(reason: "sign-in intercepted")
+            let result = await WebSessionRecoveryCoordinator.shared.startOrJoinRetransfer(trigger: .signInIntercepted)
             switch result {
             case .retransferred:
                 _ = tab?.loadRequest(URLRequest(url: interceptor.returnURL(fromSignIn: url)))
