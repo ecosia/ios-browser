@@ -17,7 +17,7 @@ runs:
       run: python3 .github/scripts/check_pinned_dependencies.py
 
     - name: Xcode Select Version
-      uses: mobiledevops/xcode-select-version-action@v1
+      uses: mobiledevops/xcode-select-version-action@7b50160de7c8bd6a8c4ee2c2e6b5ee0983886c0b # v1.1.0
       with:
         # Ecosia: pinned so the toolchain is not a moving part. Keep in sync with what developers run
         # locally, since a mismatch has bitten us before.
@@ -50,7 +50,7 @@ runs:
         cache: 'pip'
 
     - name: Install gems
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
       with:
         ruby-version: 3.3
         bundler-cache: true
