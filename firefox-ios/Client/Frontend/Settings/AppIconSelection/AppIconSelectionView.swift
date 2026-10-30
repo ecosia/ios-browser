@@ -4,6 +4,7 @@
 
 import SwiftUI
 import Common
+import class Ecosia.Analytics
 
 struct AppIconSelectionView: View, ThemeApplicable, FeatureFlaggable {
     private let windowUUID: WindowUUID
@@ -106,6 +107,9 @@ struct AppIconSelectionView: View, ThemeApplicable, FeatureFlaggable {
             }
 
             telemetry.selectedIcon(appIcon, previousIcon: previousIcon)
+
+            // Ecosia: track our custom app icons
+            Analytics.shared.changeAppIcon(to: appIcon.imageSetAssetName)
         }
     }
 }
