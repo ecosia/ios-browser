@@ -18,6 +18,7 @@ final class WebSessionRecoveryCoordinator {
         case foreground
         case cookieRemoved = "cookie removed"
         case signInIntercepted = "sign-in intercepted"
+        case websiteDataCleared = "website data cleared"
         case debug
 
         var description: String { rawValue }
@@ -55,6 +56,30 @@ final class WebSessionRecoveryCoordinator {
 
         EcosiaLogger.auth.info("Web session missing while logged in natively (\(trigger))")
         retransferWebSession(trigger: trigger)
+    }
+
+    /// Whether removing these website data records takes the web session with it.
+    static func includesWebSession(_ records: [WKWebsiteDataRecord]) -> Bool {
+        records.contains { isWebSessionRecord(displayName: $0.displayName) }
+    }
+
+    /// Records are usually named after the registrable domain, but a host (e.g. `www.ecosia.org`) holds the session too
+    static func isWebSessionRecord(displayName: String,
+                                   urlProvider: URLProvider = EcosiaEnvironment.current.urlProvider) -> Bool {
+        let name = displayName.lowercased()
+        let domain = urlProvider.domain.lowercased()
+        return name == domain || name.hasSuffix(".\(domain)")
+    }
+
+    /// A re-transfer started mid-wipe would have its own cookies wiped, so hold them back until the wipe is done.
+    func beginClearingWebsiteData() {
+        gate.beginBlockingOperation()
+    }
+
+    /// Keeps the user signed in on the web when the wipe took the web session with it.
+    func endClearingWebsiteData() {
+        gate.endBlockingOperation()
+        Task { await retransferIfWebSessionMissing(trigger: .websiteDataCleared) }
     }
 
     func retransferWebSession(trigger: Trigger) {

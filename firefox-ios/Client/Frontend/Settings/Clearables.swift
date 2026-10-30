@@ -153,7 +153,13 @@ class CookiesClearable: Clearable {
                 WKWebsiteDataTypeIndexedDBDatabases
             ]
         )
+        /* Ecosia: Restore the web session once the wipe is done, so clearing cookies keeps the user signed in
         WKWebsiteDataStore.default().removeData(ofTypes: dataTypes, modifiedSince: .distantPast, completionHandler: {})
+         */
+        WebSessionRecoveryCoordinator.shared.beginClearingWebsiteData()
+        WKWebsiteDataStore.default().removeData(ofTypes: dataTypes, modifiedSince: .distantPast, completionHandler: {
+            WebSessionRecoveryCoordinator.shared.endClearingWebsiteData()
+        })
 
         logger.log("CookiesClearable succeeded.",
                    level: .debug,
