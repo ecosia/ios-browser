@@ -218,20 +218,10 @@ The `CURRENT_PROJECT_VERSION` being set to `0` indicates that it is not being us
 
 ## 🏅 Get certificates and profiles
 
-```
-brew install fastlane
-```
-
 Our certs and profiles are managed centrally by [fastlane match](https://docs.fastlane.tools/actions/match/). Find the repo [here](https://github.com/ecosia/IosSearchSigning)
 
-You might need to set up your Ruby stack:
+fastlane and its plugins are installed with Bundler, at the versions pinned in `Gemfile.lock`. Set up Ruby, then install them from the repo root:
 ```
-sudo gem install bundler:2.3.4
-bundle install
-
-# you may need to link your ruby if you have a ruby from brew
-echo 'export PATH="/opt/homebrew/opt/ruby/bin:$PATH"' >> ~/.zshrc
-
 # you may need to install a ruby <4
 # https://formulae.brew.sh/formula/rbenv
 brew install rbenv
@@ -241,6 +231,8 @@ source ~/.zshrc
 rbenv install 3.4.10
 rbenv global 3.4.10
 
+gem install bundler:2.7.2
+bundle install
 ```
 Run `bundle exec fastlane match --readonly` to add certs and profiles to your system. You can append  `-p "keychain password"` to avoid keychain prompts during the process. The passphrase to decrypt the repo is in Bitwarden under the name: `iOS Fastlane match passphrase`.
 
