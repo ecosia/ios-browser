@@ -523,8 +523,8 @@ final class SimulateSessionTransferFailureSetting: HiddenSetting {
         let alert = AlertController(
             title: !currentValue ? "Session Transfer Failure Enabled ✅" : "Session Transfer Failure Disabled ✅",
             message: !currentValue
-                ? "Next login/logout will complete natively but the invisible tab will hit a real " +
-                  "/accounts/error - check Sentry for the event, until you toggle this off."
+                ? "Logins, logouts and web session transfers will complete natively but the invisible tab " +
+                  "will hit a real /accounts/error, until you toggle this off."
                 : "Session transfer failures disabled.",
             preferredStyle: .alert
         )
@@ -539,6 +539,38 @@ final class SimulateSessionTransferFailureSetting: HiddenSetting {
 
     nonisolated public static var isEnabled: Bool {
         UserDefaults.standard.bool(forKey: debugKey)
+    }
+}
+
+final class TriggerWebSessionRetransferSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Trigger Silent Web Session Transfer", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Re-runs the session transfer in an invisible tab (logged in only)", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+        if isLoggedIn {
+            WebSessionRecoveryCoordinator.shared.retransferWebSession(reason: "debug")
+        }
+
+        let alert = AlertController(
+            title: isLoggedIn ? "Web Session Transfer Requested ✅" : "Not Logged In",
+            message: isLoggedIn
+                ? "It runs in an invisible tab: the web stays signed in when it succeeds."
+                : "Please log in first to use this feature",
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
     }
 }
 

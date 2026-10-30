@@ -92,6 +92,11 @@ public enum Cookie: String, CaseIterable {
 
     // MARK: - Public Interface
 
+    /// The current environment's live web session cookie; `EASC` cookies from other environments can share the jar.
+    public static func authSessionCookie(in cookies: [HTTPCookie], now: Date = Date()) -> HTTPCookie? {
+        cookies.first { Cookie($0) == .authSession && !$0.isExpired(at: now) }
+    }
+
     /// Processes received cookies.
     /// - Parameters:
     ///   - cookies: An array of HTTPCookie objects.
@@ -150,5 +155,12 @@ public enum Cookie: String, CaseIterable {
         }
 
         return cookies
+    }
+}
+
+private extension HTTPCookie {
+    /// WebKit can still list a cookie for a moment after its expiry
+    func isExpired(at date: Date) -> Bool {
+        expiresDate.map { $0 <= date } ?? false
     }
 }

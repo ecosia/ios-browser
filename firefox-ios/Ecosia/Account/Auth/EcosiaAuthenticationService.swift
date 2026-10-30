@@ -53,6 +53,9 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     /// reader that can't tell the two apart may mistake "not yet checked" for "confirmed logged out".
     public private(set) var hasResolvedAuthState: Bool = false
 
+    /// `logout()` deletes the web session before clearing credentials, so `isLoggedIn` alone can't tell that loss apart from an unexpected one.
+    public private(set) var isLoggingOut: Bool = false
+
     private static let wasLoggedInKey = "EcosiaAuthenticationService.wasLoggedIn"
 
     /// Whether the user was logged in as of the last confirmed transition (login, logout, or a
@@ -182,6 +185,9 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
     ///           `AuthError.sessionClearingFailed` if both web session and credential clearing fail,
     ///           `AuthError.credentialsClearingFailed` if only credential clearing fails.
     public func logout(triggerWebLogout: Bool = true) async throws {
+        isLoggingOut = true
+        defer { isLoggingOut = false }
+
         var sessionClearingError: Error?
 
         // First, try to clear the web session if requested
@@ -392,14 +398,29 @@ extension EcosiaAuthenticationService {
      - User must be logged in (`isLoggedIn` must be `true`)
      - The auth provider must support SSO credential retrieval
      */
-    public func getSessionTransferToken() async {
+    @discardableResult
+    public func getSessionTransferToken() async -> SessionTransferTokenResult {
         guard isLoggedIn else {
             EcosiaLogger.auth.notice("Cannot get session transfer token - user not logged in")
-            return
+            return .unavailable
         }
-        ssoCredentials = await retrieveSSOCredentials()
-        if ssoCredentials != nil {
+        guard let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider else {
+            ssoCredentials = nil
+            return .unavailable
+        }
+        do {
+            ssoCredentials = try await authProvider.getSSOCredentials()
             EcosiaLogger.session.info("Retrieved session transfer token for SSO")
+            return .retrieved
+        } catch {
+            ssoCredentials = nil
+            // Expected once the refresh token is revoked or gone, or the user is deleted, so not a Sentry error
+            if error.isRefreshTokenRejection {
+                EcosiaLogger.auth.notice("Refresh token rejected by the SSO exchange: \(error)")
+                return .refreshTokenRejected
+            }
+            EcosiaLogger.auth.sentry("Failed to retrieve SSO credentials: \(error)")
+            return .unavailable
         }
     }
 
@@ -426,29 +447,6 @@ extension EcosiaAuthenticationService {
             return nil
         }
         return makeSessionTokenCookieWithSSOCredentials(ssoCredentials)
-    }
-
-    /**
-     Retrieves SSO credentials from the authentication provider if supported.
-     
-     This method checks if the current authentication provider supports SSO credential retrieval
-     (specifically `NativeToWebSSOAuth0Provider`) and requests the session transfer token.
-     
-     - Returns: `SSOCredentials` containing the session transfer token and expiration information,
-     or `nil` if the provider doesn't support SSO or if the request fails.
-     
-     - Note: This method performs a type check to ensure the provider supports SSO operations
-     before attempting to retrieve credentials.
-     */
-    private func retrieveSSOCredentials() async -> SSOCredentials? {
-        if let authProvider = auth0Provider as? NativeToWebSSOAuth0Provider {
-            do {
-                return try await authProvider.getSSOCredentials()
-            } catch {
-                EcosiaLogger.auth.sentry("Failed to retrieve SSO credentials: \(error)")
-            }
-        }
-        return nil
     }
 
     /**
@@ -538,5 +536,16 @@ extension EcosiaAuthenticationService {
         default:
             break
         }
+    }
+}
+
+fileprivate extension Error {
+    var isRefreshTokenRejection: Bool {
+        if let managerError = self as? CredentialsManagerError,
+           managerError == .noCredentials || managerError == .noRefreshToken {
+            return true
+        }
+        let cause = (self as? CredentialsManagerError)?.cause ?? self
+        return (cause as? AuthenticationError)?.code == "invalid_grant"
     }
 }

@@ -21,12 +21,17 @@ final class InvisibleTabSession: TabEventHandler {
 
     // State
     private var isCompleted = false
+    /// False when the tab was closed by the fallback timeout instead of landing on a page
+    private(set) var didLand = false
+    /// Whether the tab was still loading when it closed, e.g. a slow network mid-redirect
+    private(set) var isLoading = true
     private var completion: ((Bool) -> Void)?
     // Tracked live via KVO (see init) instead of read from tab.webView?.url at close time -
     // tabManager.removeTab has usually already torn down the webview by the time handleTabClosed()
     // runs, so tab.webView?.url would read back nil there.
     private var lastKnownURL: URL?
     private var urlObservation: NSKeyValueObservation?
+    private var loadingObservation: NSKeyValueObservation?
     private var pendingLandingClose: Task<Void, Never>?
 
     // MARK: - Initialization
@@ -59,6 +64,13 @@ final class InvisibleTabSession: TabEventHandler {
             guard let newURL = change.newValue ?? nil else { return }
             Task { @MainActor in
                 self?.lastKnownURL = newURL
+            }
+        }
+        // Tracked live for the same reason as the URL
+        loadingObservation = tab.webView?.observe(\.isLoading, options: [.initial, .new]) { [weak self] _, change in
+            guard let isLoading = change.newValue else { return }
+            Task { @MainActor in
+                self?.isLoading = isLoading
             }
         }
     }
@@ -159,6 +171,7 @@ final class InvisibleTabSession: TabEventHandler {
             // Loading again means a redirect started after this page finished
             guard let self, !Task.isCancelled, !self.tab.isLoading else { return }
             EcosiaLogger.invisibleTabs.info("Invisible tab landed on: \(pageURL.redactedForLogging)")
+            self.didLand = true
             InvisibleTabAutoCloseManager.shared.closeTrackedTab(tabUUID)
         }
     }
@@ -171,7 +184,8 @@ final class InvisibleTabSession: TabEventHandler {
 
         let success = isSessionTransferSuccessful()
         if !success {
-            EcosiaLogger.auth.sentry("Session transfer landed on a failure path: \(lastKnownURL?.redactedForLogging ?? "nil")")
+            let state = isLoading ? " (still loading)" : ""
+            EcosiaLogger.auth.sentry("Session transfer landed on a failure path\(state): \(lastKnownURL?.redactedForLogging ?? "nil")")
         }
         EcosiaLogger.invisibleTabs.info("Session completed for tab: \(tab.tabUUID), success: \(success)")
         // Ensure completion is called on main for strict concurrency (caller may update UI).
