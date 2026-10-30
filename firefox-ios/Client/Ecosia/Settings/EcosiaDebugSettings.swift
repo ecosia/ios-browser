@@ -4,6 +4,7 @@
 
 import Foundation
 import UIKit
+import WebKit
 import Shared
 import Common
 import Ecosia
@@ -554,7 +555,7 @@ final class TriggerWebSessionRetransferSetting: HiddenSetting {
     override func onClick(_ navigationController: UINavigationController?) {
         let isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
         if isLoggedIn {
-            WebSessionRecoveryCoordinator.shared.retransferWebSession(reason: "debug")
+            WebSessionRecoveryCoordinator.shared.retransferWebSession(trigger: .debug)
         }
 
         let alert = AlertController(
@@ -571,6 +572,111 @@ final class TriggerWebSessionRetransferSetting: HiddenSetting {
                 alert.dismiss(animated: true)
             }
         }
+    }
+}
+
+/// Shortens the web session cookie's lifetime so QA can watch expiry handling without waiting 90 days.
+final class ExpireWebSessionCookieSetting: HiddenSetting {
+    private static let expiryDelays: [(label: String, seconds: TimeInterval)] = [
+        ("5s", 5), ("30s", 30), ("60s", 60), ("5 min", 300)
+    ]
+
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Expire Web Session Cookie (EASC)", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Rewrites EASC to expire after 5s, 30s, 60s or 5 min", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        let picker = AlertController(title: "Expire EASC after", message: nil, preferredStyle: .alert)
+        Self.expiryDelays.forEach { delay in
+            picker.addAction(UIAlertAction(title: delay.label, style: .default) { _ in
+                Task { @MainActor in
+                    await Self.expire(after: delay, from: navigationController)
+                }
+            })
+        }
+        picker.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        navigationController?.topViewController?.present(picker, animated: true)
+    }
+
+    @MainActor
+    private static func expire(after delay: (label: String, seconds: TimeInterval),
+                               from navigationController: UINavigationController?) async {
+        let didRewrite = await rewriteAuthSessionCookie(expiringIn: delay.seconds)
+        let alert = AlertController(
+            title: didRewrite ? "EASC Expires in \(delay.label) ✅" : "No EASC Cookie",
+            message: didRewrite
+                ? "Background the app until it expires, or kill and reopen it."
+                : "Log in first so the web session exists.",
+            preferredStyle: .alert
+        )
+        navigationController?.topViewController?.present(alert, animated: true) {
+            // Task + sleep instead of DispatchQueue for strict concurrency
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 1_500_000_000)
+                alert.dismiss(animated: true)
+            }
+        }
+    }
+
+    private static func rewriteAuthSessionCookie(expiringIn delay: TimeInterval) async -> Bool {
+        let cookieStore: CookieStoreProtocol = WKWebsiteDataStore.default().httpCookieStore
+        guard let authSessionCookie = Cookie.authSessionCookie(in: await cookieStore.allCookies()),
+              var properties = authSessionCookie.properties else {
+            return false
+        }
+        // Max-Age takes precedence over Expires, so it has to go for the new expiry to apply
+        properties.removeValue(forKey: .maximumAge)
+        properties[.expires] = Date().addingTimeInterval(delay)
+        guard let shortLivedCookie = HTTPCookie(properties: properties) else { return false }
+        await cookieStore.setCookie(shortLivedCookie)
+        return true
+    }
+}
+
+/// Makes the web find the session invalid on the next Ecosia page load, so it deletes `EASC` the way it does for a dead session.
+final class CorruptWebSessionCookieSetting: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Corrupt Web Session Cookie (EASC)", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: "Opening AI chat makes the web delete EASC", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        Task { @MainActor in
+            let didCorrupt = await Self.corruptAuthSessionCookie()
+            let alert = AlertController(
+                title: didCorrupt ? "EASC Corrupted ✅" : "No EASC Cookie",
+                message: didCorrupt
+                    ? "Open AI chat: the web deletes the corrupted cookie and the web session is restored."
+                    : "Log in first so the web session exists.",
+                preferredStyle: .alert
+            )
+            navigationController?.topViewController?.present(alert, animated: true) {
+                // Task + sleep instead of DispatchQueue for strict concurrency
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 1_500_000_000)
+                    alert.dismiss(animated: true)
+                }
+            }
+        }
+    }
+
+    private static func corruptAuthSessionCookie() async -> Bool {
+        let cookieStore: CookieStoreProtocol = WKWebsiteDataStore.default().httpCookieStore
+        guard let authSessionCookie = Cookie.authSessionCookie(in: await cookieStore.allCookies()),
+              var properties = authSessionCookie.properties else {
+            return false
+        }
+        properties[.value] = "corrupted"
+        guard let corruptedCookie = HTTPCookie(properties: properties) else { return false }
+        await cookieStore.setCookie(corruptedCookie)
+        return true
     }
 }
 

@@ -15,6 +15,7 @@ final class CookieTests: XCTestCase {
         try? FileManager.default.removeItem(at: FileManager.user)
         User.shared.aiFreeSearching = nil
         Cookie.setURLProvider(urlProvider)
+        Cookie.resetReceivedCookieTypes()
     }
 
     override func tearDown() {
@@ -50,6 +51,53 @@ final class CookieTests: XCTestCase {
                                               .expires: Date().addingTimeInterval(-10)])!
 
         XCTAssertNil(Cookie.authSessionCookie(in: [expired]))
+    }
+
+    func testReceived_whenCookieDisappears_reportsItRemoved() {
+        let cookieStore = MockHTTPCookieStore()
+        let easc = HTTPCookie(properties: [.name: "EASC", .domain: ".ecosia.org", .path: "/", .value: "session"])!
+        let ecfg = HTTPCookie(properties: [.name: "ECFG", .domain: ".ecosia.org", .path: "/", .value: "a=1"])!
+        Cookie.received([easc, ecfg], in: cookieStore)
+
+        let removed = Cookie.received([ecfg], in: cookieStore)
+
+        XCTAssertEqual(removed, [.authSession])
+    }
+
+    func testReceived_onFirstCall_reportsNothingRemoved() {
+        XCTAssertEqual(Cookie.received([], in: MockHTTPCookieStore()), [])
+    }
+
+    func testReceived_withRepeatedCallsAfterRemoval_reportsRemovalOnce() {
+        let cookieStore = MockHTTPCookieStore()
+        let easc = HTTPCookie(properties: [.name: "EASC", .domain: ".ecosia.org", .path: "/", .value: "session"])!
+        Cookie.received([easc], in: cookieStore)
+
+        let firstRemoval = Cookie.received([], in: cookieStore)
+        let secondRemoval = Cookie.received([], in: cookieStore)
+
+        XCTAssertEqual(firstRemoval, [.authSession])
+        XCTAssertEqual(secondRemoval, [])
+    }
+
+    func testReceived_withExpiredCookieStillListed_reportsItRemoved() {
+        let cookieStore = MockHTTPCookieStore()
+        let live = HTTPCookie(properties: [.name: "EASC", .domain: ".ecosia.org", .path: "/", .value: "session",
+                                           .expires: Date().addingTimeInterval(3600)])!
+        let expired = HTTPCookie(properties: [.name: "EASC", .domain: ".ecosia.org", .path: "/", .value: "session",
+                                              .expires: Date().addingTimeInterval(-10)])!
+        Cookie.received([live], in: cookieStore)
+
+        XCTAssertEqual(Cookie.received([expired], in: cookieStore), [.authSession])
+    }
+
+    func testReceived_whenOnlyAnotherEnvironmentsCookieRemains_reportsItRemoved() {
+        let cookieStore = MockHTTPCookieStore()
+        let current = HTTPCookie(properties: [.name: "EASC", .domain: ".ecosia.org", .path: "/", .value: "current"])!
+        let otherEnvironment = HTTPCookie(properties: [.name: "EASC", .domain: ".ecosia-staging.xyz", .path: "/", .value: "other"])!
+        Cookie.received([current, otherEnvironment], in: cookieStore)
+
+        XCTAssertEqual(Cookie.received([otherEnvironment], in: cookieStore), [.authSession])
     }
 
     func testCookieInitFromString() {

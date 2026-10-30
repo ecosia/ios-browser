@@ -402,6 +402,20 @@ final class AuthTests: XCTestCase {
         XCTAssertNil(auth.accessToken)
     }
 
+    func testStartLogout_marksLogoutInProgressBeforeItRuns() async throws {
+        await setupLoggedInState()
+
+        auth.startLogout(triggerWebLogout: false)
+
+        XCTAssertTrue(auth.isLoggingOut)
+        for _ in 0..<50 where auth.isLoggedIn || auth.isLoggingOut {
+            try await Task.sleep(nanoseconds: 20_000_000)
+        }
+        XCTAssertFalse(auth.isLoggedIn)
+        XCTAssertFalse(auth.isLoggingOut)
+        XCTAssertEqual(mockProvider.clearSessionCallCount, 0)
+    }
+
     func testLogout_withClearSessionFailure_stillClearsCredentials() async {
         // Arrange
         await setupLoggedInState()

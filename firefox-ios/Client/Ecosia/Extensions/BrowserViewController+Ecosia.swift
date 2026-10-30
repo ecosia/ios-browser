@@ -214,7 +214,8 @@ extension BrowserViewController {
     /// Detects Ecosia-specific URLs (auth, profile, etc.) and triggers native flows.
     /// - Returns: `true` if the URL was handled and navigation should be cancelled, `false` otherwise
     func detectAndHandleEcosiaURL(_ url: URL, for tab: Tab) -> Bool {
-        guard !tab.isInvisible else { return false }
+        // Private tabs have their own web session, separate from the native account
+        guard !tab.isInvisible, !tab.isPrivate else { return false }
 
         let interceptor = EcosiaURLInterceptor()
         let interceptedType = interceptor.interceptedType(for: url)
@@ -280,37 +281,65 @@ extension BrowserViewController {
                 configuredAuth.login()
             }
         } else {
-            EcosiaLogger.auth.sentry("🔐 [WEB-AUTH] Inconsistent state: web says logged out but native doesn't; " +
-                                     "forcing logout+re-login to avoid user getting locked (provider: \(extractProviderLabel(from: ecosiaAuth.userProfile?.sub)))")
-
-            ecosiaAuth
-                .onAuthFlowCompleted { _ in
-                    EcosiaLogger.auth.info("🔐 [WEB-AUTH] Logout completed to resolve inconsistency")
-                    ecosiaAuth
-                        .onAuthFlowCompleted { [weak self] success in
-                            if success {
-                                EcosiaLogger.auth.info("🔐 [WEB-AUTH] Re-authentication successful after resolving inconsistency")
-                                // Ecosia: Task { @MainActor in } instead of DispatchQueue.main.async for strict concurrency
-                                Task { @MainActor in
-                                    self?.tabManager.selectedTab?.reload()
-                                    EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after inconsistency resolution")
-                                }
-                            } else {
-                                EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication failed after resolving inconsistency")
-                            }
-                        }
-                        .onError { error in
-                            EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication error after resolving inconsistency: \(error)")
-                        }
-                        .login()
-                }
-                .onError { error in
-                    EcosiaLogger.auth.error("🔐 [WEB-AUTH] Logout failed while resolving inconsistency: \(error)")
-                }
-                .logout()
+            resolveSignedOutWebSession(url, tab: tab, ecosiaAuth: ecosiaAuth)
         }
 
         return true
+    }
+
+    /// Native is logged in but the web asks to sign in, so its session was lost: re-transfer it silently and
+    /// continue to where the sign-in would have led.
+    private func resolveSignedOutWebSession(_ url: URL, tab: Tab, ecosiaAuth: EcosiaAuth) {
+        let interceptor = EcosiaURLInterceptor()
+        guard !interceptor.isForcedLoginPrompt(url) else {
+            reconcileWithLogoutAndLogin(ecosiaAuth)
+            return
+        }
+
+        EcosiaLogger.auth.info("🔐 [WEB-AUTH] Web asked to sign in while native is signed in; re-transferring silently")
+        Task { @MainActor [weak self, weak tab] in
+            let result = await WebSessionRecoveryCoordinator.shared.startOrJoinRetransfer(trigger: .signInIntercepted)
+            switch result {
+            case .retransferred:
+                _ = tab?.loadRequest(URLRequest(url: interceptor.returnURL(fromSignIn: url)))
+            case .loggedOut:
+                // Native is logged out now, so loading the sign-in again starts the usual native login
+                _ = tab?.loadRequest(URLRequest(url: url))
+            case .deferred, nil:
+                self?.reconcileWithLogoutAndLogin(ecosiaAuth)
+            }
+        }
+    }
+
+    private func reconcileWithLogoutAndLogin(_ ecosiaAuth: EcosiaAuth) {
+        EcosiaLogger.auth.sentry("🔐 [WEB-AUTH] Inconsistent state: web says logged out but native doesn't; " +
+                                 "forcing logout+re-login to avoid user getting locked (provider: \(extractProviderLabel(from: ecosiaAuth.userProfile?.sub)))")
+
+        ecosiaAuth
+            .onAuthFlowCompleted { _ in
+                EcosiaLogger.auth.info("🔐 [WEB-AUTH] Logout completed to resolve inconsistency")
+                ecosiaAuth
+                    .onAuthFlowCompleted { [weak self] success in
+                        if success {
+                            EcosiaLogger.auth.info("🔐 [WEB-AUTH] Re-authentication successful after resolving inconsistency")
+                            // Ecosia: Task { @MainActor in } instead of DispatchQueue.main.async for strict concurrency
+                            Task { @MainActor in
+                                self?.tabManager.selectedTab?.reload()
+                                EcosiaLogger.auth.info("🔐 [WEB-AUTH] Page refreshed after inconsistency resolution")
+                            }
+                        } else {
+                            EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication failed after resolving inconsistency")
+                        }
+                    }
+                    .onError { error in
+                        EcosiaLogger.auth.error("🔐 [WEB-AUTH] Re-authentication error after resolving inconsistency: \(error)")
+                    }
+                    .login()
+            }
+            .onError { error in
+                EcosiaLogger.auth.error("🔐 [WEB-AUTH] Logout failed while resolving inconsistency: \(error)")
+            }
+            .logout()
     }
 
     private func handleSignOutDetection(_ url: URL) -> Bool {

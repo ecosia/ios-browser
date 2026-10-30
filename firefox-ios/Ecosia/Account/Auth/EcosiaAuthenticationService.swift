@@ -179,6 +179,19 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
         EcosiaAuthScopes.hasConversationScopes(in: accessToken ?? "", grantedScope: grantedScope)
     }
 
+    /// Starts a logout without waiting for it, marking it in progress right away so that nothing reacts to the web
+    /// session it removes in the meantime (e.g. a web sign-out page loading while the native logout is scheduled).
+    public func startLogout(triggerWebLogout: Bool = true) {
+        isLoggingOut = true
+        Task {
+            do {
+                try await logout(triggerWebLogout: triggerWebLogout)
+            } catch {
+                EcosiaLogger.auth.error("Logout failed: \(error)")
+            }
+        }
+    }
+
     /// Logs out the user with option to skip web logout (for web-initiated logout)
     /// - Parameter triggerWebLogout: Whether to clear the web session. Defaults to true.
     /// - Throws: `AuthError.userCancelled` if user cancels the logout web session,

@@ -10,6 +10,8 @@ protocol CookieHandler {
     var cookieName: String { get }
     func makeCookie() -> HTTPCookie?
     func received(_ cookie: HTTPCookie, in cookieStore: CookieStoreProtocol)
+    /// Called when a cookie seen by the previous `Cookie.received` call is gone or has expired.
+    func removed(in cookieStore: CookieStoreProtocol)
 }
 
 // MARK: - Base Cookie Handler
@@ -27,6 +29,10 @@ class BaseCookieHandler: CookieHandler {
     }
 
     func received(_ cookie: HTTPCookie, in cookieStore: CookieStoreProtocol) {
+        // Override in subclasses
+    }
+
+    func removed(in cookieStore: CookieStoreProtocol) {
         // Override in subclasses
     }
 
