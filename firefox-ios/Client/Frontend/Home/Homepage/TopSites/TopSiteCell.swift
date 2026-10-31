@@ -35,8 +35,10 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         */
         static let faviconCornerRadius: CGFloat = .ecosia.borderRadius._l
         static let faviconTransparentBackgroundInset: CGFloat = 8
-        // Ecosia: 16pt inset on each side renders the favicon at 24×24pt within the 56pt container
-        static let ecosiaGlassIconInset: CGFloat = 16
+        // Ecosia: Favicon inset inside the label-less NTP shortcut tile
+        static let ecosiaGlassIconInset: CGFloat = .ecosia.space._s
+        // Ecosia: Upper bound for the square NTP shortcut tile so it doesn't balloon on iPad
+        static let ecosiaGlassMaxTileSize: CGFloat = 72
         static let transparencyThreshold: CGFloat = 15
         // Ecosia: Tag used to identify the dark-tint overlay for the NTP glass style
         static let ecosiaGlassTintTag: Int = 9953
@@ -115,9 +117,17 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
     private var textColor: UIColor?
     private var imageViewConstraints: [NSLayoutConstraint] = []
     private var theme: Theme?
+    // Ecosia: Firefox's fixed-size tile + label layout vs. the label-less square NTP tile
+    private var ecosiaDefaultLayoutConstraints: [NSLayoutConstraint] = []
+    private var ecosiaGlassLayoutConstraints: [NSLayoutConstraint] = []
     // Ecosia: When true, always use the NTP glass style regardless of Firefox wallpaper state.
     // Set by Ecosia cell configuration since Ecosia always shows an NTP background image.
-    var ecosiaGlassStyleEnabled: Bool = false
+    var ecosiaGlassStyleEnabled: Bool = false {
+        didSet {
+            guard ecosiaGlassStyleEnabled != oldValue else { return }
+            ecosiaUpdateLayoutForGlassStyle()
+        }
+    }
 
     // MARK: - Inits
 
@@ -255,16 +265,15 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
             */
             rootContainer.topAnchor.constraint(equalTo: contentView.topAnchor),
             rootContainer.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            /* Ecosia: Size constraints moved to ecosiaDefaultLayoutConstraints so the NTP can swap them
             rootContainer.widthAnchor.constraint(equalToConstant: UX.imageBackgroundSize.width),
             rootContainer.heightAnchor.constraint(equalToConstant: UX.imageBackgroundSize.height),
 
             descriptionWrapper.topAnchor.constraint(equalTo: rootContainer.bottomAnchor, constant: UX.textSafeSpace),
             descriptionWrapper.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             descriptionWrapper.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            /* Ecosia: bottomAnchor now a soft constraint so label doesn't clip
             descriptionWrapper.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             */
-            descriptionWrapper.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
 
             selectedOverlay.topAnchor.constraint(equalTo: rootContainer.topAnchor),
             selectedOverlay.leadingAnchor.constraint(equalTo: rootContainer.leadingAnchor),
@@ -289,6 +298,38 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
             imageView.bottomAnchor.constraint(equalTo: rootContainer.bottomAnchor),
         ]
         NSLayoutConstraint.activate(imageViewConstraints)
+
+        // Ecosia: Build both layouts and activate the one matching the current style
+        ecosiaDefaultLayoutConstraints = [
+            rootContainer.widthAnchor.constraint(equalToConstant: UX.imageBackgroundSize.width),
+            rootContainer.heightAnchor.constraint(equalToConstant: UX.imageBackgroundSize.height),
+            descriptionWrapper.topAnchor.constraint(equalTo: rootContainer.bottomAnchor, constant: UX.textSafeSpace),
+            descriptionWrapper.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            descriptionWrapper.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            // Ecosia: bottomAnchor is a soft constraint so the label doesn't clip
+            descriptionWrapper.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
+        ]
+        let glassTileWidth = rootContainer.widthAnchor.constraint(equalTo: contentView.widthAnchor)
+        glassTileWidth.priority = .defaultHigh
+        ecosiaGlassLayoutConstraints = [
+            glassTileWidth,
+            rootContainer.widthAnchor.constraint(lessThanOrEqualToConstant: UX.ecosiaGlassMaxTileSize),
+            rootContainer.heightAnchor.constraint(equalTo: rootContainer.widthAnchor),
+            rootContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+        ]
+        ecosiaUpdateLayoutForGlassStyle()
+    }
+
+    // Ecosia: The NTP shows label-less square tiles that fill their column
+    private func ecosiaUpdateLayoutForGlassStyle() {
+        descriptionWrapper.isHidden = ecosiaGlassStyleEnabled
+        if ecosiaGlassStyleEnabled {
+            NSLayoutConstraint.deactivate(ecosiaDefaultLayoutConstraints)
+            NSLayoutConstraint.activate(ecosiaGlassLayoutConstraints)
+        } else {
+            NSLayoutConstraint.deactivate(ecosiaGlassLayoutConstraints)
+            NSLayoutConstraint.activate(ecosiaDefaultLayoutConstraints)
+        }
     }
 
     private func configurePinnedSite(_ topSite: TopSiteConfiguration) {
