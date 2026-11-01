@@ -283,5 +283,51 @@ final class EcosiaURLInterceptorTests: XCTestCase {
         // Then
         XCTAssertEqual(result, .profile)
     }
+
+    // MARK: - Sign-in Return URL Tests
+
+    func testReturnURL_withReturnToOnWebHost_returnsIt() {
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in?returnTo=https%3A%2F%2Fwww.ecosia.org%2Fsearch%3Fq%3Dtrees")!
+
+        XCTAssertEqual(sut.returnURL(fromSignIn: url).absoluteString, "https://www.ecosia.org/search?q=trees")
+    }
+
+    func testReturnURL_withRelativeReturnTo_resolvesAgainstWebRoot() {
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in?returnTo=%2Fai-chat")!
+
+        XCTAssertEqual(sut.returnURL(fromSignIn: url).absoluteString, "https://www.ecosia.org/ai-chat")
+    }
+
+    func testReturnURL_withReturnToOnAnotherHost_returnsWebRoot() {
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in?returnTo=https%3A%2F%2Fevil.example%2F")!
+
+        XCTAssertEqual(sut.returnURL(fromSignIn: url), URLProvider.production.root)
+    }
+
+    func testReturnURL_withNonWebScheme_returnsWebRoot() {
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in?returnTo=javascript%3Aalert(1)")!
+
+        XCTAssertEqual(sut.returnURL(fromSignIn: url), URLProvider.production.root)
+    }
+
+    func testReturnURL_withoutReturnTo_returnsWebRoot() {
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in")!
+
+        XCTAssertEqual(sut.returnURL(fromSignIn: url), URLProvider.production.root)
+    }
+
+    // MARK: - Forced Login Prompt Tests
+
+    func testIsForcedLoginPrompt_withPromptLogin_isTrue() {
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in?promptLogin=true&returnTo=%2Faccounts%2Fprofile")!
+
+        XCTAssertTrue(sut.isForcedLoginPrompt(url))
+    }
+
+    func testIsForcedLoginPrompt_withoutPromptLogin_isFalse() {
+        let url = URL(string: "https://www.ecosia.org/accounts/sign-in?silent=true")!
+
+        XCTAssertFalse(sut.isForcedLoginPrompt(url))
+    }
 }
 // swiftlint:enable implicitly_unwrapped_optional

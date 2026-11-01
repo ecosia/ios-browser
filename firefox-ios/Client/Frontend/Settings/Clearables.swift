@@ -187,10 +187,20 @@ class CookiesClearable: Clearable {
     }
 
     func clear() -> Success {
+        /* Ecosia: Restore the web session once the wipe is done, so clearing cookies keeps the user signed in
         dataStore.removeData(
             ofTypes: dataTypes,
             modifiedSince: .distantPast,
             completionHandler: {}
+        )
+         */
+        WebSessionRecoveryCoordinator.shared.beginClearingWebsiteData()
+        dataStore.removeData(
+            ofTypes: dataTypes,
+            modifiedSince: .distantPast,
+            completionHandler: {
+                WebSessionRecoveryCoordinator.shared.endClearingWebsiteData()
+            }
         )
 
         logger.log("CookiesClearable succeeded.",
@@ -204,7 +214,16 @@ class CookiesClearable: Clearable {
         let records = await dataStore.dataRecords(ofTypes: dataTypes)
         let targets = records.filter { $0.displayName == domain.lowercased() }
         guard !targets.isEmpty else { return }
+        // Ecosia: Restore the web session once the wipe is done, so clearing Ecosia's cookies keeps the user signed in
+        let clearsWebSession = WebSessionRecoveryCoordinator.includesWebSession(targets)
+        if clearsWebSession {
+            WebSessionRecoveryCoordinator.shared.beginClearingWebsiteData()
+        }
         await dataStore.removeData(ofTypes: dataTypes, for: targets)
+        // Ecosia: Restore the web session once the wipe is done
+        if clearsWebSession {
+            WebSessionRecoveryCoordinator.shared.endClearingWebsiteData()
+        }
         logger.log(
             "CookiesClearable removed domain-scoped data for \(domain).",
             level: .debug,

@@ -61,6 +61,7 @@ final class EcosiaAuth {
         self.authService = authService
         self.browserViewController = browserViewController
         self.browserViewController?.ecosiaAuth = self
+        WebSessionRecoveryCoordinator.shared.register(browserViewController)
         if #available(iOS 16.0, *) {
             EcosiaErrorToastPresenter.shared.delegate = browserViewController
         }

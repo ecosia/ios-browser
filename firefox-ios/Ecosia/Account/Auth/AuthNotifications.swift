@@ -18,4 +18,7 @@ extension Notification.Name {
     /// token refresh where the login state stays the same.
     /// UserInfo contains `hasOptedOutOfChatThreads`.
     public static let EcosiaChatThreadsOptOutDidChange = Notification.Name("EcosiaChatThreadsOptOutDidChange")
+
+    /// Posted on the main queue when the web session cookie (`EASC`) disappears from the web view cookie store, including when it expires
+    public static let EcosiaAuthSessionCookieRemoved = Notification.Name("EcosiaAuthSessionCookieRemoved")
 }

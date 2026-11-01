@@ -16,12 +16,18 @@ final class AuthSessionCookieHandler: BaseCookieHandler {
         HTTPCookieStorage.shared.setCookie(cookie)
     }
 
+    /// Drops the mirrored copy too, since native requests (e.g. file uploads) fall back to it when the web view has none
+    override func removed(in cookieStore: CookieStoreProtocol) {
+        Self.clearFromSharedStorage()
+        NotificationCenter.default.post(name: .EcosiaAuthSessionCookieRemoved, object: nil)
+    }
+
     /// Removes any `EASC` cookie previously copied into `HTTPCookieStorage.shared`.
     ///
     /// We copy `EASC` cookie out of the WKWebView cookie jar so native `URLSession` calls can see it, but that copy lives
-    /// independently of the WKWebView store and isn't cleared when the web session cookie is.
-    /// This is called on logout so a stale session cookie for the previous user can't be attached to
-    /// native requests made under a different, newly logged-in user.
+    /// independently of the WKWebView store. This is called on logout, so a stale session cookie for the previous user
+    /// can't be attached to native requests made under a different, newly logged-in user, and when the web view's cookie
+    /// is removed, so native requests don't keep sending a dead session.
     static func clearFromSharedStorage() {
         let cookies = HTTPCookieStorage.shared.cookies ?? []
         cookies

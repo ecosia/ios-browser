@@ -27,6 +27,13 @@ public enum Cookie: String, CaseIterable {
     /// Based on [Swift Concurrency Agent Skill](https://github.com/AvdLee/Swift-Concurrency-Agent-Skill)
     nonisolated(unsafe) private static var _urlProvider: URLProvider?
 
+    /// Cookie types present in the last `received` call, to detect removals. Only mutated from the cookie observer on the main thread.
+    nonisolated(unsafe) private(set) static var receivedCookieTypes: Set<Cookie> = []
+
+    static func resetReceivedCookieTypes() {
+        receivedCookieTypes = []
+    }
+
     /// Sets the URLProvider for all cookie operations. Primarily used for testing.
     /// If not set, defaults to EcosiaEnvironment.current.urlProvider
     public static func setURLProvider(_ provider: URLProvider) {
@@ -92,15 +99,30 @@ public enum Cookie: String, CaseIterable {
 
     // MARK: - Public Interface
 
+    /// The current environment's live web session cookie; `EASC` cookies from other environments can share the jar.
+    public static func authSessionCookie(in cookies: [HTTPCookie], now: Date = Date()) -> HTTPCookie? {
+        cookies.first { Cookie($0) == .authSession && !$0.isExpired(at: now) }
+    }
+
     /// Processes received cookies.
     /// - Parameters:
-    ///   - cookies: An array of HTTPCookie objects.
+    ///   - cookies: The full list of cookies in the store, so that cookies missing since the previous call are reported as removed.
     ///   - cookieStore: WKHTTPCookieStore where cookies are set. Used when cookies need to be overwritten.
-    public static func received(_ cookies: [HTTPCookie], in cookieStore: CookieStoreProtocol) {
+    /// - Returns: The cookie types removed since the previous call
+    @discardableResult
+    public static func received(_ cookies: [HTTPCookie], in cookieStore: CookieStoreProtocol) -> Set<Cookie> {
+        let currentDate = Date()
+        var currentCookieTypes = Set<Cookie>()
         cookies.forEach { cookie in
-            guard let cookieType = Cookie(cookie) else { return }
+            guard let cookieType = Cookie(cookie), !cookie.isExpired(at: currentDate) else { return }
+            currentCookieTypes.insert(cookieType)
             cookieType.handler.received(cookie, in: cookieStore)
         }
+
+        let removedCookieTypes = receivedCookieTypes.subtracting(currentCookieTypes)
+        receivedCookieTypes = currentCookieTypes
+        removedCookieTypes.forEach { $0.handler.removed(in: cookieStore) }
+        return removedCookieTypes
     }
 
     /// Creates cookies for all required types for web view configuration.
@@ -150,5 +172,12 @@ public enum Cookie: String, CaseIterable {
         }
 
         return cookies
+    }
+}
+
+private extension HTTPCookie {
+    /// WebKit can still list a cookie for a moment after its expiry
+    func isExpired(at date: Date) -> Bool {
+        expiresDate.map { $0 <= date } ?? false
     }
 }
