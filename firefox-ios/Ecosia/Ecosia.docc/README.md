@@ -393,6 +393,10 @@ More details [here](SNAPSHOT_TESTING_WIKI.md)
 
 Merge Unit Tests and Snapshot Tests only run when a pull request's own changes need them, restore a compilation cache that `main` refreshes nightly, and stale caches are purged every night. See the [workflow overview](CI_WORKFLOWS.md) for the full flow.
 
+## 🛡️ Security scanning
+
+Aikido scans `main` for vulnerable dependencies and risky code. See [Security scanning and supply chain](SECURITY_SCANNING.md) for what we scan and exclude, how to judge a finding's severity, and the hardening already in place.
+
 ## Accounts / Signing in
 
 [See our documentation here](https://ecosia.atlassian.net/wiki/spaces/MOB/pages/4800118791/iOS+-+Accounts+integration+setup)
