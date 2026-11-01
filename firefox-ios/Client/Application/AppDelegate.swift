@@ -168,7 +168,10 @@ class AppDelegate: UIResponder,
         backgroundWorkUtility?.registerUtility(BackgroundSyncUtility(profile: profile, application: application))
         backgroundWorkUtility?.registerUtility(BackgroundNotificationSurfaceUtility())
 
+        /* Ecosia: Firefox Suggest is off, so keep its collections out of the daily Remote Settings sync
         if let firefoxSuggest = profile.firefoxSuggest {
+        */
+        if isFirefoxSuggestIngestionEnabled, let firefoxSuggest = profile.firefoxSuggest {
             suggestBackgroundUtility = BackgroundFirefoxSuggestIngestUtility(firefoxSuggest: firefoxSuggest)
 		}
         // Ecosia: Update EcosiaInstallType if needed. This should always happen before `FeatureManagement`
@@ -453,7 +456,13 @@ class AppDelegate: UIResponder,
         }
     }
 
+    /* Ecosia: Internal so EcosiaTests can check the feature-flag gate
     private func ingestFirefoxSuggestions(in application: UIApplication) {
+    */
+    func ingestFirefoxSuggestions(in application: UIApplication) {
+        // Ecosia: Firefox Suggest is off, so don't download Mozilla's suggestion data on every foreground
+        guard isFirefoxSuggestIngestionEnabled else { return }
+
         /// Start a background task so that the ingest task doesn't get killed
         /// immediately if the app goes to the background before ingest finishes. iOS will kill
         /// our process as soon as we hit background if we don't have a background task running.
