@@ -59,4 +59,24 @@ public struct EcosiaURLInterceptor {
     public func shouldIntercept(_ url: URL) -> Bool {
         interceptedType(for: url) != .none
     }
+
+    /// Whether a sign-in asks for an interactive login (`promptLogin=true`, e.g. before account deletion), which mustn't be satisfied silently
+    public func isForcedLoginPrompt(_ url: URL) -> Bool {
+        queryItem(named: "promptLogin", in: url) == "true"
+    }
+
+    /// Where a sign-in or sign-up page would send the user afterwards, limited to the web host since it's loaded in the user's tab
+    public func returnURL(fromSignIn url: URL) -> URL {
+        guard let returnTo = queryItem(named: "returnTo", in: url),
+              let returnURL = URL(string: returnTo, relativeTo: urlProvider.root)?.absoluteURL,
+              let scheme = returnURL.scheme?.lowercased(), ["http", "https"].contains(scheme),
+              returnURL.host?.lowercased() == urlProvider.root.host?.lowercased() else {
+            return urlProvider.root
+        }
+        return returnURL
+    }
+
+    private func queryItem(named name: String, in url: URL) -> String? {
+        URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first { $0.name == name }?.value
+    }
 }

@@ -187,10 +187,20 @@ class CookiesClearable: Clearable {
     }
 
     func clear() -> Success {
+        /* Ecosia: Restore the web session once the wipe is done, so clearing cookies keeps the user signed in
         dataStore.removeData(
             ofTypes: dataTypes,
             modifiedSince: .distantPast,
             completionHandler: {}
+        )
+         */
+        WebSessionRecoveryCoordinator.shared.beginClearingWebsiteData()
+        dataStore.removeData(
+            ofTypes: dataTypes,
+            modifiedSince: .distantPast,
+            completionHandler: {
+                WebSessionRecoveryCoordinator.shared.endClearingWebsiteData()
+            }
         )
 
         logger.log("CookiesClearable succeeded.",
