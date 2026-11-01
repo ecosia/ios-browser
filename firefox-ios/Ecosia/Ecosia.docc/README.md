@@ -167,6 +167,8 @@ The required variables can be found in Bitwarden under "[iOS Dev] Staging.xcconf
     - `--skip-bootstrap`: Skip `bootstrap.sh` (use only if dependencies are already set up).
 
     _NOTE_ for subsequent runs, appending --skip-bootstrap is faster because it will skip the dependencies
+
+    Both paths download Mozilla's `nimbus-fml.sh` (used to generate the Nimbus feature code) through `.github/scripts/download_nimbus_fml.sh`. It fetches the script from a pinned application-services commit and refuses it if its sha256 doesn't match, instead of running whatever is on Mozilla's `main`. The `nimbus-fml` binary version still comes from `MozillaRustComponents/Package.swift`, so the pin only needs bumping when Mozilla changes the script itself: update `AS_REF` and `NIMBUS_FML_SHA256` together and check that `.github/scripts/disable_nimbus_checksum_refresh.py` still applies.
 5. In Xcode, select the `Ecosia` or `EcosiaBeta` [scheme](https://developer.apple.com/documentation/xcode/build-system?changes=_2).
 6. Select the destination device you want to build on.
 7. Run the app with `Cmd + R` or by pressing the **Build and Run** button.
