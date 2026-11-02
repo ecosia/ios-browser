@@ -124,6 +124,25 @@ final class AIFreeSearchingCookieHandlerTests: XCTestCase {
         XCTAssertEqual(handler.makeCookie()?.value, "false")
     }
 
+    /// A change from the web goes the same way as one from Settings, so page summaries and
+    /// translations follow it (upgrade ticket 09, MOB-5035). The same value again changes nothing.
+    func testReceivedPostsAIFreeSearchingChangedOnlyWhenItTurnsOnOrOff() {
+        setAIFreeSearchingFlagEnabled(true)
+        var count = 0
+        let observer = NotificationCenter.default.addObserver(forName: .aiFreeSearchingChanged,
+                                                              object: nil,
+                                                              queue: nil) { _ in count += 1 }
+        defer { NotificationCenter.default.removeObserver(observer) }
+        let handler = AIFreeSearchingCookieHandler()
+
+        handler.received(cookie(value: "true"), in: MockHTTPCookieStore())
+        handler.received(cookie(value: "true"), in: MockHTTPCookieStore())
+        XCTAssertEqual(count, 1)
+
+        handler.received(cookie(value: "false"), in: MockHTTPCookieStore())
+        XCTAssertEqual(count, 2)
+    }
+
     func testCookieNameIsCorrect() {
         XCTAssertEqual(AIFreeSearchingCookieHandler().cookieName, "ECNOAI")
     }
