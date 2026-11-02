@@ -72,6 +72,24 @@ final class AIFreeSearchingSelectionTests: XCTestCase {
         XCTAssertTrue(User.shared.aiOverviews)
     }
 
+    /// Unset and off are the same for page summaries and translations, so only on and off count.
+    func testAIFreeSearchingChangedFiresOnlyWhenItTurnsOnOrOff() {
+        setFlagEnabled(true)
+        var count = 0
+        let observer = NotificationCenter.default.addObserver(forName: .aiFreeSearchingChanged,
+                                                              object: nil,
+                                                              queue: nil) { _ in count += 1 }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        AIFreeSearchingSelection.setEnabled(false)
+        XCTAssertEqual(count, 0)
+        AIFreeSearchingSelection.setEnabled(true)
+        AIFreeSearchingSelection.setEnabled(true)
+        XCTAssertEqual(count, 1)
+        AIFreeSearchingSelection.setEnabled(nil)
+        XCTAssertEqual(count, 2)
+    }
+
     func testSearchSettingsChangedFiresOnToggle() {
         setFlagEnabled(true)
         var count = 0

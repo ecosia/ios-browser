@@ -1094,6 +1094,8 @@ class BrowserViewController: UIViewController,
 
         // Ecosia: Register window for auth state so EcosiaAccounts (login/logout) can dispatch to this BVC
         EcosiaAuthWindowRegistry.shared.registerWindow(windowUUID)
+        // Ecosia: Page summaries and translations follow AI-free searching, from Settings or from the web
+        ecosiaObserveAIFreeSearching()
 
         setupEssentialUI()
         subscribeToRedux()

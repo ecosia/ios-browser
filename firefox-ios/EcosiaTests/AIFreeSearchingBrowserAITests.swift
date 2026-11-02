@@ -17,6 +17,7 @@ final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
     // swiftlint:disable:next implicitly_unwrapped_optional
     private var mockStore: MockStoreForMiddleware<AppState>!
     private let profile = MockProfile()
+    private var windows: [AIFreeSearchingBrowserAI.WindowObserver] = []
 
     override func setUp() async throws {
         try await super.setUp()
@@ -26,6 +27,7 @@ final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
     }
 
     override func tearDown() async throws {
+        windows.removeAll()
         User.shared.aiFreeSearching = nil
         // Let the asynchronous `searchSettingsChanged` posts land here, not in the next suite.
         try await Task.sleep(nanoseconds: 50_000_000)
@@ -66,6 +68,45 @@ final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
         XCTAssertTrue(mockStore.dispatchedActions.contains {
             $0.actionType as? ToolbarActionType == .didSummarizeSettingsChange
         })
+    }
+
+    // MARK: - Changes made anywhere
+
+    /// Settings and the `ECNOAI` cookie both go through `setEnabled`, and every browser window
+    /// switches its own page summaries and translations.
+    func testTurningAIFreeOnAnywhereSwitchesBothOffInEveryWindow() {
+        let windowUUIDs = [WindowUUID(), WindowUUID()]
+        windowUUIDs.forEach(observeWindow)
+
+        AIFreeSearchingSelection.setEnabled(true)
+
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature), false)
+        XCTAssertEqual(translationSettingChanges, [false, false])
+        let summarizeRefreshes = mockStore.dispatchedActions.filter {
+            $0.actionType as? ToolbarActionType == .didSummarizeSettingsChange
+        }
+        XCTAssertEqual(Set(summarizeRefreshes.map(\.windowUUID)), Set(windowUUIDs))
+    }
+
+    func testTurningAIFreeOffAnywhereSwitchesBothBackOn() {
+        observeWindow(.XCTestDefaultUUID)
+        AIFreeSearchingSelection.setEnabled(true)
+        mockStore.dispatchedActions.removeAll()
+
+        AIFreeSearchingSelection.setEnabled(false)
+
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature), true)
+        XCTAssertEqual(translationSettingChanges, [true])
+    }
+
+    func testSettingTheSameValueAgainLeavesTheUsersChoiceAlone() {
+        observeWindow(.XCTestDefaultUUID)
+        AIFreeSearchingSelection.setEnabled(true)
+        profile.prefs.setBool(true, forKey: PrefsKeys.Summarizer.summarizeContentFeature)
+
+        AIFreeSearchingSelection.setEnabled(true)
+
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature), true)
     }
 
     // MARK: - Users who had AI-free searching on before
@@ -117,6 +158,11 @@ final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
             else { return nil }
             return action.newSettingValue
         }
+    }
+
+    /// A browser window, which holds an observer once its view has loaded.
+    private func observeWindow(_ windowUUID: WindowUUID) {
+        windows.append(.init(prefs: profile.prefs, windowUUID: windowUUID))
     }
 
     /// A device that can summarize on-device, in English.
