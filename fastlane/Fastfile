@@ -14,8 +14,12 @@ target_folder_path = "firefox-ios/#{target_name}"
 project_path = "#{target_folder_path}.xcodeproj"
 workspace_path = "#{target_folder_path}.xcworkspace"
 pbx_project_file = "#{project_path}/project.pbxproj"
-testflight_archive_args = "GCC_TREAT_WARNINGS_AS_ERRORS='NO' SWIFT_TREAT_WARNINGS_AS_ERRORS='NO' VERSIONING_SYSTEM='apple-generic' CURRENT_PROJECT_VERSION='0' FUSE_BUILD_SCRIPT_PHASES='NO'"
-firebase_archive_args = "GCC_TREAT_WARNINGS_AS_ERRORS='NO' SWIFT_TREAT_WARNINGS_AS_ERRORS='NO' FUSE_BUILD_SCRIPT_PHASES='NO'"
+# Ecosia: Firefox brings the ModifiedCopy macro package. Xcode keeps the "Trust & Enable"
+# decision for macros per machine, so a fresh CI machine fails the archive with
+# "Macro ... must be enabled before it can be used". Skip that validation.
+macro_validation_args = "-skipMacroValidation -skipPackagePluginValidation"
+testflight_archive_args = "GCC_TREAT_WARNINGS_AS_ERRORS='NO' SWIFT_TREAT_WARNINGS_AS_ERRORS='NO' VERSIONING_SYSTEM='apple-generic' CURRENT_PROJECT_VERSION='0' FUSE_BUILD_SCRIPT_PHASES='NO' #{macro_validation_args}"
+firebase_archive_args = "GCC_TREAT_WARNINGS_AS_ERRORS='NO' SWIFT_TREAT_WARNINGS_AS_ERRORS='NO' FUSE_BUILD_SCRIPT_PHASES='NO' #{macro_validation_args}"
 
 if ENV['IS_CIRCLECI']
   import_build_tools(
