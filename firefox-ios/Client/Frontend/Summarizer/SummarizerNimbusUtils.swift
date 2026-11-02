@@ -5,8 +5,6 @@
 import Foundation
 import Common
 import Shared
-// Ecosia: AI-free searching switches summaries off.
-import Ecosia
 
 protocol SummarizerNimbusUtils: Sendable {
     /// Determines if the Summarize feature should be shown,
@@ -43,11 +41,7 @@ struct DefaultSummarizerNimbusUtils: FeatureFlaggable, SummarizerNimbusUtils {
     private let appleIntelligenceUtil: AppleIntelligenceUtil
 
     var isSummarizeFeatureToggledOn: Bool {
-        /* Ecosia: Ecosia's AI-free searching toggle replaces Firefox's AI controls hub and also
-           switches page summaries off. Every summaries entry point goes through this property.
         return isSummarizeFeatureEnabled && didUserEnableSummarizeFeature
-        */
-        return isSummarizeFeatureEnabled && didUserEnableSummarizeFeature && !AIFreeSearchingSelection.blocksBrowserAI
     }
 
     var isSummarizeFeatureEnabled: Bool {

@@ -3,89 +3,120 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Common
+import Redux
 import Shared
 import XCTest
 @testable import Client
 @testable import Ecosia
 
-/// AI-free searching replaces Firefox's AI controls hub: while it is on, Firefox's page
-/// summaries and translations are switched off (upgrade ticket 09, MOB-5035).
+/// AI-free searching takes the place of Firefox's AI controls hub: turning it on switches page
+/// summaries and translations off through Firefox's own settings, turning it off switches them
+/// back on, and the user can change either afterwards (upgrade ticket 09, MOB-5035).
 @MainActor
-final class AIFreeSearchingBrowserAITests: XCTestCase {
-
+final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
+    // swiftlint:disable:next implicitly_unwrapped_optional
+    private var mockStore: MockStoreForMiddleware<AppState>!
     private let profile = MockProfile()
 
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         DependencyHelperMock().bootstrapDependencies(injectedProfile: profile)
+        setupStore()
         User.shared.aiFreeSearching = nil
-        User.shared.selectedSearchEngineID = SearchProvider.ecosia.rawValue
-        Unleash.clearInstanceModel()
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         User.shared.aiFreeSearching = nil
-        User.shared.selectedSearchEngineID = SearchProvider.ecosia.rawValue
-        Unleash.clearInstanceModel()
+        // Let the asynchronous `searchSettingsChanged` posts land here, not in the next suite.
+        try await Task.sleep(nanoseconds: 50_000_000)
+        resetStore()
         DependencyHelperMock().reset()
-        super.tearDown()
+        try await super.tearDown()
     }
 
-    // MARK: - Translations
+    // MARK: - Turning AI-free searching on and off
 
-    func testTranslationsFollowNimbusWhileAIFreeIsOff() {
-        setAIFreeSearching(flag: true, userValue: false)
+    func testTurningAIFreeOnSwitchesSummariesOff() {
+        apply(aiFreeSearching: true)
 
-        XCTAssertTrue(makeFeatureFlags().isEnabled(.translation))
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature), false)
+        XCTAssertFalse(makeSummarizerUtils().isSummarizeFeatureToggledOn)
     }
 
-    func testTranslationsAreOffWhileAIFreeIsOn() {
-        setAIFreeSearching(flag: true, userValue: true)
+    func testTurningAIFreeOnSwitchesTranslationsOffThroughFirefoxsSettings() {
+        apply(aiFreeSearching: true)
 
-        XCTAssertFalse(makeFeatureFlags().isEnabled(.translation))
+        XCTAssertEqual(translationSettingChanges, [false])
     }
 
-    func testTranslationsFollowNimbusWhenTheToggleIsNotOffered() {
-        setAIFreeSearching(flag: false, userValue: true)
+    func testTurningAIFreeOffSwitchesBothBackOn() {
+        apply(aiFreeSearching: true)
+        mockStore.dispatchedActions.removeAll()
 
-        XCTAssertTrue(makeFeatureFlags().isEnabled(.translation))
-    }
+        apply(aiFreeSearching: false)
 
-    func testAIFreeLeavesOtherFlagsAlone() {
-        setAIFreeSearching(flag: true, userValue: true)
-
-        XCTAssertTrue(makeFeatureFlags().isEnabled(.translationLanguagePicker))
-    }
-
-    // MARK: - Page summaries
-
-    func testSummariesAreOnWhileAIFreeIsOff() {
-        setAIFreeSearching(flag: true, userValue: false)
-
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature), true)
         XCTAssertTrue(makeSummarizerUtils().isSummarizeFeatureToggledOn)
+        XCTAssertEqual(translationSettingChanges, [true])
     }
 
-    func testSummariesAreOffWhileAIFreeIsOn() {
-        setAIFreeSearching(flag: true, userValue: true)
-        let subject = makeSummarizerUtils()
+    func testTurningAIFreeOnOrOffRefreshesTheSummarizeButton() {
+        apply(aiFreeSearching: true)
 
-        XCTAssertFalse(subject.isSummarizeFeatureToggledOn)
-        XCTAssertFalse(subject.isToolbarButtonEnabled)
-        XCTAssertFalse(subject.isShakeGestureEnabled)
+        XCTAssertTrue(mockStore.dispatchedActions.contains {
+            $0.actionType as? ToolbarActionType == .didSummarizeSettingsChange
+        })
     }
 
-    /// Where the toggle is not offered, Settings shows Firefox's Summarize row instead, which
-    /// needs the device check alone.
-    func testSummariesStayAvailableForTheirOwnSettingsRowWhileAIFreeIsOn() {
-        setAIFreeSearching(flag: true, userValue: true)
+    // MARK: - Users who had AI-free searching on before
 
-        XCTAssertTrue(makeSummarizerUtils().isSummarizeFeatureEnabled)
+    func testExistingAIFreeUsersStartWithSummariesAndTranslationsOff() {
+        User.shared.aiFreeSearching = true
+
+        AIFreeSearchingBrowserAI.switchOffForExistingAIFreeUsers(prefs: profile.prefs)
+
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature), false)
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Settings.translationsFeature), false)
+    }
+
+    func testExistingAIFreeUsersKeepWhatTheyChose() {
+        User.shared.aiFreeSearching = true
+        profile.prefs.setBool(true, forKey: PrefsKeys.Settings.translationsFeature)
+
+        AIFreeSearchingBrowserAI.switchOffForExistingAIFreeUsers(prefs: profile.prefs)
+
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Settings.translationsFeature), true)
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature), false)
+    }
+
+    func testUsersWithoutAIFreeAreLeftAlone() {
+        for value in [nil, false] {
+            User.shared.aiFreeSearching = value
+
+            AIFreeSearchingBrowserAI.switchOffForExistingAIFreeUsers(prefs: profile.prefs)
+
+            XCTAssertNil(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature))
+            XCTAssertNil(profile.prefs.boolForKey(PrefsKeys.Settings.translationsFeature))
+        }
     }
 
     // MARK: - Helpers
 
-    private func makeFeatureFlags() -> FeatureFlagsProvider {
-        FeatureFlagsProvider(prefs: profile.prefs, backendLayer: AllFlagsOnNimbusLayer())
+    private func apply(aiFreeSearching: Bool) {
+        AIFreeSearchingBrowserAI.apply(aiFreeSearching: aiFreeSearching,
+                                       prefs: profile.prefs,
+                                       windowUUID: .XCTestDefaultUUID)
+    }
+
+    /// The values sent to Firefox's translation settings, which store the setting, refresh the
+    /// toolbar and delete the downloaded models when switching off.
+    private var translationSettingChanges: [Bool?] {
+        mockStore.dispatchedActions.compactMap { action in
+            guard let action = action as? TranslationSettingsViewAction,
+                  action.actionType as? TranslationSettingsViewActionType == .toggleTranslationsEnabled
+            else { return nil }
+            return action.newSettingValue
+        }
     }
 
     /// A device that can summarize on-device, in English.
@@ -93,13 +124,18 @@ final class AIFreeSearchingBrowserAITests: XCTestCase {
         .make(profile: profile, appleIntelligenceAvailable: true)
     }
 
-    private func setAIFreeSearching(flag: Bool, userValue: Bool) {
-        let toggle = Unleash.Toggle(
-            name: Unleash.Toggle.Name.aiFreeSearching.rawValue,
-            enabled: flag,
-            variant: Unleash.Variant(name: "", enabled: false, payload: nil)
-        )
-        Unleash.model = Unleash.Model(toggles: Set([toggle]))
-        User.shared.aiFreeSearching = userValue
+    // MARK: - StoreTestUtility
+
+    func setupAppState() -> AppState {
+        AppState()
+    }
+
+    func setupStore() {
+        mockStore = MockStoreForMiddleware(state: setupAppState())
+        StoreTestUtilityHelper.setupStore(with: mockStore)
+    }
+
+    func resetStore() {
+        StoreTestUtilityHelper.resetStore()
     }
 }

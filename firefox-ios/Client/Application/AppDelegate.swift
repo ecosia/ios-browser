@@ -231,10 +231,17 @@ class AppDelegate: UIResponder,
         // Ecosia: Send the install event. It happens only once per App install.
         ecosiaTrackInstall()
 
+        // Ecosia: Users who already had AI-free searching on start with page summaries and translations off.
+        AIFreeSearchingBrowserAI.switchOffForExistingAIFreeUsers(prefs: profile.prefs)
+
+        /* Ecosia: Don't download translation models while the user has translations switched off
+        if featureFlagsProvider.isEnabled(.translation) {
+        */
         /// Prewarm translation resources off the main thread
         /// This will fetch the translator WASM and model attachments for the device language.
         /// Running this on a utility QoS to avoid impacting app launch time.
-        if featureFlagsProvider.isEnabled(.translation) {
+        if featureFlagsProvider.isEnabled(.translation),
+           profile.prefs.boolForKey(PrefsKeys.Settings.translationsFeature) ?? true {
             Task(priority: .utility) {
                 await ASTranslationModelsFetcher().prewarmResourcesForStartup()
             }
