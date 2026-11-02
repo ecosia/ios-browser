@@ -28,6 +28,10 @@ final class AppSettingsTableViewControllerEcosiaTests: XCTestCase {
 
     override func tearDown() async throws {
         Unleash.clearInstanceModel()
+        User.shared.aiFreeSearching = nil
+        // Changing the AI-free value posts `searchSettingsChanged` asynchronously, and the tab
+        // manager's observer resolves dependencies: let it run before they are reset.
+        try await Task.sleep(nanoseconds: 50_000_000)
         DependencyHelperMock().reset()
         profile = nil
         tabManager = nil
@@ -60,23 +64,40 @@ final class AppSettingsTableViewControllerEcosiaTests: XCTestCase {
         XCTAssertEqual(sendCrashReportsSetting(in: subject)?.prefKey, AppConstants.prefSendCrashReports)
     }
 
-    // MARK: - AI-free searching replaces Firefox's AI controls hub (MOB-5035)
+    // MARK: - AI-free searching takes the place of Firefox's AI controls hub (MOB-5035)
 
     @MainActor
-    func testAIFeatureRows_whenAIFreeSearchingIsOffered_areHidden() {
+    func testAIFeatureRows_whenAIFreeSearchingIsOn_sitUnderItsToggle() {
         setUnleash(aiFreeSearching: true)
+        User.shared.aiFreeSearching = true
         let subject = createSubject(appleIntelligenceAvailable: true)
 
+        XCTAssertEqual(searchRowTypes(in: subject).suffix(4), [
+            "AIFreeSearchingSearchSettings", "SummarizeSetting", "TranslationSetting", "AIOverviewsSearchSettings"
+        ])
         XCTAssertFalse(generalSettingsContain(SummarizeSetting.self, in: subject))
         XCTAssertFalse(generalSettingsContain(TranslationSetting.self, in: subject))
+    }
+
+    @MainActor
+    func testAIFeatureRows_whenAIFreeSearchingIsOff_areInGeneral() {
+        setUnleash(aiFreeSearching: true)
+        User.shared.aiFreeSearching = false
+        let subject = createSubject(appleIntelligenceAvailable: true)
+
+        XCTAssertTrue(generalSettingsContain(SummarizeSetting.self, in: subject))
+        XCTAssertTrue(generalSettingsContain(TranslationSetting.self, in: subject))
+        XCTAssertFalse(searchRowTypes(in: subject).contains("SummarizeSetting"))
+        XCTAssertFalse(searchRowTypes(in: subject).contains("TranslationSetting"))
     }
 
     /// Covers every reason the toggle is not offered, including a non-Ecosia search provider
     /// (see `AIFreeSearchingSelectionTests.testIsAvailableIsFalseWithACustomSearchProvider`): Settings
     /// syncs the provider from the default engine, which these tests leave at Ecosia.
     @MainActor
-    func testAIFeatureRows_whenAIFreeSearchingIsNotOffered_areShown() {
+    func testAIFeatureRows_whenAIFreeSearchingIsNotOffered_areInGeneral() {
         setUnleash(aiFreeSearching: false)
+        User.shared.aiFreeSearching = true
         let subject = createSubject(appleIntelligenceAvailable: true)
 
         XCTAssertTrue(generalSettingsContain(SummarizeSetting.self, in: subject))
@@ -85,11 +106,13 @@ final class AppSettingsTableViewControllerEcosiaTests: XCTestCase {
 
     @MainActor
     func testSummarizeRow_onADeviceThatCannotSummarize_isHidden() {
-        setUnleash(aiFreeSearching: false)
+        setUnleash(aiFreeSearching: true)
+        User.shared.aiFreeSearching = true
         let subject = createSubject(appleIntelligenceAvailable: false)
 
+        XCTAssertFalse(searchRowTypes(in: subject).contains("SummarizeSetting"))
+        XCTAssertTrue(searchRowTypes(in: subject).contains("TranslationSetting"))
         XCTAssertFalse(generalSettingsContain(SummarizeSetting.self, in: subject))
-        XCTAssertTrue(generalSettingsContain(TranslationSetting.self, in: subject))
     }
 
     // MARK: - Helper
@@ -99,6 +122,14 @@ final class AppSettingsTableViewControllerEcosiaTests: XCTestCase {
                                     enabled: aiFreeSearching,
                                     variant: Unleash.Variant(name: "", enabled: false, payload: nil))
         Unleash.model = Unleash.Model(toggles: Set([toggle]))
+    }
+
+    @MainActor
+    private func searchRowTypes(in subject: AppSettingsTableViewController) -> [String] {
+        let searchSection = subject.generateSettings().first {
+            $0.title?.string == String.localized(.search)
+        }
+        return searchSection?.children.map { String(describing: type(of: $0)) } ?? []
     }
 
     @MainActor
