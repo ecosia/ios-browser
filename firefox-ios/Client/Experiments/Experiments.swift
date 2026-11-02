@@ -165,7 +165,10 @@ enum Experiments {
                                      description: err.localizedDescription)
         }
 
+        /* Ecosia: Firefox's bundled recipes target firefox_ios and could override Ecosia's feature defaults
         let initialExperiments = Bundle.main.url(forResource: "initial_experiments", withExtension: "json")
+        */
+        let initialExperiments: URL? = nil
 
         guard let dbPath = Experiments.dbPath else {
             DefaultLogger.shared.log("Nimbus didn't get to create, because of a nil dbPath",
@@ -261,8 +264,11 @@ enum Experiments {
             cannotUseAppleIntelligence: cannotUseAppleIntelligence()
         )
 
+        /* Ecosia: The profile's service syncs daily and would download Mozilla's recipes for Nimbus's client
         let profile: Profile = AppContainer.shared.resolve()
         let remoteSettingsService = profile.remoteSettingsService
+        */
+        let remoteSettingsService = localRemoteSettingsService(nimbusDBPath: dbPath)
 
         return NimbusBuilder(dbPath: dbPath)
             .using(previewCollection: usePreviewCollection())
@@ -318,9 +324,12 @@ enum Experiments {
                                  level: .info,
                                  category: .experiments)
 
+        /* Ecosia: Mozilla's remote recipes target firefox_ios and could override Ecosia's feature defaults
         // This does its work on another thread, downloading the experiment recipes
         // for the next run. It should be the last thing we do before returning.
         nimbus.fetchExperiments()
+        */
+        disableRemoteExperiments(for: nimbus)
     }
 }
 
