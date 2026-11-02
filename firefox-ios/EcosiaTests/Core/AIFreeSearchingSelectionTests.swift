@@ -114,7 +114,7 @@ final class AIFreeSearchingSelectionTests: XCTestCase {
         XCTAssertEqual(count, 1, "Explicit off must fire searchSettingsChanged so ECNOAI=false is written")
     }
 
-    // MARK: - Browser AI (replaces Firefox's AI controls hub)
+    // MARK: - Browser AI (takes the place of Firefox's AI controls hub)
 
     func testIsAvailableRequiresFlag() {
         setFlagEnabled(false)
@@ -133,31 +133,31 @@ final class AIFreeSearchingSelectionTests: XCTestCase {
         XCTAssertFalse(AIFreeSearchingSelection.isAvailable)
     }
 
-    func testBlocksBrowserAIRequiresAvailableAndToggleOn() {
+    func testShowsBrowserAISettingsRequiresAvailableAndToggleOn() {
         setFlagEnabled(true)
-        XCTAssertFalse(AIFreeSearchingSelection.blocksBrowserAI, "Never set")
+        XCTAssertFalse(AIFreeSearchingSelection.showsBrowserAISettings, "Never set")
 
         AIFreeSearchingSelection.setEnabled(false)
-        XCTAssertFalse(AIFreeSearchingSelection.blocksBrowserAI)
+        XCTAssertFalse(AIFreeSearchingSelection.showsBrowserAISettings)
 
         AIFreeSearchingSelection.setEnabled(true)
-        XCTAssertTrue(AIFreeSearchingSelection.blocksBrowserAI)
+        XCTAssertTrue(AIFreeSearchingSelection.showsBrowserAISettings)
 
         setFlagEnabled(false)
-        XCTAssertFalse(AIFreeSearchingSelection.blocksBrowserAI, "Flag off hides the toggle")
+        XCTAssertFalse(AIFreeSearchingSelection.showsBrowserAISettings, "Flag off hides the toggle")
     }
 
     /// A user who turned AI-free on, then picked another provider, can no longer see the
-    /// toggle, so it must not keep summaries and translations hidden.
-    func testBlocksBrowserAIIsFalseOnceTheToggleIsHidden() {
+    /// toggle, so page summaries and translations go back to General settings.
+    func testShowsBrowserAISettingsIsFalseOnceTheToggleIsHidden() {
         setFlags(aiFreeSearching: true, customSearchProvider: true)
         AIFreeSearchingSelection.setEnabled(true)
-        XCTAssertTrue(AIFreeSearchingSelection.blocksBrowserAI)
+        XCTAssertTrue(AIFreeSearchingSelection.showsBrowserAISettings)
 
         User.shared.selectedSearchEngineID = SearchProvider.perplexity.rawValue
 
         XCTAssertTrue(AIFreeSearchingSelection.isActive, "The search preference itself is kept")
-        XCTAssertFalse(AIFreeSearchingSelection.blocksBrowserAI)
+        XCTAssertFalse(AIFreeSearchingSelection.showsBrowserAISettings)
     }
 
     private func setFlagEnabled(_ enabled: Bool) {

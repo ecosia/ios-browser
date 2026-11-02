@@ -14,8 +14,9 @@ import Foundation
 /// Dependent settings are only greyed out in Settings. Their values are carried
 /// unchanged and web applies the exclusion where they are used.
 ///
-/// It also replaces Firefox's AI controls hub: `blocksBrowserAI` switches off
-/// page summaries and translations.
+/// It also takes the place of Firefox's AI controls hub: turning it on switches
+/// page summaries and translations off, and `showsBrowserAISettings` lists their
+/// settings under the toggle so the user can turn either back on.
 public enum AIFreeSearchingSelection {
 
     /// Flag on AND user toggle on (`User.shared.aiFreeSearching == true`).
@@ -34,11 +35,9 @@ public enum AIFreeSearchingSelection {
             && !(CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider)
     }
 
-    /// Whether the browser's own AI features (page summaries, translations) are
-    /// switched off. Only while the toggle is offered: a value set before the user
-    /// picked another provider must not hide features they can no longer switch
-    /// back on from here.
-    public static var blocksBrowserAI: Bool {
+    /// Whether Settings lists page summaries and translations under the toggle
+    /// (offered and on). Otherwise they are in General settings, as in Firefox.
+    public static var showsBrowserAISettings: Bool {
         isAvailable && User.shared.aiFreeSearching == true
     }
 

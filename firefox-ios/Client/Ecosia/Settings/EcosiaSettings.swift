@@ -209,10 +209,11 @@ final class AIFreeSearchingSearchSettings: BoolSetting {
                   titleText: .localized(.aiFreeSearchingTitle),
                   settingDidChange: { [weak settings] value in
             AIFreeSearchingSelection.setEnabled(value)
-            settings?.tableView.reloadData()
-            if let settings {
-                BrowserAIRefresh.dispatch(prefs: prefs, windowUUID: settings.windowUUID)
-            }
+            guard let settings else { return }
+            AIFreeSearchingBrowserAI.apply(aiFreeSearching: value, prefs: prefs, windowUUID: settings.windowUUID)
+            // Page summaries and translations move between this section and General settings.
+            settings.settings = settings.generateSettings()
+            settings.tableView.reloadData()
         })
     }
 
