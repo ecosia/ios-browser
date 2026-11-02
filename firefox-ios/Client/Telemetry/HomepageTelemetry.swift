@@ -3,8 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 // Ecosia: This file contains Firefox's telemetry code which is kept intact for easier upgrades.
-// All telemetry calls are silenced via NoOpGleanWrapper - see Client/Ecosia/Telemetry/NoOpGleanWrapper.swift
-// No need to comment out individual calls; they compile successfully but do nothing at runtime.
+// Calls through GleanWrapper are no-ops (FakeGleanWrapper), and Glean never uploads (`TelemetryWrapper.isGleanUploadEnabled`).
 
 import Foundation
 import Glean

@@ -5,17 +5,8 @@
 import Foundation
 import Glean
 
-// Ecosia: Fake implementation of GleanWrapper that silences all Firefox telemetry
-// This allows us to keep Firefox's telemetry code intact while preventing any actual telemetry collection.
-// All Firefox telemetry calls will compile successfully but do nothing at runtime.
-//
-// Why this approach:
-// - Keeps Firefox code unchanged (easier upgrades)
-// - Centralizes telemetry control in one file
-// - No need to comment out individual telemetry calls
-// - New Firefox telemetry calls are automatically silenced
-//
-// See: TELEMETRY_SILENCING_STRATEGY.md for full documentation
+// Ecosia: No-op GleanWrapper, so Firefox telemetry made through the wrapper does nothing.
+// It doesn't cover code that calls GleanMetrics directly; Glean upload being off covers that (`TelemetryWrapper.isGleanUploadEnabled`).
 struct FakeGleanWrapper: GleanWrapper {
     func handleDeeplinkUrl(url: URL) {
         // Ecosia: No-op
