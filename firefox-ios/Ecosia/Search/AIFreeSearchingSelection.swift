@@ -4,6 +4,11 @@
 
 import Foundation
 
+extension Notification.Name {
+    /// Posted when AI-free searching turns on or off, from Settings or from the web (`ECNOAI`).
+    public static let aiFreeSearchingChanged = Notification.Name("aiFreeSearchingChanged")
+}
+
 /// Central gating hook for AI-free searching.
 ///
 /// `isActive` is true only when the Unleash flag is on **and** the user has
@@ -41,8 +46,12 @@ public enum AIFreeSearchingSelection {
         isAvailable && User.shared.aiFreeSearching == true
     }
 
-    /// Writes the preference (`true` / `false` from Settings, or `nil` to unset).
+    /// Writes the preference (`true` / `false` from Settings or the `ECNOAI` cookie, or `nil` to
+    /// unset) and posts `aiFreeSearchingChanged` when that turns AI-free searching on or off.
     public static func setEnabled(_ enabled: Bool?) {
+        let wasOn = User.shared.aiFreeSearching == true
         User.shared.aiFreeSearching = enabled
+        guard wasOn != (enabled == true) else { return }
+        NotificationCenter.default.post(name: .aiFreeSearchingChanged, object: nil)
     }
 }

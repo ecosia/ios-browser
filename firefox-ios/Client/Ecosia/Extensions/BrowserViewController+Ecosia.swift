@@ -426,3 +426,21 @@ extension BrowserViewController {
         }
     }
 }
+
+// MARK: AI-free searching
+private struct AIFreeSearchingAssociatedKeys {
+    nonisolated(unsafe) static var observer: UInt8 = 0
+}
+
+extension BrowserViewController {
+    /// Switches this window's page summaries and translations whenever AI-free searching turns on
+    /// or off, in Settings or on the web (the `ECNOAI` cookie). The observer goes with the window.
+    func ecosiaObserveAIFreeSearching() {
+        objc_setAssociatedObject(
+            self,
+            &AIFreeSearchingAssociatedKeys.observer,
+            AIFreeSearchingBrowserAI.WindowObserver(prefs: profile.prefs, windowUUID: windowUUID),
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+    }
+}

@@ -12,7 +12,8 @@ import Shared
 /// on the user can turn either back on from the rows Settings lists under its toggle.
 enum AIFreeSearchingBrowserAI {
     /// Writes Firefox's page summaries and translations settings for the new AI-free value and
-    /// tells the open window, so its toolbar buttons update straight away.
+    /// tells the window, so its toolbar buttons update straight away. Each browser window runs it
+    /// when AI-free searching turns on or off, in Settings or on the web (`aiFreeSearchingChanged`).
     @MainActor
     static func apply(aiFreeSearching isOn: Bool, prefs: Prefs, windowUUID: WindowUUID) {
         let isEnabled = !isOn
@@ -30,6 +31,32 @@ enum AIFreeSearchingBrowserAI {
             windowUUID: windowUUID,
             actionType: TranslationSettingsViewActionType.toggleTranslationsEnabled
         ))
+    }
+
+    /// Keeps one browser window's page summaries and translations in line with AI-free searching,
+    /// whether it changed in Settings or on the web (the `ECNOAI` cookie). Each window holds one.
+    final class WindowObserver: NSObject {
+        private let prefs: Prefs
+        private let windowUUID: WindowUUID
+
+        init(prefs: Prefs, windowUUID: WindowUUID, notificationCenter: NotificationCenter = .default) {
+            self.prefs = prefs
+            self.windowUUID = windowUUID
+            super.init()
+            notificationCenter.addObserver(self,
+                                           selector: #selector(aiFreeSearchingChanged),
+                                           name: .aiFreeSearchingChanged,
+                                           object: nil)
+        }
+
+        @objc
+        nonisolated private func aiFreeSearchingChanged() {
+            ensureMainThread { [prefs, windowUUID] in
+                AIFreeSearchingBrowserAI.apply(aiFreeSearching: User.shared.aiFreeSearching == true,
+                                               prefs: prefs,
+                                               windowUUID: windowUUID)
+            }
+        }
     }
 
     /// Users who turned AI-free searching on before page summaries and translations arrived

@@ -208,9 +208,10 @@ final class AIFreeSearchingSearchSettings: BoolSetting {
                   defaultValue: false,
                   titleText: .localized(.aiFreeSearchingTitle),
                   settingDidChange: { [weak settings] value in
+            // Each browser window switches page summaries and translations, as it does when
+            // AI-free searching changes on the web.
             AIFreeSearchingSelection.setEnabled(value)
             guard let settings else { return }
-            AIFreeSearchingBrowserAI.apply(aiFreeSearching: value, prefs: prefs, windowUUID: settings.windowUUID)
             // Page summaries and translations move between this section and General settings.
             settings.settings = settings.generateSettings()
             settings.tableView.reloadData()
