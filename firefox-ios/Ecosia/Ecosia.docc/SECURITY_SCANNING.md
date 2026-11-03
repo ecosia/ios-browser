@@ -45,10 +45,11 @@ These were found during the November 2026 review and haven't been addressed yet.
 - Fuzi and GCDWebServer (both from a personal fork, `nbhasin2`) and MappaMundi track `master` instead of a version, and the `danger` gem tracks danger's git `master`.
 - No GitHub workflow runs Ruby Danger, but its gems are still installed in CI.
 
-Some Aikido findings are false positives and should be ignored in Aikido with a reason rather than fixed. "On-screen data should be hidden when backgrounding" in `AppDelegate.swift` is already handled: `BrowserViewController` covers private tabs with a privacy window, and normal tabs are shown in the app switcher on purpose. The SSRF and file-inclusion findings in `scrape_plugins.py` and `Update_Remote_Settings.py` come from Mozilla maintenance scripts that use fixed URLs and paths.
+Some Aikido findings are false positives, so they're ignored in Aikido with a reason rather than fixed (done on 3 November 2026, for the current findings only, so new findings in these files still show up). "On-screen data should be hidden when backgrounding" in `AppDelegate.swift` is already handled: `BrowserViewController` covers private tabs with a privacy window, and normal tabs are shown in the app switcher on purpose. The SSRF and file-inclusion findings in `scrape_plugins.py` and `Update_Remote_Settings.py` come from Mozilla maintenance scripts that use fixed URLs and paths.
 
 ## History
 
 - [#1374](https://github.com/ecosia/ios-browser/pull/1374): `dompurify` 3.4.8 → 3.4.17.
 - [#1379](https://github.com/ecosia/ios-browser/pull/1379): fastlane 2.241.1, which also fixed `aws-sdk-core`, `excon` and `jwt`, and removed `httpclient`.
-- The `dc-noticket-aikido-security-fixes` pull request: pinned actions, `persist-credentials`, `faraday-http-cache` 2.8.0, the pinned Nimbus script, and the `.aikido` excludes above.
+- [#1381](https://github.com/ecosia/ios-browser/pull/1381): pinned actions, `persist-credentials`, `faraday-http-cache` 2.8.0, the pinned Nimbus script, and the `.aikido` excludes above.
+- `addressable` 2.9.0 → 2.9.1 (CI-only, pulled in by fastlane), the last open Aikido finding after #1381.
