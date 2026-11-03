@@ -18,4 +18,5 @@ Before any change: determine if the file is Firefox core or Ecosia-owned, and fo
 | Ecosia.strings, Transifex, localization | [firefox-ios/Ecosia/Ecosia.docc/agents/LOCALIZATION.md](firefox-ios/Ecosia/Ecosia.docc/agents/LOCALIZATION.md) |
 | XCTest, snapshots, mocks | [firefox-ios/Ecosia/Ecosia.docc/agents/TESTING.md](firefox-ios/Ecosia/Ecosia.docc/agents/TESTING.md) |
 | Tuist project generation, new files | [firefox-ios/Ecosia/Ecosia.docc/agents/TUIST.md](firefox-ios/Ecosia/Ecosia.docc/agents/TUIST.md) |
+| Dependencies, Aikido findings, CI supply chain | [firefox-ios/Ecosia/Ecosia.docc/agents/SECURITY.md](firefox-ios/Ecosia/Ecosia.docc/agents/SECURITY.md) |
 | Swift Concurrency guide | [.cursor/skills/swift-concurrency/SKILL.md](.cursor/skills/swift-concurrency/SKILL.md) |

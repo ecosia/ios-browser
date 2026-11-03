@@ -62,10 +62,7 @@ else
     # Ecosia: CI installs Node dependencies and builds user scripts before invoking this script.
     # Bootstrap is skipped there to avoid a duplicate npm install, but Nimbus still needs its
     # generated helper scripts on a clean runner.
-    NIMBUS_FML_FILE=./firefox-ios/nimbus.fml.yaml
-    curl --proto '=https' --tlsv1.2 -sSf \
-        https://raw.githubusercontent.com/mozilla/application-services/main/components/nimbus/ios/scripts/bootstrap.sh \
-        | bash -s -- --directory ./firefox-ios/bin "$NIMBUS_FML_FILE"
+    ./.github/scripts/download_nimbus_fml.sh ./firefox-ios/bin
 fi
 
 # Ecosia: the downloaded script stores FML binaries in versioned directories, so checking the
