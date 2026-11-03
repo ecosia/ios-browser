@@ -233,11 +233,20 @@ final class SwipeUpTabPreviewGestureHandlerTests: XCTestCase, StoreTestUtility {
         let gesture = MockSwipeUpPanGestureRecognizer()
         gesture.state = .ended
         gesture.gestureLocation = CGPoint(x: 150, y: 100)
+        // Ecosia: The toss animation's completion dispatches closeTab to the global store. Wait for it here:
+        // left pending, it can land in the next test's mock store and fail
+        // testHandlePanGesture_whenInteractiveGestureDisabled_doesNotDispatch, which runs next.
+        let closeTabDispatched = expectation(description: "closeTab dispatched")
+        mockStore.dispatchCalled = { closeTabDispatched.fulfill() }
 
         subject.handlePanGestureForTesting(gesture)
 
         XCTAssertLessThan(tabPreview.previewCardFrame.midY, previewFrame.midY)
         assertRecordedEvent(outcome: .tabClosed)
+        // Ecosia: See the note above. Then stop listening: tearDown deallocates the browser view
+        // controller, which dispatches to this store again and would over-fulfill the expectation.
+        wait(for: [closeTabDispatched], timeout: 1.0)
+        mockStore.dispatchCalled = nil
     }
 
     // MARK: - handleSwipeGesture
