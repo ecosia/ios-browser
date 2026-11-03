@@ -4,7 +4,18 @@
 
 import XCTest
 import SwiftUI
+import SnowplowTracker
 @testable import Client
+@testable import Ecosia
+
+// MARK: - AnalyticsSpy
+
+func makeAnalyticsSpyContextSUT(status: UNAuthorizationStatus = .notDetermined) -> AnalyticsSpy {
+    let mockSettings = MockUNNotificationSettings(authorizationStatus: status)
+    let mockNotificationCenter = MockAnalyticsUserNotificationCenter(mockSettings: mockSettings)
+    let analyticsSpy = AnalyticsSpy(notificationCenter: mockNotificationCenter)
+    return analyticsSpy
+}
 
 @MainActor
 class AppIconViewTest: XCTestCase {
@@ -30,5 +41,18 @@ class AppIconViewTest: XCTestCase {
         for icon in AppIcon.allCases {
             XCTAssertNotNil(UIImage.ecosia(named: icon.imageSetAssetName), "Missing image for \(icon)")
         }
+    }
+    
+    func test_appIconView_invokesEcosiaTracking() {
+        let analyticsSpy = makeAnalyticsSpyContextSUT()
+        let expectation = self.expectation(description: "Event tracked")
+        let event = Structured(category: Analytics.Category.settings.rawValue, action: Analytics.Action.Activity.launch.rawValue)
+        
+        let view = AppIconView(appIcon: .ecosiaLight, isSelected: false, windowUUID: UUID(), setAppIcon: { _ in })
+        
+        wait(for: [expectation], timeout: 2)
+        
+        //TODO: test the view constructor invokes tracking (analyticsSpy.changeAppIcon(...))
+        XCTAssertEqual(analyticsSpy.referralActionCalled, .click, "Analytics should track referral action as .click.")
     }
 }
