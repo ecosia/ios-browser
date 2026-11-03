@@ -28,7 +28,9 @@ final class DefaultAppStartupTelemetry: AppStartupTelemetry, @unchecked Sendable
     @MainActor
     public func sendStartupTelemetry() {
         queryCreditCards()
+        /* Ecosia: Loading logins downloads Mozilla's breach list just to count logins for telemetry
         queryLogins()
+        */
         queryBookmarks()
         queryAddresses()
     }

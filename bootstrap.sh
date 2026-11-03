@@ -25,8 +25,8 @@ if [[ "$PRODUCT" == "firefox" ]]; then
     find . -type d -name ".venv" -exec rm -rf {} +
 
     # Download the nimbus-fml.sh script from application-services.
-    NIMBUS_FML_FILE=./firefox-ios/nimbus.fml.yaml
-    curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/mozilla/application-services/main/components/nimbus/ios/scripts/bootstrap.sh | bash -s -- --directory ./firefox-ios/bin $NIMBUS_FML_FILE
+    # Ecosia: pinned and checksum-verified instead of piping bootstrap.sh from application-services main.
+    ./.github/scripts/download_nimbus_fml.sh ./firefox-ios/bin
 
     # Move hooks from .githooks to .git/hooks
     cp -r .githooks/* .git/hooks/
