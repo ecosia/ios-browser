@@ -63,6 +63,77 @@ final class GleanUploadTests: XCTestCase {
 
         XCTAssertEqual(fixture.api.submitPingCount, 0)
     }
+
+    func testGleanPendingPingsDirectory_isInsideGleanDataInApplicationSupport() throws {
+        let directory = try XCTUnwrap(TelemetryWrapper.gleanPendingPingsDirectory)
+
+        XCTAssertEqual(directory.lastPathComponent, "pending_pings")
+        XCTAssertEqual(directory.deletingLastPathComponent().lastPathComponent, "glean_data")
+        XCTAssertEqual(directory.deletingLastPathComponent().deletingLastPathComponent(),
+                       FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first)
+    }
+
+    func testDiscardQueuedGleanPingsOnce_deletesQueuedPingsAndKeepsDeletionRequest() throws {
+        let gleanData = try GleanDataFixture()
+        let prefs = MockProfilePrefs()
+
+        TelemetryWrapper.discardQueuedGleanPingsOnce(prefs: prefs, directory: gleanData.pendingPings)
+
+        XCTAssertFalse(FileManager.default.fileExists(atPath: gleanData.pendingPings.path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: gleanData.deletionRequestPing.path))
+        XCTAssertEqual(prefs.boolForKey(TelemetryWrapper.discardedQueuedGleanPingsKey), true)
+    }
+
+    func testDiscardQueuedGleanPingsOnce_keepsPingsQueuedAfterTheFirstRun() throws {
+        let gleanData = try GleanDataFixture()
+        let prefs = MockProfilePrefs()
+        TelemetryWrapper.discardQueuedGleanPingsOnce(prefs: prefs, directory: gleanData.pendingPings)
+        let retriedPing = try gleanData.queuePing(named: "usage-deletion-request")
+
+        TelemetryWrapper.discardQueuedGleanPingsOnce(prefs: prefs, directory: gleanData.pendingPings)
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: retriedPing.path))
+    }
+
+    func testDiscardQueuedGleanPingsOnce_withoutQueuedPings_marksItDone() throws {
+        let gleanData = try GleanDataFixture()
+        try FileManager.default.removeItem(at: gleanData.pendingPings)
+        let prefs = MockProfilePrefs()
+
+        TelemetryWrapper.discardQueuedGleanPingsOnce(prefs: prefs, directory: gleanData.pendingPings)
+
+        XCTAssertEqual(prefs.boolForKey(TelemetryWrapper.discardedQueuedGleanPingsKey), true)
+    }
+}
+
+/// A `glean_data` folder in a temporary directory, removed when the fixture is released.
+private final class GleanDataFixture {
+    let root: URL
+    let pendingPings: URL
+    let deletionRequestPing: URL
+
+    init() throws {
+        root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        pendingPings = root.appendingPathComponent("glean_data/pending_pings", isDirectory: true)
+        let deletionRequest = root.appendingPathComponent("glean_data/deletion_request", isDirectory: true)
+        deletionRequestPing = deletionRequest.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: pendingPings, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: deletionRequest, withIntermediateDirectories: true)
+        try Data("deletion-request".utf8).write(to: deletionRequestPing)
+        _ = try queuePing(named: "usage-reporting")
+        _ = try queuePing(named: "nimbus")
+    }
+
+    func queuePing(named name: String) throws -> URL {
+        try FileManager.default.createDirectory(at: pendingPings, withIntermediateDirectories: true)
+        let ping = pendingPings.appendingPathComponent(UUID().uuidString)
+        try Data(name.utf8).write(to: ping)
+        return ping
+    }
+
+    deinit {
+        try? FileManager.default.removeItem(at: root)
+    }
 }
 
 @MainActor

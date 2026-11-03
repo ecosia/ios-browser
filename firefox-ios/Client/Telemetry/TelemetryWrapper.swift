@@ -175,6 +175,8 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
                 logLevel: .off
             )
         }
+        // Ecosia: Drop pings an earlier version queued, so upgrades send only the deletion requests
+        Self.discardQueuedGleanPingsOnce(prefs: profile.prefs)
         /* Ecosia: Never upload to Mozilla, whatever the stored data preferences say
         glean.initialize(uploadEnabled: sendUsageData,
                          configuration: gleanConfig,
