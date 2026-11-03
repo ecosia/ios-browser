@@ -77,7 +77,10 @@ class AppSettingsTableViewController: SettingsTableViewController,
     private let gleanUsageReportingMetricsService: GleanUsageReportingMetricsService
     private var hasAppearedBefore = false
     private let searchEnginesManager: SearchEnginesManagerProvider
+    /* Ecosia: Internal so the Ecosia search section can list the Page Summaries row
     private let summarizerNimbusUtils: SummarizerNimbusUtils
+    */
+    let summarizerNimbusUtils: SummarizerNimbusUtils
 
     weak var parentCoordinator: SettingsFlowDelegate?
 
@@ -466,7 +469,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                    ])]
         }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
-        let generalSettings: [Setting] = [
+        var generalSettings: [Setting] = [
             OpenWithSetting(settings: self, settingsDelegate: parentCoordinator),
             ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
             SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
@@ -489,6 +492,13 @@ class AppSettingsTableViewController: SettingsTableViewController,
                 statusText: .SettingsShowLinkPreviewsStatus
             )
         ]
+
+        // Ecosia: The AI-free searching toggle takes the place of Firefox's AI controls hub. Page
+        // summaries (on devices that can summarize) and translations get Firefox's rows here, or
+        // under the toggle while AI-free searching is on.
+        if !AIFreeSearchingSelection.showsBrowserAISettings {
+            generalSettings += getBrowserAISettings()
+        }
 
         return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
                                children: generalSettings)]

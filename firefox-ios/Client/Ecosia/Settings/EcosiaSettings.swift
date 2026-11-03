@@ -194,8 +194,7 @@ final class AIOverviewsSearchSettings: BoolSetting {
 
 final class AIFreeSearchingSearchSettings: BoolSetting {
     override var hidden: Bool {
-        !AIFreeSearchingFeatureFlag.isEnabled
-            || (CustomSearchProviderFeatureFlag.isEnabled && !User.shared.isEcosiaSearchProvider)
+        !AIFreeSearchingSelection.isAvailable
     }
 
     override var accessibilityIdentifier: String? {
@@ -209,8 +208,13 @@ final class AIFreeSearchingSearchSettings: BoolSetting {
                   defaultValue: false,
                   titleText: .localized(.aiFreeSearchingTitle),
                   settingDidChange: { [weak settings] value in
+            // Each browser window switches page summaries and translations, as it does when
+            // AI-free searching changes on the web.
             AIFreeSearchingSelection.setEnabled(value)
-            settings?.tableView.reloadData()
+            guard let settings else { return }
+            // Page summaries and translations move between this section and General settings.
+            settings.settings = settings.generateSettings()
+            settings.tableView.reloadData()
         })
     }
 
