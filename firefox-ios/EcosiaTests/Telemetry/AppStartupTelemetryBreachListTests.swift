@@ -9,23 +9,13 @@ import Storage
 @MainActor
 final class AppStartupTelemetryBreachListTests: XCTestCase {
     func testSendStartupTelemetry_doesNotLoadLoginsOrBreaches() {
-        let profile = LoginsAccessCountingProfile()
+        let databasePrefix = "breach_list_\(UUID().uuidString.prefix(8))"
+        let profile = MockProfile(databasePrefix: databasePrefix)
         let telemetry = DefaultAppStartupTelemetry(profile: profile)
 
         telemetry.sendStartupTelemetry()
 
-        XCTAssertEqual(profile.loginsAccessCount, 0)
-    }
-}
-
-private final class LoginsAccessCountingProfile: MockProfile, @unchecked Sendable {
-    var loginsAccessCount = 0
-
-    override var logins: RustLogins {
-        get {
-            loginsAccessCount += 1
-            return super.logins
-        }
-        set { super.logins = newValue }
+        // MockProfile is final, so check the logins database its lazy `logins` creates on first access
+        XCTAssertFalse(profile.files.exists("\(databasePrefix)_loginsPerField.db"))
     }
 }
