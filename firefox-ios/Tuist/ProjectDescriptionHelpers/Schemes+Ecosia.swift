@@ -102,12 +102,6 @@ public enum EcosiaSchemes {
         // Ecosia-specific intro logic) — skip entry removed to avoid maintaining dead references.
         "ShortcutRouteTests",
         "SyncContentSettingsViewControllerTests",
-        // Ecosia: The wallpaper settings header is not yet surfaced as a feature in the Ecosia app (coming soon).
-        // This test asserts a collection-JSON-driven description (nil when the collection has none), but the
-        // current production header uses hardcoded Limited-Edition strings, and real collections ship null
-        // heading/description — so implementing it now would regress the live UI. Skip until the wallpaper
-        // feature ships, then implement collection-driven headers and re-enable. (MOB-4384)
-        "WallpaperSettingsViewModelTests/testSectionHeaderViewModel_headingWithoutDescription()",
         // Ecosia: testLoadSummary forces the Firefox HOSTED summarizer (setIsHostedSummaryEnabled(true)); the
         // production path spins up a real web-process summarization and HANGS (2-min timeout) in the test host.
         // Ecosia ships the Apple-Intelligence summarizer only (hosted summarizer disabled), so this is a
@@ -147,12 +141,6 @@ public enum EcosiaSchemes {
         // NTPLayout.swift, Snowplow analytics, and its own status bar). These tests assert that Firefox
         // production behavior, which Ecosia replaces — relevance-skipped per "evaluate relevance, otherwise
         // disable". (MOB-4384)
-        // - Pocket/Merino story feed (Ecosia NTP has no Pocket stories):
-        "MerinoProviderTests/test_fetchStories_cachesManyStories_returnsRequired()",
-        "MerinoProviderTests/test_fetchStories_fetchesAndSaves_whenNoCache()",
-        "MerinoProviderTests/test_fetchStories_fetchesAndSaves_whenThresholdPassed()",
-        "MerinoProviderTests/test_fetchStories_fetches_whenNoLastUpdatedEvenIfItemsExist()",
-        "MerinoProviderTests/test_fetchStories_returnsCached_whenThresholdNotPassed()",
         // - iOS-26 translucent "glass" status bar overlay (whole class asserts the old opaque behavior):
         "StatusBarOverlayTests",
         // - Firefox sponsored top-site tiles (Ecosia NTP shows none):
@@ -165,10 +153,7 @@ public enum EcosiaSchemes {
         "TopSitesManagerTests/test_searchEngine_sponsoredSite_getsRemoved()",
         // - Firefox 155.1 relies on the hardcoded default, which Ecosia sets to off (UserFeaturePreferenceManager):
         "TopSitesManagerTests/test_sponsoredShortcutsFlagEnabled_withoutUserPref_returnsSponsoredSites()",
-        // - Firefox homepage stories-redesign + glass status-bar scroll coupling:
-        "HomepageViewControllerTests/test_newState_forTriggeringImpression_withStoriesRedesignEnabled_triggersHomepageAction()",
-        "HomepageViewControllerTests/test_scrollViewDidEndDecelerating_withStoriesRedesignEnabled_triggersHomepageAction()",
-        "HomepageViewControllerTests/test_viewDidAppear_withStoriesRedesignEnabled_triggersHomepageAction()",
+        // - Firefox homepage glass status-bar scroll coupling:
         "HomepageViewControllerTests/test_scrollToTop_updatesStatusBarScrollDelegate_andSetsCollectionViewOffset()",
         "HomepageViewControllerTests/test_newState_didSelectedTabChangeToHomepageAction_forScrollToTop_setsCollectionViewOffsetToZero()",
         // - Ecosia's wallpaper is an inset card pinned top and bottom, so there is no height constraint to update:
