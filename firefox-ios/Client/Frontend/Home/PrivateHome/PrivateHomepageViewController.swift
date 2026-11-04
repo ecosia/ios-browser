@@ -124,7 +124,7 @@ final class PrivateHomepageViewController: UIViewController,
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateConstraintsForMultitasking()
-        /* Ecosia: NTPLogoCell does not need re-configuration on size class changes
+        /* Ecosia: The header cell does not need re-configuration on size class changes
         if previousTraitCollection?.horizontalSizeClass != traitCollection.horizontalSizeClass
             || previousTraitCollection?.verticalSizeClass != traitCollection.verticalSizeClass {
             homepageHeaderCell.configure(headerState: HeaderState(windowUUID: windowUUID, isPrivate: true))

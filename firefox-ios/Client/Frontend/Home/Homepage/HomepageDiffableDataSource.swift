@@ -43,7 +43,6 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
         case spacer
         // Ecosia: Custom sections for Ecosia-specific homepage content
         case ecosiaHeader
-        case ecosiaLogo
         case ecosiaLibrary
         case ecosiaImpact
         case ecosiaNTPCustomization
@@ -78,7 +77,6 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
         case spacer
         // Ecosia: Custom items for Ecosia-specific homepage cells
         case ecosiaHeader
-        case ecosiaLogo
         case ecosiaLibrary
         // Ecosia: showRows drives NSDiffableDataSource diff so toggling Climate Impact animates correctly
         case ecosiaImpact(sectionIndex: Int, showRows: Bool)

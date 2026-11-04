@@ -12,7 +12,6 @@ import Common
 
 enum HomepageSectionType: Int, CaseIterable {
     case header
-    case homepageHeader
     case libraryShortcuts
     case topSites
     case impact
@@ -23,7 +22,6 @@ enum HomepageSectionType: Int, CaseIterable {
         switch self {
         case .header:
             return NTPHeader.cellIdentifier
-        case .homepageHeader: return NTPLogoCell.cellIdentifier
         case .libraryShortcuts: return NTPLibraryCell.cellIdentifier
         case .topSites: return "" // Top sites has more than 1 cell type, dequeuing is done through FxHomeSectionHandler protocol
         case .impact: return NTPImpactCell.cellIdentifier
@@ -38,7 +36,6 @@ enum HomepageSectionType: Int, CaseIterable {
 
         types.append(NTPHeader.self)
         types.append(contentsOf: [
-            NTPLogoCell.self,
             TopSiteItemCell.self,
             EmptyTopSiteCell.self,
             NTPLibraryCell.self,
@@ -60,7 +57,7 @@ private let MinimumInsets: CGFloat = 16
 extension HomepageSectionType {
     var customizableConfig: CustomizableNTPSettingConfig? {
         switch self {
-        case .header, .homepageHeader, .libraryShortcuts, .ntpCustomization: return nil
+        case .header, .libraryShortcuts, .ntpCustomization: return nil
         case .topSites: return .topSites
         case .impact: return .climateImpact
         case .news: return nil
@@ -92,7 +89,7 @@ extension HomepageSectionType {
                                            leading: horizontal,
                                            bottom: bottomSpacing,
                                            trailing: horizontal)
-        case .homepageHeader, .header:
+        case .header:
             return .init(top: 0, leading: 0, bottom: 0, trailing: 0)
         }
     }

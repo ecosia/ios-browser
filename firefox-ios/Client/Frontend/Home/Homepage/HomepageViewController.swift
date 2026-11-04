@@ -811,8 +811,6 @@ final class HomepageViewController: UIViewController,
         // Ecosia: Custom cell configuration
         case .ecosiaHeader:
             return configureEcosiaHeaderCell(at: indexPath)
-        case .ecosiaLogo:
-            return configureEcosiaLogoCell(at: indexPath)
         case .ecosiaLibrary:
             return configureEcosiaLibraryCell(at: indexPath)
         case .ecosiaImpact(let sectionIndex, let showRows):
