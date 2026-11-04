@@ -38,19 +38,6 @@ extension HomepageViewController {
         return headerCell
     }
 
-    func configureEcosiaLogoCell(at indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cv = homepageCollectionView,
-              let logoCell = cv.dequeueReusableCell(
-            cellType: NTPLogoCell.self,
-            for: indexPath
-        ) else {
-            return UICollectionViewCell()
-        }
-
-        logoCell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
-        return logoCell
-    }
-
     func configureEcosiaLibraryCell(at indexPath: IndexPath) -> UICollectionViewCell {
         guard let cv = homepageCollectionView,
               let libraryCell = cv.dequeueReusableCell(
