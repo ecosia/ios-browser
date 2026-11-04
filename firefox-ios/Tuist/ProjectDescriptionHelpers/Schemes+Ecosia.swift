@@ -102,12 +102,6 @@ public enum EcosiaSchemes {
         // Ecosia-specific intro logic) — skip entry removed to avoid maintaining dead references.
         "ShortcutRouteTests",
         "SyncContentSettingsViewControllerTests",
-        // Ecosia: The wallpaper settings header is not yet surfaced as a feature in the Ecosia app (coming soon).
-        // This test asserts a collection-JSON-driven description (nil when the collection has none), but the
-        // current production header uses hardcoded Limited-Edition strings, and real collections ship null
-        // heading/description — so implementing it now would regress the live UI. Skip until the wallpaper
-        // feature ships, then implement collection-driven headers and re-enable. (MOB-4384)
-        "WallpaperSettingsViewModelTests/testSectionHeaderViewModel_headingWithoutDescription()",
         // Ecosia: testLoadSummary forces the Firefox HOSTED summarizer (setIsHostedSummaryEnabled(true)); the
         // production path spins up a real web-process summarization and HANGS (2-min timeout) in the test host.
         // Ecosia ships the Apple-Intelligence summarizer only (hosted summarizer disabled), so this is a
@@ -119,8 +113,6 @@ public enum EcosiaSchemes {
         // help (the difference is in production, not the test). They subscript arrays that are shorter under
         // Ecosia, which CRASHES (index-out-of-range / "no TabManager"), so they are skipped per the
         // "evaluate relevance, otherwise disable" guidance. (MOB-4384)
-        // - Firefox SearchPlugins/list.json is not bundled in the Ecosia Client app (Ecosia ships its own search):
-        "DefaultSearchPrefsTests/testParsing_hasAllInfo_succeeds()",
         // - Firefox sponsored top-site tiles are not shown on the Ecosia NTP:
         "TopSitesManagerTests/test_recalculateTopSites_duplicatePinnedTile_doesNotShowDuplicateSponsoredSite()",
         // - Firefox "Terms of Use" acceptance telemetry — Ecosia uses its own ToS/onboarding flow:
@@ -149,12 +141,6 @@ public enum EcosiaSchemes {
         // NTPLayout.swift, Snowplow analytics, and its own status bar). These tests assert that Firefox
         // production behavior, which Ecosia replaces — relevance-skipped per "evaluate relevance, otherwise
         // disable". (MOB-4384)
-        // - Pocket/Merino story feed (Ecosia NTP has no Pocket stories):
-        "MerinoProviderTests/test_fetchStories_cachesManyStories_returnsRequired()",
-        "MerinoProviderTests/test_fetchStories_fetchesAndSaves_whenNoCache()",
-        "MerinoProviderTests/test_fetchStories_fetchesAndSaves_whenThresholdPassed()",
-        "MerinoProviderTests/test_fetchStories_fetches_whenNoLastUpdatedEvenIfItemsExist()",
-        "MerinoProviderTests/test_fetchStories_returnsCached_whenThresholdNotPassed()",
         // - iOS-26 translucent "glass" status bar overlay (whole class asserts the old opaque behavior):
         "StatusBarOverlayTests",
         // - Firefox sponsored top-site tiles (Ecosia NTP shows none):
@@ -167,10 +153,7 @@ public enum EcosiaSchemes {
         "TopSitesManagerTests/test_searchEngine_sponsoredSite_getsRemoved()",
         // - Firefox 155.1 relies on the hardcoded default, which Ecosia sets to off (UserFeaturePreferenceManager):
         "TopSitesManagerTests/test_sponsoredShortcutsFlagEnabled_withoutUserPref_returnsSponsoredSites()",
-        // - Firefox homepage stories-redesign + glass status-bar scroll coupling:
-        "HomepageViewControllerTests/test_newState_forTriggeringImpression_withStoriesRedesignEnabled_triggersHomepageAction()",
-        "HomepageViewControllerTests/test_scrollViewDidEndDecelerating_withStoriesRedesignEnabled_triggersHomepageAction()",
-        "HomepageViewControllerTests/test_viewDidAppear_withStoriesRedesignEnabled_triggersHomepageAction()",
+        // - Firefox homepage glass status-bar scroll coupling:
         "HomepageViewControllerTests/test_scrollToTop_updatesStatusBarScrollDelegate_andSetsCollectionViewOffset()",
         "HomepageViewControllerTests/test_newState_didSelectedTabChangeToHomepageAction_forScrollToTop_setsCollectionViewOffsetToZero()",
         // - Ecosia's wallpaper is an inset card pinned top and bottom, so there is no height constraint to update:
@@ -197,7 +180,6 @@ public enum EcosiaSchemes {
         // Glean metrics via `testGetValue()` — test a deliberately-disabled feature and cannot pass. Skipped per
         // "evaluate relevance, otherwise disable" (user-confirmed). (MOB-4384)
         "ActionExtensionTelemetryTests",
-        "AdjustTelemetryHelperTests",
         "AppIconSelectionTelemetryTests",
         "BookmarksTelemetryTests",
         "ContextMenuTelemetryTests",
@@ -205,10 +187,8 @@ public enum EcosiaSchemes {
         "MainMenuTelemetryTests",
         "MicrosurveyTelemetryTests",
         "NotificationManagerTelemetryTests",
-        "OnboardingTelemetryDelegationTests",
         "OnboardingTelemetryUtilityTests",
         "PasswordGeneratorTelemetryTests",
-        "PrivateBrowsingTelemetryTests",
         // Firefox 155.1: reads its Nimbus context back from Glean; passes alone, fails after other suites leave Glean disabled
         "RecordedNimbusContextTests/testObjectRecordedToGleanMatchesExpected()",
         "SearchTelemetryTests",
@@ -216,13 +196,11 @@ public enum EcosiaSchemes {
         "ShareExtensionTelemetryTests",
         "ShareTelemetryActivityItemProviderTests",
         "ShareTelemetryTests",
-        "StoriesFeedTelemetryTests",
         "TabsTelemetryTests",
         "TelemetryContextualIdentifierTests",
         "TelemetryWrapperTests",
         "TermsOfServiceTelemetryTests",
         "TermsOfUseTelemetryTests",
-        "ToastTelemetryTests",
         "ToolbarTelemetryTests",
         "TranslationsTelemetryTests",
         "UnifiedAdsCallbackTelemetryTests",
