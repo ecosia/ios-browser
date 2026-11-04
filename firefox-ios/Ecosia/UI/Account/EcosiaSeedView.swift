@@ -17,6 +17,8 @@ public struct EcosiaSeedView: View {
     private let enableAnimation: Bool
     private let showSparkles: Bool
     private let showLock: Bool
+    /// Replaces the themed count and lock colours, e.g. for content on glass.
+    private let contentColor: Color?
     private let windowUUID: WindowUUID
     @State private var animationScale: CGFloat = 1.0
     @State private var animationOffsetY: CGFloat = 0
@@ -44,6 +46,7 @@ public struct EcosiaSeedView: View {
         enableAnimation: Bool = true,
         showSparkles: Bool = false,
         showLock: Bool = false,
+        contentColor: Color? = nil,
         windowUUID: WindowUUID
     ) {
         self.seedCount = seedCount
@@ -52,6 +55,7 @@ public struct EcosiaSeedView: View {
         self.enableAnimation = enableAnimation
         self.showSparkles = showSparkles
         self.showLock = showLock
+        self.contentColor = contentColor
         self.windowUUID = windowUUID
     }
 
@@ -92,7 +96,7 @@ public struct EcosiaSeedView: View {
 
             Text(displayedSeedCount)
                 .font(.headline)
-                .foregroundColor(theme.textColor)
+                .foregroundColor(contentColor ?? theme.textColor)
                 .animatedText(numericValue: seedCount, reduceMotionEnabled: !enableAnimation)
 
             if showLock {
@@ -100,7 +104,7 @@ public struct EcosiaSeedView: View {
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: UX.lockSize, height: UX.lockSize)
-                    .foregroundColor(theme.lockColor)
+                    .foregroundColor(contentColor ?? theme.lockColor)
             }
         }
         .accessibilityElement(children: .combine)

@@ -85,7 +85,7 @@ private extension HomepageComponentTests {
 
     func makeCustomizeButtonHostingController() -> UIViewController {
         makeNTPHeaderSnapshotHostingController(
-            content: { EcosiaCustomizeButton(onTap: {}) },
+            content: { EcosiaCustomizeButton(windowUUID: .XCTestDefaultUUID, onTap: {}) },
             size: CGSize(width: 72, height: 72)
         )
     }

@@ -100,28 +100,60 @@ private struct GlassCircleModifier: ViewModifier {
     }
 }
 
+/// Groups the header's glass buttons so iOS 26 and later render them together.
+private struct NTPHeaderGlassContainerModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            GlassEffectContainer {
+                content
+            }
+        } else {
+            content
+        }
+    }
+}
+
 // MARK: - Customize (Pencil) Button
 
 /// Glass-style circular button with a pencil icon for opening NTP customization.
 struct EcosiaCustomizeButton: View {
+    let windowUUID: WindowUUID
     let onTap: () -> Void
+    @State private var theme = EcosiaCustomizeButtonTheme()
 
     private let buttonSize: CGFloat = .ecosia.space._3l // 40pt
     private let iconSize: CGFloat = 16
+
+    /// On iOS 26 and later the glass follows the theme, so the icon does too; below it sits on dark glass.
+    private var iconColor: Color {
+        if #available(iOS 26, *) {
+            return theme.glassContentColor
+        }
+        return .white
+    }
 
     var body: some View {
         Button(action: { onTap() }) {
             Image.ecosia("ntp-pencil-edit")
                 .resizable()
                 .renderingMode(.template)
-                .foregroundColor(.white)
+                .foregroundColor(iconColor)
                 .frame(width: iconSize, height: iconSize)
                 .frame(width: buttonSize, height: buttonSize)
         }
         .modifier(GlassCircleModifier())
+        .ecosiaThemed(windowUUID, $theme)
         .hapticFeedback()
         .accessibilityLabel(String.localized(.customizeHomepage))
         .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.NTP.customizeButton)
+    }
+}
+
+struct EcosiaCustomizeButtonTheme: EcosiaThemeable {
+    var glassContentColor = Color.white
+
+    mutating func applyTheme(theme: Theme) {
+        glassContentColor = Color(theme.colors.ecosia.textPrimary)
     }
 }
 
@@ -156,6 +188,7 @@ struct NTPHeaderView: View {
 
             HStack(spacing: .ecosia.space._1s) {
                 EcosiaCustomizeButton(
+                    windowUUID: windowUUID,
                     onTap: handleCustomizeTap
                 )
                 Spacer()
@@ -196,6 +229,7 @@ struct NTPHeaderView: View {
                     }
                 }
             }
+            .modifier(NTPHeaderGlassContainerModifier())
         }
         .padding(.horizontal, .ecosia.space._m)
         .padding(.vertical, .ecosia.space._m)
