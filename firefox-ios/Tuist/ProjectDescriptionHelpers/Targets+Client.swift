@@ -52,7 +52,12 @@ public enum ClientTarget {
                 "Client/Generated/**/*.swift",
                 "Providers/**/*.swift",
                 "Account/*.swift",
-                "RustFxA/**/*.swift",
+                // These three belong to the Account framework, as in upstream's project.
+                .glob("RustFxA/**/*.swift", excluding: [
+                    "RustFxA/Avatar.swift",
+                    "RustFxA/PushNotificationSetup.swift",
+                    "RustFxA/RustFirefoxAccounts.swift"
+                ]),
                 "WidgetKit/DownloadManager/DownloadLiveActivity.swift",
                 "WidgetKit/OpenTabs/SimpleTab.swift",
                 "Extensions/NotificationService/NotificationPayloads.swift"
