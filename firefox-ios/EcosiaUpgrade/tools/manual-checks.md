@@ -1,6 +1,6 @@
 # Manual upgrade checks
 
-The checks ticket 12 (MOB-5038) ran by hand on `upgrade/firefox`, written down so ticket 14 (MOB-5040) can turn them into scripts. Run from the repository root. Results and triage are in the diary ([157.md](../diary/157.md), 2026-11-04 entry for 12). The helper scripts are at the end of this file; save each one outside the repository (for example in a temporary folder `$t`) before running it.
+The checks tickets 12 (MOB-5038) and 13 (MOB-5039) ran by hand on `upgrade/firefox`, written down so ticket 14 (MOB-5040) can turn them into scripts. Run from the repository root. Results and triage are in the diary ([157.md](../diary/157.md), 2026-11-04 entries for 12 and 13). The helper scripts are at the end of this file; save each one outside the repository (for example in a temporary folder `$t`) before running it.
 
 Always name Firefox tags as `refs/tags/...`: `firefox-v147.2` is ambiguous in some clones.
 
@@ -90,6 +90,22 @@ Tuist drops a manifest path that matches nothing without a warning, so a missing
 
 ```bash
 python3 -I "$t/dead_manifest_paths.py" "$PWD"
+```
+
+## 4. Skipped tests that no longer exist (ticket 13)
+
+Xcode ignores a skipped test that doesn't exist, so a renamed or deleted test stays in the scheme's skip list unnoticed. Uses the `our_members.tsv` from section 3.
+
+```bash
+python3 -I "$t/skipped_tests.py" "$PWD" "$t/our_members.tsv"
+```
+
+## 5. Strings users see from `Info.plist` (ticket 13)
+
+A purpose string in `Info.plist` reaches users only in languages whose `InfoPlist.strings` lacks the key; languages without their own folder fall back to `en`.
+
+```bash
+bash "$t/plist_strings.sh" origin/main NSCameraUsageDescription | grep -E 'MISSING|Firefox'
 ```
 
 ## Helper scripts
@@ -423,4 +439,72 @@ for path in manifests:
                 print(f"{os.path.relpath(path, sys.argv[1])}:{lineno}: {s}")
 print(f"{dead} manifest paths match nothing", file=sys.stderr)
 sys.exit(1 if dead else 0)
+```
+
+### `skipped_tests.py`
+
+```python
+#!/usr/bin/env python3
+"""List skipped tests in Schemes+Ecosia.swift that name no existing test class or method.
+
+Usage: skipped_tests.py <repo-root> <our_members.tsv>
+  our_members.tsv: pbx_members.py output for the generated project (decides which files each
+  unit-test target compiles).
+Exits 1 when an entry is stale.
+"""
+import re
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1])
+scheme = (root / "firefox-ios/Tuist/ProjectDescriptionHelpers/Schemes+Ecosia.swift").read_text()
+
+targets = re.search(r"unitTestTargets: \[TestableTarget\] = \[(.*?)\]", scheme, re.S).group(1)
+targets = set(re.findall(r'"(\w+)"', targets))
+block = re.search(r"skippedTests: \[String\] = \[(.*?)\n    \]", scheme, re.S).group(1)
+entries = [re.search(r'"([^"]+)"', l).group(1) for l in block.splitlines()
+           if re.match(r'\s*"', l)]
+
+sources = set()
+for line in open(sys.argv[2]):
+    t, k, p = line.rstrip("\n").split("\t")
+    if t in targets and k == "sources" and p.endswith(".swift"):
+        sources.add(p)
+
+classes = {}
+for p in sources:
+    text = (root / p).read_text(errors="ignore")
+    for m in re.finditer(r"^\s*(?:final\s+|open\s+|public\s+|@MainActor\s+)*class\s+(\w+)\s*:", text, re.M):
+        classes.setdefault(m.group(1), []).append(text)
+
+stale = 0
+for e in entries:
+    cls, _, method = e.partition("/")
+    method = method.rstrip("()")
+    if cls not in classes:
+        print(f"missing class: {e}")
+        stale += 1
+    elif method and not any(re.search(rf"func\s+{re.escape(method)}\s*\(", t) for t in classes[cls]):
+        print(f"missing method: {e}")
+        stale += 1
+print(f"{len(entries)} skipped entries, {stale} stale, targets: {', '.join(sorted(targets))}", file=sys.stderr)
+sys.exit(1 if stale else 0)
+```
+
+### `plist_strings.sh`
+
+```bash
+#!/bin/bash
+# Usage: plist_strings.sh <ref> <key>
+# For every Client/*.lproj on <ref>, prints the localized value of <key> in InfoPlist.strings, or
+# "MISSING" when that language falls back to Info.plist.
+ref=$1
+key=$2
+git ls-tree -d --name-only "$ref" firefox-ios/Client/ | grep '\.lproj$' | while read -r dir; do
+  lang=$(basename "$dir" .lproj)
+  value=$(git show "$ref:$dir/InfoPlist.strings" 2>/dev/null \
+    | iconv -f "$(git show "$ref:$dir/InfoPlist.strings" 2>/dev/null | file -b --mime-encoding -)" -t utf-8 2>/dev/null \
+    | grep -E "^\"?$key\"? *=" | head -1 | sed -E 's/^[^=]*= *"(.*)";.*/\1/')
+  echo "$lang	${value:-MISSING}"
+done
 ```
