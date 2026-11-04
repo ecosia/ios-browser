@@ -251,6 +251,10 @@ public enum TestTargets {
                 "firefox-ios-tests/Tests/ClientTests/DependencyInjection/*.swift",
                 "firefox-ios-tests/Tests/ClientTests/Mocks/*.swift",
                 "firefox-ios-tests/Tests/ClientTests/Microsurvey/Mock/MockMicrosurveySurfaceManager.swift",
+                // Ecosia: 155.1's DependencyHelperMock registers a search-engine provider and a
+                // Merino manager, so the mocks backing them have to be in this target too.
+                "firefox-ios-tests/Tests/ClientTests/Frontend/Browser/SearchEngines/MockSearchEngineProvider.swift",
+                "firefox-ios-tests/Tests/ClientTests/Frontend/Homepage/Mock/MockPocketManager.swift",
             ],
             resources: [
                 "EcosiaTests/SnapshotTests/environment.json",
@@ -267,6 +271,8 @@ public enum TestTargets {
                 .package(product: "SiteImageView"),
                 .package(product: "SnapshotTesting"),
                 .package(product: "TabDataStore"),
+                // Ecosia: DependencyHelperMock imports TestKit since 155.1
+                .package(product: "TestKit"),
             ],
             settings: .settings(base: appHostedTestSettings)
         )
