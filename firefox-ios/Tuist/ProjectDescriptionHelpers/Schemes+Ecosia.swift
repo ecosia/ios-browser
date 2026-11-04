@@ -119,8 +119,6 @@ public enum EcosiaSchemes {
         // help (the difference is in production, not the test). They subscript arrays that are shorter under
         // Ecosia, which CRASHES (index-out-of-range / "no TabManager"), so they are skipped per the
         // "evaluate relevance, otherwise disable" guidance. (MOB-4384)
-        // - Firefox SearchPlugins/list.json is not bundled in the Ecosia Client app (Ecosia ships its own search):
-        "DefaultSearchPrefsTests/testParsing_hasAllInfo_succeeds()",
         // - Firefox sponsored top-site tiles are not shown on the Ecosia NTP:
         "TopSitesManagerTests/test_recalculateTopSites_duplicatePinnedTile_doesNotShowDuplicateSponsoredSite()",
         // - Firefox "Terms of Use" acceptance telemetry — Ecosia uses its own ToS/onboarding flow:
@@ -197,7 +195,6 @@ public enum EcosiaSchemes {
         // Glean metrics via `testGetValue()` — test a deliberately-disabled feature and cannot pass. Skipped per
         // "evaluate relevance, otherwise disable" (user-confirmed). (MOB-4384)
         "ActionExtensionTelemetryTests",
-        "AdjustTelemetryHelperTests",
         "AppIconSelectionTelemetryTests",
         "BookmarksTelemetryTests",
         "ContextMenuTelemetryTests",
@@ -205,10 +202,8 @@ public enum EcosiaSchemes {
         "MainMenuTelemetryTests",
         "MicrosurveyTelemetryTests",
         "NotificationManagerTelemetryTests",
-        "OnboardingTelemetryDelegationTests",
         "OnboardingTelemetryUtilityTests",
         "PasswordGeneratorTelemetryTests",
-        "PrivateBrowsingTelemetryTests",
         // Firefox 155.1: reads its Nimbus context back from Glean; passes alone, fails after other suites leave Glean disabled
         "RecordedNimbusContextTests/testObjectRecordedToGleanMatchesExpected()",
         "SearchTelemetryTests",
@@ -216,13 +211,11 @@ public enum EcosiaSchemes {
         "ShareExtensionTelemetryTests",
         "ShareTelemetryActivityItemProviderTests",
         "ShareTelemetryTests",
-        "StoriesFeedTelemetryTests",
         "TabsTelemetryTests",
         "TelemetryContextualIdentifierTests",
         "TelemetryWrapperTests",
         "TermsOfServiceTelemetryTests",
         "TermsOfUseTelemetryTests",
-        "ToastTelemetryTests",
         "ToolbarTelemetryTests",
         "TranslationsTelemetryTests",
         "UnifiedAdsCallbackTelemetryTests",
