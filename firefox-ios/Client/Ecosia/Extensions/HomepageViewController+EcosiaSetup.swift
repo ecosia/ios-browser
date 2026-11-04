@@ -17,7 +17,6 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
     /// Registers all Ecosia cell types on the collection view. Call from configureCollectionView so Ecosia cells (e.g. NTPHeader) are always available regardless of setup order.
     func registerEcosiaCells(on collectionView: UICollectionView) {
-        // NTPLogoCell removed — logo is now part of NTPHeader.
         var types: [ReusableCell.Type] = [
             NTPHeader.self,
             NTPLibraryCell.self,
@@ -175,7 +174,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // Ecosia: Add the embedded NTP search bar (Approach 1 spike)
         setupNTPSearchBar(delegate: browserViewController)
 
-        // Register Ecosia cell types; NTPLogoCell removed — logo now lives in NTPHeader.
+        // Register Ecosia cell types.
         var ecosiaCellTypes: [ReusableCell.Type] = [
             NTPHeader.self,
             NTPLibraryCell.self,
