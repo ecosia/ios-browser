@@ -29,8 +29,7 @@ public enum FrameworkTargets {
                 "Client/GeneralizedImageFetcher.swift",
                 "Client/ImageIdentifiers.swift",
                 "Push/Autopush.swift",
-                "Push/PushConfiguration.swift",
-                "Client/Telemetry/ReferringPage.swift"
+                "Push/PushConfiguration.swift"
             ],
             dependencies: [
                 .package(product: "Common"),

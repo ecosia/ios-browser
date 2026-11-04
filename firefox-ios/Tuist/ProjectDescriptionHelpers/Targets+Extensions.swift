@@ -22,8 +22,6 @@ public enum ExtensionTargets {
                     "Providers/TopSitesProvider.swift",
                     "Providers/TopSitesWidgetManager.swift"
                 ]),
-                "Push/Autopush.swift",
-                "Push/PushConfiguration.swift",
                 "Client/Frontend/Extensions/DevicePickerViewController.swift",
                 "Client/Frontend/DevicePickerTableViewCell.swift",
                 "Client/Frontend/DevicePickerTableViewHeaderCell.swift",
