@@ -12,16 +12,13 @@ import XCTest
 
 class EcosiaSearchBarLocationSaverTests: XCTestCase {
     private var profile: MockProfile!
+    private var containerProfile: MockProfile!
 
     override func setUp() async throws {
         try await super.setUp()
         profile = MockProfile()
-        // Ecosia: 155.1 replaced `FeatureFlaggable.set(feature:to:)` with `UserFeaturePreferring`,
-        // which `EcosiaSearchBarLocationSaver` resolves from `AppContainer` rather than from the
-        // `profile` argument. `DependencyHelperMock` builds that manager over the profile it was
-        // bootstrapped with, so the test profile has to be the injected one or the write lands in a
-        // different prefs store than the assertions read.
-        await DependencyHelperMock().bootstrapDependencies(injectedProfile: profile)
+        containerProfile = MockProfile()
+        await DependencyHelperMock().bootstrapDependencies(injectedProfile: containerProfile)
         User.shared.firstTime = true
         UserDefaults.standard.removeObject(forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey)
     }
@@ -29,6 +26,8 @@ class EcosiaSearchBarLocationSaverTests: XCTestCase {
     override func tearDown() async throws {
         profile.shutdown()
         profile = nil
+        containerProfile.shutdown()
+        containerProfile = nil
         User.shared.firstTime = true
         UserDefaults.standard.removeObject(forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey)
         DependencyHelperMock().reset()
@@ -56,14 +55,15 @@ class EcosiaSearchBarLocationSaverTests: XCTestCase {
         // than the presence of a write. Tracked in MOB-4384.
         // Ecosia: 155.1 made `.bottom` the fallback in `UserFeaturePreferenceManager.searchBarPosition`
         // when nothing is stored, so `migrateExistingTopUserToBottomIfNeeded` now short-circuits on its
-        // `isBottomSearchBar` guard and writes nothing — the user is already where the migration wants
+        // bottom-position guard and writes nothing — the user is already where the migration wants
         // them. Reading the raw pref key therefore sees `nil`; read the effective position instead.
         let subject = createSubject()
         User.shared.firstTime = false
 
         subject.saveUserSearchBarLocation(profile: profile, userInterfaceIdiom: .phone)
 
-        XCTAssertEqual(subject.searchBarPosition, .bottom)
+        XCTAssertEqual(UserFeaturePreferenceManager(prefs: profile.prefs, userInterfaceIdiom: .phone).searchBarPosition,
+                       .bottom)
         XCTAssertTrue(UserDefaults.standard.bool(forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey))
     }
 
@@ -115,6 +115,19 @@ class EcosiaSearchBarLocationSaverTests: XCTestCase {
 
         XCTAssertEqual(profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition),
                        SearchBarPosition.bottom.rawValue)
+    }
+
+    @MainActor
+    func test_saveSearchBarLocation_writesToGivenProfileOnly() async throws {
+        let subject = createSubject()
+        User.shared.firstTime = false
+        profile.prefs.setString(SearchBarPosition.top.rawValue, forKey: PrefsKeys.FeatureFlags.SearchBarPosition)
+
+        subject.saveUserSearchBarLocation(profile: profile, userInterfaceIdiom: .phone)
+
+        XCTAssertEqual(profile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition),
+                       SearchBarPosition.bottom.rawValue)
+        XCTAssertNil(containerProfile.prefs.stringForKey(PrefsKeys.FeatureFlags.SearchBarPosition))
     }
 
     private func createSubject() -> EcosiaSearchBarLocationSaver {
