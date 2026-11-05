@@ -6,6 +6,7 @@ import UIKit
 import SwiftUI
 import Common
 import Ecosia
+import Combine
 // swiftlint:disable closure_body_length
 
 @MainActor
@@ -19,6 +20,7 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
     // MARK: - Properties
     private var hostingController: UIHostingController<AnyView>?
     private var viewModel: NTPHeaderViewModel?
+    private var glassAppearanceCancellable: AnyCancellable?
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -61,6 +63,11 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
         )
 
         hostingController?.rootView = AnyView(swiftUIView)
+
+        // Set on the hosting view rather than the controller, so sheets presented from the header keep the app's style.
+        glassAppearanceCancellable = viewModel.$glassAppearance.sink { [weak self] appearance in
+            self?.hostingController?.view.overrideUserInterfaceStyle = appearance.interfaceStyle
+        }
     }
 }
 
@@ -118,18 +125,19 @@ private struct NTPHeaderGlassContainerModifier: ViewModifier {
 /// Glass-style circular button with a pencil icon for opening NTP customization.
 struct EcosiaCustomizeButton: View {
     let windowUUID: WindowUUID
+    var appearance: NTPGlassAppearance = .wallpaper
     let onTap: () -> Void
-    @State private var theme = EcosiaCustomizeButtonTheme()
+    @State private var theme = NTPGlassContentTheme()
 
     private let buttonSize: CGFloat = .ecosia.space._3l // 40pt
     private let iconSize: CGFloat = 16
 
-    /// On iOS 26 and later the glass follows the theme, so the icon does too; below it sits on dark glass.
+    /// Below iOS 26 the custom glass is always dark, so the icon uses the wallpaper content colour.
     private var iconColor: Color {
         if #available(iOS 26, *) {
-            return theme.glassContentColor
+            return theme.contentColor(for: appearance)
         }
-        return .white
+        return theme.contentColor(for: .wallpaper)
     }
 
     var body: some View {
@@ -146,14 +154,6 @@ struct EcosiaCustomizeButton: View {
         .hapticFeedback()
         .accessibilityLabel(String.localized(.customizeHomepage))
         .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.NTP.customizeButton)
-    }
-}
-
-struct EcosiaCustomizeButtonTheme: EcosiaThemeable {
-    var glassContentColor = Color.white
-
-    mutating func applyTheme(theme: Theme) {
-        glassContentColor = Color(theme.colors.ecosia.textPrimary)
     }
 }
 
@@ -189,6 +189,7 @@ struct NTPHeaderView: View {
             HStack(spacing: .ecosia.space._1s) {
                 EcosiaCustomizeButton(
                     windowUUID: windowUUID,
+                    appearance: viewModel.glassAppearance,
                     onTap: handleCustomizeTap
                 )
                 Spacer()
@@ -199,6 +200,7 @@ struct NTPHeaderView: View {
                             avatarURL: viewModel.userAvatarURL,
                             enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
                             showSeedSparkles: viewModel.showSeedSparkles,
+                            glassAppearance: viewModel.glassAppearance,
                             windowUUID: windowUUID,
                             onTap: handleTap
                         )

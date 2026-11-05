@@ -13,6 +13,7 @@ public struct EcosiaAccountNavButton: View {
     private let onTap: () -> Void
     private let enableAnimation: Bool
     private let showSeedSparkles: Bool
+    private let glassAppearance: NTPGlassAppearance
     private var showSeedCoundLock: Bool {
         !authStateProvider.isLoggedIn &&
         seedCount == UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers
@@ -26,6 +27,7 @@ public struct EcosiaAccountNavButton: View {
         avatarURL: URL? = nil,
         enableAnimation: Bool = true,
         showSeedSparkles: Bool = false,
+        glassAppearance: NTPGlassAppearance = .wallpaper,
         windowUUID: WindowUUID,
         onTap: @escaping () -> Void
     ) {
@@ -33,14 +35,15 @@ public struct EcosiaAccountNavButton: View {
         self.avatarURL = avatarURL
         self.enableAnimation = enableAnimation
         self.showSeedSparkles = showSeedSparkles
+        self.glassAppearance = glassAppearance
         self.windowUUID = windowUUID
         self.onTap = onTap
     }
 
-    /// On iOS 26 and later the glass follows the theme, so the seed count and lock do too.
+    /// On glass (iOS 26 and later) the seed count and lock match the glass appearance.
     private var seedContentColor: Color? {
         if #available(iOS 26, *) {
-            return theme.glassContentColor
+            return theme.glassContent.contentColor(for: glassAppearance)
         }
         return nil
     }
@@ -126,12 +129,12 @@ private struct EcosiaAccountNavButtonStyle: ButtonStyle {
 struct EcosiaAccountNavButtonTheme: EcosiaThemeable {
     var backgroundColor = Color.white
     var backgroundColorActive = Color(UIColor.systemGray4)
-    var glassContentColor = Color.primary
+    var glassContent = NTPGlassContentTheme()
 
     mutating func applyTheme(theme: Theme) {
         backgroundColor = Color(theme.colors.ecosia.buttonBackgroundSecondary)
         backgroundColorActive = Color(theme.colors.ecosia.buttonBackgroundSecondaryActive)
-        glassContentColor = Color(theme.colors.ecosia.textPrimary)
+        glassContent.applyTheme(theme: theme)
     }
 }
 
