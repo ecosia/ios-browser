@@ -94,7 +94,7 @@ extension HomepageSectionLayoutProvider {
         /* Size the impact section to fill the remaining card height so TopSites is
            always pinned at the bottom. Subtract the fixed-height surrounding sections:
              • ecosiaHeader:  estimated 64 pt (matches createEcosiaHeaderLayout)
-             • topSites row: square tile + section top/bottom insets (see ecosiaTopSitesSectionHeight)
+             • topSites row: fixed tile height + section top/bottom insets
            Also subtract the embedded NTP omnibox footprint (min height +
            a single `_1l` cushion above) so the TopSites grid clears the
            omnibox on every form factor instead of being covered by it. The
@@ -103,7 +103,9 @@ extension HomepageSectionLayoutProvider {
            above it — this gives the impact cell more room than reserving
            cushions on both sides.
          */
-        let topSitesSectionHeight = ecosiaTopSitesSectionHeight(for: environment)
+        let topSitesSectionHeight = TopSiteCell.UX.imageBackgroundSize.height
+            + Self.ecosiaTopSitesTopInset
+            + Self.ecosiaTopSitesBottomInset
         let headerSectionHeight: CGFloat = 64
         let omniboxFootprint: CGFloat = NTPSearchBarView.minHeight + .ecosia.space._1l
         let fillHeight = environment.container.contentSize.height
@@ -160,17 +162,31 @@ extension HomepageSectionLayoutProvider {
         return section
     }
 
-    /// Shortcuts (top sites) layout — a single row of label-less square tiles whose edges line up
-    /// with the omnibox below. On wide containers (iPad, landscape) the row is capped and centered.
+    /// Shortcuts (top sites) layout — a single row of fixed-size, label-less tiles whose outer edges
+    /// line up with the omnibox below, with the remaining space distributed evenly between tiles.
     private func createEcosiaTopSitesLayout(
         for environment: NSCollectionLayoutEnvironment,
         numberOfTilesPerRow: Int
     ) -> NSCollectionLayoutSection {
-        let section = TopSitesSectionLayoutProvider.createTopSitesSectionLayout(
-            for: environment.traitCollection,
-            numberOfTilesPerRow: numberOfTilesPerRow
+        let tileSize = TopSiteCell.UX.imageBackgroundSize
+        let edgeInset = HomepageViewController.ntpSearchBarHorizontalInset(for: environment.traitCollection)
+        let tiles = CGFloat(max(1, numberOfTilesPerRow))
+        let rowWidth = environment.container.contentSize.width - 2 * edgeInset
+        // Explicit gap so the slots stay fixed even when fewer than `numberOfTilesPerRow` sites exist
+        let spacing = tiles > 1 ? max(0, (rowWidth - tiles * tileSize.width) / (tiles - 1)) : 0
+        let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
+            widthDimension: .absolute(tileSize.width),
+            heightDimension: .absolute(tileSize.height)
+        ))
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .absolute(tileSize.height)
+            ),
+            subitems: Array(repeating: item, count: Int(tiles))
         )
-        let edgeInset = ecosiaTopSitesHorizontalInset(for: environment, numberOfTilesPerRow: numberOfTilesPerRow)
+        group.interItemSpacing = .fixed(spacing)
+        let section = NSCollectionLayoutSection(group: group)
         /* TopSites row uses 16 pt (EcosiaSpacing._m) top so the row sits
            noticeably below the impact tiles above it, and 24 pt bottom
            (EcosiaSpacing._1l) so the gap to the omnibox stays balanced.
@@ -182,32 +198,13 @@ extension HomepageSectionLayoutProvider {
             trailing: edgeInset
         )
         section.contentInsets = insets
+        // The omnibox is inset from the view edges, not the safe area
+        section.contentInsetsReference = .none
         return section
     }
 
     private static let ecosiaTopSitesTopInset: CGFloat = .ecosia.space._m
     private static let ecosiaTopSitesBottomInset: CGFloat = .ecosia.space._1l
-
-    private func ecosiaTopSitesHorizontalInset(
-        for environment: NSCollectionLayoutEnvironment,
-        numberOfTilesPerRow: Int
-    ) -> CGFloat {
-        let tiles = CGFloat(numberOfTilesPerRow)
-        let spacing = HomepageSectionLayoutProvider.UX.standardSpacing
-        let maxRowWidth = tiles * TopSiteCell.UX.ecosiaGlassMaxTileSize + (tiles - 1) * spacing
-        let omniboxInset = HomepageViewController.ntpSearchBarHorizontalInset(for: environment.traitCollection)
-        let containerWidth = environment.container.contentSize.width
-        return max(omniboxInset, (containerWidth - maxRowWidth) / 2)
-    }
-
-    private func ecosiaTopSitesSectionHeight(for environment: NSCollectionLayoutEnvironment) -> CGFloat {
-        let tiles = CGFloat(TopSitesSectionLayoutProvider.UX.maxCards)
-        let spacing = HomepageSectionLayoutProvider.UX.standardSpacing
-        let edgeInset = ecosiaTopSitesHorizontalInset(for: environment, numberOfTilesPerRow: Int(tiles))
-        let rowWidth = environment.container.contentSize.width - 2 * edgeInset
-        let tileSize = min(TopSiteCell.UX.ecosiaGlassMaxTileSize, (rowWidth - (tiles - 1) * spacing) / tiles)
-        return max(0, tileSize) + Self.ecosiaTopSitesTopInset + Self.ecosiaTopSitesBottomInset
-    }
 
     // MARK: - Helper Methods
 
