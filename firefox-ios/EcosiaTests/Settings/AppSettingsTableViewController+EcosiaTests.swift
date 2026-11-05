@@ -91,5 +91,16 @@ final class AppSettingsTableViewControllerEcosiaTests: XCTestCase {
         trackForMemoryLeaks(subject)
         return subject
     }
+
+    @MainActor
+    func test_Settings_contain_AppIconSettings() throws {
+        try XCTSkipUnless(UIApplication.shared.supportsAlternateIcons)
+        let generalSectionTitle = NSAttributedString(string: .SettingsGeneralSectionTitle)
+        let generalSettings = createSubject().generateSettings().first { $0.title == generalSectionTitle }
+
+        let appIconSetting = generalSettings?.children.first { $0 is AppIconSetting }
+        XCTAssertNotNil(appIconSetting)
+        XCTAssertEqual(appIconSetting?.title?.string, .Settings.AppIconSelection.SettingsOptionName)
+    }
 }
 // swiftlint:enable implicitly_unwrapped_optional

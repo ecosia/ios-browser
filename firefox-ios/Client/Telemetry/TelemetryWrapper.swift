@@ -109,8 +109,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
         // send "unavailable" in order not to send `null`, but still differentiate
         // the event in the startup sequence.
 
-        // Ecosia: These GleanMetrics namespaces don't exist in Ecosia's generated metrics
-        // All telemetry is silenced via NoOpGleanWrapper, so these initialization calls are not needed
+        // Ecosia: Glean upload is off (`isGleanUploadEnabled`), so Firefox's startup metrics and opt-out pings aren't needed
         /*
         let defaultEngine = searchEnginesManager.defaultEngine
         GleanMetrics.Search.defaultEngine.set(defaultEngine?.telemetryID ?? "unavailable")
@@ -131,6 +130,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
         GleanMetrics.Pings.shared.onboardingOptOut.setEnabled(enabled: true)
          */
 
+        /* Ecosia: usage-reporting ignores Glean's upload flag, so it must never start
         let shouldSendUsagePing: Bool
 
         if let dailyUsagePing = profile.prefs.boolForKey(AppConstants.prefSendDailyUsagePing) {
@@ -155,9 +155,10 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
         } else {
             gleanUsageReportingMetricsService.unsetUsageProfileId()
         }
+        */
+        gleanUsageReportingMetricsService.disableUsageReporting()
 
-        // Ecosia: GleanMetrics.Pings doesn't exist in Ecosia's generated metrics
-        // glean.registerPings(GleanMetrics.Pings.shared)
+        glean.registerPings(GleanMetrics.Pings.shared)
 
         // Initialize Glean telemetry
         // Ecosia: Simplified configuration without custom ping uploader
@@ -174,7 +175,14 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
                 logLevel: .off
             )
         }
+        // Ecosia: Drop pings an earlier version queued, so upgrades send only the deletion requests
+        Self.discardQueuedGleanPingsOnce(prefs: profile.prefs)
+        /* Ecosia: Never upload to Mozilla, whatever the stored data preferences say
         glean.initialize(uploadEnabled: sendUsageData,
+                         configuration: gleanConfig,
+                         buildInfo: GleanMetrics.GleanBuild.info)
+        */
+        glean.initialize(uploadEnabled: Self.isGleanUploadEnabled,
                          configuration: gleanConfig,
                          buildInfo: GleanMetrics.GleanBuild.info)
 
@@ -1563,7 +1571,7 @@ extension TelemetryWrapper {
                   let messageId = extras?[EventExtraKey.messageKey.rawValue] as? String
             else { return }
 
-            // Ecosia: GleanMetrics.Messaging not available - silenced via NoOpGleanWrapper
+            // Ecosia: Not recorded; Glean upload is off
             /*
             if let actionUUID = extras?[EventExtraKey.actionUUID.rawValue] as? String {
                 GleanMetrics.Messaging.clicked.record(
@@ -1587,7 +1595,7 @@ extension TelemetryWrapper {
                   let messageId = extras?[EventExtraKey.messageKey.rawValue] as? String
             else { return }
 
-            // Ecosia: GleanMetrics.Messaging not available - silenced via NoOpGleanWrapper
+            // Ecosia: Not recorded; Glean upload is off
             /*
             GleanMetrics.Messaging.expired.record(
                 GleanMetrics.Messaging.ExpiredExtra(
@@ -1601,7 +1609,7 @@ extension TelemetryWrapper {
                   let messageId = extras?[EventExtraKey.messageKey.rawValue] as? String
             else { return }
 
-            // Ecosia: GleanMetrics.Messaging not available - silenced via NoOpGleanWrapper
+            // Ecosia: Not recorded; Glean upload is off
             /*
             GleanMetrics.Messaging.malformed.record(
                 GleanMetrics.Messaging.MalformedExtra(
@@ -1612,7 +1620,7 @@ extension TelemetryWrapper {
              */
 
         // MARK: - App Errors
-        // Ecosia: GleanMetrics.AppErrors not available - silenced via NoOpGleanWrapper
+        // Ecosia: Not recorded; Glean upload is off
         case(.information, .error, .app, .largeFileWrite, let extras):
             /*
             if let quantity = extras?[EventExtraKey.size.rawValue] as? Int32 {
@@ -1651,7 +1659,7 @@ extension TelemetryWrapper {
             break
 
         // MARK: Webview
-        // Ecosia: GleanMetrics.Webview not available - silenced via NoOpGleanWrapper
+        // Ecosia: Not recorded; Glean upload is off
         case(.information, .error, .webview, .webviewFail, _):
             // GleanMetrics.Webview.didFail.record()
             break

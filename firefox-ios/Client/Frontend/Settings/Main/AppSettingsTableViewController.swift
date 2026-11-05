@@ -459,7 +459,10 @@ class AppSettingsTableViewController: SettingsTableViewController,
                                    ])]
         }
         let theme = themeManager.getCurrentTheme(for: windowUUID)
+        /* Ecosia: We use our own app icons
         let generalSettings: [Setting] = [
+        */
+        var generalSettings: [Setting] = [
             OpenWithSetting(settings: self, settingsDelegate: parentCoordinator),
             ThemeSetting(settings: self, settingsDelegate: parentCoordinator),
             SiriPageSetting(settings: self, settingsDelegate: parentCoordinator),
@@ -482,6 +485,12 @@ class AppSettingsTableViewController: SettingsTableViewController,
                 statusText: .SettingsShowLinkPreviewsStatus
             )
         ]
+
+        // Ecosia: We use our own app icons
+        if UIApplication.shared.supportsAlternateIcons {
+            generalSettings.insert(AppIconSetting(theme: theme, settingsDelegate: parentCoordinator), at: 3)
+        }
+        // Ecosia (End).
 
         return [SettingSection(title: NSAttributedString(string: .SettingsGeneralSectionTitle),
                                children: generalSettings)]

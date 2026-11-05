@@ -48,16 +48,14 @@ struct DefaultGleanWrapper: GleanWrapper {
     static let shared = DefaultGleanWrapper()
 
     private let glean: Glean
-    // Ecosia: Use FakeGleanWrapper to silence all Firefox telemetry
-    // This allows us to keep Firefox's telemetry code intact while preventing any actual data collection
+    // Ecosia: Calls through this wrapper are dropped; code calling GleanMetrics directly relies on Glean upload being off
     private let fakeWrapper = FakeGleanWrapper()
 
     init(glean: Glean = Glean.shared) {
         self.glean = glean
     }
 
-    // Ecosia: All methods below delegate to NoOpGleanWrapper (no-op) instead of real Glean implementation
-    // This centralizes telemetry silencing in one place, making Firefox upgrades easier
+    // Ecosia: All methods below delegate to FakeGleanWrapper (no-op) instead of real Glean
 
     func handleDeeplinkUrl(url: URL) {
         fakeWrapper.handleDeeplinkUrl(url: url)

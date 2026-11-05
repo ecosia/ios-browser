@@ -9,7 +9,14 @@ exclude:
     - test-fixtures/
     - firefox-ios/ThirdParty/
     - Carthage/
-    - firefox-ios-tests/Tests/XCUITests
+    # Mozilla's test tooling: not Tuist targets and not run by our CI
+    - firefox-ios/firefox-ios-tests/Tests/XCUITests/
+    - firefox-ios/firefox-ios-tests/Tests/ExperimentIntegrationTests/
+    - firefox-ios/firefox-ios-tests/Tests/SyncIntegrationTests/
+    - firefox-ios/firefox-ios-tests/Tests/Pipfile
+    - firefox-ios/firefox-ios-tests/Tests/Pipfile.lock
+    # Composite action no workflow uses
+    - .github/actions/evaluate_tests_to_execute/
     # Disabled third-party services within firefox-ios
     - firefox-ios/Client/AdjustHelper.swift
     - firefox-ios/Client/AdjustTelemetryHelper.swift

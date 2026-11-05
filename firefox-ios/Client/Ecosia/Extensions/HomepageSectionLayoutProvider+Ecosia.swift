@@ -17,8 +17,6 @@ extension HomepageSectionLayoutProvider {
         switch section {
         case .ecosiaHeader:
             return createEcosiaHeaderLayout(for: traitCollection)
-        case .ecosiaLogo:
-            return createEcosiaLogoLayout(for: traitCollection)
         case .ecosiaLibrary:
             return createEcosiaLibraryLayout(for: traitCollection)
         case .ecosiaImpact:
@@ -49,25 +47,6 @@ extension HomepageSectionLayoutProvider {
         let section = NSCollectionLayoutSection(group: group)
         // NTPHeaderView owns all internal padding via SwiftUI modifiers; no additional insets needed here.
         section.contentInsets = .zero
-        return section
-    }
-
-    private func createEcosiaLogoLayout(for traitCollection: UITraitCollection) -> NSCollectionLayoutSection {
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(100)
-        )
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1),
-            heightDimension: .estimated(100)
-        )
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 1)
-
-        let section = NSCollectionLayoutSection(group: group)
-        let insets = getEcosiaSectionInsets(traitCollection, topSpacing: 0, bottomSpacing: 24)
-        section.contentInsets = insets
         return section
     }
 
