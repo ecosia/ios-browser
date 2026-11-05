@@ -34,6 +34,8 @@ echo "$SNAPSHOT_REFERENCE_DIR" > /tmp/ecosia_snapshot_reference_dir
 
 if [ -n "${SNAPSHOT_TESTING_RECORD:-}" ]; then
   echo "$SNAPSHOT_TESTING_RECORD" > /tmp/ecosia_snapshot_testing_record
+  # xcodebuild passes TEST_RUNNER_-prefixed variables to the test process, where swift-snapshot-testing reads its record mode.
+  export TEST_RUNNER_SNAPSHOT_TESTING_RECORD="$SNAPSHOT_TESTING_RECORD"
   echo "Recording snapshots (SNAPSHOT_TESTING_RECORD=${SNAPSHOT_TESTING_RECORD}) into ${SNAPSHOT_REFERENCE_DIR}"
 else
   rm -f /tmp/ecosia_snapshot_testing_record
