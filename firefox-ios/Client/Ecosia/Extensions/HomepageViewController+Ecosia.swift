@@ -57,11 +57,6 @@ extension BrowserViewController: @MainActor NTPTooltipDelegate {
             tooltip?.alpha = 0
         } completion: { [weak self] _ in
             switch ntpHighlight {
-            case .gotClaimed, .successfulInvite:
-                User.shared.referrals.accept()
-            case .referralSpotlight:
-                Analytics.shared.referral(action: .open, label: .promo)
-                User.shared.hideReferralSpotlight()
             case .collectiveImpactIntro:
                 User.shared.hideImpactIntro()
             }
@@ -100,13 +95,6 @@ extension BrowserViewController: NTPLibraryDelegate {
 extension BrowserViewController: NTPImpactCellDelegate {
     func impactCellButtonClickedWithInfo(_ info: ClimateImpactInfo) {
         switch info {
-        case .referral:
-            Analytics.shared.ntpClimateCounterTapped(.referral)
-            guard let referrals else { return }
-            let invite = MultiplyImpact(referrals: referrals, windowUUID: windowUUID)
-            invite.delegate = self
-            let nav = EcosiaNavigation(rootViewController: invite)
-            present(nav, animated: true)
         case .totalTrees:
             Analytics.shared.ntpClimateCounterTapped(.totalTrees)
             guard let url = info.destinationURL else { return }

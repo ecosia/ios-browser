@@ -169,42 +169,15 @@ extension BrowserViewController {
 extension BrowserViewController {
 
     func presentIntroViewController(_ alwaysShow: Bool = false) {
-        if showLoadingScreen(for: .shared) {
-            presentLoadingScreen()
-        } else if User.shared.firstTime {
+        if User.shared.firstTime {
             handleFirstTimeUserActions()
         }
-    }
-
-    private func presentLoadingScreen() {
-        guard let referrals = referrals else { return }
-        present(LoadingScreen(profile: profile, referrals: referrals, windowUUID: windowUUID, referralCode: User.shared.referrals.pendingClaim), animated: true)
     }
 
     private func handleFirstTimeUserActions() {
         User.shared.firstTime = false
         User.shared.migrated = true
         User.shared.hideBookmarksImportExportTooltip()
-    }
-
-    private func showLoadingScreen(for user: User) -> Bool {
-        user.referrals.pendingClaim != nil
-    }
-}
-
-// MARK: Claim Referral
-@MainActor
-extension BrowserViewController {
-
-    func openBlankNewTabAndClaimReferral(code: String) {
-        User.shared.referrals.pendingClaim = code
-
-        // on first start, browser is not in view hierarchy yet
-        guard !User.shared.firstTime else { return }
-        navigationHandler?.popToBVC()
-        openURLInNewTab(nil, isPrivate: false)
-        // Intro logic will trigger claiming referral
-        presentIntroViewController()
     }
 }
 

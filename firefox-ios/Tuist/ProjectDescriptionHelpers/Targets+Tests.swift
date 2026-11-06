@@ -292,7 +292,7 @@ public enum TestTargets {
             ],
             resources: [
                 // Ecosia: JSON fixtures, HTML import/export files, and other test assets
-                // required by NewsTests, ReferralsTests, and bookmark import/export tests.
+                // required by NewsTests and bookmark import/export tests.
                 // Bundle identifier must match bundleId ("com.ecosia.tests.Ecosia") in Bundle+EcosiaTests.swift.
                 .glob(pattern: "EcosiaTests/Core/Resources/**"),
             ],

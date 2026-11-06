@@ -17,7 +17,6 @@ final class EcosiaHomepageAdapter {
     private let profile: Profile
     private let windowUUID: WindowUUID
     private let tabManager: TabManager
-    private let referrals: Referrals
     private var theme: Theme
     private let auth: EcosiaAuth
 
@@ -39,13 +38,11 @@ final class EcosiaHomepageAdapter {
     init(profile: Profile,
          windowUUID: WindowUUID,
          tabManager: TabManager,
-         referrals: Referrals,
          theme: Theme,
          auth: EcosiaAuth) {
         self.profile = profile
         self.windowUUID = windowUUID
         self.tabManager = tabManager
-        self.referrals = referrals
         self.theme = theme
         self.auth = auth
 
@@ -69,10 +66,7 @@ final class EcosiaHomepageAdapter {
         )
 
         // Climate impact
-        impactViewModel = NTPImpactCellViewModel(
-            referrals: referrals,
-            theme: theme
-        )
+        impactViewModel = NTPImpactCellViewModel(theme: theme)
         impactViewModel?.delegate = impactDelegate
 
         // Customization
