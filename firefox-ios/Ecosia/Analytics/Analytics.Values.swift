@@ -15,7 +15,6 @@ extension Analytics {
         browser,
         external,
         intro,
-        invitations,
         menu,
         menuStatus = "menu_status",
         migration,
@@ -125,15 +124,6 @@ extension Analytics {
             privacyTour = "privacy_tour"
         }
 
-        public enum Referral: String {
-            case
-            invite,
-            inviteScreen = "invite_screen",
-            learnMore = "learn_more",
-            linkCopying = "link_copying",
-            promo
-        }
-
         public enum Settings: String {
             case
             aiOverviews = "ai_overviews",
@@ -207,15 +197,6 @@ extension Analytics {
             case
             click,
             close,
-            view
-        }
-
-        public enum Referral: String {
-            case
-            claim,
-            click,
-            open,
-            send,
             view
         }
 
@@ -321,8 +302,7 @@ extension Analytics {
         public enum ClimateCounter: String {
             case
             totalTrees = "total_trees",
-            totalInvested = "total_invested",
-            referral
+            totalInvested = "total_invested"
         }
 
         public enum TopSite: String {
