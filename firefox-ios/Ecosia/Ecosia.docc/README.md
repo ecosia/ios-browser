@@ -20,14 +20,14 @@ Some of the Ecosia codebase still lives under the main project `Client/Ecosia` b
 
 The Ecosia NTP features a custom wallpaper background (a nature photograph), glassmorphism impact tiles, shortcut tiles, and a daily rotating title fetched from the CDN.
 
-All necessary assets are hosted on our CDN:
- - [wallpaper configuration JSON](https://cdn.ecosia.org/static/mobile-wallpapers/metadata/v1/wallpapers.json)
- - The assets themselves are maintained in [core repo](https://github.com/ecosia/core/blob/main/static-files/README.md#mobile-wallpapers-ios-android-planned-q2-2026)
-
-**Background Asset:**
+**Wallpapers / Background Asset:**
 - Located in `Ecosia/UI/Common.xcassets/ntpBackground.imageset/` (Ecosia framework bundle — loaded via `UIImage.ecosia(named:)`)
 - A single universal asset used in both light and dark mode (no appearance variants)
 - The `WallpaperBackgroundView` is pinned to the parent `BrowserViewController` view on iPad so the card fills the full screen height with a consistent 16pt margin on all sides
+- Wallpaper assets are hosted on our CDN:
+  - [wallpaper configuration JSON](https://cdn.ecosia.org/static/mobile-wallpapers/metadata/v1/wallpapers.json)
+  - The assets themselves are maintained in [core repo](https://github.com/ecosia/core/blob/main/static-files/README.md#mobile-wallpapers-ios-android-planned-q2-2026)
+- Note that these are shared with Android at the time of writing
 
 **Impact Tiles:**
 - `NTPImpactCell` / `NTPImpactCellViewModel` — glassmorphism rows (trees planted + money invested) driven by `TreesProjection` and `InvestmentsProjection`
