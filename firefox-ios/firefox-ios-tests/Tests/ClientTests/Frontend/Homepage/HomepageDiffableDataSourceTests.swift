@@ -129,9 +129,16 @@ final class HomepageDiffableDataSourceTests: XCTestCase {
         dataSource.updateSnapshot(state: updatedState, jumpBackInDisplayConfig: mockSectionConfig)
 
         let snapshot = dataSource.snapshot()
+        /* Ecosia: Default tiles per row is 5 (MOB-5080)
         XCTAssertEqual(snapshot.numberOfItems(inSection: .topSites(nil, 4)), 8)
         let expectedSections: [HomepageSection] = [
             .topSites(nil, 4),
+            .customizeHomepage
+        ]
+         */
+        XCTAssertEqual(snapshot.numberOfItems(inSection: .topSites(nil, 5)), 10)
+        let expectedSections: [HomepageSection] = [
+            .topSites(nil, 5),
             .customizeHomepage
         ]
         XCTAssertEqual(snapshot.sectionIdentifiers, expectedSections)
