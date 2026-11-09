@@ -10,9 +10,15 @@ features:
         type: Boolean
         default: true
     defaults:
+      # Ecosia: App Attest only authenticates requests to Mozilla's hosted summarizer, which Ecosia
+      # does not use (see hostedSummarizerFeature.yaml). Off on every channel, with `release` listed
+      # explicitly because the upstream variable default is `true`.
+      - channel: release
+        value:
+          enabled: false
       - channel: beta
         value:
-          enabled: true
+          enabled: false
       - channel: developer
         value:
-          enabled: true
+          enabled: false
