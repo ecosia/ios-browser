@@ -29,6 +29,8 @@ final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
     override func tearDown() async throws {
         windows.removeAll()
         User.shared.aiFreeSearching = nil
+        User.shared.selectedSearchEngineID = SearchProvider.ecosia.rawValue
+        Unleash.clearInstanceModel()
         // Let the asynchronous `searchSettingsChanged` posts land here, not in the next suite.
         try await Task.sleep(nanoseconds: 50_000_000)
         resetStore()
@@ -112,6 +114,7 @@ final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
     // MARK: - Users who had AI-free searching on before
 
     func testExistingAIFreeUsersStartWithSummariesAndTranslationsOff() {
+        setFlags(aiFreeSearching: true)
         User.shared.aiFreeSearching = true
 
         AIFreeSearchingBrowserAI.switchOffForExistingAIFreeUsers(prefs: profile.prefs)
@@ -121,6 +124,7 @@ final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
     }
 
     func testExistingAIFreeUsersKeepWhatTheyChose() {
+        setFlags(aiFreeSearching: true)
         User.shared.aiFreeSearching = true
         profile.prefs.setBool(true, forKey: PrefsKeys.Settings.translationsFeature)
 
@@ -130,7 +134,38 @@ final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
         XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature), false)
     }
 
+    /// With the flag off the toggle is hidden and both rows are in General, so nothing explains
+    /// why they would be off. The settings stay unwritten, so a later launch with the flag on
+    /// still switches them off.
+    func testExistingAIFreeUsersAreLeftAloneWhileTheFlagIsOff() {
+        setFlags(aiFreeSearching: false)
+        User.shared.aiFreeSearching = true
+
+        AIFreeSearchingBrowserAI.switchOffForExistingAIFreeUsers(prefs: profile.prefs)
+
+        XCTAssertNil(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature))
+        XCTAssertNil(profile.prefs.boolForKey(PrefsKeys.Settings.translationsFeature))
+
+        setFlags(aiFreeSearching: true)
+        AIFreeSearchingBrowserAI.switchOffForExistingAIFreeUsers(prefs: profile.prefs)
+
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature), false)
+        XCTAssertEqual(profile.prefs.boolForKey(PrefsKeys.Settings.translationsFeature), false)
+    }
+
+    func testExistingAIFreeUsersOnACustomSearchProviderAreLeftAlone() {
+        setFlags(aiFreeSearching: true, customSearchProvider: true)
+        User.shared.aiFreeSearching = true
+        User.shared.selectedSearchEngineID = SearchProvider.perplexity.rawValue
+
+        AIFreeSearchingBrowserAI.switchOffForExistingAIFreeUsers(prefs: profile.prefs)
+
+        XCTAssertNil(profile.prefs.boolForKey(PrefsKeys.Summarizer.summarizeContentFeature))
+        XCTAssertNil(profile.prefs.boolForKey(PrefsKeys.Settings.translationsFeature))
+    }
+
     func testUsersWithoutAIFreeAreLeftAlone() {
+        setFlags(aiFreeSearching: true)
         for value in [nil, false] {
             User.shared.aiFreeSearching = value
 
@@ -142,6 +177,18 @@ final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
     }
 
     // MARK: - Helpers
+
+    private func setFlags(aiFreeSearching: Bool, customSearchProvider: Bool = false) {
+        let toggles: [(Unleash.Toggle.Name, Bool)] = [
+            (.aiFreeSearching, aiFreeSearching),
+            (.customSearchProvider, customSearchProvider)
+        ]
+        Unleash.model = Unleash.Model(toggles: Set(toggles.map { name, enabled in
+            Unleash.Toggle(name: name.rawValue,
+                           enabled: enabled,
+                           variant: Unleash.Variant(name: "", enabled: false, payload: nil))
+        }))
+    }
 
     private func apply(aiFreeSearching: Bool) {
         AIFreeSearchingBrowserAI.apply(aiFreeSearching: aiFreeSearching,

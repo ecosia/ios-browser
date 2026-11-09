@@ -61,9 +61,14 @@ enum AIFreeSearchingBrowserAI {
 
     /// Users who turned AI-free searching on before page summaries and translations arrived
     /// start with both off, as if they had just turned it on. Settings the user has already
-    /// chosen are left alone. Runs at launch.
+    /// chosen are left alone. Runs at launch, once the cached Unleash flags are loaded.
+    ///
+    /// Only while Settings offers AI-free searching: when the flag is off or a custom search
+    /// provider is in use, the toggle is hidden and both rows are in General, where switching
+    /// them off would have no visible reason. The check runs again at every launch, so it
+    /// applies once AI-free searching is offered again.
     static func switchOffForExistingAIFreeUsers(prefs: Prefs) {
-        guard User.shared.aiFreeSearching == true else { return }
+        guard AIFreeSearchingSelection.isAvailable, User.shared.aiFreeSearching == true else { return }
         for key in [PrefsKeys.Summarizer.summarizeContentFeature, PrefsKeys.Settings.translationsFeature]
         where prefs.boolForKey(key) == nil {
             prefs.setBool(false, forKey: key)
