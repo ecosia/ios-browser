@@ -39,9 +39,9 @@ struct EcosiaSearchBarLocationSaver: SearchBarLocationSaverProtocol {
 
     /// Ecosia: `SearchBarLocationSaverProtocol` gained this member in Firefox 155.1. Ecosia does not
     /// call it (see `AppLaunchUtil.setUpPreLaunchDependencies`) because the MOB-4304 migration above
-    /// deliberately puts every device on the bottom Omnibox; both `isBottomSearchBar` and
-    /// `UserFeaturePreferenceManager.searchBarPosition` already clamp iPad to `.top`, so the stored
-    /// value is not observable there. Delegating keeps upstream's semantics for any other caller.
+    /// deliberately puts every device on the bottom Omnibox; `UserFeaturePreferenceManager.searchBarPosition`
+    /// already clamps iPad to `.top`, so the stored value is not observable there. Delegating keeps
+    /// upstream's semantics for any other caller.
     @MainActor
     func migrateBottomBarPositionToTopOnIPad(
         profile: Profile,
