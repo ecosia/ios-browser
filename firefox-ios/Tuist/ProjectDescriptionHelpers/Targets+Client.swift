@@ -52,8 +52,12 @@ public enum ClientTarget {
                 "Client/Generated/**/*.swift",
                 "Providers/**/*.swift",
                 "Account/*.swift",
-                "RustFxA/**/*.swift",
-                "TranslationsEngine.html",
+                // These three belong to the Account framework, as in upstream's project.
+                .glob("RustFxA/**/*.swift", excluding: [
+                    "RustFxA/Avatar.swift",
+                    "RustFxA/PushNotificationSetup.swift",
+                    "RustFxA/RustFirefoxAccounts.swift"
+                ]),
                 "WidgetKit/DownloadManager/DownloadLiveActivity.swift",
                 "WidgetKit/OpenTabs/SimpleTab.swift",
                 "Extensions/NotificationService/NotificationPayloads.swift"
@@ -98,6 +102,10 @@ public enum ClientTarget {
                 "Client/Experiments/initial_experiments.json",
                 "Client/Frontend/LottieFiles/**/*.json",
                 "Client/Frontend/Reader/Resources/*.{html,css}",
+                // Ecosia: The translations engine web view loads `translations://app/TranslationsEngine.html`
+                // from the bundle. This was listed under sources as "TranslationsEngine.html", a path that
+                // doesn't exist, so the page never shipped and every translation timed out.
+                "Client/Frontend/UserContent/UserScripts/TranslationsEngine/TranslationsEngine.html",
                 "Client/MailSchemes.plist",
                 .glob(pattern: "Client/Assets/**/*.xcassets", excluding: [
                     "Client/Assets/Images.xcassets/AppIcon.appiconset",

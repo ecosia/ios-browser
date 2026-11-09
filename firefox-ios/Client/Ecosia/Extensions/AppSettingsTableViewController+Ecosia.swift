@@ -33,9 +33,12 @@ extension AppSettingsTableViewController {
             SearchAreaSetting(settings: self),
             SafeSearchSettings(settings: self),
             AutoCompleteSettings(prefs: profile.prefs, theme: theme),
-            AIFreeSearchingSearchSettings(prefs: profile.prefs, theme: theme, settings: self),
-            AIOverviewsSearchSettings(prefs: profile.prefs, theme: theme)
+            AIFreeSearchingSearchSettings(prefs: profile.prefs, theme: theme, settings: self)
         ]
+        if AIFreeSearchingSelection.showsBrowserAISettings {
+            settings += getBrowserAISettings()
+        }
+        settings.append(AIOverviewsSearchSettings(prefs: profile.prefs, theme: theme))
 
         if CustomSearchProviderFeatureFlag.isEnabled {
             settings.insert(
@@ -50,6 +53,19 @@ extension AppSettingsTableViewController {
 
         return [SettingSection(title: .init(string: .localized(.search)),
                                children: settings)]
+    }
+
+    /// Firefox's Page Summaries (on devices that can summarize) and Translation rows. They sit
+    /// under AI-free searching while it is on, and in General settings otherwise.
+    func getBrowserAISettings() -> [Setting] {
+        var settings: [Setting] = []
+        if summarizerNimbusUtils.isSummarizeFeatureEnabled {
+            settings.append(SummarizeSetting(settings: self, settingsDelegate: parentCoordinator))
+        }
+        if featureFlagsProvider.isEnabled(.translation) {
+            settings.append(TranslationSetting(settings: self, settingsDelegate: parentCoordinator))
+        }
+        return settings
     }
 
     func getCustomizationSection() -> [SettingSection] {
