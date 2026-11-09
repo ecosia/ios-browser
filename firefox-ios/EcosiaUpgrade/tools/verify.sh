@@ -1,6 +1,7 @@
 #!/bin/bash
 # Builds, unit-tests and lints the current checkout the way CI's merge tests do.
-# Exit codes: 0 ok, 1 project generation or build failed, 2 tests failed, 3 lint failed.
+# Exit codes: 0 ok, 1 project generation or build failed, 2 tests failed, 3 lint failed,
+# 4 a feature decision does not hold on some Nimbus channel (check-feature-config.sh).
 set -uo pipefail
 
 root=$(git rev-parse --show-toplevel)
@@ -50,5 +51,11 @@ xcodebuild "${common[@]}" -testLanguage en -testRegion US ${skip_tests[@]+"${ski
 
 echo "verify: linting (log: $logs/lint.log)"
 swiftlint --strict --quiet > "$logs/lint.log" 2>&1 || { echo "verify: lint failed"; exit 3; }
+
+# The unit tests only see the developer channel; this checks the feature decisions on beta and release
+# too, with the nimbus-fml binary the build above cached.
+echo "verify: checking the feature decisions on every channel (log: $logs/feature-config.log)"
+firefox-ios/EcosiaUpgrade/tools/check-feature-config.sh > "$logs/feature-config.log" 2>&1 \
+  || { echo "verify: feature configuration check failed"; exit 4; }
 
 echo "verify: OK"
