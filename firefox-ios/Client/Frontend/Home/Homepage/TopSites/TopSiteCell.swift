@@ -25,13 +25,13 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
         static let textSafeSpace: CGFloat = 6
         */
         static let textSafeSpace: CGFloat = .ecosia.space._1s
-        /* Ecosia: Corner radius for shortcut icon container
         static let faviconCornerRadius: CGFloat = 16
-        */
-        static let faviconCornerRadius: CGFloat = .ecosia.borderRadius._l
         static let faviconTransparentBackgroundInset: CGFloat = 8
-        // Ecosia: 16pt inset on each side renders the favicon at 24×24pt within the 56pt container
-        static let ecosiaGlassIconInset: CGFloat = 16
+        // Ecosia: Favicon size inside the label-less NTP shortcut tile
+        static let ecosiaGlassIconSize: CGFloat = 36
+        static let ecosiaGlassIconInset: CGFloat = (imageBackgroundSize.width - ecosiaGlassIconSize) / 2
+        // Ecosia: Rounds the favicon inside the label-less NTP shortcut tile
+        static let ecosiaGlassIconCornerRadius: CGFloat = 8
         static let transparencyThreshold: CGFloat = 15
         // Ecosia: Tag used to identify the dark-tint overlay for the NTP glass style
         static let ecosiaGlassTintTag: Int = 9953
@@ -106,9 +106,17 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
     private var textColor: UIColor?
     private var imageViewConstraints: [NSLayoutConstraint] = []
     private var theme: Theme?
+    // Ecosia: Firefox's tile + label layout vs. the label-less NTP tile
+    private var ecosiaDefaultLayoutConstraints: [NSLayoutConstraint] = []
+    private var ecosiaGlassLayoutConstraints: [NSLayoutConstraint] = []
     // Ecosia: When true, always use the NTP glass style regardless of Firefox wallpaper state.
     // Set by Ecosia cell configuration since Ecosia always shows an NTP background image.
-    var ecosiaGlassStyleEnabled: Bool = false
+    var ecosiaGlassStyleEnabled: Bool = false {
+        didSet {
+            guard ecosiaGlassStyleEnabled != oldValue else { return }
+            ecosiaUpdateLayoutForGlassStyle()
+        }
+    }
 
     // MARK: - Inits
 
@@ -258,13 +266,12 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
             rootContainer.widthAnchor.constraint(equalToConstant: UX.imageBackgroundSize.width),
             rootContainer.heightAnchor.constraint(equalToConstant: UX.imageBackgroundSize.height),
 
+            /* Ecosia: Label constraints moved to ecosiaDefaultLayoutConstraints so the NTP can drop the label
             descriptionWrapper.topAnchor.constraint(equalTo: rootContainer.bottomAnchor, constant: UX.textSafeSpace),
             descriptionWrapper.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             descriptionWrapper.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            /* Ecosia: bottomAnchor now a soft constraint so label doesn't clip
             descriptionWrapper.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             */
-            descriptionWrapper.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
 
             selectedOverlay.topAnchor.constraint(equalTo: rootContainer.topAnchor),
             selectedOverlay.leadingAnchor.constraint(equalTo: rootContainer.leadingAnchor),
@@ -289,6 +296,31 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
             imageView.bottomAnchor.constraint(equalTo: rootContainer.bottomAnchor),
         ]
         NSLayoutConstraint.activate(imageViewConstraints)
+
+        // Ecosia: Build both layouts and activate the one matching the current style
+        ecosiaDefaultLayoutConstraints = [
+            descriptionWrapper.topAnchor.constraint(equalTo: rootContainer.bottomAnchor, constant: UX.textSafeSpace),
+            descriptionWrapper.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            descriptionWrapper.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            // Ecosia: bottomAnchor is a soft constraint so the label doesn't clip
+            descriptionWrapper.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor),
+        ]
+        ecosiaGlassLayoutConstraints = [
+            rootContainer.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+        ]
+        ecosiaUpdateLayoutForGlassStyle()
+    }
+
+    // Ecosia: The NTP shows label-less tiles
+    private func ecosiaUpdateLayoutForGlassStyle() {
+        descriptionWrapper.isHidden = ecosiaGlassStyleEnabled
+        if ecosiaGlassStyleEnabled {
+            NSLayoutConstraint.deactivate(ecosiaDefaultLayoutConstraints)
+            NSLayoutConstraint.activate(ecosiaGlassLayoutConstraints)
+        } else {
+            NSLayoutConstraint.deactivate(ecosiaGlassLayoutConstraints)
+            NSLayoutConstraint.activate(ecosiaDefaultLayoutConstraints)
+        }
     }
 
     private func configurePinnedSite(_ topSite: TopSiteConfiguration) {
@@ -305,6 +337,8 @@ class TopSiteCell: UICollectionViewCell, ReusableCell {
 
     // Add insets to favicons with transparent backgrounds
     private func configureFaviconWithTransparency() {
+        // Ecosia: The glass tile owns the favicon inset; this async callback would otherwise override it for some icons
+        guard !ecosiaGlassStyleEnabled else { return }
         guard let image = imageView.image,
               let percentTransparent = image.percentTransparent,
               percentTransparent > UX.transparencyThreshold else { return }
@@ -394,6 +428,9 @@ extension TopSiteCell: Blurrable {
             rootContainer.layer.borderColor = (ecosia?.borderGlassStatic ?? EcosiaColor.White.withAlphaComponent(0x3D / 255.0)).cgColor
             // Ecosia: 0.5px border for the glass ring
             rootContainer.layer.borderWidth = 0.5
+            // Ecosia: Squircle corners per the NTP shortcut design
+            rootContainer.layer.cornerCurve = .continuous
+            imageView.layer.cornerCurve = .continuous
             // Ecosia: Inset favicon so the glass ring remains visible around the icon
             let inset = UX.ecosiaGlassIconInset
             imageViewConstraints.forEach { constraint in
@@ -403,7 +440,7 @@ extension TopSiteCell: Blurrable {
                     constraint.constant = inset
                 }
             }
-            imageView.layer.cornerRadius = max(0, UX.faviconCornerRadius - inset)
+            imageView.layer.cornerRadius = UX.ecosiaGlassIconCornerRadius
         } else {
             // If blur is disabled set background color
             rootContainer.removeVisualEffectView()
