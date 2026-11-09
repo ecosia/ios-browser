@@ -323,7 +323,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
     /// 160pt of breathing room on iPad regular-width surfaces so the pill doesn't
     /// stretch the full width of a 1024pt display; everything else (iPhone, iPad
     /// narrow split-screen) uses the design-system `_s` (12pt) margin.
-    fileprivate static func ntpSearchBarHorizontalInset(for traitCollection: UITraitCollection) -> CGFloat {
+    static func ntpSearchBarHorizontalInset(for traitCollection: UITraitCollection) -> CGFloat {
         let isWideIPad = traitCollection.userInterfaceIdiom == .pad
             && traitCollection.horizontalSizeClass == .regular
         return isWideIPad ? 160 : .ecosia.space._s

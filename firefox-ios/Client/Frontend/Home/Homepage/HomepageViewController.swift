@@ -697,6 +697,16 @@ final class HomepageViewController: UIViewController,
                 return sectionProvider.makeEmptyLayoutSection()
             }
 
+            // Ecosia: Top sites are centered based on the actual number of tiles
+            if case .topSites(_, let numberOfTilesPerRow, _) = section,
+               let numberOfItems = self?.dataSource?.snapshot().numberOfItems(inSection: section) {
+                return sectionProvider.createEcosiaTopSitesLayout(
+                    for: environment,
+                    numberOfTilesPerRow: numberOfTilesPerRow,
+                    numberOfItems: numberOfItems
+                )
+            }
+
             let layoutSection = sectionProvider.createLayoutSection(
                 for: section,
                 with: environment
