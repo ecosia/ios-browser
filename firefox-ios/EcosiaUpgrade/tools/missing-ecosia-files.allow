@@ -1,0 +1,7 @@
+# Ecosia files missing on the upgrade branch on purpose. One per line: <path><TAB><reason>.
+# Read by missing_ecosia_files.sh. Each entry needs a reason a reviewer can check.
+firefox-ios/Client/Assets/Images.xcassets/shareMedium.imageset/shareMedium.pdf	155.1 experiment 19 §4/§9h: orphan asset, 155.1 renamed the share icon to shareAppleMedium (diary 157.md, 2026-11-04 MOB-5038)
+firefox-ios/Client/Coordinators/Launch/TermsOfServiceManager.swift	155.1 experiment 17: relocated
+firefox-ios/Client/DispatchQueueHelper.swift	155.1 experiment 19 §9: byte-identical duplicate of BrowserKit's
+firefox-ios/Client/TabManagement/TabManagerImplementation.swift.firefox	155.1 experiment 19 §10: backup of the Firefox file, deleted after re-verification
+firefox-ios/firefox-ios-tests/Tests/ClientTests/NativeErrorPage/Mock/NativeErrorPageMockModel.swift	155.1 experiment 19 §13: dead Ecosia mock
