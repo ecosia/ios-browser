@@ -141,28 +141,45 @@ extension HomepageSectionLayoutProvider {
         return section
     }
 
-    /// Shortcuts (top sites) layout — a single row of fixed-size, label-less tiles whose outer edges
-    /// line up with the omnibox below, with the remaining space distributed evenly between tiles.
-    private func createEcosiaTopSitesLayout(
+    /// Shortcuts (top sites) layout — a single, horizontally centered row of fixed-size, label-less tiles.
+    /// On iPhone the gap is chosen so a full row lines up with the omnibox edges; on wide iPad,
+    /// where the omnibox is much wider, the gap is fixed instead.
+    func createEcosiaTopSitesLayout(
         for environment: NSCollectionLayoutEnvironment,
-        numberOfTilesPerRow: Int
+        numberOfTilesPerRow: Int,
+        numberOfItems: Int? = nil
     ) -> NSCollectionLayoutSection {
         let tileSize = TopSiteCell.UX.imageBackgroundSize
-        let edgeInset = HomepageViewController.ntpSearchBarHorizontalInset(for: environment.traitCollection)
-        let tiles = CGFloat(max(1, numberOfTilesPerRow))
-        let rowWidth = environment.container.contentSize.width - 2 * edgeInset
-        // Explicit gap so the slots stay fixed even when fewer than `numberOfTilesPerRow` sites exist
-        let spacing = tiles > 1 ? max(0, (rowWidth - tiles * tileSize.width) / (tiles - 1)) : 0
+        let traitCollection = environment.traitCollection
+        let containerWidth = environment.container.contentSize.width
+        let tilesPerRow = max(1, numberOfTilesPerRow)
+        let tilesInRow = max(1, min(numberOfItems ?? tilesPerRow, tilesPerRow))
+
+        let isWideIPad = traitCollection.userInterfaceIdiom == .pad && traitCollection.horizontalSizeClass == .regular
+        let spacing: CGFloat
+        if isWideIPad {
+            spacing = Self.ecosiaTopSitesWideSpacing
+        } else if tilesPerRow > 1 {
+            let omniboxInset = HomepageViewController.ntpSearchBarHorizontalInset(for: traitCollection)
+            let omniboxWidth = containerWidth - 2 * omniboxInset
+            spacing = max(0, (omniboxWidth - CGFloat(tilesPerRow) * tileSize.width) / CGFloat(tilesPerRow - 1))
+        } else {
+            spacing = 0
+        }
+
+        let rowWidth = CGFloat(tilesInRow) * tileSize.width + CGFloat(tilesInRow - 1) * spacing
+        let edgeInset = max(0, (containerWidth - rowWidth) / 2)
+
         let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(
             widthDimension: .absolute(tileSize.width),
             heightDimension: .absolute(tileSize.height)
         ))
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1),
+                widthDimension: .absolute(rowWidth),
                 heightDimension: .absolute(tileSize.height)
             ),
-            subitems: Array(repeating: item, count: Int(tiles))
+            subitems: Array(repeating: item, count: tilesInRow)
         )
         group.interItemSpacing = .fixed(spacing)
         let section = NSCollectionLayoutSection(group: group)
@@ -170,13 +187,12 @@ extension HomepageSectionLayoutProvider {
            noticeably below the impact tiles above it, and 24 pt bottom
            (EcosiaSpacing._1l) so the gap to the omnibox stays balanced.
          */
-        let insets = NSDirectionalEdgeInsets(
+        section.contentInsets = NSDirectionalEdgeInsets(
             top: Self.ecosiaTopSitesTopInset,
             leading: edgeInset,
             bottom: Self.ecosiaTopSitesBottomInset,
             trailing: edgeInset
         )
-        section.contentInsets = insets
         // The omnibox is inset from the view edges, not the safe area
         section.contentInsetsReference = .none
         return section
@@ -184,6 +200,8 @@ extension HomepageSectionLayoutProvider {
 
     private static let ecosiaTopSitesTopInset: CGFloat = .ecosia.space._m
     private static let ecosiaTopSitesBottomInset: CGFloat = .ecosia.space._1l
+    /// Fixed gap between tiles on wide iPad, where aligning with the omnibox would spread them too far apart
+    private static let ecosiaTopSitesWideSpacing: CGFloat = .ecosia.space._m
 
     // MARK: - Helper Methods
 
