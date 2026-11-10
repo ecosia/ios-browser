@@ -220,6 +220,17 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             name: .EcosiaChatThreadsOptOutDidChange,
             object: nil
         )
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(wallpaperDidRotate),
+            name: WallpaperRotation.didRotate,
+            object: nil
+        )
+        DebugWallpaperRotation.startIfEnabled()
+    }
+
+    @objc private func wallpaperDidRotate() {
+        newState(state: homepageState)
     }
 
     @objc private func updateNTPUploadButtonVisibility() {

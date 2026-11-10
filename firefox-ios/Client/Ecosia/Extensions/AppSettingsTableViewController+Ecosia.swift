@@ -88,6 +88,7 @@ extension AppSettingsTableViewController {
             ToggleDefaultBrowserPromo(settings: self),
             ShowWelcomeScreen(settings: self),
             ToggleImpactIntro(settings: self),
+            ToggleWallpaperRotation(settings: self),
             CreateReferralCode(settings: self),
             AddReferral(settings: self),
             AddClaim(settings: self),

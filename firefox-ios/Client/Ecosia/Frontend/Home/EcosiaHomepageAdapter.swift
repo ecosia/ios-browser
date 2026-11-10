@@ -181,6 +181,9 @@ final class EcosiaHomepageAdapter {
 
     /// Provides the wallpaper configuration for the NTP background
     func getNTPBackgroundConfiguration() -> WallpaperConfiguration {
+        if let debugConfiguration = DebugWallpaperRotation.currentConfiguration() {
+            return debugConfiguration
+        }
 
         let wallpaperManager = WallpaperManager()
         let currentWallpaper = wallpaperManager.currentWallpaper
@@ -216,6 +219,23 @@ final class EcosiaHomepageAdapter {
             cardColor: currentWallpaper.cardColor,
             logoTextColor: currentWallpaper.logoTextColor,
             hasImage: portraitImage != nil || landscapeImage != nil
+        )
+    }
+
+    /// A wallpaper without a bundled image, or whose image fails to load, shows the plain background.
+    static func configuration(forBundled wallpaper: Wallpaper) -> WallpaperConfiguration {
+        guard let assetName = wallpaper.bundledAssetName,
+              let image = UIImage.ecosia(named: assetName) else {
+            return WallpaperConfiguration(hasImage: false)
+        }
+        return WallpaperConfiguration(
+            id: wallpaper.id,
+            landscapeImage: image,
+            portraitImage: image,
+            textColor: wallpaper.textColor,
+            cardColor: wallpaper.cardColor,
+            logoTextColor: wallpaper.logoTextColor,
+            hasImage: true
         )
     }
 }
