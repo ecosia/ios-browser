@@ -9,6 +9,8 @@ import XCTest
 final class UserTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.user)
+        // User.shared is process-global; other suites (e.g. NewsTests) leave state on it.
+        User.shared = User()
     }
 
     override func tearDown() {
