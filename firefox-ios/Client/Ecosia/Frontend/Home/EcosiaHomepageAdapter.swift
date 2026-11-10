@@ -118,8 +118,6 @@ final class EcosiaHomepageAdapter {
             sections.append(.ecosiaHeader)
         }
 
-        // Logo moved into the NTPHeader cell — no separate logo section needed.
-
         // Library shortcuts (Bookmarks, History, Reading List, Downloads) — hidden for now
 
         // Climate impact section (always present for the rotating title;
@@ -144,8 +142,6 @@ final class EcosiaHomepageAdapter {
         switch section {
         case .ecosiaHeader:
             return [.ecosiaHeader]
-        case .ecosiaLogo:
-            return [.ecosiaLogo]
         case .ecosiaLibrary:
             return [.ecosiaLibrary]
         case .ecosiaImpact:

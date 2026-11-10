@@ -82,7 +82,8 @@ class HomepageDimensionCalculatorTests: XCTestCase {
             leadingInset: leadingInset
         )
 
-        XCTAssertEqual(numberOfTilesPerRow, 4)
+        // Ecosia: Top sites always show 5 tiles per row (MOB-5080). // XCTAssertEqual(numberOfTilesPerRow, 4)
+        XCTAssertEqual(numberOfTilesPerRow, 5)
     }
 
     func test_getNumberOfTilesPerRow_withLandscapeIphone_showsExpectedRowNumber() {
@@ -94,9 +95,8 @@ class HomepageDimensionCalculatorTests: XCTestCase {
             leadingInset: leadingInset
         )
 
-        // Ecosia: Top sites are capped at 4 tiles per row (NTP design = 1 row × 4 shortcuts) via
-        // HomepageDimensionImplementation's `min(tilesPerRowCount, 4)`. // XCTAssertEqual(numberOfTilesPerRow, 8)
-        XCTAssertEqual(numberOfTilesPerRow, 4)
+        // Ecosia: Top sites always show 5 tiles per row (MOB-5080). // XCTAssertEqual(numberOfTilesPerRow, 8)
+        XCTAssertEqual(numberOfTilesPerRow, 5)
     }
 
     func test_getNumberOfTilesPerRow_withPortraitIpadRegular_showsExpectedRowNumber() {
@@ -108,8 +108,8 @@ class HomepageDimensionCalculatorTests: XCTestCase {
             leadingInset: leadingInset
         )
 
-        // Ecosia: Top sites are capped at 4 tiles per row. // XCTAssertEqual(numberOfTilesPerRow, 7)
-        XCTAssertEqual(numberOfTilesPerRow, 4)
+        // Ecosia: Top sites always show 5 tiles per row (MOB-5080). // XCTAssertEqual(numberOfTilesPerRow, 7)
+        XCTAssertEqual(numberOfTilesPerRow, 5)
     }
 
     func test_getNumberOfTilesPerRow_withLandscapeIpadRegular_showsDefaultRowNumber() {
@@ -121,8 +121,8 @@ class HomepageDimensionCalculatorTests: XCTestCase {
             leadingInset: leadingInset
         )
 
-        // Ecosia: Top sites are capped at 4 tiles per row. // XCTAssertEqual(numberOfTilesPerRow, 10)
-        XCTAssertEqual(numberOfTilesPerRow, 4)
+        // Ecosia: Top sites always show 5 tiles per row (MOB-5080). // XCTAssertEqual(numberOfTilesPerRow, 10)
+        XCTAssertEqual(numberOfTilesPerRow, 5)
     }
 
     func test_getNumberOfTilesPerRow_withPortraitIpadCompact_showsDefaultRowNumber() {
@@ -134,7 +134,8 @@ class HomepageDimensionCalculatorTests: XCTestCase {
             leadingInset: leadingInset
         )
 
-        XCTAssertEqual(numberOfTilesPerRow, 4)
+        // Ecosia: Top sites always show 5 tiles per row (MOB-5080). // XCTAssertEqual(numberOfTilesPerRow, 4)
+        XCTAssertEqual(numberOfTilesPerRow, 5)
     }
 
     func test_getNumberOfTilesPerRow_withLandscapeIpadCompact_showsDefaultRowNumber() {
@@ -146,7 +147,8 @@ class HomepageDimensionCalculatorTests: XCTestCase {
             leadingInset: leadingInset
         )
 
-        XCTAssertEqual(numberOfTilesPerRow, 4)
+        // Ecosia: Top sites always show 5 tiles per row (MOB-5080). // XCTAssertEqual(numberOfTilesPerRow, 4)
+        XCTAssertEqual(numberOfTilesPerRow, 5)
     }
 
     func test_getTallestViewHeight_returnsTallestHeight() throws {

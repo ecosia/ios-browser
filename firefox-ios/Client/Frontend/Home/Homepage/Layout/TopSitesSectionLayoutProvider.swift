@@ -8,7 +8,10 @@ import Foundation
 struct TopSitesSectionLayoutProvider {
     struct UX {
         static let estimatedCellSize = CGSize(width: 85, height: 94)
+        /* Ecosia: Always show exactly 5 shortcuts in a single row (MOB-5080)
         static let minCards = 4
+         */
+        static let minCards = 5
         // Ecosia: Cap shortcuts row at 5 tiles to avoid a cramped layout
         static let maxCards = 5
     }
