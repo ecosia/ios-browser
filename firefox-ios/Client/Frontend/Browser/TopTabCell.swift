@@ -98,7 +98,11 @@ class TopTabCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         let hideCloseButton = frame.width < UX.closeButtonThreshold && !selected
         closeButton.isHidden = hideCloseButton
 
+        /* Ecosia: Show the globe for pages without a favicon (the homepage), not Firefox's logo
         favicon.manuallySetImage(UIImage(named: ImageIdentifiers.firefoxFavicon) ?? UIImage())
+         */
+        favicon.manuallySetImage(
+            UIImage(named: StandardImageIdentifiers.Large.globe)?.withRenderingMode(.alwaysTemplate) ?? UIImage())
 
         favicon.backgroundColor = .clear
 

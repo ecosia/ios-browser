@@ -71,8 +71,14 @@ final class TabTitleSupplementaryView: UICollectionReusableView, ThemeApplicable
     func configure(with tabModel: TabModel, theme: Theme?, newTabTitle: String?) {
         titleText.text = newTabTitle ?? tabModel.tabTitle
 
+        /* Ecosia: Show the globe for pages without a favicon (the homepage), not Firefox's logo
         if let firefoxFavicon = UIImage(named: ImageIdentifiers.firefoxFavicon) {
             favicon.manuallySetImage(firefoxFavicon)
+        }
+         */
+        let identifier = StandardImageIdentifiers.Large.globe
+        if let globeFavicon = UIImage(named: identifier)?.withRenderingMode(.alwaysTemplate) {
+            favicon.manuallySetImage(globeFavicon)
         }
 
         if !tabModel.isFxHomeTab, let tabURL = tabModel.url?.absoluteString {
