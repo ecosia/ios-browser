@@ -311,7 +311,6 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
             impactRow.applySnapshotDisplay(
                 title: row.title,
                 subtitle: row.subtitle,
-                buttonTitle: row.buttonTitle,
                 image: row.info.image
             )
         }

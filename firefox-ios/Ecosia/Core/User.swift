@@ -74,7 +74,6 @@ public struct User: Codable, Equatable, @unchecked Sendable {
     // MARK: Other
     public var news = Date.distantPast
     public var migrated = false
-    public var referrals = Referrals.Model()
     @MainActor
     public var seedCount: Int {
         EcosiaAuthUIStateProvider.shared.seedCount
@@ -112,7 +111,6 @@ public struct User: Codable, Equatable, @unchecked Sendable {
         showClimateImpact,
         showEcosiaNews,
         migrated,
-        referrals,
         id,
         state,
         cookieConsentValue,
@@ -142,7 +140,6 @@ public struct User: Codable, Equatable, @unchecked Sendable {
         showClimateImpact = (try? root.decode(Bool.self, forKey: .showClimateImpact)) ?? true
         showEcosiaNews = (try? root.decode(Bool.self, forKey: .showEcosiaNews)) ?? true
         migrated = (try? root.decode(Bool.self, forKey: .migrated)) ?? false
-        referrals = (try? root.decode(Referrals.Model.self, forKey: .referrals)) ?? .init()
         id = try? root.decode(String.self, forKey: .id)
         searchCount = (try? root.decode(Int.self, forKey: .searchCount)) ?? 0
         state = (try? root.decode([String: String].self, forKey: .state)) ?? [:]
@@ -171,7 +168,6 @@ public struct User: Codable, Equatable, @unchecked Sendable {
             showTopSites = stored.showTopSites
             showClimateImpact = stored.showClimateImpact
             showEcosiaNews = stored.showEcosiaNews
-            referrals = stored.referrals
             install = stored.install
             versionOnInstall = stored.versionOnInstall
             cookieConsentValue = stored.cookieConsentValue
@@ -198,11 +194,6 @@ public struct User: Codable, Equatable, @unchecked Sendable {
 // MARK: Helper methods
 extension User {
 
-    public var showsReferralSpotlight: Bool {
-        guard install < Calendar.current.date(byAdding: .day, value: -3, to: .init())! else { return false }
-        return state[Key.referralSpotlight.rawValue].map(Bool.init) != false
-    }
-
     public var showsInactiveTabsTooltip: Bool {
         state[Key.inactiveTabsTooltip.rawValue].map(Bool.init) != false
     }
@@ -221,10 +212,6 @@ extension User {
 
     public mutating func showImpactIntro() {
         state[Key.impactIntro.rawValue] = "\(true)"
-    }
-
-    public mutating func hideReferralSpotlight() {
-        state[Key.referralSpotlight.rawValue] = "\(false)"
     }
 
     public mutating func showInactiveTabsTooltip() {
@@ -277,7 +264,6 @@ extension User {
 
     enum Key: String {
         case
-        referralSpotlight,
         impactIntro = "counterIntro", // Reusing previous key
         inactiveTabsTooltip,
         bookmarksImportExportTooltipShown,

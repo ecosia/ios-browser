@@ -39,6 +39,13 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
         let hostingController = UIHostingController(rootView: AnyView(EmptyView()))
         hostingController.view.backgroundColor = UIColor.clear
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        /* The cell can briefly overlap the status bar during a forced rotation (e.g. closing a
+           landscape tab). A hosting controller would then pad the header by the top safe area and
+           the cell self-sizes taller, pushing the whole NTP down and TopSites under the omnibox.
+         */
+        if #available(iOS 16.4, *) {
+            hostingController.safeAreaRegions = []
+        }
 
         contentView.addSubview(hostingController.view)
         self.hostingController = hostingController
@@ -68,6 +75,9 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
         glassAppearanceCancellable = viewModel.$glassAppearance.sink { [weak self] appearance in
             self?.hostingController?.view.overrideUserInterfaceStyle = appearance.interfaceStyle
         }
+
+        // Pre-iOS 16.4 fallback for `safeAreaRegions = []` (see setup)
+        hostingController?.rootView = AnyView(swiftUIView.ignoresSafeArea())
     }
 }
 

@@ -45,7 +45,6 @@ final class UpgradeTests: XCTestCase {
         XCTAssertEqual(old.id, upgraded.id)
         XCTAssertEqual(old.treeCount, upgraded.searchCount)
         XCTAssertEqual(old.state, upgraded.state)
-        XCTAssertEqual(Referrals.Model(), upgraded.referrals)
     }
 }
 // swiftlint:enable force_try
