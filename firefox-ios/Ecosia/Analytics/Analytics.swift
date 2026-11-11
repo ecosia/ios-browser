@@ -307,13 +307,6 @@ open class Analytics {
         track(event)
     }
 
-    // MARK: Referrals
-    public func referral(action: Action.Referral, label: Label.Referral? = nil) {
-        track(Structured(category: Category.invitations.rawValue,
-                         action: action.rawValue)
-            .label(label?.rawValue))
-    }
-
     // MARK: In-App Search
     public func inappSearch(url: URL, isPrivate: Bool = false) {
         guard let query = url.getEcosiaSearchQuery() else {

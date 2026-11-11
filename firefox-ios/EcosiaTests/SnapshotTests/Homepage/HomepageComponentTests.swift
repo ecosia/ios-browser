@@ -205,14 +205,12 @@ private enum ImpactCellSnapshotFixture {
         NTPImpactSnapshotRow(
             info: .totalTrees(value: 200_356_458),
             title: "200,356,458",
-            subtitle: "trees planted by Ecosia",
-            buttonTitle: nil
+            subtitle: "trees planted by Ecosia"
         ),
         NTPImpactSnapshotRow(
             info: .totalInvested(value: 89_942_822),
             title: "€89,942,822",
-            subtitle: "dedicated to climate action",
-            buttonTitle: nil
+            subtitle: "dedicated to climate action"
         )
     ]
 }

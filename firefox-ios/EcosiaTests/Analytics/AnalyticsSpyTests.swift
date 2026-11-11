@@ -97,28 +97,6 @@ final class AnalyticsSpy: Analytics, @unchecked Sendable {
         navigationOpenNewsIdCalled = id
     }
 
-    var referralActionCalled: Action.Referral?
-    var referralLabelCalled: Label.Referral?
-
-    // Separate expectations for different referral actions
-    var referralClickExpectation: XCTestExpectation?
-    var referralSendExpectation: XCTestExpectation?
-
-    override func referral(action: Action.Referral, label: Label.Referral? = nil) {
-        referralActionCalled = action
-        referralLabelCalled = label
-        // Ecosia: XCTestExpectation.fulfill() is thread-safe; fulfill directly to avoid
-        // Swift 6 region-isolation errors with @Sendable DispatchQueue closures.
-        switch action {
-        case .click:
-            referralClickExpectation?.fulfill()
-        case .send:
-            referralSendExpectation?.fulfill()
-        default:
-            break
-        }
-    }
-
     var inappSearchUrlCalled: URL?
     var inappSearchIsPrivateCalled: Bool?
     override func inappSearch(url: URL, isPrivate: Bool = false) {
@@ -439,132 +417,6 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
             XCTAssertEqual(analyticsSpy.navigationOpenNewsIdCalled, "example_news_tracking", "Analytics should track navigation open news with ID 'example_news_tracking'.")
         } catch {
             XCTFail(error.localizedDescription)
-        }
-    }
-
-    // MARK: - Multiply Impact - Referrals Tests
-
-    func testMultiplyImpactViewDidAppearTracksReferralViewInviteScreen() {
-        // Arrange
-        let referrals = Referrals()
-        let multiplyImpact = MultiplyImpact(referrals: referrals, windowUUID: .XCTestDefaultUUID)
-        multiplyImpact.loadViewIfNeeded()
-
-        // Act
-        multiplyImpact.viewDidAppear(false)
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .view, "Analytics should track referral action as .view.")
-        XCTAssertEqual(analyticsSpy.referralLabelCalled, .inviteScreen, "Analytics should track referral label as .inviteScreen.")
-    }
-
-    func testMultiplyImpactLearnMoreButtonTracksReferralClickLearnMore() {
-        // Arrange
-        let referrals = Referrals()
-        let multiplyImpact = MultiplyImpact(referrals: referrals, windowUUID: .XCTestDefaultUUID)
-        multiplyImpact.loadViewIfNeeded()
-
-        // Ensure learnMoreButton is not nil
-        guard let learnMoreButton = multiplyImpact.learnMoreButton else {
-            XCTFail("learnMoreButton should not be nil after view is loaded")
-            return
-        }
-
-        // Create an expectation
-        let expectation = self.expectation(description: "Analytics referral called for Learn More")
-        analyticsSpy.referralClickExpectation = expectation
-
-        // Act
-        learnMoreButton.sendActions(for: .primaryActionTriggered)
-
-        // Wait for the expectation
-        wait(for: [expectation], timeout: 2)
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .click, "Analytics should track referral action as .click.")
-        XCTAssertEqual(analyticsSpy.referralLabelCalled, .learnMore, "Analytics should track referral label as .learnMore.")
-    }
-
-    func testMultiplyImpactInviteFriendsTracksReferralClickInvite() {
-        // Arrange
-        let referrals = Referrals()
-        let multiplyImpact = MultiplyImpact(referrals: referrals, windowUUID: .XCTestDefaultUUID)
-        User.shared.referrals.code = "testCode"
-        multiplyImpact.loadViewIfNeeded()
-
-        // Ensure inviteButton is not nil
-        guard let inviteButton = multiplyImpact.inviteButton else {
-            XCTFail("Invite Friends button should not be nil after view is loaded")
-            return
-        }
-
-        // Create an expectation
-        let expectation = self.expectation(description: "Analytics referral called for Invite")
-        analyticsSpy.referralClickExpectation = expectation
-
-        // Act
-        inviteButton.sendActions(for: .touchUpInside)
-
-        // Wait for the expectation
-        wait(for: [expectation], timeout: 2)
-
-        // Assert
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .click, "Analytics should track referral action as .click.")
-        XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite, "Analytics should track referral label as .invite.")
-    }
-
-    func testMultiplyImpactInviteFriendsCompletionTracksReferralSendInvite() {
-        // Arrange
-        let referrals = Referrals()
-        let multiplyImpact = MultiplyImpactTestable(referrals: referrals, windowUUID: .XCTestDefaultUUID)
-        User.shared.referrals.code = "testCode"
-        multiplyImpact.loadViewIfNeeded()
-
-        // Ensure inviteButton is not nil
-        guard let inviteButton = multiplyImpact.inviteButton else {
-            XCTFail("Invite Friends button should not be nil after view is loaded")
-            return
-        }
-
-        // Create expectations for .click and .send actions
-        let clickExpectation = self.expectation(description: "Analytics referral click called")
-        let sendExpectation = self.expectation(description: "Analytics referral send called")
-        analyticsSpy.referralClickExpectation = clickExpectation
-        analyticsSpy.referralSendExpectation = sendExpectation
-
-        // Act
-        inviteButton.sendActions(for: .touchUpInside)
-
-        // Wait for the click expectation
-        wait(for: [clickExpectation], timeout: 2)
-
-        // Assert initial click analytics
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .click, "Analytics should track referral action as .click.")
-        XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite, "Analytics should track referral label as .invite.")
-
-        // Reset analyticsSpy properties for the next action
-        analyticsSpy.referralActionCalled = nil
-        analyticsSpy.referralLabelCalled = nil
-
-        // Assert that the share sheet is intended to be presented
-        XCTAssertNotNil(multiplyImpact.capturedPresentedViewController, "Expected a view controller to be presented")
-        XCTAssertTrue(multiplyImpact.capturedPresentedViewController is UIActivityViewController, "Expected UIActivityViewController to be presented")
-
-        // Simulate share completion
-        if let activityVC = multiplyImpact.capturedPresentedViewController as? UIActivityViewController,
-           let completionHandler = activityVC.completionWithItemsHandler {
-
-            // Act: Simulate user completed the share action
-            completionHandler(nil, true, nil, nil)
-
-            // Wait for the send expectation
-            wait(for: [sendExpectation], timeout: 2)
-
-            // Assert send analytics
-            XCTAssertEqual(analyticsSpy.referralActionCalled, .send, "Analytics should track referral action as .send.")
-            XCTAssertEqual(analyticsSpy.referralLabelCalled, .invite, "Analytics should track referral label as .invite.")
-        } else {
-            XCTFail("UIActivityViewController not found or completion handler not set")
         }
     }
 
@@ -1161,16 +1013,6 @@ extension AnalyticsSpyTests {
         ) {
             EmptyView()
         }
-    }
-}
-
-// MARK: - Helper Classes
-
-class MultiplyImpactTestable: MultiplyImpact {
-    var capturedPresentedViewController: UIViewController?
-
-    override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
-        capturedPresentedViewController = viewControllerToPresent
     }
 }
 
