@@ -38,42 +38,6 @@
 			<string>%d ricerche</string>
 		</dict>
 	</dict>
-	<key>%d referral(s)</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@referrals@</string>
-		<key>referrals</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>%d raccomandazione</string>
-			<key>many</key>
-			<string>%d raccomandazioni</string>
-			<key>other</key>
-			<string>%d raccomandazioni</string>
-		</dict>
-	</dict>
-	<key>%d friend(s) joined</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@friends@</string>
-		<key>friends</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>%d amico coinvolto</string>
-			<key>many</key>
-			<string>%d amici coinvolti</string>
-			<key>other</key>
-			<string>%d amici coinvolti</string>
-		</dict>
-	</dict>
 	<key>Tree(s) planted</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -90,24 +54,6 @@
 			<string>Alberi piantati</string>
 			<key>other</key>
 			<string>Alberi piantati</string>
-		</dict>
-	</dict>
-	<key>accepted invite(s)</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@invites@</string>
-		<key>invites</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>invito accettato</string>
-			<key>many</key>
-			<string>inviti accettati</string>
-			<key>other</key>
-			<string>inviti accettati</string>
 		</dict>
 	</dict>
 </dict>
