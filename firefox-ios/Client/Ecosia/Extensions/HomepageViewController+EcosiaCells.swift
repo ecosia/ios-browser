@@ -134,6 +134,12 @@ extension HomepageViewController {
         objc_setAssociatedObject(self, &AssociatedKeys.ntpSearchBarBackdrop, view, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 
+    // Ecosia: Last collection view height the NTP layout was invalidated for.
+    var ntpLastLayoutHeight: CGFloat? {
+        get { objc_getAssociatedObject(self, &AssociatedKeys.ntpLastLayoutHeight) as? CGFloat }
+        set { objc_setAssociatedObject(self, &AssociatedKeys.ntpLastLayoutHeight, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+
     var omniboxSheetHostingController: UIViewController? {
         objc_getAssociatedObject(self, &AssociatedKeys.omniboxSheetHostingController) as? UIViewController
     }
@@ -157,4 +163,5 @@ private struct AssociatedKeys {
     nonisolated(unsafe) static var ntpSearchBarTrailingConstraint: UInt8 = 0
     nonisolated(unsafe) static var ntpSearchBarBackdrop: UInt8 = 0
     nonisolated(unsafe) static var omniboxSheetHostingController: UInt8 = 0
+    nonisolated(unsafe) static var ntpLastLayoutHeight: UInt8 = 0
 }
