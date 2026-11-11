@@ -21,25 +21,48 @@ final class HomepageComponentTests: SnapshotBaseTests {
     func testNTPHeaderLogo() {
         SnapshotTestHelper.assertSnapshot(
             initializingWith: { self.makeHeaderLogoHostingController() },
-            locales: englishOnlyLocales
+            locales: englishOnlyLocales,
+            drawsViewHierarchy: true
         )
     }
 
-    func testEcosiaCustomizeButton() {
+    func testEcosiaCustomizeButton_onWallpaper() {
         SnapshotTestHelper.assertSnapshot(
-            initializingWith: { self.makeCustomizeButtonHostingController() },
-            locales: englishOnlyLocales
+            initializingWith: { self.makeCustomizeButtonHostingController(appearance: .wallpaper) },
+            locales: englishOnlyLocales,
+            drawsViewHierarchy: true
+        )
+    }
+
+    func testEcosiaCustomizeButton_onSolidBackground() {
+        SnapshotTestHelper.assertSnapshot(
+            initializingWith: { self.makeCustomizeButtonHostingController(appearance: .themed) },
+            locales: englishOnlyLocales,
+            drawsViewHierarchy: true
         )
     }
 
     @available(iOS 16, *)
-    func testEcosiaAccountNavButton_loggedOut() {
+    func testEcosiaAccountNavButton_loggedOut_onWallpaper() {
         prepareLoggedOutAccountState()
 
         SnapshotTestHelper.assertSnapshot(
-            initializingWith: { self.makeAccountNavButtonHostingController() },
+            initializingWith: { self.makeAccountNavButtonHostingController(appearance: .wallpaper) },
             locales: englishOnlyLocales,
-            wait: 0.3
+            wait: 0.3,
+            drawsViewHierarchy: true
+        )
+    }
+
+    @available(iOS 16, *)
+    func testEcosiaAccountNavButton_loggedOut_onSolidBackground() {
+        prepareLoggedOutAccountState()
+
+        SnapshotTestHelper.assertSnapshot(
+            initializingWith: { self.makeAccountNavButtonHostingController(appearance: .themed) },
+            locales: englishOnlyLocales,
+            wait: 0.3,
+            drawsViewHierarchy: true
         )
     }
 
@@ -83,44 +106,73 @@ private extension HomepageComponentTests {
         )
     }
 
-    func makeCustomizeButtonHostingController() -> UIViewController {
+    func makeCustomizeButtonHostingController(appearance: NTPGlassAppearance) -> UIViewController {
         makeNTPHeaderSnapshotHostingController(
-            content: { EcosiaCustomizeButton(onTap: {}) },
-            size: CGSize(width: 72, height: 72)
+            content: {
+                EcosiaCustomizeButton(
+                    windowUUID: .snapshotTestDefaultUUID,
+                    appearance: appearance,
+                    onTap: {}
+                )
+            },
+            size: CGSize(width: 72, height: 72),
+            appearance: appearance
         )
     }
 
     @available(iOS 16, *)
-    func makeAccountNavButtonHostingController() -> UIViewController {
+    func makeAccountNavButtonHostingController(appearance: NTPGlassAppearance) -> UIViewController {
         makeNTPHeaderSnapshotHostingController(
             content: {
                 EcosiaAccountNavButton(
                     seedCount: UserDefaultsSeedProgressManager.maxSeedsForLoggedOutUsers,
                     enableAnimation: false,
                     showSeedSparkles: false,
+                    glassAppearance: appearance,
                     windowUUID: .snapshotTestDefaultUUID,
                     onTap: {}
                 )
             },
-            size: CGSize(width: 160, height: 72)
+            size: CGSize(width: 160, height: 72),
+            appearance: appearance
         )
     }
 
+    /// Hosts header content on the backdrop it sits on for `appearance`: the dark-green stand-in
+    /// for a wallpaper, or the themed plain NTP background.
     func makeNTPHeaderSnapshotHostingController<Content: View>(
         @ViewBuilder content: () -> Content,
-        size: CGSize
+        size: CGSize,
+        appearance: NTPGlassAppearance = .wallpaper
     ) -> UIViewController {
-        let background = Color(uiColor: Self.ntpSnapshotBackgroundColor)
+        let theme = themeManager.getCurrentTheme(for: .snapshotTestDefaultUUID)
+        let backgroundColor = backgroundColor(for: appearance, theme: theme)
         let root = ZStack {
-            background
+            Color(uiColor: backgroundColor)
             content()
         }
         .frame(width: size.width, height: size.height)
 
         let controller = UIHostingController(rootView: root)
         controller.view.bounds = CGRect(origin: .zero, size: size)
-        controller.view.backgroundColor = Self.ntpSnapshotBackgroundColor
+        controller.view.backgroundColor = backgroundColor
+        controller.view.overrideUserInterfaceStyle = interfaceStyle(for: appearance, theme: theme)
         return controller
+    }
+
+    func backgroundColor(for appearance: NTPGlassAppearance, theme: Theme) -> UIColor {
+        switch appearance {
+        case .wallpaper: return Self.ntpSnapshotBackgroundColor
+        case .themed: return theme.colors.ecosia.backgroundPrimaryDecorative
+        }
+    }
+
+    /// Native glass takes its light or dark look from the UIKit interface style. The app gets it from
+    /// the window, which follows the theme; the snapshot window does not, so it is set here instead.
+    func interfaceStyle(for appearance: NTPGlassAppearance, theme: Theme) -> UIUserInterfaceStyle {
+        let appearanceStyle = appearance.interfaceStyle
+        guard appearanceStyle == .unspecified else { return appearanceStyle }
+        return theme.type.getInterfaceStyle()
     }
 
     func makeConfiguredImpactCell() -> UIView {

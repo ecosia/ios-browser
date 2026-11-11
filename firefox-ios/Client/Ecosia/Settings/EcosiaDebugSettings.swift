@@ -102,6 +102,22 @@ final class ShowWelcomeScreen: HiddenSetting {
     }
 }
 
+final class ToggleWallpaperRotation: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(string: "Debug: Toggle - Rotate NTP wallpapers every 30 seconds", attributes: [:])
+    }
+
+    override var status: NSAttributedString? {
+        let isOn = DebugWallpaperRotation.isEnabled
+        return NSAttributedString(string: isOn ? "True" : "False", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        DebugWallpaperRotation.isEnabled.toggle()
+        settings.tableView.reloadData()
+    }
+}
+
 final class ResetSearchCount: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Set search count to 0", attributes: [:])
