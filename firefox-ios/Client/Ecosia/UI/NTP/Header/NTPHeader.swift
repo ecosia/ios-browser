@@ -14,7 +14,7 @@ protocol NTPHeaderDelegate: AnyObject {
     func headerOpenCustomizeHomepage()
 }
 
-/// NTP header cell containing the Ecosia logo and navigation actions
+/// NTP header cell containing the navigation actions
 final class NTPHeader: UICollectionViewCell, ReusableCell {
 
     // MARK: - Properties
@@ -110,7 +110,7 @@ private struct NTPCircleGlassButtonStyle: ButtonStyle {
 private struct GlassCircleModifier: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 16, *) {
-            content.buttonStyle(NTPGlassButtonStyle(Circle()))
+            content.buttonStyle(NTPGlassButtonStyle(Circle(), followsColorScheme: true))
         } else {
             content.buttonStyle(NTPCircleGlassButtonStyle())
         }
@@ -135,19 +135,19 @@ private struct NTPHeaderGlassContainerModifier: ViewModifier {
 /// Glass-style circular button with a pencil icon for opening NTP customization.
 struct EcosiaCustomizeButton: View {
     let windowUUID: WindowUUID
-    var appearance: NTPGlassAppearance = .wallpaper
+    var appearance: NTPGlassAppearance = .dark
     let onTap: () -> Void
     @State private var theme = NTPGlassContentTheme()
 
     private let buttonSize: CGFloat = .ecosia.space._3l // 40pt
     private let iconSize: CGFloat = 16
 
-    /// Below iOS 26 the custom glass is always dark, so the icon uses the wallpaper content colour.
+    /// iOS 15 only has the dark custom glass.
     private var iconColor: Color {
-        if #available(iOS 26, *) {
+        if #available(iOS 16, *) {
             return theme.contentColor(for: appearance)
         }
-        return theme.contentColor(for: .wallpaper)
+        return theme.contentColor(for: .dark)
     }
 
     var body: some View {
@@ -167,81 +167,70 @@ struct EcosiaCustomizeButton: View {
     }
 }
 
-// MARK: - Ecosia Logo (centered in header)
+// MARK: - SwiftUI Multi-Purpose Header View
 
-struct NTPHeaderLogoView: View {
-    private let logoHeight: CGFloat = 20
+/// The account button's frame, so the balance increment can be drawn over it outside the glass container.
+private struct AccountButtonBoundsKey: PreferenceKey {
+    static let defaultValue: Anchor<CGRect>? = nil
 
-    var body: some View {
-        Image("ecosiaLogoLaunch")
-            .renderingMode(.template)
-            .resizable()
-            .scaledToFit()
-            .foregroundColor(.white)
-            .frame(height: logoHeight)
-            .accessibilityLabel(String.localized(.ecosiaLogoAccessibilityLabel))
-            .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.NTP.headerLogo)
+    static func reduce(value: inout Anchor<CGRect>?, nextValue: () -> Anchor<CGRect>?) {
+        value = value ?? nextValue()
     }
 }
 
-// MARK: - SwiftUI Multi-Purpose Header View
 struct NTPHeaderView: View {
     @ObservedObject var viewModel: NTPHeaderViewModel
     let windowUUID: WindowUUID
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
 
-    var body: some View {
-        ZStack {
-            // Wordmark centered regardless of button widths
-            NTPHeaderLogoView()
+    private let balanceIncrementOffset = CGSize(width: 18, height: -8)
 
-            HStack(spacing: .ecosia.space._1s) {
-                EcosiaCustomizeButton(
+    var body: some View {
+        HStack(spacing: .ecosia.space._1s) {
+            EcosiaCustomizeButton(
+                windowUUID: windowUUID,
+                appearance: viewModel.glassAppearance,
+                onTap: handleCustomizeTap
+            )
+            Spacer()
+            if #available(iOS 16, *) {
+                EcosiaAccountNavButton(
+                    seedCount: viewModel.seedCount,
+                    avatarURL: viewModel.userAvatarURL,
+                    enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
+                    showSeedSparkles: viewModel.showSeedSparkles,
+                    glassAppearance: viewModel.glassAppearance,
                     windowUUID: windowUUID,
-                    appearance: viewModel.glassAppearance,
-                    onTap: handleCustomizeTap
+                    onTap: handleTap
                 )
-                Spacer()
-                if #available(iOS 16, *) {
-                    ZStack(alignment: .topLeading) {
-                        EcosiaAccountNavButton(
-                            seedCount: viewModel.seedCount,
-                            avatarURL: viewModel.userAvatarURL,
-                            enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
-                            showSeedSparkles: viewModel.showSeedSparkles,
-                            glassAppearance: viewModel.glassAppearance,
-                            windowUUID: windowUUID,
-                            onTap: handleTap
-                        )
-                        .sheet(isPresented: $viewModel.showAccountImpactView) {
-                            EcosiaAccountImpactView(
-                                viewModel: EcosiaAccountImpactViewModel(
-                                    onLogin: {
-                                        viewModel.performLogin()
-                                    },
-                                    onDismiss: {
-                                        viewModel.dismissAccountImpact()
-                                    }
-                                ),
-                                windowUUID: windowUUID,
-                                webViewUserAgent: EcosiaInAppWebViewUserAgent.mobileUserAgent()
-                            )
-                            .padding(.horizontal, .ecosia.space._m)
-                            .dynamicHeightPresentationDetent()
-                            .presentationDragIndicator(.visible)
-                        }
-                        if let increment = viewModel.balanceIncrement {
-                            BalanceIncrementAnimationView(
-                                increment: increment,
-                                windowUUID: windowUUID
-                            )
-                            .offset(x: 18, y: -8)
-                        }
-                    }
+                .anchorPreference(key: AccountButtonBoundsKey.self, value: .bounds) { $0 }
+                .sheet(isPresented: $viewModel.showAccountImpactView) {
+                    EcosiaAccountImpactView(
+                        viewModel: EcosiaAccountImpactViewModel(
+                            onLogin: {
+                                viewModel.performLogin()
+                            },
+                            onDismiss: {
+                                viewModel.dismissAccountImpact()
+                            }
+                        ),
+                        windowUUID: windowUUID,
+                        webViewUserAgent: EcosiaInAppWebViewUserAgent.mobileUserAgent()
+                    )
+                    .padding(.horizontal, .ecosia.space._m)
+                    .dynamicHeightPresentationDetent()
+                    .presentationDragIndicator(.visible)
                 }
             }
-            .modifier(NTPHeaderGlassContainerModifier())
+        }
+        .modifier(NTPHeaderGlassContainerModifier())
+        // Outside the glass container so the glass never draws over the increment.
+        .overlayPreferenceValue(AccountButtonBoundsKey.self) { accountButtonBounds in
+            if #available(iOS 16, *) {
+                balanceIncrement(over: accountButtonBounds)
+                    .allowsHitTesting(false)
+            }
         }
         .padding(.horizontal, .ecosia.space._m)
         .padding(.vertical, .ecosia.space._m)
@@ -250,6 +239,24 @@ struct NTPHeaderView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
             viewModel.refreshSeedState()
+        }
+    }
+
+    @available(iOS 16, *)
+    @ViewBuilder
+    private func balanceIncrement(over accountButtonBounds: Anchor<CGRect>?) -> some View {
+        if let increment = viewModel.balanceIncrement, let accountButtonBounds {
+            GeometryReader { proxy in
+                let accountButtonFrame = proxy[accountButtonBounds]
+                BalanceIncrementAnimationView(
+                    increment: increment,
+                    windowUUID: windowUUID
+                )
+                .offset(
+                    x: accountButtonFrame.minX + balanceIncrementOffset.width,
+                    y: accountButtonFrame.minY + balanceIncrementOffset.height
+                )
+            }
         }
     }
 

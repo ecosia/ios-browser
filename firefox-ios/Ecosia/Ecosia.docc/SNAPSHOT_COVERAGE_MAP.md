@@ -11,10 +11,11 @@ localization, and asset catalogs; changes to those inputs also run snapshot test
 | UI area | Source (primary) | Snapshot test | Locales / themes |
 | --- | --- | --- | --- |
 | Welcome screen | `Ecosia/UI/ProductTour/**` | `OnboardingTests.testWelcomeScreen` | all locales, light only |
-| NTP header logo | `Client/Ecosia/UI/NTP/Header/**` | `HomepageComponentTests.testNTPHeaderLogo` | en, light + dark |
 | Customize button (on wallpaper) | `Client/Ecosia/UI/NTP/Header/**` | `HomepageComponentTests.testEcosiaCustomizeButton_onWallpaper` | en, light + dark |
+| Customize button (on light wallpaper) | `Client/Ecosia/UI/NTP/Header/**` | `HomepageComponentTests.testEcosiaCustomizeButton_onLightWallpaper` | en, light + dark |
 | Customize button (solid background) | `Client/Ecosia/UI/NTP/Header/**` | `HomepageComponentTests.testEcosiaCustomizeButton_onSolidBackground` | en, light + dark |
 | Account nav button (logged out, on wallpaper) | `Client/Ecosia/UI/NTP/Header/**` | `HomepageComponentTests.testEcosiaAccountNavButton_loggedOut_onWallpaper` | en, light + dark |
+| Account nav button (logged out, on light wallpaper) | `Client/Ecosia/UI/NTP/Header/**` | `HomepageComponentTests.testEcosiaAccountNavButton_loggedOut_onLightWallpaper` | en, light + dark |
 | Account nav button (logged out, solid background) | `Client/Ecosia/UI/NTP/Header/**` | `HomepageComponentTests.testEcosiaAccountNavButton_loggedOut_onSolidBackground` | en, light + dark |
 | Impact cell | `Client/Ecosia/UI/NTP/Impact/**` | `HomepageComponentTests.testNTPImpactCell_withImpactRows` | en, light only |
 | NTP search bar | `Client/Ecosia/UI/NTP/SearchBar/**` | `HomepageComponentTests.testNTPSearchBar_resting` | all locales, light + dark |

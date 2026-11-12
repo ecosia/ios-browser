@@ -18,17 +18,17 @@ final class HomepageComponentTests: SnapshotBaseTests {
     private let topSiteCellSize = CGSize(width: 100, height: 120)
     private let englishOnlyLocales = [Locale(identifier: "en")]
 
-    func testNTPHeaderLogo() {
+    func testEcosiaCustomizeButton_onWallpaper() {
         SnapshotTestHelper.assertSnapshot(
-            initializingWith: { self.makeHeaderLogoHostingController() },
+            initializingWith: { self.makeCustomizeButtonHostingController(appearance: .dark) },
             locales: englishOnlyLocales,
             drawsViewHierarchy: true
         )
     }
 
-    func testEcosiaCustomizeButton_onWallpaper() {
+    func testEcosiaCustomizeButton_onLightWallpaper() {
         SnapshotTestHelper.assertSnapshot(
-            initializingWith: { self.makeCustomizeButtonHostingController(appearance: .wallpaper) },
+            initializingWith: { self.makeCustomizeButtonHostingController(appearance: .light) },
             locales: englishOnlyLocales,
             drawsViewHierarchy: true
         )
@@ -47,7 +47,19 @@ final class HomepageComponentTests: SnapshotBaseTests {
         prepareLoggedOutAccountState()
 
         SnapshotTestHelper.assertSnapshot(
-            initializingWith: { self.makeAccountNavButtonHostingController(appearance: .wallpaper) },
+            initializingWith: { self.makeAccountNavButtonHostingController(appearance: .dark) },
+            locales: englishOnlyLocales,
+            wait: 0.3,
+            drawsViewHierarchy: true
+        )
+    }
+
+    @available(iOS 16, *)
+    func testEcosiaAccountNavButton_loggedOut_onLightWallpaper() {
+        prepareLoggedOutAccountState()
+
+        SnapshotTestHelper.assertSnapshot(
+            initializingWith: { self.makeAccountNavButtonHostingController(appearance: .light) },
             locales: englishOnlyLocales,
             wait: 0.3,
             drawsViewHierarchy: true
@@ -99,13 +111,6 @@ final class HomepageComponentTests: SnapshotBaseTests {
 
 private extension HomepageComponentTests {
 
-    func makeHeaderLogoHostingController() -> UIViewController {
-        makeNTPHeaderSnapshotHostingController(
-            content: { NTPHeaderLogoView() },
-            size: CGSize(width: commonWidth, height: 72)
-        )
-    }
-
     func makeCustomizeButtonHostingController(appearance: NTPGlassAppearance) -> UIViewController {
         makeNTPHeaderSnapshotHostingController(
             content: {
@@ -138,12 +143,12 @@ private extension HomepageComponentTests {
         )
     }
 
-    /// Hosts header content on the backdrop it sits on for `appearance`: the dark-green stand-in
+    /// Hosts header content on the backdrop it sits on for `appearance`: a dark or light stand-in
     /// for a wallpaper, or the themed plain NTP background.
     func makeNTPHeaderSnapshotHostingController<Content: View>(
         @ViewBuilder content: () -> Content,
         size: CGSize,
-        appearance: NTPGlassAppearance = .wallpaper
+        appearance: NTPGlassAppearance
     ) -> UIViewController {
         let theme = themeManager.getCurrentTheme(for: .snapshotTestDefaultUUID)
         let backgroundColor = backgroundColor(for: appearance, theme: theme)
@@ -162,7 +167,8 @@ private extension HomepageComponentTests {
 
     func backgroundColor(for appearance: NTPGlassAppearance, theme: Theme) -> UIColor {
         switch appearance {
-        case .wallpaper: return Self.ntpSnapshotBackgroundColor
+        case .dark: return Self.ntpSnapshotBackgroundColor
+        case .light: return Self.ntpSnapshotLightWallpaperColor
         case .themed: return theme.colors.ecosia.backgroundPrimaryDecorative
         }
     }
@@ -237,6 +243,7 @@ private extension HomepageComponentTests {
     }
 
     static let ntpSnapshotBackgroundColor = UIColor(red: 0.08, green: 0.18, blue: 0.12, alpha: 1)
+    static let ntpSnapshotLightWallpaperColor = UIColor(red: 0.85, green: 0.9, blue: 0.82, alpha: 1)
 
     static let snapshotFaviconPlaceholder: UIImage = {
         let size = CGSize(width: 32, height: 32)

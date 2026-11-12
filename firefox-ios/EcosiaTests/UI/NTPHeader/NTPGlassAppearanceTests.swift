@@ -16,26 +16,59 @@ final class NTPGlassAppearanceTests: XCTestCase {
 
     // MARK: - Background
 
-    func testInit_withWallpaper_isWallpaper() {
+    func testInit_wallpaperWithWhiteText_isDark() {
         // When
-        let appearance = NTPGlassAppearance(hasWallpaper: true)
+        let appearance = NTPGlassAppearance(hasWallpaper: true, wallpaperTextColor: .white)
 
         // Then
-        XCTAssertEqual(appearance, .wallpaper)
+        XCTAssertEqual(appearance, .dark)
     }
 
-    func testInit_withoutWallpaper_isThemed() {
+    func testInit_wallpaperWithDarkText_isLight() {
         // When
-        let appearance = NTPGlassAppearance(hasWallpaper: false)
+        let appearance = NTPGlassAppearance(hasWallpaper: true, wallpaperTextColor: .black)
 
         // Then
-        XCTAssertEqual(appearance, .themed)
+        XCTAssertEqual(appearance, .light)
+    }
+
+    func testInit_wallpaperWithDarkRGBText_isLight() {
+        // When
+        let appearance = NTPGlassAppearance(hasWallpaper: true, wallpaperTextColor: UIColor(rgb: 0x333333))
+
+        // Then
+        XCTAssertEqual(appearance, .light)
+    }
+
+    func testInit_wallpaperWithoutTextColor_isDark() {
+        // When
+        let appearance = NTPGlassAppearance(hasWallpaper: true, wallpaperTextColor: nil)
+
+        // Then
+        XCTAssertEqual(appearance, .dark)
+    }
+
+    func testInit_defaultWallpaper_isDark() {
+        // When
+        let appearance = NTPGlassAppearance(hasWallpaper: true, wallpaperTextColor: Wallpaper.ecosiaDefault.textColor)
+
+        // Then
+        XCTAssertEqual(appearance, .dark)
+    }
+
+    func testInit_withoutWallpaper_isThemed_whateverTheTextColor() {
+        XCTAssertEqual(NTPGlassAppearance(hasWallpaper: false, wallpaperTextColor: nil), .themed)
+        XCTAssertEqual(NTPGlassAppearance(hasWallpaper: false, wallpaperTextColor: .black), .themed)
     }
 
     // MARK: - Glass
 
-    func testWallpaper_forcesDarkGlass() {
-        XCTAssertEqual(NTPGlassAppearance.wallpaper.interfaceStyle, .dark)
+    func testDark_forcesDarkGlass() {
+        XCTAssertEqual(NTPGlassAppearance.dark.interfaceStyle, .dark)
+    }
+
+    func testLight_forcesLightGlass() {
+        XCTAssertEqual(NTPGlassAppearance.light.interfaceStyle, .light)
     }
 
     func testThemed_followsThemeForGlass() {
@@ -44,9 +77,14 @@ final class NTPGlassAppearanceTests: XCTestCase {
 
     // MARK: - Content
 
-    func testWallpaper_contentIsStaticLight_inLightAndDarkTheme() {
-        XCTAssertEqual(NTPGlassAppearance.wallpaper.contentColor(for: lightTheme), staticLight)
-        XCTAssertEqual(NTPGlassAppearance.wallpaper.contentColor(for: darkTheme), staticLight)
+    func testDark_contentIsStaticLight_inLightAndDarkTheme() {
+        XCTAssertEqual(NTPGlassAppearance.dark.contentColor(for: lightTheme), staticLight)
+        XCTAssertEqual(NTPGlassAppearance.dark.contentColor(for: darkTheme), staticLight)
+    }
+
+    func testLight_contentIsStaticStrong_inLightAndDarkTheme() {
+        XCTAssertEqual(NTPGlassAppearance.light.contentColor(for: lightTheme), staticStrong)
+        XCTAssertEqual(NTPGlassAppearance.light.contentColor(for: darkTheme), staticStrong)
     }
 
     func testThemed_contentFollowsTheme() {

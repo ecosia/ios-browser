@@ -423,7 +423,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
         let wallpaperConfig = adapter.getNTPBackgroundConfiguration()
         // The header glass depends on whether a wallpaper is behind it.
-        adapter.headerViewModel?.updateGlassAppearance(hasWallpaper: wallpaperConfig.hasImage)
+        adapter.headerViewModel?.updateGlassAppearance(for: wallpaperConfig)
         let state = WallpaperState(windowUUID: windowUUID, wallpaperConfiguration: wallpaperConfig)
         return state
     }

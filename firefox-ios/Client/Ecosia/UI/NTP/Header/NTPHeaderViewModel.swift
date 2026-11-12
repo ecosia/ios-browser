@@ -32,7 +32,7 @@ final class NTPHeaderViewModel: ObservableObject {
     var shouldAnimateSeed: Bool { balanceIncrement != nil }
     @Published var showSeedSparkles: Bool = false
     @Published var showAccountImpactView: Bool = false
-    @Published private(set) var glassAppearance: NTPGlassAppearance = .wallpaper
+    @Published private(set) var glassAppearance: NTPGlassAppearance = .dark
 
     // nonisolated(unsafe) so deinit can remove observer without MainActor isolation
     nonisolated(unsafe) private var levelUpObserver: NSObjectProtocol?
@@ -129,8 +129,8 @@ final class NTPHeaderViewModel: ObservableObject {
     }
 
     /// Picks the glass appearance for the background currently behind the header.
-    func updateGlassAppearance(hasWallpaper: Bool) {
-        let appearance = NTPGlassAppearance(hasWallpaper: hasWallpaper)
+    func updateGlassAppearance(for wallpaper: WallpaperConfiguration) {
+        let appearance = NTPGlassAppearance(hasWallpaper: wallpaper.hasImage, wallpaperTextColor: wallpaper.textColor)
         // Only publish real changes, as this runs on every homepage state update.
         guard appearance != glassAppearance else { return }
         glassAppearance = appearance
