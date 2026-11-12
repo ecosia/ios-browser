@@ -1,6 +1,6 @@
 # Upgrade checks
 
-Tickets 12 (MOB-5038) and 13 (MOB-5039) ran these checks by hand. Ticket 14 (MOB-5040) turned them into the scripts in this folder: inputs, outputs and exit codes are in the [README](README.md). This page says when to run each script and how to triage what it finds. The results of the hand-run checks are in the diary ([157.md](../diary/157.md), the 2026-11-04 entries for 12 and 13).
+Tickets 12 (MOB-5038) and 13 (MOB-5039) ran these checks by hand. Ticket 14 (MOB-5040) turned them into the scripts in this folder: inputs, outputs and exit codes are in the [README](README.md). This page says when to run each script and how to triage what it finds. The results of the hand-run checks are in the diary ([159.md](../diary/159.md), the 2026-11-04 entries for 12 and 13).
 
 Run from the repository root. `<target>` is the Firefox release tag being merged, for example `firefox-v157.0`.
 
