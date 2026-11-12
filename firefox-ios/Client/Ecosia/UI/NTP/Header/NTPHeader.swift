@@ -6,6 +6,7 @@ import UIKit
 import SwiftUI
 import Common
 import Ecosia
+import Combine
 // swiftlint:disable closure_body_length
 
 @MainActor
@@ -19,6 +20,7 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
     // MARK: - Properties
     private var hostingController: UIHostingController<AnyView>?
     private var viewModel: NTPHeaderViewModel?
+    private var glassAppearanceCancellable: AnyCancellable?
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -67,6 +69,13 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
             windowUUID: windowUUID
         )
 
+        hostingController?.rootView = AnyView(swiftUIView)
+
+        // Set on the hosting view rather than the controller, so sheets presented from the header keep the app's style.
+        glassAppearanceCancellable = viewModel.$glassAppearance.sink { [weak self] appearance in
+            self?.hostingController?.view.overrideUserInterfaceStyle = appearance.interfaceStyle
+        }
+
         // Pre-iOS 16.4 fallback for `safeAreaRegions = []` (see setup)
         hostingController?.rootView = AnyView(swiftUIView.ignoresSafeArea())
     }
@@ -108,25 +117,50 @@ private struct GlassCircleModifier: ViewModifier {
     }
 }
 
+/// Groups the header's glass buttons so iOS 26 and later render them together.
+private struct NTPHeaderGlassContainerModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            GlassEffectContainer {
+                content
+            }
+        } else {
+            content
+        }
+    }
+}
+
 // MARK: - Customize (Pencil) Button
 
 /// Glass-style circular button with a pencil icon for opening NTP customization.
 struct EcosiaCustomizeButton: View {
+    let windowUUID: WindowUUID
+    var appearance: NTPGlassAppearance = .wallpaper
     let onTap: () -> Void
+    @State private var theme = NTPGlassContentTheme()
 
     private let buttonSize: CGFloat = .ecosia.space._3l // 40pt
     private let iconSize: CGFloat = 16
+
+    /// Below iOS 26 the custom glass is always dark, so the icon uses the wallpaper content colour.
+    private var iconColor: Color {
+        if #available(iOS 26, *) {
+            return theme.contentColor(for: appearance)
+        }
+        return theme.contentColor(for: .wallpaper)
+    }
 
     var body: some View {
         Button(action: { onTap() }) {
             Image.ecosia("ntp-pencil-edit")
                 .resizable()
                 .renderingMode(.template)
-                .foregroundColor(.white)
+                .foregroundColor(iconColor)
                 .frame(width: iconSize, height: iconSize)
                 .frame(width: buttonSize, height: buttonSize)
         }
         .modifier(GlassCircleModifier())
+        .ecosiaThemed(windowUUID, $theme)
         .hapticFeedback()
         .accessibilityLabel(String.localized(.customizeHomepage))
         .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.NTP.customizeButton)
@@ -164,6 +198,8 @@ struct NTPHeaderView: View {
 
             HStack(spacing: .ecosia.space._1s) {
                 EcosiaCustomizeButton(
+                    windowUUID: windowUUID,
+                    appearance: viewModel.glassAppearance,
                     onTap: handleCustomizeTap
                 )
                 Spacer()
@@ -174,6 +210,7 @@ struct NTPHeaderView: View {
                             avatarURL: viewModel.userAvatarURL,
                             enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
                             showSeedSparkles: viewModel.showSeedSparkles,
+                            glassAppearance: viewModel.glassAppearance,
                             windowUUID: windowUUID,
                             onTap: handleTap
                         )
@@ -204,6 +241,7 @@ struct NTPHeaderView: View {
                     }
                 }
             }
+            .modifier(NTPHeaderGlassContainerModifier())
         }
         .padding(.horizontal, .ecosia.space._m)
         .padding(.vertical, .ecosia.space._m)

@@ -59,8 +59,7 @@ public enum EcosiaSchemes {
         // network contaminators are contained at the source — Unleash via seedFreshUnleashModelToAvoidNetwork-
         // Fetch() and Singular/MMP via MMP.provider = MockMMPProvider() (setUp + tearDown). That alone made
         // the ~13-test cut logically pass, but CI showed the remaining UI-object-creation load still tips
-        // load-sensitive sibling checks intermittently: ReferralsModelTests "multiple fulfill" (fixed by the
-        // MultiplyImpact skips below) AND HistoryPanelViewModelTests' trackForMemoryLeaks — a weak-ref leak
+        // load-sensitive sibling checks intermittently: HistoryPanelViewModelTests' trackForMemoryLeaks — a weak-ref leak
         // assertion that races the background reloadData completion's release; under added load the bg thread
         // hasn't released the subject-capturing block when the main-thread check runs → false positive
         // (passed tiered run #1, failed run #2, same config). That load is NOT containable test-by-test — the
@@ -73,11 +72,6 @@ public enum EcosiaSchemes {
         // -- The 5 in-app-search tests are deliberately NOT skipped (MOB-4948). They no longer build a
         //    WKWebView or route through the navigation delegate, so only a BrowserViewController
         //    remains, and they guard the in-app search event that regressed twice while skipped.
-        // -- 4 MultiplyImpact referral tests (the "multiple fulfill" contaminator that hit ReferralsModelTests):
-        "AnalyticsSpyTests/testMultiplyImpactViewDidAppearTracksReferralViewInviteScreen()",
-        "AnalyticsSpyTests/testMultiplyImpactLearnMoreButtonTracksReferralClickLearnMore()",
-        "AnalyticsSpyTests/testMultiplyImpactInviteFriendsTracksReferralClickInvite()",
-        "AnalyticsSpyTests/testMultiplyImpactInviteFriendsCompletionTracksReferralSendInvite()",
         // -- 2 NewsController VC tests:
         "AnalyticsSpyTests/testNewsControllerViewDidAppearTracksNavigationViewNews()",
         "AnalyticsSpyTests/testNewsControllerDidSelectItemTracksNavigationOpenNews()",

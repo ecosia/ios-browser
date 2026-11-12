@@ -130,7 +130,6 @@ final class FirefoxUpgradeCharacterizationTests: XCTestCase {
         XCTAssertFalse(treesTitle.contains("€"), "The tree counter must not render a currency symbol")
         XCTAssertTrue(investedTitle.contains("1,234"), "Got \(investedTitle)")
         XCTAssertTrue(investedTitle.contains("€"), "The invested counter must render the euro symbol")
-        XCTAssertEqual(ClimateImpactInfo.referral(value: 7).title, "7")
     }
 
     /// UI tests and snapshot references key off these identifiers, and the deep links are the counters' only
@@ -142,19 +141,14 @@ final class FirefoxUpgradeCharacterizationTests: XCTestCase {
                        EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.totalTreesCount)
         XCTAssertEqual(ClimateImpactInfo.totalInvested(value: 0).accessibilityIdentifier,
                        EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.totalInvestedCount)
-        XCTAssertEqual(ClimateImpactInfo.referral(value: 0).accessibilityIdentifier,
-                       EcosiaAccessibilityIdentifiers.NTP.ClimateImpact.friendsAndTreesInvitesCounter)
 
         XCTAssertEqual(ClimateImpactInfo.totalTrees(value: 0).destinationURL, urlProvider.trees)
         XCTAssertEqual(ClimateImpactInfo.totalInvested(value: 0).destinationURL, urlProvider.financialReports)
-        XCTAssertNil(ClimateImpactInfo.referral(value: 0).destinationURL,
-                     "The referral tile opens the invite flow, not a URL")
     }
 
     /// `rawValue` is how the cell matches a refresh to a row without comparing associated values; a reordering
     /// would silently route tree updates into the invested row.
     func testImpactCounterRowOrderingIsStable() {
-        XCTAssertEqual(ClimateImpactInfo.referral(value: 0).rawValue, 0)
         XCTAssertEqual(ClimateImpactInfo.totalTrees(value: 0).rawValue, 1)
         XCTAssertEqual(ClimateImpactInfo.totalInvested(value: 0).rawValue, 2)
     }

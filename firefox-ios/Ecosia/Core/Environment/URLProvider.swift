@@ -99,10 +99,6 @@ public enum URLProvider {
         URL(string: "https://ecosia.helpscoutdocs.com/article/458-import-export-bookmarks")!
     }
 
-    public var referHelp: URL {
-        URL(string: "https://ecosia.helpscoutdocs.com/article/358-refer-a-friend-ios-only")!
-    }
-
     public var financialReports: URL {
         switch Language.current {
         case .de:

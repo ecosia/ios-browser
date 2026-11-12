@@ -139,8 +139,6 @@ class BrowserViewController: UIViewController,
     lazy var screenshotHelper = ScreenshotHelper(controller: self)
     // Ecosia: Authentication manager for handling login/logout flows
     var ecosiaAuth: EcosiaAuth?
-    // Ecosia: Referrals service for loading screen and homepage adapter
-    var referrals: Referrals?
 
     // MARK: Lazy loading UI elements
     private var documentLoadingView: TemporaryDocumentLoadingView?

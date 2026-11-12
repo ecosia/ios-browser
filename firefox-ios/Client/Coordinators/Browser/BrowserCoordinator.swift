@@ -100,7 +100,7 @@ final class BrowserCoordinator: BaseCoordinator,
         browserViewController.browserDelegate = self
         browserViewController.navigationHandler = self
         tabManager.addDelegate(self)
-        // Ecosia: Set referrals and ecosiaAuth so showHomepage can run setupEcosiaAdapter and use Ecosia NTP
+        // Ecosia: Set ecosiaAuth so showHomepage can run setupEcosiaAdapter and use Ecosia NTP
         configureEcosiaServicesIfNeeded()
     }
 
@@ -183,12 +183,10 @@ final class BrowserCoordinator: BaseCoordinator,
 
         // Ecosia: Setup Ecosia adapter before first view access so homepage uses Ecosia sections
         if self.homepageViewController == nil,
-           let auth = browserViewController.ecosiaAuth,
-           let referrals = browserViewController.referrals {
+           let auth = browserViewController.ecosiaAuth {
             homepageController.setupEcosiaAdapter(
                 profile: profile,
                 tabManager: browserViewController.tabManager,
-                referrals: referrals,
                 auth: auth,
                 browserViewController: browserViewController
             )

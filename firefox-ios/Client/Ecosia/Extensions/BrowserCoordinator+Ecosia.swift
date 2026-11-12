@@ -7,12 +7,11 @@ import Ecosia
 
 extension BrowserCoordinator {
 
-    /// Ecosia: Injects Referrals and EcosiaAuth into the browser view controller so that
+    /// Ecosia: Injects EcosiaAuth into the browser view controller so that
     /// showHomepage can run setupEcosiaAdapter and the Ecosia NTP data source is used.
     /// Call once after the coordinator's browserViewController is created.
     func configureEcosiaServicesIfNeeded() {
-        guard browserViewController.referrals == nil else { return }
-        browserViewController.referrals = Referrals()
+        guard browserViewController.ecosiaAuth == nil else { return }
         _ = EcosiaAuth(browserViewController: browserViewController)
     }
 
