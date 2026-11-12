@@ -319,6 +319,18 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         homepageCollectionView?.isScrollEnabled = isPhoneLandscape
     }
 
+    /// The impact section fills the collection view's height, but a vertically scrolling
+    /// compositional layout only invalidates itself on width changes. When the hidden address
+    /// toolbar collapses after the last invalidation (e.g. back-swipe from the SERP), the
+    /// collection view grows but the impact cell keeps the shorter height and TopSites shift up.
+    func invalidateNTPLayoutIfHeightChanged() {
+        guard let collectionView = homepageCollectionView else { return }
+        let height = collectionView.bounds.height
+        guard height != ntpLastLayoutHeight else { return }
+        ntpLastLayoutHeight = height
+        collectionView.collectionViewLayout.invalidateLayout()
+    }
+
     /// Re-applies the iPad horizontal inset to the omnibox after a rotation or
     /// size-class change (e.g. iPad split-screen resize). On iPhone-class
     /// surfaces the value collapses back to the default `_s` (12pt) margin.
