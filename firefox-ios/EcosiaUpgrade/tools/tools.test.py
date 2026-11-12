@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for source_scan.py and swallowed_declarations.py.
+"""Tests for source_scan.py, swallowed_declarations.py and conflict_risk.py.
 
 Run: python3 -I firefox-ios/EcosiaUpgrade/tools/tools.test.py
 """
@@ -12,6 +12,7 @@ from pathlib import Path
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import conflict_risk  # noqa: E402
 import source_scan as ss  # noqa: E402
 import swallowed_declarations  # noqa: E402
 
@@ -150,6 +151,35 @@ class SwallowedDeclarationTests(unittest.TestCase):
         broken = text[:anchor] + block_opener + text[anchor:]
         names = {name for _, name, _ in swallowed_declarations.check(BOOKMARKS, broken)}
         self.assertEqual(names, {"setupLayout", "updateLayoutForKeyboard", "updateBottomSearchBarLayout"})
+
+
+class ConflictRiskTests(unittest.TestCase):
+    def test_numstat_counts_added_and_removed_and_binary_as_zero(self):
+        text = "3\t2\tA.swift\0-\t-\tlogo.pdf\0"
+        self.assertEqual(conflict_risk.parse_numstat(text), {"A.swift": 5, "logo.pdf": 0})
+
+    def test_commit_counts_count_each_commit_once_per_file(self):
+        text = "\x01\0\nA.swift\0B.swift\0\x01\0\nA.swift\0"
+        self.assertEqual(conflict_risk.parse_commit_counts(text), {"A.swift": 2, "B.swift": 1})
+
+    def test_conflicts_skip_the_tree(self):
+        text = "0123abcd\0A.swift\0dir/B.swift\0"
+        self.assertEqual(conflict_risk.parse_conflicts(text), {"A.swift", "dir/B.swift"})
+
+    def test_risk(self):
+        lines = {"B.swift": 4, "logo.pdf": 0}
+        self.assertEqual(conflict_risk.risk_of("A.swift", {"A.swift"}, lines), "conflict")
+        self.assertEqual(conflict_risk.risk_of("B.swift", set(), lines), "silent")
+        self.assertEqual(conflict_risk.risk_of("logo.pdf", set(), lines), "silent")
+        self.assertEqual(conflict_risk.risk_of("C.swift", set(), lines), "none")
+
+    def test_rank_orders_by_risk_then_churn_then_commits(self):
+        def row(name, risk, lines, commits):
+            return {"file": name, "risk": risk, "upstream_lines": lines, "upstream_commits": commits}
+        rows = [row("none", "none", 0, 0), row("small", "silent", 5, 9), row("big", "silent", 50, 1),
+                row("busy", "silent", 50, 3), row("conflict", "conflict", 1, 1)]
+        self.assertEqual([r["file"] for r in conflict_risk.rank(rows)],
+                         ["conflict", "busy", "big", "small", "none"])
 
 
 if __name__ == "__main__":
