@@ -22,19 +22,10 @@ class EcosiaNTPTooltipHighlightTests: XCTestCase {
         XCTAssertNil(NTPTooltip.highlight(for: user))
     }
 
-    func testGotClaimed() throws {
-        user.referrals.isNewClaim = true
-        XCTAssert(NTPTooltip.highlight(for: user) == .gotClaimed)
-    }
-
-    func testSuccessfulInvite() throws {
-        user.referrals.claims = 1
-        XCTAssert(NTPTooltip.highlight(for: user) == .successfulInvite)
-    }
-
-    func testReferralSpotlight() throws {
+    func testUserInstalledDaysAgoWithImpactIntroDismissedSeesNoTooltip() throws {
         user.install = Calendar.current.date(byAdding: .day, value: -4, to: .init())!
-        XCTAssert(NTPTooltip.highlight(for: user) == .referralSpotlight)
+        user.hideImpactIntro()
+        XCTAssertNil(NTPTooltip.highlight(for: user))
     }
 
     func testImpactIntro() throws {

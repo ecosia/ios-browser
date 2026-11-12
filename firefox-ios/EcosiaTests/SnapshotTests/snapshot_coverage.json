@@ -27,21 +27,39 @@
       "localesThemes": "en, light + dark"
     },
     {
-      "area": "Customize button",
+      "area": "Customize button (on wallpaper)",
       "sources": [
         "firefox-ios/Client/Ecosia/UI/NTP/Header/**",
         "firefox-ios/Ecosia/UI/NTP/Header/**"
       ],
-      "snapshotTest": "HomepageComponentTests.testEcosiaCustomizeButton",
+      "snapshotTest": "HomepageComponentTests.testEcosiaCustomizeButton_onWallpaper",
       "localesThemes": "en, light + dark"
     },
     {
-      "area": "Account nav button (logged out)",
+      "area": "Customize button (solid background)",
       "sources": [
         "firefox-ios/Client/Ecosia/UI/NTP/Header/**",
         "firefox-ios/Ecosia/UI/NTP/Header/**"
       ],
-      "snapshotTest": "HomepageComponentTests.testEcosiaAccountNavButton_loggedOut",
+      "snapshotTest": "HomepageComponentTests.testEcosiaCustomizeButton_onSolidBackground",
+      "localesThemes": "en, light + dark"
+    },
+    {
+      "area": "Account nav button (logged out, on wallpaper)",
+      "sources": [
+        "firefox-ios/Client/Ecosia/UI/NTP/Header/**",
+        "firefox-ios/Ecosia/UI/NTP/Header/**"
+      ],
+      "snapshotTest": "HomepageComponentTests.testEcosiaAccountNavButton_loggedOut_onWallpaper",
+      "localesThemes": "en, light + dark"
+    },
+    {
+      "area": "Account nav button (logged out, solid background)",
+      "sources": [
+        "firefox-ios/Client/Ecosia/UI/NTP/Header/**",
+        "firefox-ios/Ecosia/UI/NTP/Header/**"
+      ],
+      "snapshotTest": "HomepageComponentTests.testEcosiaAccountNavButton_loggedOut_onSolidBackground",
       "localesThemes": "en, light + dark"
     },
     {

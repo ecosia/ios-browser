@@ -102,84 +102,19 @@ final class ShowWelcomeScreen: HiddenSetting {
     }
 }
 
-final class CreateReferralCode: HiddenSetting {
+final class ToggleWallpaperRotation: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Referral Code \(User.shared.referrals.code ?? "-")", attributes: [:])
+        return NSAttributedString(string: "Debug: Toggle - Rotate NTP wallpapers every 30 seconds", attributes: [:])
     }
 
     override var status: NSAttributedString? {
-        return .init(string: "Toggle to create or erase code")
+        let isOn = DebugWallpaperRotation.isEnabled
+        return NSAttributedString(string: isOn ? "True" : "False", attributes: [:])
     }
 
     override func onClick(_ navigationController: UINavigationController?) {
-
-        if User.shared.referrals.code == nil {
-            User.shared.referrals.code = "TEST123"
-
-            let alertTitle = "Code created"
-            let alert = AlertController(title: alertTitle, message: User.shared.referrals.code, preferredStyle: .alert)
-            navigationController?.topViewController?.present(alert, animated: true) {
-                // Task + sleep instead of DispatchQueue for strict concurrency
-                Task { @MainActor in
-                    try? await Task.sleep(nanoseconds: 1_500_000_000)
-                    alert.dismiss(animated: true)
-                }
-                self.settings.tableView.reloadData()
-            }
-        } else {
-            User.shared.referrals.code = nil
-
-            let alert = AlertController(title: "Code erased!", message: "Reopen app to create new one", preferredStyle: .alert)
-            navigationController?.topViewController?.present(alert, animated: true) {
-                // Task + sleep instead of DispatchQueue for strict concurrency
-                Task { @MainActor in
-                    try? await Task.sleep(nanoseconds: 1_500_000_000)
-                    alert.dismiss(animated: true)
-                }
-                self.settings.tableView.reloadData()
-            }
-        }
-    }
-}
-
-final class AddReferral: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Add Referral", attributes: [:])
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        User.shared.referrals.claims += 1
-
-        let alertTitle = "Referral count increased by one."
-        let alert = AlertController(title: alertTitle, message: "Open NTP to see spotlight", preferredStyle: .alert)
-        navigationController?.topViewController?.present(alert, animated: true) {
-            // Task + sleep instead of DispatchQueue for strict concurrency
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 1_500_000_000)
-                alert.dismiss(animated: true)
-            }
-        }
-    }
-}
-
-final class AddClaim: HiddenSetting {
-    override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Add Referral Claim", attributes: [:])
-    }
-
-    override func onClick(_ navigationController: UINavigationController?) {
-        User.shared.referrals.isClaimed = true
-        User.shared.referrals.isNewClaim = true
-
-        let alertTitle = "User got referred."
-        let alert = AlertController(title: alertTitle, message: "Open NTP to see claim", preferredStyle: .alert)
-        navigationController?.topViewController?.present(alert, animated: true) {
-            // Task + sleep instead of DispatchQueue for strict concurrency
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 1_500_000_000)
-                alert.dismiss(animated: true)
-            }
-        }
+        DebugWallpaperRotation.isEnabled.toggle()
+        settings.tableView.reloadData()
     }
 }
 

@@ -37,8 +37,7 @@ extension XCTestCase {
     /// Why this matters: driving `applicationDidBecomeActive` (MMP / AnalyticsSpy lifecycle tests)
     /// kicks off async writes on `User.queue` (User.shared saves from searchCount/etc. mutations) and
     /// `PageStore.queue` (loadBackgroundTabs / history). Left undrained, those land DURING a later test
-    /// — backing the queue up so its 1-2s-timeout expectations fail (ReferralsModelTests "multiple
-    /// fulfill", TabEcosia webview timeout) and rewriting shared files so the later test reads stale
+    /// — backing the queue up so its 1-2s-timeout expectations fail (TabEcosia webview timeout) and rewriting shared files so the later test reads stale
     /// state (FavouritesTests). Draining here in the contaminating class's tearDown makes each
     /// subsequent test start from quiescent shared queues. Pairs with
     /// `seedFreshUnleashModelToAvoidNetworkFetch()` (which removes the Unleash-network vector). (MOB-4384)

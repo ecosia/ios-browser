@@ -180,6 +180,7 @@ final class SnapshotTestHelper {
         themes: [ThemeConfiguration.Theme],
         wait: TimeInterval,
         precision: CGFloat,
+        drawsViewHierarchy: Bool = false,
         file: StaticString,
         testName: String,
         line: UInt
@@ -245,21 +246,38 @@ final class SnapshotTestHelper {
 
                     let isCurrentDeviceMatchingSimulator = deviceName == simulatorDeviceName
 
-                    let snapshotting = Snapshotting<UIView, UIImage>.image(
-                        precision: Float(precision),
-                        size: isCurrentDeviceMatchingSimulator ? nil : config.size!,
-                        traits: traits
-                    )
-
                     let snapshotName = "\(String.cleanFunctionName(testName))_\(themeSuffix.rawValue)_\(deviceType.rawValue)_\(locale.identifier)"
+                    let snapshotSize = isCurrentDeviceMatchingSimulator ? nil : config.size!
 
-                    let failure = verifySnapshot(
-                        of: window,
-                        as: snapshotting,
-                        snapshotDirectory: snapshotDirectory,
-                        file: file,
-                        testName: snapshotName
-                    )
+                    let failure: String?
+                    if drawsViewHierarchy, let viewController = window.rootViewController {
+                        // Snapshots the hosted controller, which the library draws in place in this key window.
+                        // Drawing the window itself this way comes out blank.
+                        failure = verifySnapshot(
+                            of: viewController,
+                            as: .image(
+                                drawHierarchyInKeyWindow: true,
+                                precision: Float(precision),
+                                size: snapshotSize,
+                                traits: traits
+                            ),
+                            snapshotDirectory: snapshotDirectory,
+                            file: file,
+                            testName: snapshotName
+                        )
+                    } else {
+                        failure = verifySnapshot(
+                            of: window,
+                            as: .image(
+                                precision: Float(precision),
+                                size: snapshotSize,
+                                traits: traits
+                            ),
+                            snapshotDirectory: snapshotDirectory,
+                            file: file,
+                            testName: snapshotName
+                        )
+                    }
 
                     if let message = failure {
                         XCTFail(message, file: file, line: line)
@@ -351,6 +369,8 @@ final class SnapshotTestHelper {
     ///   - locales: An array of `Locale` specifying the locales for the snapshot. Defaults to the loaded from `snapshot_configuration.json` of each test if no other array is passed.
     ///   - wait: The time interval to delay the snapshot.
     ///   - precision: The precision of the snapshot comparison. Default to 0.99 to allow slightly different colors between CI and local runs.
+    ///   - drawsViewHierarchy: Captures what the window draws on screen instead of rendering its layers.
+    ///     Needed for system-composited effects such as native Liquid Glass, which layer rendering leaves out.
     ///   - file: The file in which failures should be reported.
     ///   - testName: The name of the test.
     ///   - line: The line number to report failures.
@@ -361,6 +381,7 @@ final class SnapshotTestHelper {
         themes: [ThemeConfiguration.Theme] = [],
         wait: TimeInterval = 0.5,
         precision: CGFloat = 0.99,
+        drawsViewHierarchy: Bool = false,
         file: StaticString = #file,
         testName: String = #function,
         line: UInt = #line
@@ -371,6 +392,7 @@ final class SnapshotTestHelper {
             themes: themes,
             wait: wait,
             precision: precision,
+            drawsViewHierarchy: drawsViewHierarchy,
             file: file,
             testName: testName,
             line: line

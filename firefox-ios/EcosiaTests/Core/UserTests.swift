@@ -9,6 +9,8 @@ import XCTest
 final class UserTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         try? FileManager.default.removeItem(at: FileManager.user)
+        // User.shared is process-global; other suites (e.g. NewsTests) leave state on it.
+        User.shared = User()
     }
 
     override func tearDown() {
@@ -249,17 +251,23 @@ final class UserTests: XCTestCase, @unchecked Sendable {
         waitForExpectations(timeout: 1)
     }
 
-    func testShowsReferralSpotlight() {
-        XCTAssertFalse(User.shared.showsReferralSpotlight)
+    func testDecodingStoredUserWithLegacyReferralsKeepsOtherFields() throws {
+        let analyticsId = UUID()
+        let stored = """
+        {
+            "analyticsId": "\(analyticsId.uuidString)",
+            "firstTime": false,
+            "treeCount": 42,
+            "referrals": {"code": "ABC123", "claims": 3, "isClaimed": true, "pendingClaim": "XYZ"},
+            "state": {"referralSpotlight": "true"}
+        }
+        """
 
-        // set install to 4 days ago
-        User.shared.install = Calendar.current.date(byAdding: .day, value: -4, to: .init())!
-        User.queue.sync {}
-        XCTAssertTrue(User().showsReferralSpotlight)
+        let user = try JSONDecoder().decode(User.self, from: Data(stored.utf8))
 
-        User.shared.hideReferralSpotlight()
-        User.queue.sync {}
-        XCTAssertFalse(User().showsReferralSpotlight)
+        XCTAssertEqual(user.analyticsId, analyticsId)
+        XCTAssertFalse(user.firstTime)
+        XCTAssertEqual(user.searchCount, 42)
     }
 
     func testShowsInactiveTabsTooltip() {
