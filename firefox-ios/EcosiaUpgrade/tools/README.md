@@ -97,7 +97,11 @@ Shows what users see for `Info.plist` strings, such as purpose strings, in every
 ## Main sync and verification
 
 - **`sync-main.sh [--base-ref <ref>]`**: merges `main` into the upgrade branch. See its header for exit codes. Tested by `sync-main.test.sh`.
-- **`verify.sh`**: generates the project, builds, runs the unit tests and lints the way CI does.
+- **`verify.sh`**: generates the project, builds, runs the unit tests and lints the way CI does, then runs `check-feature-config.sh`. See its header for exit codes.
+- **`check-feature-config.sh [--fml <path to nimbus-fml>]`**: checks Ecosia's decisions about Firefox's features (translations on; hosted summarizer, App Attest, Google Lens, Quick Answers, VPN, ad blocker and Nova off) on the developer, beta and release Nimbus channels. Unit tests (`FeatureConfigurationTests`) only see developer.
+  - **Input:** `nimbus-features/*.yaml`, and the `nimbus-fml` binary a build caches under `firefox-ios/build/nimbus/`.
+  - **Output:** one line per decision that doesn't hold: `<channel> <feature> <variable>: expected X, found Y`.
+  - **Exit:** 0 when every decision holds, 1 when one doesn't, 2 when `nimbus-fml` fails or a feature is missing from its output, 64 on a usage error or when there's no `nimbus-fml` binary yet.
 
 ## Shared modules
 
