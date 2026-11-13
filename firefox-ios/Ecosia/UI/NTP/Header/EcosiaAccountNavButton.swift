@@ -101,7 +101,7 @@ private struct AccountNavButtonBackground: ViewModifier {
 
     func body(content: Content) -> some View {
         if #available(iOS 26, *) {
-            content.buttonStyle(NTPGlassButtonStyle(Capsule()))
+            content.buttonStyle(NTPGlassButtonStyle(Capsule(), theme: theme.glass))
         } else {
             content.buttonStyle(EcosiaAccountNavButtonStyle(
                 backgroundColor: theme.backgroundColor,
@@ -129,11 +129,13 @@ private struct EcosiaAccountNavButtonStyle: ButtonStyle {
 struct EcosiaAccountNavButtonTheme: EcosiaThemeable {
     var backgroundColor = Color.white
     var backgroundColorActive = Color(UIColor.systemGray4)
+    var glass = NTPGlassTheme()
     var glassContent = NTPGlassContentTheme()
 
     mutating func applyTheme(theme: Theme) {
         backgroundColor = Color(theme.colors.ecosia.buttonBackgroundSecondary)
         backgroundColorActive = Color(theme.colors.ecosia.buttonBackgroundSecondaryActive)
+        glass.applyTheme(theme: theme)
         glassContent.applyTheme(theme: theme)
     }
 }

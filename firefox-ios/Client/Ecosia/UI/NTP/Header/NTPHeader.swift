@@ -85,16 +85,14 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
 
 /// Circle-specific glass button style for iOS 15 that avoids `AnyShape` (iOS 16+).
 private struct NTPCircleGlassButtonStyle: ButtonStyle {
-    private static let glassTint = Color(red: 26 / 255, green: 26 / 255, blue: 26 / 255)
-    private static let glassBorder = Color.white.opacity(0x3D / 255.0)
+    let theme: NTPGlassTheme
 
     func makeBody(configuration: Configuration) -> some View {
-        let tintOpacity: Double = configuration.isPressed ? 0.64 : 0.32
         configuration.label
             .background(
                 ZStack {
                     Color.clear.background(.ultraThinMaterial)
-                    Self.glassTint.opacity(tintOpacity)
+                    configuration.isPressed ? theme.tintPressed : theme.tint
                 }
                 // Ecosia: Force the dark-mode variant of ultraThinMaterial so the glass always
                 // reads against the NTP wallpaper regardless of the system colour scheme.
@@ -102,17 +100,19 @@ private struct NTPCircleGlassButtonStyle: ButtonStyle {
                 .clipShape(Circle())
             )
             .clipShape(Circle())
-            .overlay(Circle().stroke(Self.glassBorder, lineWidth: 1))
+            .overlay(Circle().stroke(theme.border, lineWidth: 1))
     }
 }
 
 /// Applies the glass circle button style, selecting the appropriate variant by OS version.
 private struct GlassCircleModifier: ViewModifier {
+    let theme: NTPGlassTheme
+
     func body(content: Content) -> some View {
         if #available(iOS 16, *) {
-            content.buttonStyle(NTPGlassButtonStyle(Circle()))
+            content.buttonStyle(NTPGlassButtonStyle(Circle(), theme: theme))
         } else {
-            content.buttonStyle(NTPCircleGlassButtonStyle())
+            content.buttonStyle(NTPCircleGlassButtonStyle(theme: theme))
         }
     }
 }
@@ -132,12 +132,22 @@ private struct NTPHeaderGlassContainerModifier: ViewModifier {
 
 // MARK: - Customize (Pencil) Button
 
+struct EcosiaCustomizeButtonTheme: EcosiaThemeable {
+    var glass = NTPGlassTheme()
+    var glassContent = NTPGlassContentTheme()
+
+    mutating func applyTheme(theme: Theme) {
+        glass.applyTheme(theme: theme)
+        glassContent.applyTheme(theme: theme)
+    }
+}
+
 /// Glass-style circular button with a pencil icon for opening NTP customization.
 struct EcosiaCustomizeButton: View {
     let windowUUID: WindowUUID
     var appearance: NTPGlassAppearance = .wallpaper
     let onTap: () -> Void
-    @State private var theme = NTPGlassContentTheme()
+    @State private var theme = EcosiaCustomizeButtonTheme()
 
     private let buttonSize: CGFloat = .ecosia.space._3l // 40pt
     private let iconSize: CGFloat = 16
@@ -145,9 +155,9 @@ struct EcosiaCustomizeButton: View {
     /// Below iOS 26 the custom glass is always dark, so the icon uses the wallpaper content colour.
     private var iconColor: Color {
         if #available(iOS 26, *) {
-            return theme.contentColor(for: appearance)
+            return theme.glassContent.contentColor(for: appearance)
         }
-        return theme.contentColor(for: .wallpaper)
+        return theme.glassContent.contentColor(for: .wallpaper)
     }
 
     var body: some View {
@@ -159,7 +169,7 @@ struct EcosiaCustomizeButton: View {
                 .frame(width: iconSize, height: iconSize)
                 .frame(width: buttonSize, height: buttonSize)
         }
-        .modifier(GlassCircleModifier())
+        .modifier(GlassCircleModifier(theme: theme.glass))
         .ecosiaThemed(windowUUID, $theme)
         .hapticFeedback()
         .accessibilityLabel(String.localized(.customizeHomepage))
