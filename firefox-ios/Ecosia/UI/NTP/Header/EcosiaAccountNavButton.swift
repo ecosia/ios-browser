@@ -40,12 +40,12 @@ public struct EcosiaAccountNavButton: View {
         self.onTap = onTap
     }
 
-    /// On glass (iOS 26 and later) the seed count and lock match the glass appearance.
-    private var seedContentColor: Color? {
+    /// Below iOS 26 the custom glass is always dark, so the seed count uses the wallpaper content colour.
+    private var seedContentColor: Color {
         if #available(iOS 26, *) {
             return theme.glassContent.contentColor(for: glassAppearance)
         }
-        return nil
+        return theme.glassContent.contentColor(for: .wallpaper)
     }
 
     private var accessibilityLabel: String {
@@ -81,7 +81,7 @@ public struct EcosiaAccountNavButton: View {
             .frame(minHeight: .ecosia.space._3l, maxHeight: .ecosia.space._3l)
             .animation(.easeInOut(duration: 0.3), value: authStateProvider.hasRegisterVisitError)
         }
-        .modifier(AccountNavButtonBackground(theme: theme))
+        .buttonStyle(NTPGlassButtonStyle(Capsule(), theme: theme.glass))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
         .accessibilityHint(String.localized(.accountButtonAccessibilityHint))
@@ -92,49 +92,13 @@ public struct EcosiaAccountNavButton: View {
     }
 }
 
-// MARK: - Button Style
-
-/// Uses the NTP glass on iOS 26 and later, and a solid background below.
-@available(iOS 16.0, *)
-private struct AccountNavButtonBackground: ViewModifier {
-    let theme: EcosiaAccountNavButtonTheme
-
-    func body(content: Content) -> some View {
-        if #available(iOS 26, *) {
-            content.buttonStyle(NTPGlassButtonStyle(Capsule(), theme: theme.glass))
-        } else {
-            content.buttonStyle(EcosiaAccountNavButtonStyle(
-                backgroundColor: theme.backgroundColor,
-                backgroundColorActive: theme.backgroundColorActive
-            ))
-        }
-    }
-}
-
-@available(iOS 16.0, *)
-private struct EcosiaAccountNavButtonStyle: ButtonStyle {
-    let backgroundColor: Color
-    let backgroundColorActive: Color
-    private let shape = RoundedRectangle(cornerRadius: CGFloat.ecosia.borderRadius._1l)
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .background(configuration.isPressed ? backgroundColorActive : backgroundColor)
-            .clipShape(shape)
-    }
-}
-
 // MARK: - Theme
 
 struct EcosiaAccountNavButtonTheme: EcosiaThemeable {
-    var backgroundColor = Color.white
-    var backgroundColorActive = Color(UIColor.systemGray4)
     var glass = NTPGlassTheme()
     var glassContent = NTPGlassContentTheme()
 
     mutating func applyTheme(theme: Theme) {
-        backgroundColor = Color(theme.colors.ecosia.buttonBackgroundSecondary)
-        backgroundColorActive = Color(theme.colors.ecosia.buttonBackgroundSecondaryActive)
         glass.applyTheme(theme: theme)
         glassContent.applyTheme(theme: theme)
     }
