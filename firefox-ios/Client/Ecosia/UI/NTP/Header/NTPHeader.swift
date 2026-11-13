@@ -167,6 +167,14 @@ struct EcosiaCustomizeButton: View {
     }
 }
 
+private struct AccountNavButtonBoundsKey: PreferenceKey {
+    static let defaultValue: Anchor<CGRect>? = nil
+
+    static func reduce(value: inout Anchor<CGRect>?, nextValue: () -> Anchor<CGRect>?) {
+        value = value ?? nextValue()
+    }
+}
+
 // MARK: - SwiftUI Multi-Purpose Header View
 struct NTPHeaderView: View {
     @ObservedObject var viewModel: NTPHeaderViewModel
@@ -183,44 +191,52 @@ struct NTPHeaderView: View {
             )
             Spacer()
             if #available(iOS 16, *) {
-                ZStack(alignment: .topLeading) {
-                    EcosiaAccountNavButton(
-                        seedCount: viewModel.seedCount,
-                        avatarURL: viewModel.userAvatarURL,
-                        enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
-                        showSeedSparkles: viewModel.showSeedSparkles,
-                        glassAppearance: viewModel.glassAppearance,
+                EcosiaAccountNavButton(
+                    seedCount: viewModel.seedCount,
+                    avatarURL: viewModel.userAvatarURL,
+                    enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
+                    showSeedSparkles: viewModel.showSeedSparkles,
+                    glassAppearance: viewModel.glassAppearance,
+                    windowUUID: windowUUID,
+                    onTap: handleTap
+                )
+                .anchorPreference(key: AccountNavButtonBoundsKey.self, value: .bounds) { $0 }
+                .sheet(isPresented: $viewModel.showAccountImpactView) {
+                    EcosiaAccountImpactView(
+                        viewModel: EcosiaAccountImpactViewModel(
+                            onLogin: {
+                                viewModel.performLogin()
+                            },
+                            onDismiss: {
+                                viewModel.dismissAccountImpact()
+                            }
+                        ),
                         windowUUID: windowUUID,
-                        onTap: handleTap
+                        webViewUserAgent: EcosiaInAppWebViewUserAgent.mobileUserAgent()
                     )
-                    .sheet(isPresented: $viewModel.showAccountImpactView) {
-                        EcosiaAccountImpactView(
-                            viewModel: EcosiaAccountImpactViewModel(
-                                onLogin: {
-                                    viewModel.performLogin()
-                                },
-                                onDismiss: {
-                                    viewModel.dismissAccountImpact()
-                                }
-                            ),
-                            windowUUID: windowUUID,
-                            webViewUserAgent: EcosiaInAppWebViewUserAgent.mobileUserAgent()
-                        )
-                        .padding(.horizontal, .ecosia.space._m)
-                        .dynamicHeightPresentationDetent()
-                        .presentationDragIndicator(.visible)
-                    }
-                    if let increment = viewModel.balanceIncrement {
-                        BalanceIncrementAnimationView(
-                            increment: increment,
-                            windowUUID: windowUUID
-                        )
-                        .offset(x: 18, y: -8)
-                    }
+                    .padding(.horizontal, .ecosia.space._m)
+                    .dynamicHeightPresentationDetent()
+                    .presentationDragIndicator(.visible)
                 }
             }
         }
         .modifier(NTPHeaderGlassContainerModifier())
+        // Outside the glass container so the glass can't render over the balance increment.
+        .overlayPreferenceValue(AccountNavButtonBoundsKey.self) { anchor in
+            GeometryReader { proxy in
+                if #available(iOS 16, *) {
+                    if let anchor, let increment = viewModel.balanceIncrement {
+                        let accountButtonFrame = proxy[anchor]
+                        BalanceIncrementAnimationView(
+                            increment: increment,
+                            windowUUID: windowUUID
+                        )
+                        .offset(x: accountButtonFrame.minX + 18, y: accountButtonFrame.minY - 8)
+                    }
+                }
+            }
+            .allowsHitTesting(false)
+        }
         .padding(.horizontal, .ecosia.space._m)
         .padding(.vertical, .ecosia.space._m)
         .onAppear {
