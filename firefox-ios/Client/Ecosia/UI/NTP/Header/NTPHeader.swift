@@ -104,15 +104,21 @@ private struct NTPCircleGlassButtonStyle: ButtonStyle {
     }
 }
 
-/// Applies the glass circle button style, selecting the appropriate variant by OS version.
-private struct GlassCircleModifier: ViewModifier {
-    let theme: NTPGlassTheme
+/// Uses glass on a wallpaper and a solid button on a plain background.
+private struct CustomizeButtonBackground: ViewModifier {
+    let appearance: NTPGlassAppearance
+    let theme: EcosiaCustomizeButtonTheme
 
     func body(content: Content) -> some View {
-        if #available(iOS 16, *) {
-            content.buttonStyle(NTPGlassButtonStyle(Circle(), theme: theme))
-        } else {
-            content.buttonStyle(NTPCircleGlassButtonStyle(theme: theme))
+        switch appearance {
+        case .wallpaper:
+            if #available(iOS 16, *) {
+                content.buttonStyle(NTPGlassButtonStyle(Circle(), theme: theme.glass))
+            } else {
+                content.buttonStyle(NTPCircleGlassButtonStyle(theme: theme.glass))
+            }
+        case .themed:
+            content.buttonStyle(NTPSolidButtonStyle(Circle(), theme: theme.solid))
         }
     }
 }
@@ -134,15 +140,17 @@ private struct NTPHeaderGlassContainerModifier: ViewModifier {
 
 struct EcosiaCustomizeButtonTheme: EcosiaThemeable {
     var glass = NTPGlassTheme()
+    var solid = NTPSolidButtonTheme()
     var glassContent = NTPGlassContentTheme()
 
     mutating func applyTheme(theme: Theme) {
         glass.applyTheme(theme: theme)
+        solid.applyTheme(theme: theme)
         glassContent.applyTheme(theme: theme)
     }
 }
 
-/// Glass-style circular button with a pencil icon for opening NTP customization.
+/// Circular button with a pencil icon for opening NTP customization.
 struct EcosiaCustomizeButton: View {
     let windowUUID: WindowUUID
     var appearance: NTPGlassAppearance = .wallpaper
@@ -152,24 +160,16 @@ struct EcosiaCustomizeButton: View {
     private let buttonSize: CGFloat = .ecosia.space._3l // 40pt
     private let iconSize: CGFloat = 16
 
-    /// Below iOS 26 the custom glass is always dark, so the icon uses the wallpaper content colour.
-    private var iconColor: Color {
-        if #available(iOS 26, *) {
-            return theme.glassContent.contentColor(for: appearance)
-        }
-        return theme.glassContent.contentColor(for: .wallpaper)
-    }
-
     var body: some View {
         Button(action: { onTap() }) {
             Image.ecosia("ntp-pencil-edit")
                 .resizable()
                 .renderingMode(.template)
-                .foregroundColor(iconColor)
+                .foregroundColor(theme.glassContent.contentColor(for: appearance))
                 .frame(width: iconSize, height: iconSize)
                 .frame(width: buttonSize, height: buttonSize)
         }
-        .modifier(GlassCircleModifier(theme: theme.glass))
+        .modifier(CustomizeButtonBackground(appearance: appearance, theme: theme))
         .ecosiaThemed(windowUUID, $theme)
         .hapticFeedback()
         .accessibilityLabel(String.localized(.customizeHomepage))

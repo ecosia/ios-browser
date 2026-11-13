@@ -61,3 +61,34 @@ public struct NTPGlassButtonStyle: ButtonStyle {
             .overlay(shape.stroke(theme.border, lineWidth: 1))
     }
 }
+
+/// Themed colours for the solid NTP header buttons, for views themed with `ecosiaThemed`.
+public struct NTPSolidButtonTheme: EcosiaThemeable {
+    public private(set) var background = Color.clear
+    public private(set) var backgroundPressed = Color.clear
+
+    public init() {}
+
+    public mutating func applyTheme(theme: Theme) {
+        // Not buttonBackgroundSecondary: in dark mode it matches the plain NTP background, so the button disappears.
+        background = Color(theme.colors.ecosia.backgroundElevation1)
+        backgroundPressed = Color(theme.colors.ecosia.buttonBackgroundSecondaryActive)
+    }
+}
+
+/// Solid secondary button style for the NTP header buttons when no wallpaper is behind them.
+public struct NTPSolidButtonStyle<S: Shape>: ButtonStyle {
+    private let shape: S
+    private let theme: NTPSolidButtonTheme
+
+    public init(_ shape: S, theme: NTPSolidButtonTheme) {
+        self.shape = shape
+        self.theme = theme
+    }
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .background(configuration.isPressed ? theme.backgroundPressed : theme.background)
+            .clipShape(shape)
+    }
+}
