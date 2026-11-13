@@ -392,6 +392,9 @@ class BrowserCoordinator: BaseCoordinator,
                 handleClosePrivateTabsWidgetAction()
             case .showIntroOnboarding:
                 showIntroOnboarding()
+            // Ecosia: Keep the "Scan QR Code" home screen quick action that Firefox removed in v147
+            case .showQRCode:
+                showQRCode(delegate: browserViewController)
             }
 
         case let .fxaSignIn(params):

@@ -94,7 +94,8 @@ public enum EcosiaSchemes {
         "GleanPlumbMessageManagerTests/testManagerOnMessagePressed_withMalformedURL()",
         // Ecosia: testHasSeenIntroScreen_shouldNotShowIt is commented out in source (replaced by
         // Ecosia-specific intro logic) — skip entry removed to avoid maintaining dead references.
-        "ShortcutRouteTests",
+        // Ecosia: Skip only the test Firefox skips, so the "Scan QR Code" quick action test runs
+        "ShortcutRouteTests/testOpenLastBookmarkShortcutWithInvalidUrl()",
         "SyncContentSettingsViewControllerTests",
         // Ecosia: The wallpaper settings header is not yet surfaced as a feature in the Ecosia app (coming soon).
         // This test asserts a collection-JSON-driven description (nil when the collection has none), but the

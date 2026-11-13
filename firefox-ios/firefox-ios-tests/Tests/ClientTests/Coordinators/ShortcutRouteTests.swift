@@ -58,13 +58,15 @@ final class ShortcutRouteTests: XCTestCase {
         XCTAssertNil(route)
     }
 
+    // Ecosia: Keep the "Scan QR Code" home screen quick action that Firefox removed in v147
     func testQRCodeShortcut() {
         let subject = createSubject()
         let shortcutItem = UIApplicationShortcutItem(type: "com.example.app.QRCode",
                                                      localizedTitle: "QR Code")
+
         let route = subject.makeRoute(shortcutItem: shortcutItem, tabSetting: .blankPage)
-        // QRCode was removed from DeeplinkInput.Shortcut in v147; unknown shortcuts return nil
-        XCTAssertNil(route)
+
+        XCTAssertEqual(route, .action(action: .showQRCode))
     }
 
     func testInvalidShortcut() {

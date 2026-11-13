@@ -740,9 +740,8 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
 
     // MARK: - App action route
 
-    // Ecosia: Route.AppAction.showQRCode removed in v147
-    /*
-    func testHandleHandleQRCode_returnsTrue() {
+    // Ecosia: The "Scan QR Code" home screen quick action presents the QR code scanner
+    func testHandleShowQRCode_presentsQRCodeScanner() {
         // Given
         let subject = createSubject()
         let mbvc = MockBrowserViewController(profile: profile, tabManager: tabManager)
@@ -754,9 +753,9 @@ final class BrowserCoordinatorTests: XCTestCase, FeatureFlaggable {
 
         // Then
         XCTAssertTrue(result)
-        XCTAssertEqual(mbvc.qrCodeCount, 1)
+        XCTAssertTrue(subject.childCoordinators.contains { $0 is QRCodeCoordinator })
+        XCTAssertTrue(mockRouter.presentedViewController is QRCodeNavigationController)
     }
-    */
 
     func testHandleClosePrivateTabs_returnsTrue() {
         // Given

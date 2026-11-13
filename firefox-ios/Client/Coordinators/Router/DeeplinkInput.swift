@@ -72,5 +72,7 @@ enum DeeplinkInput {
         case newTab = "NewTab"
         case newPrivateTab = "NewPrivateTab"
         case openLastBookmark = "OpenLastBookmark"
+        // Ecosia: Keep the "Scan QR Code" home screen quick action that Firefox removed in v147
+        case qrCode = "QRCode"
     }
 }

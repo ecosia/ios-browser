@@ -416,6 +416,16 @@ class RouteTests: XCTestCase {
         XCTAssertEqual(route, .action(action: .showIntroOnboarding))
     }
 
+    // Ecosia: The QR code scanner action is only reachable from the home screen quick action, not from a deeplink
+    func testAppAction_showQRCode_isNotADeeplink() {
+        let subject = createSubject()
+        let url = URL(string: "ecosia://deep-link?url=/action/showQRCode")!
+
+        let route = subject.makeRoute(url: url)
+
+        XCTAssertNil(route)
+    }
+
     // MARK: - Helper
 
     func createSubject() -> RouteBuilder {

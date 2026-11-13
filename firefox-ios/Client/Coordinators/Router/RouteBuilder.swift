@@ -233,6 +233,9 @@ final class RouteBuilder: FeatureFlaggable, @unchecked Sendable {
             } else {
                 return nil
             }
+        // Ecosia: Keep the "Scan QR Code" home screen quick action that Firefox removed in v147
+        case .qrCode:
+            return .action(action: .showQRCode)
         }
     }
 

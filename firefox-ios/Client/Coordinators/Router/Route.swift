@@ -121,6 +121,8 @@ enum Route {
     enum AppAction: String, CaseIterable, Equatable {
         case closePrivateTabs = "close-private-tabs"
         case showIntroOnboarding = "show-intro-onboarding"
+        // Ecosia: Keep the "Scan QR Code" home screen quick action that Firefox removed in v147
+        case showQRCode
     }
 
     /// An enumeration representing different sections of the default browser settings.
