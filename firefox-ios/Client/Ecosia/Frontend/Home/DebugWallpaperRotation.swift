@@ -5,7 +5,7 @@
 import UIKit
 
 /// Hidden Debug setting that rotates the NTP between the bundled wallpapers, the "wood" wallpaper
-/// and a plain background every 30 seconds, to check how NTP elements look on each of them.
+/// and a plain background every 20 seconds, to check how NTP elements look on each of them.
 @MainActor
 enum DebugWallpaperRotation {
     /// The only wallpaper in the CDN metadata with dark text, so it is downloaded when rotation starts.
@@ -18,7 +18,7 @@ enum DebugWallpaperRotation {
 
     static let rotation = WallpaperRotation(
         wallpapers: [.ecosiaDefault, .ecosiaForest, wood, .baseWallpaper],
-        interval: 30
+        interval: 20
     )
 
     private struct Images {

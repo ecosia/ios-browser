@@ -104,7 +104,7 @@ final class ShowWelcomeScreen: HiddenSetting {
 
 final class ToggleWallpaperRotation: HiddenSetting {
     override var title: NSAttributedString? {
-        return NSAttributedString(string: "Debug: Toggle - Rotate NTP wallpapers every 30 seconds", attributes: [:])
+        return NSAttributedString(string: "Debug: Toggle - Rotate NTP wallpapers every 20 seconds", attributes: [:])
     }
 
     override var status: NSAttributedString? {
