@@ -170,6 +170,7 @@
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).NewPrivateTab</string>
 		</dict>
+		<!-- Ecosia: Remove the "Scan QR Code" quick action. Firefox 147 (FXIOS-14593) removed its routing and we follow upstream rather than restore it. The in-app QR scanner stays.
 		<dict>
 			<key>UIApplicationShortcutItemIconFile</key>
 			<string>menu-ScanQRCode</string>
@@ -178,6 +179,7 @@
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).QRCode</string>
 		</dict>
+		-->
 	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
