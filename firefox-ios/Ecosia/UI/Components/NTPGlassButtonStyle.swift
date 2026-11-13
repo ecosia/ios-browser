@@ -23,7 +23,7 @@ public struct NTPGlassTheme: EcosiaThemeable {
 /// Glass button style for the NTP header buttons (customize, account, AI Chat).
 ///
 /// On iOS 26 and later it uses the native interactive Liquid Glass, which adapts its
-/// appearance to the content behind it.
+/// appearance to the content behind it, with a `borderGlassStatic` border.
 /// Below iOS 26 it imitates glass with `ultraThinMaterial` blur + the `buttonBgGlassStatic` tint,
 /// which steps to `buttonBgGlassStaticActive` when pressed, with a `borderGlassStatic` border.
 /// Pass any SwiftUI `Shape` to control the glass geometry (e.g. `Circle()`, `Capsule()`).
@@ -41,6 +41,7 @@ public struct NTPGlassButtonStyle: ButtonStyle {
         if #available(iOS 26, *) {
             configuration.label
                 .glassEffect(.regular.interactive(), in: shape)
+                .overlay(shape.stroke(theme.border, lineWidth: 1))
         } else {
             imitationGlass(configuration: configuration)
         }
