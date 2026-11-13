@@ -39,6 +39,14 @@ Writes the intent-diff manifest, the diff of what Ecosia changed in each Firefox
 - **Output:** `<dir>/core_modified_files.txt`, `<dir>/intent-diffs/<path with / as _>.diff` (paths starting with a dot give hidden files), and `<dir>/intent-diff-index.tsv` with the columns `file`, `ecosia_markers`, `added_lines`, `removed_lines`, `status` (`OK`, `NO_BASELINE`, `MISSING`, `NO_ECOSIA_DIFF`), plus `upstream` (`changed`, `unchanged`, `deleted`) with `--target`. Files that upstream changed between the base and the target are the ones the merge can break.
 - **Exit:** 0 when every listed file has an Ecosia diff, 1 when one doesn't (only possible with `--files`).
 
+### `conflict_risk.py`
+
+Ranks every Firefox file Ecosia customized by the risk the merge to `--target` brings: the marked, unmarked and deleted files of `core_modified_files.py`. It runs `git merge-tree` against the base, which writes nothing to the work tree.
+
+- **Inputs:** `--target <ref>` (required), `--base`, `--ref` (as above), `--changed-only` (leave out the files upstream did not touch).
+- **Output:** a TSV with the columns `rank`, `file`, `kind` (`marked`, `unmarked`, `deleted`), `risk`, `upstream_commits`, `upstream_lines`, `ecosia_lines`. `risk` is `conflict` (the merge stops on the file), `silent` (upstream changed it and the merge takes both sides without a conflict) or `none`. Files are ordered by risk, then by upstream churn (lines added plus removed from the base to the target), then by upstream commits. The summary on stderr counts each kind and risk.
+- **Exit:** 0, or 2/64.
+
 ### `symbol_map.py`
 
 Flags Firefox types and methods that Ecosia's own Swift files use and the target no longer declares. A name that disappeared with no conflict near Ecosia's lines is what a 3-way merge misses. Comments and strings are ignored on both sides, so a name only mentioned in a comment is no reference, and a declaration inside an `/* Ecosia: */` block is no declaration.

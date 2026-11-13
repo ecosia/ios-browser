@@ -44,4 +44,4 @@ Remote actions to take when Dario decides to publish M0. `upgrade/firefox` was b
 
 ## Jira
 
-- [ ] Update the M0 tickets (MOB-5026 to MOB-5032): action items and statuses, with links to the diary entries in `firefox-ios/EcosiaUpgrade/diary/157.md`.
+- [ ] Update the M0 tickets (MOB-5026 to MOB-5032): action items and statuses, with links to the diary entries in `firefox-ios/EcosiaUpgrade/diary/159.md`.

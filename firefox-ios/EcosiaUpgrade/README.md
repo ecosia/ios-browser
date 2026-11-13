@@ -22,3 +22,7 @@ It names the Firefox release that this branch's Firefox code is built on. The up
 base=$(cut -f1 firefox-ios/EcosiaUpgrade/UPSTREAM_BASE)
 git merge-tree --write-tree --merge-base="$base" HEAD <new-tag>
 ```
+
+## `inventory/`
+
+One change inventory per upgrade target, named after the target release: [`159.1.md`](inventory/159.1.md). It lists what Firefox changed between the base and the target, release by release, marks each new feature and Nimbus flag **keep**, **out** or **needs product decision**, and ranks Ecosia's customized files by conflict risk. Write it before the merge; the merge works through it.

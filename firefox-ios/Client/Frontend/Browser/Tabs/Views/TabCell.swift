@@ -135,8 +135,14 @@ final class TabCell: UICollectionViewCell,
         titleText.text = newTabTitle ?? tabModel.tabTitle
         accessibilityLabel = getA11yTitleLabel(tabModel: tabModel, newTabTitle: newTabTitle)
 
+        /* Ecosia: Show the globe for pages without a favicon (the homepage), not Firefox's logo
         if let firefoxFavicon = UIImage(named: ImageIdentifiers.firefoxFavicon) {
             favicon.manuallySetImage(firefoxFavicon)
+        }
+         */
+        let identifier = StandardImageIdentifiers.Large.globe
+        if let globeFavicon = UIImage(named: identifier)?.withRenderingMode(.alwaysTemplate) {
+            favicon.manuallySetImage(globeFavicon)
         }
 
         isAccessibilityElement = true

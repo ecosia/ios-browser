@@ -4,12 +4,12 @@ Past upgrades kept a diary, and it repeatedly helped trace issues found in QA ba
 
 ## Rules
 
-- **One diary file per upgrade**, named after the target release: `<target>.md`. The upgrade to Firefox 157 is [`157.md`](157.md).
+- **One diary file per upgrade**, named after the target release: `<target>.md`. The upgrade to Firefox 159.1 is [`159.md`](159.md); it was `157.md` until the target was fixed.
 - **Every ticket ends with an entry.** A ticket is not done until its entry is written.
 - **A milestone is done only when its entry exists.**
 - **Engineers and agents write the same way.** The heading names the author: `author: <engineer name>` or `agent: <model name>`.
 - **Entries are appended, never rewritten.** To correct an earlier entry, add a new entry that says what was wrong and what is right.
-- [`155.1-experiment/`](155.1-experiment/) holds the 155.1 experiment's tickets, copied unchanged. They are the source of the 155.1 checkpoint in `157.md`.
+- [`155.1-experiment/`](155.1-experiment/) holds the 155.1 experiment's tickets, copied unchanged. They are the source of the 155.1 checkpoint in `159.md`.
 
 ## Entry format
 

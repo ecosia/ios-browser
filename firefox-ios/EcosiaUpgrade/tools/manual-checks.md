@@ -1,6 +1,6 @@
 # Upgrade checks
 
-Tickets 12 (MOB-5038) and 13 (MOB-5039) ran these checks by hand. Ticket 14 (MOB-5040) turned them into the scripts in this folder: inputs, outputs and exit codes are in the [README](README.md). This page says when to run each script and how to triage what it finds. The results of the hand-run checks are in the diary ([157.md](../diary/157.md), the 2026-11-04 entries for 12 and 13).
+Tickets 12 (MOB-5038) and 13 (MOB-5039) ran these checks by hand. Ticket 14 (MOB-5040) turned them into the scripts in this folder: inputs, outputs and exit codes are in the [README](README.md). This page says when to run each script and how to triage what it finds. The results of the hand-run checks are in the diary ([159.md](../diary/159.md), the 2026-11-04 entries for 12 and 13).
 
 Run from the repository root. `<target>` is the Firefox release tag being merged, for example `firefox-v157.0`.
 
@@ -11,11 +11,13 @@ tools=firefox-ios/EcosiaUpgrade/tools
 out=$(mktemp -d)
 $tools/build_intent_diffs.sh --out "$out/manifest" --target <target>
 $tools/symbol_map.py --target <target> --extended --out "$out/symbols.md"
+$tools/conflict_risk.py --target <target> --changed-only > "$out/conflict-risk.tsv"
 $tools/core_modified_files.py --list unmarked > "$out/unmarked.txt"
 git merge-tree --write-tree --name-only --merge-base="refs/tags/$(cut -f1 firefox-ios/EcosiaUpgrade/UPSTREAM_BASE)" HEAD <target>
 ```
 
 - `intent-diff-index.tsv`: rows with `upstream` = `changed` are the Ecosia changes the merge can break. Keep the manifest folder until the merge is done; it is the reference for every conflict.
+- `conflict-risk.tsv`: the order to work through the customized files. `silent` rows merge without a conflict and still need their intent diff checked: in 159.1 the Google Lens YAML took upstream's `enabled: true` on `beta` this way.
 - `unmarked.txt`: Firefox files that differ from the base without an `Ecosia:` comment. Their changes still have to survive, but no marker shows where. Add a marker, or record why the change isn't Ecosia's.
 - The `merge-tree` output lists the files that will conflict.
 
