@@ -5,20 +5,19 @@
 import UIKit
 import Common
 
-/// Hidden Debug setting that rotates the NTP between the bundled default wallpaper, the "forest",
-/// "leaf" and "wood" wallpapers from the CDN and a plain background every 20 seconds, to check how
-/// NTP elements look on each of them.
+/// Hidden Debug setting that rotates the NTP between the bundled default wallpaper (the CDN's
+/// "ecosia-forest"), the "leaf" and "wood" wallpapers from the CDN and a plain background every
+/// 20 seconds, to check how NTP elements look on each of them.
 @MainActor
 enum DebugWallpaperRotation {
     /// Colours match the CDN metadata (`metadata/v1/wallpapers.json`).
-    private static let forest = cdnWallpaper(id: "forest", textColor: .white, logoTextColor: UIColor(rgb: 0xE8F5E9))
     private static let leaf = cdnWallpaper(id: "leaf", textColor: .white, logoTextColor: UIColor(rgb: 0xE8F5E9))
     /// The only wallpaper in the CDN metadata with dark text.
     private static let wood = cdnWallpaper(id: "wood", textColor: .black, logoTextColor: .black)
-    private static let cdnWallpapers = [forest, leaf, wood]
+    private static let cdnWallpapers = [leaf, wood]
 
     static let rotation = WallpaperRotation(
-        wallpapers: [.ecosiaDefault, forest, leaf, wood, .baseWallpaper],
+        wallpapers: [.ecosiaDefault, leaf, wood, .baseWallpaper],
         interval: 20
     )
 
