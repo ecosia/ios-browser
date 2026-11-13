@@ -182,6 +182,14 @@ struct NTPHeaderView: View {
     @SwiftUI.Environment(\.themeManager) var themeManager: any ThemeManager
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
 
+    private static var hasFadedInSinceLaunch = false
+    @State private var isFadedIn = NTPHeaderView.hasFadedInSinceLaunch
+
+    private enum LaunchFadeUX {
+        static let delay: TimeInterval = 0.2
+        static let duration: TimeInterval = 0.3
+    }
+
     var body: some View {
         HStack(spacing: .ecosia.space._1s) {
             EcosiaCustomizeButton(
@@ -237,13 +245,24 @@ struct NTPHeaderView: View {
             }
             .allowsHitTesting(false)
         }
+        // Clear Liquid Glass visibly settles on its first render after launch, so fade in over it.
+        .opacity(isFadedIn ? 1 : 0)
         .padding(.horizontal, .ecosia.space._m)
         .padding(.vertical, .ecosia.space._m)
         .onAppear {
             viewModel.refreshSeedState()
+            fadeInOnFirstAppearanceSinceLaunch()
         }
         .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
             viewModel.refreshSeedState()
+        }
+    }
+
+    private func fadeInOnFirstAppearanceSinceLaunch() {
+        guard !isFadedIn else { return }
+        Self.hasFadedInSinceLaunch = true
+        withAnimation(.easeIn(duration: LaunchFadeUX.duration).delay(LaunchFadeUX.delay)) {
+            isFadedIn = true
         }
     }
 
