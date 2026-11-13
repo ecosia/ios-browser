@@ -83,6 +83,10 @@ public protocol EcosiaSemanticColors {
     var buttonBgGlassStaticActive: UIColor { get }
     /// White translucent border around glass tiles.
     var borderGlassStatic: UIColor { get }
+    /// Background of the "+1" pill shown when the seed balance increases.
+    var backgroundBalanceIncrement: UIColor { get }
+    /// Text on the "+1" pill shown when the seed balance increases.
+    var textBalanceIncrement: UIColor { get }
 }
 
 public protocol EcosiaThemeColourPalette: ThemeColourPalette {
@@ -140,4 +144,6 @@ class FakeEcosiaSemanticColors: EcosiaSemanticColors {
     var buttonBgGlassStatic: UIColor = .systemGray
     var buttonBgGlassStaticActive: UIColor = .systemGray
     var borderGlassStatic: UIColor = .systemGray
+    var backgroundBalanceIncrement: UIColor = .systemGray
+    var textBalanceIncrement: UIColor = .systemGray
 }
