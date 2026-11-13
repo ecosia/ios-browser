@@ -18,15 +18,6 @@
       "localesThemes": "all locales, light only"
     },
     {
-      "area": "NTP header logo",
-      "sources": [
-        "firefox-ios/Client/Ecosia/UI/NTP/Header/**",
-        "firefox-ios/Ecosia/UI/NTP/Header/**"
-      ],
-      "snapshotTest": "HomepageComponentTests.testNTPHeaderLogo",
-      "localesThemes": "en, light + dark"
-    },
-    {
       "area": "Customize button (on wallpaper)",
       "sources": [
         "firefox-ios/Client/Ecosia/UI/NTP/Header/**",

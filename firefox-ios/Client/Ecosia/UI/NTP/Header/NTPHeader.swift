@@ -14,7 +14,7 @@ protocol NTPHeaderDelegate: AnyObject {
     func headerOpenCustomizeHomepage()
 }
 
-/// NTP header cell containing the Ecosia logo and navigation actions
+/// NTP header cell containing the navigation actions
 final class NTPHeader: UICollectionViewCell, ReusableCell {
 
     // MARK: - Properties
@@ -167,23 +167,6 @@ struct EcosiaCustomizeButton: View {
     }
 }
 
-// MARK: - Ecosia Logo (centered in header)
-
-struct NTPHeaderLogoView: View {
-    private let logoHeight: CGFloat = 20
-
-    var body: some View {
-        Image("ecosiaLogoLaunch")
-            .renderingMode(.template)
-            .resizable()
-            .scaledToFit()
-            .foregroundColor(.white)
-            .frame(height: logoHeight)
-            .accessibilityLabel(String.localized(.ecosiaLogoAccessibilityLabel))
-            .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.NTP.headerLogo)
-    }
-}
-
 // MARK: - SwiftUI Multi-Purpose Header View
 struct NTPHeaderView: View {
     @ObservedObject var viewModel: NTPHeaderViewModel
@@ -192,57 +175,52 @@ struct NTPHeaderView: View {
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
 
     var body: some View {
-        ZStack {
-            // Wordmark centered regardless of button widths
-            NTPHeaderLogoView()
-
-            HStack(spacing: .ecosia.space._1s) {
-                EcosiaCustomizeButton(
-                    windowUUID: windowUUID,
-                    appearance: viewModel.glassAppearance,
-                    onTap: handleCustomizeTap
-                )
-                Spacer()
-                if #available(iOS 16, *) {
-                    ZStack(alignment: .topLeading) {
-                        EcosiaAccountNavButton(
-                            seedCount: viewModel.seedCount,
-                            avatarURL: viewModel.userAvatarURL,
-                            enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
-                            showSeedSparkles: viewModel.showSeedSparkles,
-                            glassAppearance: viewModel.glassAppearance,
+        HStack(spacing: .ecosia.space._1s) {
+            EcosiaCustomizeButton(
+                windowUUID: windowUUID,
+                appearance: viewModel.glassAppearance,
+                onTap: handleCustomizeTap
+            )
+            Spacer()
+            if #available(iOS 16, *) {
+                ZStack(alignment: .topLeading) {
+                    EcosiaAccountNavButton(
+                        seedCount: viewModel.seedCount,
+                        avatarURL: viewModel.userAvatarURL,
+                        enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
+                        showSeedSparkles: viewModel.showSeedSparkles,
+                        glassAppearance: viewModel.glassAppearance,
+                        windowUUID: windowUUID,
+                        onTap: handleTap
+                    )
+                    .sheet(isPresented: $viewModel.showAccountImpactView) {
+                        EcosiaAccountImpactView(
+                            viewModel: EcosiaAccountImpactViewModel(
+                                onLogin: {
+                                    viewModel.performLogin()
+                                },
+                                onDismiss: {
+                                    viewModel.dismissAccountImpact()
+                                }
+                            ),
                             windowUUID: windowUUID,
-                            onTap: handleTap
+                            webViewUserAgent: EcosiaInAppWebViewUserAgent.mobileUserAgent()
                         )
-                        .sheet(isPresented: $viewModel.showAccountImpactView) {
-                            EcosiaAccountImpactView(
-                                viewModel: EcosiaAccountImpactViewModel(
-                                    onLogin: {
-                                        viewModel.performLogin()
-                                    },
-                                    onDismiss: {
-                                        viewModel.dismissAccountImpact()
-                                    }
-                                ),
-                                windowUUID: windowUUID,
-                                webViewUserAgent: EcosiaInAppWebViewUserAgent.mobileUserAgent()
-                            )
-                            .padding(.horizontal, .ecosia.space._m)
-                            .dynamicHeightPresentationDetent()
-                            .presentationDragIndicator(.visible)
-                        }
-                        if let increment = viewModel.balanceIncrement {
-                            BalanceIncrementAnimationView(
-                                increment: increment,
-                                windowUUID: windowUUID
-                            )
-                            .offset(x: 18, y: -8)
-                        }
+                        .padding(.horizontal, .ecosia.space._m)
+                        .dynamicHeightPresentationDetent()
+                        .presentationDragIndicator(.visible)
+                    }
+                    if let increment = viewModel.balanceIncrement {
+                        BalanceIncrementAnimationView(
+                            increment: increment,
+                            windowUUID: windowUUID
+                        )
+                        .offset(x: 18, y: -8)
                     }
                 }
             }
-            .modifier(NTPHeaderGlassContainerModifier())
         }
+        .modifier(NTPHeaderGlassContainerModifier())
         .padding(.horizontal, .ecosia.space._m)
         .padding(.vertical, .ecosia.space._m)
         .onAppear {
