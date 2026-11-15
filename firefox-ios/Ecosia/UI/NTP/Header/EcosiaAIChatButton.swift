@@ -30,7 +30,7 @@ public struct EcosiaAIChatButton: View {
                 .padding(.ecosia.space._2s)
                 .frame(width: .ecosia.space._3l, height: .ecosia.space._3l)
         }
-        .buttonStyle(NTPGlassButtonStyle(RoundedRectangle(cornerRadius: .ecosia.borderRadius._1l)))
+        .buttonStyle(NTPGlassButtonStyle(RoundedRectangle(cornerRadius: .ecosia.borderRadius._1l), theme: theme.glass))
         .accessibilityLabel(String.localized(.aiChat))
         .accessibilityHint(String.localized(.aiChatAccessibilityHint))
         .ecosiaThemed(windowUUID, $theme)
