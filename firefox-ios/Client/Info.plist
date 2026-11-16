@@ -210,22 +210,16 @@
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).NewPrivateTab</string>
 		</dict>
+		<!-- Ecosia: No third quick action. Firefox's App Icon picker is left out (its icon is the Firefox logo), and Scan QR Code was removed because Firefox 147 (FXIOS-14593) removed its routing. Upstream's entry:
 		<dict>
-			<!-- Ecosia: Ecosia's third home-screen quick action is Scan QR Code, not Firefox's
-			     App Icon picker (whose icon is the Firefox logo). Upstream's entry:
+			<key>UIApplicationShortcutItemIconFile</key>
 			<string>logoFirefoxLarge</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>App Icon</string>
 			<key>UIApplicationShortcutItemType</key>
 			<string>$(PRODUCT_BUNDLE_IDENTIFIER).AppIcon</string>
-			-->
-			<key>UIApplicationShortcutItemIconFile</key>
-			<string>menu-ScanQRCode</string>
-			<key>UIApplicationShortcutItemTitle</key>
-			<string>Scan QR Code</string>
-			<key>UIApplicationShortcutItemType</key>
-			<string>$(PRODUCT_BUNDLE_IDENTIFIER).QRCode</string>
 		</dict>
+		-->
 	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>

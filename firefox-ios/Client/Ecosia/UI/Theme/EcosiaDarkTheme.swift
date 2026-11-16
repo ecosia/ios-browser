@@ -71,4 +71,6 @@ private struct EcosiaDarkSemanticColors: EcosiaSemanticColors {
     var buttonBgGlassStatic: UIColor = EcosiaColor.Gray90.withAlphaComponent(0.32)
     var buttonBgGlassStaticActive: UIColor = EcosiaColor.Gray90.withAlphaComponent(0.64)
     var borderGlassStatic: UIColor = EcosiaColor.White.withAlphaComponent(0x3D / 255.0)
+    var backgroundBalanceIncrement: UIColor = EcosiaColor.Peach100
+    var textBalanceIncrement: UIColor = EcosiaColor.Peach700
 }

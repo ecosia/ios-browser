@@ -40,14 +40,6 @@ public struct EcosiaAccountNavButton: View {
         self.onTap = onTap
     }
 
-    /// On glass (iOS 26 and later) the seed count and lock match the glass appearance.
-    private var seedContentColor: Color? {
-        if #available(iOS 26, *) {
-            return theme.glassContent.contentColor(for: glassAppearance)
-        }
-        return nil
-    }
-
     private var accessibilityLabel: String {
         let seedCountLabel = String(format: .localized(.seedCountAccessibilityLabel), seedCount)
         return String(format: .localized(.accountButtonAccessibilityLabel), seedCountLabel)
@@ -64,7 +56,7 @@ public struct EcosiaAccountNavButton: View {
                         enableAnimation: enableAnimation,
                         showSparkles: showSeedSparkles,
                         showLock: showSeedCoundLock,
-                        contentColor: seedContentColor,
+                        contentColor: theme.glassContent.contentColor(for: glassAppearance),
                         windowUUID: windowUUID
                     )
                 }
@@ -81,7 +73,7 @@ public struct EcosiaAccountNavButton: View {
             .frame(minHeight: .ecosia.space._3l, maxHeight: .ecosia.space._3l)
             .animation(.easeInOut(duration: 0.3), value: authStateProvider.hasRegisterVisitError)
         }
-        .modifier(AccountNavButtonBackground(theme: theme))
+        .modifier(AccountNavButtonBackground(appearance: glassAppearance, theme: theme))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityLabel)
         .accessibilityHint(String.localized(.accountButtonAccessibilityHint))
@@ -94,46 +86,32 @@ public struct EcosiaAccountNavButton: View {
 
 // MARK: - Button Style
 
-/// Uses the NTP glass on iOS 26 and later, and a solid background below.
+/// Uses glass on a wallpaper and a solid button on a plain background.
 @available(iOS 16.0, *)
 private struct AccountNavButtonBackground: ViewModifier {
+    let appearance: NTPGlassAppearance
     let theme: EcosiaAccountNavButtonTheme
 
     func body(content: Content) -> some View {
-        if #available(iOS 26, *) {
-            content.buttonStyle(NTPGlassButtonStyle(Capsule()))
-        } else {
-            content.buttonStyle(EcosiaAccountNavButtonStyle(
-                backgroundColor: theme.backgroundColor,
-                backgroundColorActive: theme.backgroundColorActive
-            ))
+        switch appearance {
+        case .wallpaper:
+            content.buttonStyle(NTPGlassButtonStyle(Capsule(), theme: theme.glass))
+        case .themed:
+            content.buttonStyle(NTPSolidButtonStyle(Capsule(), theme: theme.solid))
         }
-    }
-}
-
-@available(iOS 16.0, *)
-private struct EcosiaAccountNavButtonStyle: ButtonStyle {
-    let backgroundColor: Color
-    let backgroundColorActive: Color
-    private let shape = RoundedRectangle(cornerRadius: CGFloat.ecosia.borderRadius._1l)
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .background(configuration.isPressed ? backgroundColorActive : backgroundColor)
-            .clipShape(shape)
     }
 }
 
 // MARK: - Theme
 
 struct EcosiaAccountNavButtonTheme: EcosiaThemeable {
-    var backgroundColor = Color.white
-    var backgroundColorActive = Color(UIColor.systemGray4)
+    var glass = NTPGlassTheme()
+    var solid = NTPSolidButtonTheme()
     var glassContent = NTPGlassContentTheme()
 
     mutating func applyTheme(theme: Theme) {
-        backgroundColor = Color(theme.colors.ecosia.buttonBackgroundSecondary)
-        backgroundColorActive = Color(theme.colors.ecosia.buttonBackgroundSecondaryActive)
+        glass.applyTheme(theme: theme)
+        solid.applyTheme(theme: theme)
         glassContent.applyTheme(theme: theme)
     }
 }

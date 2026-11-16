@@ -6,11 +6,11 @@ import SwiftUI
 import UIKit
 import Common
 
-/// How the NTP glass buttons look, based on the background behind them.
+/// How the NTP header buttons look, based on the background behind them.
 public enum NTPGlassAppearance: Equatable {
     /// On a wallpaper: always dark glass with static light content, in both light and dark mode.
     case wallpaper
-    /// On a solid background: the glass and its content follow the theme.
+    /// On a solid background: solid secondary buttons whose content follows the theme.
     case themed
 
     public init(hasWallpaper: Bool) {
@@ -31,7 +31,7 @@ public enum NTPGlassAppearance: Equatable {
     public func contentColor(for theme: Theme) -> UIColor {
         switch self {
         case .wallpaper: return theme.colors.ecosia.textStaticLight
-        case .themed: return theme.colors.ecosia.textPrimary
+        case .themed: return theme.colors.ecosia.buttonContentSecondary
         }
     }
 }
