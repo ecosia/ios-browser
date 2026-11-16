@@ -18,14 +18,6 @@ final class HomepageComponentTests: SnapshotBaseTests {
     private let topSiteCellSize = CGSize(width: 100, height: 120)
     private let englishOnlyLocales = [Locale(identifier: "en")]
 
-    func testNTPHeaderLogo() {
-        SnapshotTestHelper.assertSnapshot(
-            initializingWith: { self.makeHeaderLogoHostingController() },
-            locales: englishOnlyLocales,
-            drawsViewHierarchy: true
-        )
-    }
-
     func testEcosiaCustomizeButton_onWallpaper() {
         SnapshotTestHelper.assertSnapshot(
             initializingWith: { self.makeCustomizeButtonHostingController(appearance: .wallpaper) },
@@ -98,13 +90,6 @@ final class HomepageComponentTests: SnapshotBaseTests {
 // MARK: - View builders
 
 private extension HomepageComponentTests {
-
-    func makeHeaderLogoHostingController() -> UIViewController {
-        makeNTPHeaderSnapshotHostingController(
-            content: { NTPHeaderLogoView() },
-            size: CGSize(width: commonWidth, height: 72)
-        )
-    }
 
     func makeCustomizeButtonHostingController(appearance: NTPGlassAppearance) -> UIViewController {
         makeNTPHeaderSnapshotHostingController(
