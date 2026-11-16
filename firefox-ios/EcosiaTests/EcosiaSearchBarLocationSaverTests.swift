@@ -16,8 +16,8 @@ class EcosiaSearchBarLocationSaverTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        profile = MockProfile()
-        containerProfile = MockProfile()
+        profile = MockProfile.unmanaged()
+        containerProfile = MockProfile.unmanaged()
         await DependencyHelperMock().bootstrapDependencies(injectedProfile: containerProfile)
         User.shared.firstTime = true
         UserDefaults.standard.removeObject(forKey: EcosiaSearchBarLocationSaver.didMigrateToBottomToolbarKey)

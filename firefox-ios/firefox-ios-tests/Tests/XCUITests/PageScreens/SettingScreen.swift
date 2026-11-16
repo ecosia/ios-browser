@@ -4,6 +4,12 @@
 
 import XCTest
 
+/// The button the user can place in the middle of the navigation toolbar, from Settings → Toolbar.
+enum NavigationToolbarMiddleButton {
+    case home
+    case newTab
+}
+
 @MainActor
 final class SettingScreen {
     private let app: XCUIApplication
@@ -23,6 +29,8 @@ final class SettingScreen {
     private var translationCell: XCUIElement { sel.TRANSLATION_CELL_TITLE.element(in: app) }
     private var toolbarCell: XCUIElement { sel.TOOLBAR_CELL.element(in: app) }
     private var bottomToolbarButton: XCUIElement { sel.BOTTOM_TOOLBAR_BUTTON.element(in: app) }
+    private var topToolbarButton: XCUIElement { sel.TOP_TOOLBAR_BUTTON.element(in: app) }
+    private var summarizeCell: XCUIElement { sel.SUMMARIZE_CELL.element(in: app) }
 
     func closeSettingsWithDoneButton() {
         let doneButton = sel.DONE_BUTTON.element(in: app)
@@ -82,6 +90,16 @@ final class SettingScreen {
         let newTab = sel.NEW_TAB_CELL.element(in: app)
         BaseTestCase().mozWaitForElementToExist(newTab)
         newTab.swipeUp()
+    }
+
+    func waitForSettingsRoot(timeout: TimeInterval = TIMEOUT) {
+        BaseTestCase().mozWaitForElementToExist(sel.SETTINGS_TITLE.element(in: app), timeout: timeout)
+    }
+
+    /// Waits on the theme buttons rather than the "Appearance" title: Appearance opened through
+    /// a deeplink has no navigation title.
+    func waitForThemeOptions(timeout: TimeInterval = TIMEOUT) {
+        BaseTestCase().mozWaitForElementToExist(sel.DARK_THEME_BUTTON.element(in: app), timeout: timeout)
     }
 
     func waitForBrowsingLinksSection() {
@@ -198,6 +216,23 @@ final class SettingScreen {
         bottomToolbarButton.waitAndTap()
     }
 
+    func selectTopToolbar() {
+        BaseTestCase().mozWaitForElementToExist(topToolbarButton)
+        topToolbarButton.waitAndTap()
+    }
+
+    /// Picks which button sits in the middle of the navigation toolbar. The Home option is what makes
+    /// the custom homepage URL reachable, as the default New Tab button ignores it.
+    func selectNavigationToolbarMiddleButton(_ button: NavigationToolbarMiddleButton) {
+        let option = switch button {
+        case .home: sel.NAVIGATION_TOOLBAR_HOME_BUTTON.element(in: app)
+        case .newTab: sel.NAVIGATION_TOOLBAR_NEW_TAB_BUTTON.element(in: app)
+        }
+        BaseTestCase().mozWaitForElementToExist(option)
+        option.waitAndTap()
+        BaseTestCase().mozWaitForValueContains(option, value: "1")
+    }
+
     func navigateToDisplaySettings() {
         let cell = sel.DISPLAY_THEME_CELL.element(in: app)
         BaseTestCase().mozWaitForElementToExist(cell)
@@ -299,10 +334,14 @@ final class SettingScreen {
         cell.waitAndTap()
     }
 
+    func assertSummarizeSettingsIsInGeneralSection() {
+        BaseTestCase().mozWaitForElementToExist(sel.SETTINGS_TABLE.element(in: app))
+        XCTAssertTrue(summarizeCell.isBelow(element: sel.GENERAL_SECTION_HEADER.element(in: app)))
+    }
+
     func openSummarizeSettings() {
-        let cell = app.tables.cells[AccessibilityIdentifiers.Settings.Summarize.title]
-        BaseTestCase().scrollToElement(cell)
-        cell.waitAndTap()
+        BaseTestCase().scrollToElement(summarizeCell)
+        summarizeCell.waitAndTap()
     }
 
     func assertTranslationSettingsDoesNotExist() {

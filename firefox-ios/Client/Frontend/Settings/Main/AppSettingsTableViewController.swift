@@ -292,10 +292,13 @@ class AppSettingsTableViewController: SettingsTableViewController,
         }
         sendTechnicalDataSetting = sendTechnicalDataSettings
 
+        // Technical data is the only setting that drives the Nimbus telemetry setting
+        Experiments.setTelemetrySetting(profile.prefs.boolForKey(AppConstants.prefSendUsageData) ?? true)
+
         let sendDailyUsagePingSettings = SendDataSetting(
             prefs: profile.prefs,
             prefKey: AppConstants.prefSendDailyUsagePing,
-            defaultValue: true,
+            defaultValue: AppConstants.defaultSendDailyUsagePing,
             titleText: .SendDailyUsagePingSettingTitle,
             subtitleText: String(format: .SendDailyUsagePingSettingMessage, MozillaName.shortName.rawValue),
             learnMoreText: .SendDailyUsagePingSettingLinkV2,
@@ -379,7 +382,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
             string: String.FirefoxHomepage.HomeTabBanner.EvergreenMessage.HomeTabBannerDescription)
 
         return [SettingSection(footerTitle: footerTitle,
-                               children: [DefaultBrowserSetting(theme: themeManager.getCurrentTheme(for: windowUUID))])]
+                               children: [DefaultBrowserSetting(theme: currentTheme())])]
         */
         let placeholder = EcosiaDefaultBrowserNudgeCardPlaceholder()
         return [SettingSection(children: [placeholder])]
@@ -414,7 +417,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
             SearchSetting(
                 settingsDelegate: parentCoordinator,
                 searchEnginesManager: searchEnginesManager,
-                theme: themeManager.getCurrentTheme(for: windowUUID)
+                theme: currentTheme()
             ),
             NewTabPageSetting(settings: self, settingsDelegate: parentCoordinator),
             HomeSetting(settings: self, settingsDelegate: parentCoordinator),
@@ -432,7 +435,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
         if UIApplication.shared.supportsAlternateIcons {
             generalSettings.append(
                 AppIconSetting(
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    theme: currentTheme(),
                     settingsDelegate: parentCoordinator
                 )
             )
@@ -525,7 +528,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
             privacySettings.append(
                 BoolSetting(
                     prefs: profile.prefs,
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    theme: currentTheme(),
                     prefKey: PrefsKeys.Settings.closePrivateTabs,
                     defaultValue: true,
                     titleText: .AppSettingsClosePrivateTabsTitle,
@@ -542,12 +545,12 @@ class AppSettingsTableViewController: SettingsTableViewController,
         privacySettings.append(ContentBlockerSetting(settings: self, settingsDelegate: parentCoordinator))
 
         if let profile {
-            privacySettings.append(NotificationsSetting(theme: themeManager.getCurrentTheme(for: windowUUID),
+            privacySettings.append(NotificationsSetting(theme: currentTheme(),
                                                         profile: profile,
                                                         settingsDelegate: parentCoordinator))
         }
 
-        privacySettings.append(PrivacyPolicySetting(theme: themeManager.getCurrentTheme(for: windowUUID),
+        privacySettings.append(PrivacyPolicySetting(theme: currentTheme(),
                                                     settingsDelegate: parentCoordinator))
 
         return [SettingSection(title: NSAttributedString(string: .AppSettingsPrivacyTitle),
@@ -597,7 +600,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
                 SentFromFirefoxSetting(
                     prefs: profile.prefs,
                     delegate: settingsDelegate,
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    theme: currentTheme(),
                     settingsDelegate: parentCoordinator
                 )
             )
@@ -621,7 +624,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
 
         supportSettings.append(contentsOf: [
             OpenSupportPageSetting(delegate: settingsDelegate,
-                                   theme: themeManager.getCurrentTheme(for: windowUUID),
+                                   theme: currentTheme(),
                                    settingsDelegate: parentCoordinator),
         ])
 
@@ -678,7 +681,6 @@ class AppSettingsTableViewController: SettingsTableViewController,
             ChangeToChinaSetting(settings: self),
             AppReviewPromptSetting(settings: self, settingsDelegate: self),
             ResetContextualHints(settings: self),
-            ResetWallpaperOnboardingPage(settings: self, settingsDelegate: self),
             ResetTermsOfServiceAcceptancePage(settings: self, settingsDelegate: self),
             ResetSearchEnginePrefsSetting(settings: self),
             SentryIDSetting(settings: self, settingsDelegate: self),
@@ -699,10 +701,28 @@ class AppSettingsTableViewController: SettingsTableViewController,
         #if MOZ_CHANNEL_beta || MOZ_CHANNEL_developer
         hiddenDebugOptions.append(ResetTipsSetting(settings: self))
         hiddenDebugOptions.append(ChangeMLPAEndpointSetting(settings: self))
+        hiddenDebugOptions.append(QuickAnswersModelSetting(settings: self))
+        hiddenDebugOptions.append(ChangeVPNEndpointSetting(settings: self))
+        hiddenDebugOptions.append(TriggerVPNAttestationSetting(settings: self))
+        hiddenDebugOptions.append(RefreshVPNSessionSetting(settings: self))
+        hiddenDebugOptions.append(FetchVPNProxyTokenSetting(settings: self))
+        hiddenDebugOptions.append(ClearVPNSessionSetting(settings: self))
         hiddenDebugOptions.append(DeleteAppAttestKeySetting(settings: self))
         hiddenDebugOptions.append(PrivacyNoticeUpdate(settings: self))
+        if featureFlagsProvider.isEnabled(.multiDayOnboarding) {
+            hiddenDebugOptions.append(AdvanceOnboardingDripSetting(settings: self, settingsDelegate: self))
+            hiddenDebugOptions.append(ResetOnboardingDripSetting(settings: self, settingsDelegate: self))
+            for day in OnboardingCardSchedule.cardsByDay.keys.sorted() {
+                hiddenDebugOptions.append(
+                    JumpToOnboardingDripDaySetting(settings: self, settingsDelegate: self, day: day)
+                )
+            }
+        }
         hiddenDebugOptions.append(FeatureFlagsSettings(settings: self, settingsDelegate: self))
+        hiddenDebugOptions.append(MockBreachAlertsSetting(settings: self, settingsDelegate: self))
         #endif
+
+        hiddenDebugOptions.append(SafeAreaGuidesSetting(settings: self))
 
         return [SettingSection(title: NSAttributedString(string: "Debug"), children: hiddenDebugOptions)]
     }
@@ -792,7 +812,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
     override func applyTheme() {
         super.applyTheme()
         if #available(iOS 26.0, *) {
-            let theme = themeManager.getCurrentTheme(for: windowUUID)
+            let theme = currentTheme()
             navigationItem.rightBarButtonItem?.tintColor = theme.isNova
                 ? theme.colors.actionPrimary
                 : theme.colors.textPrimary

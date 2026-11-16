@@ -19,6 +19,11 @@ final class AppIconSelectionTelemetryTests: XCTestCase {
         mockGleanWrapper = MockGleanWrapper()
     }
 
+    override func tearDown() {
+        mockGleanWrapper = nil
+        super.tearDown()
+    }
+
     /* Ecosia: Disable test, we have our own icons
     func testSelectedIcon_firesSelected() throws {
         // The event and event extras type under test

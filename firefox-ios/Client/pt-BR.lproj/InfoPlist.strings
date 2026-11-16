@@ -23,7 +23,7 @@
 "NSPhotoLibraryAddUsageDescription" = "Permite salvar fotos.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "O Ecosia usa reconhecimento de voz para converter sua fala em texto ao usar pesquisa por voz.";
+"NSSpeechRecognitionUsageDescription" = "Isto permite que o Ecosia transcreva seu áudio.";
 
 /* (No Comment) */
 "Scan QR Code" = "Digitalizar código QR";

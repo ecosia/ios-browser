@@ -171,7 +171,7 @@ final class FirefoxUpgradeCharacterizationTests: XCTestCase {
     }
 
     private func makeTab(windowUUID: WindowUUID = .XCTestDefaultUUID, isPrivate: Bool = false) -> Client.Tab {
-        Client.Tab(profile: MockProfile(), isPrivate: isPrivate, windowUUID: windowUUID)
+        Client.Tab(profile: MockProfile.unmanaged(), isPrivate: isPrivate, windowUUID: windowUUID)
     }
 
     private func setCustomSearchProvider(enabled: Bool) {

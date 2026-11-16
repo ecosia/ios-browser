@@ -16,6 +16,7 @@ final class LocationView: UIView,
         static let gradientViewWidth: CGFloat = 40
         static let safeOffset: CGFloat = 40
         static let lockIconImageViewSize = CGSize(width: 40, height: 24)
+        static let searchIconImageViewSize = CGSize(width: 20, height: 16)
         static let shieldImageViewSize = CGSize(width: 24, height: 24)
         static let iconContainerNoLockLeadingSpace: CGFloat = 16
         static let iconAnimationTime: CGFloat = 0.1
@@ -32,8 +33,8 @@ final class LocationView: UIView,
 
     private var urlAbsolutePath: String?
     private var searchTerm: String?
+    private var shouldDisplaySearchTerm = false
     private var onTapLockIcon: (@MainActor (UIButton) -> Void)?
-    private var onLongPress: (@MainActor () -> Void)?
     private weak var delegate: LocationViewDelegate?
     private var theme: any Theme = LightTheme()
     private var isUnifiedSearchEnabled = false
@@ -54,6 +55,9 @@ final class LocationView: UIView,
         urlTextField.plainUserText
     }
 
+    private var isDisplayingSearchTerm: Bool {
+        !isEditing && shouldDisplaySearchTerm && searchTerm != nil
+    }
     private var hasHomeIndicator: Bool {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let window = windowScene.windows.first else { return false }
@@ -61,7 +65,6 @@ final class LocationView: UIView,
     }
 
     private var tapGestureRecognizer: UITapGestureRecognizer?
-    private var longPressGestureRecognizer: UILongPressGestureRecognizer?
 
     /// Determines if the URL text field's content is wider than the visible area, accounting for a safe offset.
     /// An additional offset (default is 0) used when reader mode is available,
@@ -70,9 +73,9 @@ final class LocationView: UIView,
         guard let text = urlTextField.text, let font = urlTextField.font, !isAddressBarMinimized else {
             return false
         }
-        let (_, normalizedHost) = URL.getSubdomainAndHost(from: text)
+        let displayedText = isDisplayingSearchTerm ? text : URL.getSubdomainAndHost(from: text).normalizedHost
         let locationViewVisibleWidth = frame.width - iconContainerStackView.frame.width - UX.horizontalSpace - offset
-        let urlTextFieldWidth = normalizedHost.size(withAttributes: [.font: font]).width
+        let urlTextFieldWidth = displayedText.size(withAttributes: [.font: font]).width
 
         return urlTextFieldWidth >= locationViewVisibleWidth
     }
@@ -96,6 +99,7 @@ final class LocationView: UIView,
     /* Ecosia: Pins the empty icon stack to zero width during editing so auto layout doesn't
        resolve the ambiguous (no-content, no explicit width) stack to an arbitrary large value. */
     private var iconContainerStackViewWidthConstraint: NSLayoutConstraint?
+    private var searchIconWidthAnchor: NSLayoutConstraint?
 
     // MARK: - Search Engine / Lock Image
     private(set) lazy var iconContainerStackView: UIStackView = .build { view in
@@ -112,13 +116,22 @@ final class LocationView: UIView,
         button.addTarget(self, action: #selector(self.didTapLockIcon), for: .touchUpInside)
     }
 
+    /// Shown in place of the shield icon when the location view displays a search term instead of a URL.
+    private(set) lazy var searchIconImageView: UIImageView = .build { imageView in
+        imageView.image = UIImage(named: StandardImageIdentifiers.Large.search)?.withRenderingMode(.alwaysTemplate)
+        imageView.contentMode = .scaleAspectFit
+        imageView.isAccessibilityElement = false
+        imageView.heightAnchor.constraint(equalToConstant: UX.searchIconImageViewSize.height).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: UX.searchIconImageViewSize.width).isActive = true
+    }
+
     private lazy var glassEffect: UIVisualEffect? = if #available(iOS 26.0, *) { UIGlassEffect() } else { nil }
     private lazy var effectView: UIVisualEffectView = .build {
         $0.layer.cornerRadius = UX.effectViewCornerRadius
     }
 
     // MARK: - URL Text Field
-    private lazy var urlTextField: LocationTextField = .build { [self] urlTextField in
+    private(set) lazy var urlTextField: LocationTextField = .build { [self] urlTextField in
         urlTextField.backgroundColor = .clear
         urlTextField.font = FXFontStyles.Regular.body.scaledFont()
         urlTextField.adjustsFontForContentSizeCategory = true
@@ -143,7 +156,6 @@ final class LocationView: UIView,
         super.init(frame: .zero)
         setupLayout()
         setupGradientLayer()
-        addLongPressGestureRecognizer()
     }
 
     required init?(coder: NSCoder) {
@@ -154,6 +166,7 @@ final class LocationView: UIView,
         super.becomeFirstResponder()
         // Skip if urlTextField is already first responder to avoid triggering duplicate delegate callbacks
         guard !urlTextField.isFirstResponder else { return true }
+        urlTextField.isUserInteractionEnabled = true
         return urlTextField.becomeFirstResponder()
     }
 
@@ -171,15 +184,10 @@ final class LocationView: UIView,
         configureURLPlaceholder(basedOn: config)
         setTextFieldPlaceholder(color: theme.colors.textPrimary)
         urlTextField.text = config.url?.absoluteString
+        formatAndTruncateURLTextField()
         updateIconContainer(isURLTextFieldCentered: isURLTextFieldCentered,
                             locationTextFieldTrailingPadding: uxConfig.locationTextFieldTrailingPadding)
         layoutContainerView(isEditing: config.isEditing, isURLTextFieldCentered: isURLTextFieldCentered)
-        /* Ecosia: Pass whether a search query is displayed so URL truncation is skipped on SERPs.
-           New call site in 155.1 — `configureNonInteractive` did not exist at the fork point, so it
-           auto-merged in without Ecosia's argument.
-        formatAndTruncateURLTextField()
-        */
-        formatAndTruncateURLTextField(hasSearchTerm: config.searchTerm != nil)
     }
 
     func configure(_ config: LocationViewConfiguration,
@@ -216,22 +224,12 @@ final class LocationView: UIView,
         // of the normalized host, causing overflow to trigger incorrectly in reader mode
         // and producing a visible shift when the lock icon is hidden.
 
-        /* Ecosia: Pass whether a search query is displayed so URL truncation is skipped on SERPs.
         formatAndTruncateURLTextField()
-        */
-        formatAndTruncateURLTextField(hasSearchTerm: config.searchTerm != nil)
         updateIconContainer(isURLTextFieldCentered: isURLTextFieldCentered,
                             locationTextFieldTrailingPadding: uxConfig.locationTextFieldTrailingPadding)
         handleGesture(&tapGestureRecognizer, type: UITapGestureRecognizer.self, action: #selector(becomeFirstResponder))
-        handleGesture(
-            &longPressGestureRecognizer,
-            type: UILongPressGestureRecognizer.self,
-            action: #selector(handleLongPress)
-        )
         self.delegate = delegate
         self.isUnifiedSearchEnabled = isUnifiedSearchEnabled
-        searchTerm = config.searchTerm
-        onLongPress = config.onLongPress
 
         layoutContainerView(isEditing: config.isEditing, isURLTextFieldCentered: isURLTextFieldCentered)
         applyTheme(theme: theme)
@@ -361,7 +359,8 @@ final class LocationView: UIView,
     }
 
     private func updateGradient() {
-        let showGradientForLongURL = isNormalizedHostWiderThanVisibleArea() && !isEditing
+        // A displayed search term truncates at the tail, so the leading gradient used for long hosts is not needed.
+        let showGradientForLongURL = isNormalizedHostWiderThanVisibleArea() && !isEditing && !isDisplayingSearchTerm
         gradientView.isHidden = !showGradientForLongURL
         // Use the containerView height since gradient's view height could be still not updated here
         // This can avoid to call containerView.layoutIfNeeded() which is an expensive call.
@@ -370,7 +369,7 @@ final class LocationView: UIView,
     }
 
     private func updateURLTextFieldLeadingConstraintBasedOnState() {
-        let shouldAdjustForOverflow = isNormalizedHostWiderThanVisibleArea() && !isEditing
+        let shouldAdjustForOverflow = isNormalizedHostWiderThanVisibleArea() && !isEditing  && !isDisplayingSearchTerm
         let shouldAdjustForNonEmpty = !isURLTextFieldEmpty && !isEditing
 
         func handleOverflowAdjustment() {
@@ -427,7 +426,7 @@ final class LocationView: UIView,
         if isURLTextFieldEmpty {
             updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
         } else {
-            updateUIForLockIconDisplay()
+            updateUIForPageIconDisplay()
         }
         */
         /* Ecosia: When browsing (non-empty URL), pass isURLTextFieldCentered=false so the icon is always
@@ -445,21 +444,21 @@ final class LocationView: UIView,
         let shouldShowLockIcon: Bool
         if isEditing {
             lockIconButton.alpha = 0
-            shouldShowLockIcon = false
-        } else if isURLTextFieldEmpty {
-            shouldShowLockIcon = false
-        } else if lockIconImageName == nil {
-            shouldShowLockIcon = false
-        } else {
-            shouldShowLockIcon = true
+            searchIconImageView.alpha = 0
         }
+        let hasPageContent = !isEditing && !isURLTextFieldEmpty
+        let shouldShowSearchIcon = hasPageContent && isDisplayingSearchTerm
+        let shouldShowLockIcon = hasPageContent && !isDisplayingSearchTerm && lockIconImageName != nil
 
-        let searchEngineAlpha: CGFloat = shouldShowLockIcon ? 0 : 1
+        let searchEngineAlpha: CGFloat = (shouldShowLockIcon || shouldShowSearchIcon) ? 0 : 1
         let lockIconAlpha: CGFloat = shouldShowLockIcon ? 1 : 0
+        let searchIconAlpha: CGFloat = shouldShowSearchIcon ? 1 : 0
 
-        // Skip the animation when both icons already sit at their target alpha, otherwise every toolbar
+        // Skip the animation when all icons already sit at their target alpha, otherwise every toolbar
         // state update kicks off an animation block that has nothing to animate.
-        guard searchEngineContentView.alpha != searchEngineAlpha || lockIconButton.alpha != lockIconAlpha
+        guard searchEngineContentView.alpha != searchEngineAlpha
+                || lockIconButton.alpha != lockIconAlpha
+                || searchIconImageView.alpha != searchIconAlpha
         else { return }
 
         let isAnimationEnabled = !UIAccessibility.isReduceMotionEnabled
@@ -467,10 +466,12 @@ final class LocationView: UIView,
             UIView.animate(withDuration: UX.iconAnimationTime, delay: UX.iconAnimationDelay) {
                 self.searchEngineContentView.alpha = searchEngineAlpha
                 self.lockIconButton.alpha = lockIconAlpha
+                self.searchIconImageView.alpha = searchIconAlpha
             }
         } else {
             searchEngineContentView.alpha = searchEngineAlpha
             lockIconButton.alpha = lockIconAlpha
+            searchIconImageView.alpha = searchIconAlpha
         }
         */
         let isAnimationEnabled = !UIAccessibility.isReduceMotionEnabled
@@ -521,6 +522,24 @@ final class LocationView: UIView,
         updateGradient()
     }
 
+    /// Shows the search icon when a search term is displayed, otherwise the TP icon.
+    private func updateUIForPageIconDisplay() {
+        if isDisplayingSearchTerm {
+            updateUIForSearchIconDisplay()
+        } else {
+            updateUIForLockIconDisplay()
+        }
+    }
+
+    private func updateUIForSearchIconDisplay() {
+        guard !isEditing else { return }
+        setContainerIcons([searchIconImageView])
+
+        updateURLTextFieldLeadingConstraintBasedOnState()
+        iconContainerStackViewLeadingConstraint?.constant = 0
+        updateGradient()
+    }
+
     private func updateUIForLockIconDisplay() {
         guard !isEditing else { return }
         setContainerIcons([lockIconButton])
@@ -530,7 +549,8 @@ final class LocationView: UIView,
 
         updateURLTextFieldLeadingConstraintBasedOnState()
 
-        let leadingConstraint = lockIconImageName == nil ? UX.iconContainerNoLockLeadingSpace : 0.0
+        let noLockLeadingSpace = isURLTextFieldCentered ? UX.shieldImageViewSize.width : UX.iconContainerNoLockLeadingSpace
+        let leadingConstraint = lockIconImageName == nil ? noLockLeadingSpace : 0.0
         iconContainerStackViewLeadingConstraint?.constant = leadingConstraint
         updateGradient()
     }
@@ -575,7 +595,7 @@ final class LocationView: UIView,
     }
 
     private func restoreLocationViewSize() {
-        urlTextField.isUserInteractionEnabled = true
+        urlTextField.isUserInteractionEnabled = isEditing
         isUserInteractionEnabled = true
         UIView.animate(
             withDuration: UX.identityResetAnimationDuration,
@@ -657,12 +677,7 @@ final class LocationView: UIView,
         // Once the user started typing we should not update the text anymore as that interferes with
         // setting the autocomplete suggestions which is done using a delegate method.
         guard !config.didStartTyping else { return }
-        /* Ecosia: Show the search query in the collapsed address bar when on a SERP.
-           Firefox only showed the search term while editing; Ecosia shows it in both
-           editing and collapsed states so users always see what they searched for.
         let shouldShowSearchTerm = (config.searchTerm != nil) && configurationIsEditing
-        */
-        let shouldShowSearchTerm = config.searchTerm != nil
         let text = shouldShowSearchTerm ? config.searchTerm : config.url?.absoluteString
         urlTextField.text = text
 
@@ -677,6 +692,7 @@ final class LocationView: UIView,
 
     private func configureURLPlaceholder(basedOn config: LocationViewConfiguration) {
         isEditing = config.isEditing
+        urlTextField.isUserInteractionEnabled = isEditing && !isAddressBarMinimized
         if !isEditing && config.url != nil {
             // allow proper centering of the urlTextField removing placeholder size.
             urlTextField.placeholder = nil
@@ -684,32 +700,38 @@ final class LocationView: UIView,
             urlTextField.placeholder = config.urlTextFieldPlaceholder
         }
         urlAbsolutePath = config.url?.absoluteString
+        searchTerm = config.searchTerm
+        shouldDisplaySearchTerm = config.shouldDisplaySearchTerm
     }
 
-    /* Ecosia: Accept whether a search query is displayed so URL truncation can be skipped on SERPs.
-    private func formatAndTruncateURLTextField() {
-    */
     /// Updates the URL text field (when not editing) by:
-    /// - Extracting the subdomain and normalized host.
+    /// - Showing the search term, truncated from the tail, when one is displayed in place of the URL.
+    /// - Otherwise extracting the subdomain and normalized host.
     /// - Applying primary color to the host and secondary color to the subdomain.
     /// - Truncating from the head if the text is too long.
     /// - Setting the styled result as the text field's attributed text.
-    private func formatAndTruncateURLTextField(hasSearchTerm: Bool) {
+    private func formatAndTruncateURLTextField() {
         guard !isEditing else { return }
-        // Ecosia: When a search query is available the text field already shows it as plain text;
-        // applying URL-style host truncation here would overwrite the query with a hostname.
-        guard !hasSearchTerm else { return }
 
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineBreakMode = .byTruncatingHead
+        paragraphStyle.lineBreakMode = .byTruncatingTail
+
+        let (primaryColor, secondaryColor) = getPrimaryAndSecondaryColors()
+
+        if shouldDisplaySearchTerm, let searchTerm {
+            urlTextField.attributedText = NSAttributedString(
+                string: searchTerm,
+                attributes: [.foregroundColor: primaryColor, .paragraphStyle: paragraphStyle])
+            return
+        }
 
         let urlString = urlAbsolutePath ?? ""
         let (subdomain, normalizedHost) = URL.getSubdomainAndHost(from: urlString)
 
-        let (primaryColor, secondaryColor) = getPrimaryAndSecondaryColors()
         let attributedString = NSMutableAttributedString(
             string: normalizedHost,
             attributes: [.foregroundColor: primaryColor])
+        paragraphStyle.lineBreakMode = .byTruncatingHead
 
         if let subdomain {
             let range = NSRange(location: 0, length: subdomain.count)
@@ -786,17 +808,12 @@ final class LocationView: UIView,
     }
 
     // MARK: - Gesture Recognizers
-    private func addLongPressGestureRecognizer() {
-        let gestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(LocationView.handleLongPress))
-        urlTextField.addGestureRecognizer(gestureRecognizer)
-    }
-
     private func handleGesture<T: UIGestureRecognizer>(
         _ gesture: inout T?,
         type: T.Type,
         action: Selector
     ) {
-        if isURLTextFieldCentered {
+        if !isEditing || isURLTextFieldCentered {
             if gesture == nil {
                 let newGesture = type.init(target: self, action: action)
                 addGestureRecognizer(newGesture)
@@ -812,13 +829,6 @@ final class LocationView: UIView,
     @objc
     private func didTapLockIcon() {
         onTapLockIcon?(lockIconButton)
-    }
-
-    @objc
-    private func handleLongPress(_ recognizer: UILongPressGestureRecognizer) {
-        if recognizer.state == .began {
-            onLongPress?()
-        }
     }
 
     // MARK: - MenuHelperURLBarInterface
@@ -863,6 +873,7 @@ final class LocationView: UIView,
 
     func locationTextFieldDidBeginEditing(_ textField: UITextField) {
         guard !isEditing else { return }
+
         updateUIForSearchEngineDisplay(isURLTextFieldCentered: isURLTextFieldCentered)
         let searchText = searchTerm != nil ? searchTerm : urlAbsolutePath
 
@@ -882,8 +893,8 @@ final class LocationView: UIView,
             // inside the pill; keep the editing layout instead.
             updateUIForEditingDisplay()
         } else {
-            /* Ecosia: Show search engine view (favicon) instead of lock icon when editing ends
-            updateUIForLockIconDisplay()
+            /* Ecosia: Show search engine view (favicon) instead of the page icon when editing ends
+            updateUIForPageIconDisplay()
             */
             // Ecosia: URL is present (non-empty), so pass false to ensure the favicon icon is added to the stack.
             updateUIForSearchEngineDisplay(isURLTextFieldCentered: false)
@@ -918,8 +929,17 @@ final class LocationView: UIView,
         let colors = theme.colors
         /* Ecosia: Use backgroundElevation1 to match the locationContainer background so the
            gradient fade blends seamlessly into the URL bar pill on long URLs.
-        let usesAlternativeLocationColor = !theme.isNova && hasAlternativeLocationColor
-        let mainBackgroundColor = usesAlternativeLocationColor ? colors.layerSurfaceMediumAlt : colors.layerSurfaceMedium
+
+        var mainBackgroundColor = hasAlternativeLocationColor ? colors.layerSurfaceMediumAlt : colors.layerSurfaceMedium
+
+        if theme.isNova {
+            // for Nova themes we want to use the alternative color for both top and bottom toolbar
+            mainBackgroundColor = if #unavailable(iOS 26) {
+                colors.layerSurfaceMediumAlt
+            } else {
+                colors.layerSurfaceMediumAltGlass
+            }
+        }
          */
         let mainBackgroundColor = colors.ecosia.backgroundElevation1
         // Ecosia: the URL text, subdomain and lock tint are recoloured in
@@ -935,6 +955,7 @@ final class LocationView: UIView,
         searchEngineContentView.applyTheme(theme: theme)
         lockIconButton.tintColor = secondaryColor
         lockIconButton.backgroundColor = isAddressBarMinimized ? nil : mainBackgroundColor
+        searchIconImageView.tintColor = secondaryColor
         urlTextField.applyTheme(theme: theme)
         urlTextField.textColor = primaryColor
         /* Ecosia: Use Ecosia text color for the placeholder.
@@ -945,10 +966,7 @@ final class LocationView: UIView,
         setLockIconImage()
         // Applying the theme to urlTextField can cause the url formatting to get removed
         // so we apply it again
-        /* Ecosia: Pass whether a search query is displayed so URL truncation is skipped on SERPs.
         formatAndTruncateURLTextField()
-        */
-        formatAndTruncateURLTextField(hasSearchTerm: searchTerm != nil)
     }
 
     private func getPrimaryAndSecondaryColors() -> (primary: UIColor, secondary: UIColor) {

@@ -47,6 +47,8 @@ class EcosiaLightColourPalette: EcosiaThemeColourPalette {
     var layerSurfaceLow: UIColor { ecosia.backgroundPrimaryDecorative }
     var layerSurfaceMedium: UIColor { ecosia.backgroundElevation1 }
     var layerSurfaceMediumAlt: UIColor { fallbackTheme.colors.layerSurfaceMediumAlt }
+    var layerSurfaceMediumAltGlass: UIColor { fallbackTheme.colors.layerSurfaceMediumAltGlass }
+    var layerToolbarGlass: UIColor { fallbackTheme.colors.layerToolbarGlass }
     var layerSurfaceMediumAlpha: UIColor { fallbackTheme.colors.layerSurfaceMediumAlpha }
     var layerGradientSummary: Gradient { fallbackTheme.colors.layerGradientSummary }
 

@@ -202,6 +202,7 @@ class BookmarksTests: FeatureFlaggedTestBase {
 
     // https://mozilla.testrail.io/index.php?/cases/view/3936976
     // Smoketest
+    // Regression
     func testSearchBookmarkIconDisplay() throws {
         if !isFennec {
             throw XCTSkip("Skipping test because bookmark search bar is off on Firefox")
@@ -212,6 +213,7 @@ class BookmarksTests: FeatureFlaggedTestBase {
         toolbarScreen.tapSettingsMenuButton()
         mainMenu.tapBookmarks()
         libraryScreen.assertBookmarkEmptyStateTextExists()
+        libraryScreen.assertEditButtonExists()
         libraryScreen.assertBottomSearchButtonExists(shouldExist: false)
 
         // Step 2: Create a new folder — search icon is displayed
@@ -229,10 +231,12 @@ class BookmarksTests: FeatureFlaggedTestBase {
         bookmark()
         toolbarScreen.tapSettingsMenuButton()
         mainMenu.tapBookmarks()
+        libraryScreen.assertEditButtonExists()
         libraryScreen.assertBottomSearchButtonExists(shouldExist: true)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3936981
+    // Regression
     func testBookmarkSearchResultContextMenu() throws {
         try launchWithBookmarksSearchEnabledAndOpenSearch()
         // Long-tap a searched bookmark — context menu shows expected options
@@ -241,6 +245,7 @@ class BookmarksTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3937449
+    // Regression
     func testBookmarkSearchResultDisclosureContextMenu() throws {
         try launchWithBookmarksSearchEnabledAndOpenSearch()
         // Tap the three-dot button on the search result — context menu shows expected options
@@ -249,6 +254,7 @@ class BookmarksTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3936982
+    // Regression
     func testBookmarkSearchResultOpenInNewTab() throws {
         try launchWithBookmarksSearchEnabledAndOpenSearch()
         // Long-tap a searched bookmark and select "Open in New Tab"
@@ -269,6 +275,7 @@ class BookmarksTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3936983
+    // Regression
     func testBookmarkSearchResultOpenInNewPrivateTab() throws {
         try launchWithBookmarksSearchEnabledAndOpenSearch()
         // Long-tap a searched bookmark and select "Open in a Private Tab"
@@ -290,6 +297,7 @@ class BookmarksTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3967271
+    // Regression
     func testFolderIsUpdatedAfterDeletingBookmarkViaSearch() throws {
         if !isFennec {
             throw XCTSkip("Skipping test because bookmark search bar is off on Firefox")
@@ -696,9 +704,11 @@ class BookmarksTests: FeatureFlaggedTestBase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3168584
+    // Regression
     func testCheckDonebutton() {
         app.launch()
         toolbarScreen.tapSettingsMenuButton()
+        mainMenu.assertMenuOptionsExist()
         mainMenu.tapBookmarks()
         libraryScreen.assertBookmarkEmptyStateTextExists()
         libraryScreen.tapDoneButton()

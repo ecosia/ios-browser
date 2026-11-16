@@ -3,12 +3,28 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
+import Common
 import Ecosia
 
 class SearchEnginePicker: ThemedTableViewController {
     weak var delegate: SearchEnginePickerDelegate?
     var engines: [OpenSearchEngine] = []
     var selectedSearchEngineID: String?
+
+    /// Keep the private theme override just for Settings, since this is also presented from the
+    /// address bar's "manage search engines" action.
+    private let _shouldUsePrivateOverride: Bool
+    override var shouldUsePrivateOverride: Bool { return _shouldUsePrivateOverride }
+    override var shouldBeInPrivateTheme: Bool { return false }
+
+    init(windowUUID: WindowUUID, shouldUsePrivateOverride: Bool = true) {
+        self._shouldUsePrivateOverride = shouldUsePrivateOverride
+        super.init(windowUUID: windowUUID)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,7 +45,7 @@ class SearchEnginePicker: ThemedTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let engine = engines[indexPath.item]
         let cell = dequeueCellFor(indexPath: indexPath)
-        cell.applyTheme(theme: themeManager.getCurrentTheme(for: windowUUID))
+        cell.applyTheme(theme: currentTheme())
         cell.textLabel?.text = engine.shortName
         // Ecosia: Per-engine identifiers for custom search provider acceptance tests.
         cell.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.SearchEnginePicker.engine(engine.engineID)

@@ -17,6 +17,10 @@ class EcosiaNTPTooltipHighlightTests: XCTestCase {
         user.firstTime = false
     }
 
+    override func tearDownWithError() throws {
+        try super.tearDownWithError()
+    }
+
     func testFirstTimeReturnsNil() throws {
         user.firstTime = true
         XCTAssertNil(NTPTooltip.highlight(for: user))

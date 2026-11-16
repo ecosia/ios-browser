@@ -48,6 +48,8 @@ public struct AddressToolbarUXConfiguration {
     }
 
     func addressToolbarBackgroundColor(theme: some Theme) -> UIColor {
+        guard !isAddressBarMinimized else { return .clear }
+
         /* Ecosia: Use Ecosia background for toolbar (legacy URLBarView applyTheme)
         let backgroundColor = isLocationTextCentered ? theme.colors.layerSurfaceLow : theme.colors.layer1
          */
@@ -61,15 +63,23 @@ public struct AddressToolbarUXConfiguration {
 
     func locationContainerBackgroundColor(theme: some Theme) -> UIColor {
         guard !isAddressBarMinimized else { return .clear }
-
-        let alternativeLocationColor = theme.isNova ? theme.colors.layerSurfaceMedium : theme.colors.layerSurfaceMediumAlt
-
         /* Ecosia: Use backgroundElevation1 as the location container background.
-        if hasAlternativeLocationColor {
-            return isLocationTextCentered ? alternativeLocationColor : theme.colors.layerEmphasis
-        } else {
-            return isLocationTextCentered ? theme.colors.layerSurfaceMedium : theme.colors.layerEmphasis
+        guard isLocationTextCentered else { return theme.colors.layerEmphasis }
+
+        if #available(iOS 26, *) {
+            if theme.isNova {
+                return theme.colors.layerSurfaceMediumAltGlass
+            }
+
+            return hasAlternativeLocationColor
+                ? theme.colors.layerSurfaceMediumAlt
+                : theme.colors.layerSurfaceMedium
         }
+
+        // On iOS 18, Nova always uses the alternative color.
+        return (theme.isNova || hasAlternativeLocationColor)
+            ? theme.colors.layerSurfaceMediumAlt
+            : theme.colors.layerSurfaceMedium
          */
         return theme.colors.ecosia.backgroundElevation1
     }

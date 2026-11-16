@@ -99,6 +99,11 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
         initGlean(profile, sendUsageData: sendUsageData)
     }
 
+    /// Never follows `prefSendUsageData`: `usage-reporting` is `follows_collection_enabled: false`.
+    func shouldSendDailyUsagePing(prefs: Prefs) -> Bool {
+        return prefs.boolForKey(AppConstants.prefSendDailyUsagePing) ?? AppConstants.defaultSendDailyUsagePing
+    }
+
     @MainActor
     func initGlean(
         _ profile: Profile,
@@ -132,26 +137,7 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
          */
 
         /* Ecosia: usage-reporting ignores Glean's upload flag, so it must never start
-        let shouldSendUsagePing: Bool
-
-        if let dailyUsagePing = profile.prefs.boolForKey(AppConstants.prefSendDailyUsagePing) {
-            // If SendDailyUsagePing is explicitly set, use its value
-            shouldSendUsagePing = dailyUsagePing
-        } else if let usageData = profile.prefs.boolForKey(AppConstants.prefSendUsageData) {
-            // If SendDailyUsagePing is not set, follow SendUsageData
-            shouldSendUsagePing = usageData
-
-            // Persist the SendDailyUsagePing value to ensure it is explicitly set for future launches
-            profile.prefs.setBool(usageData, forKey: AppConstants.prefSendDailyUsagePing)
-        } else {
-            // Default to true if neither is set
-            shouldSendUsagePing = true
-
-            // Persist the default to ensure consistency on subsequent launches
-            profile.prefs.setBool(true, forKey: AppConstants.prefSendDailyUsagePing)
-        }
-
-        if shouldSendUsagePing {
+        if shouldSendDailyUsagePing(prefs: profile.prefs) {
             gleanUsageReportingMetricsService.start()
         } else {
             gleanUsageReportingMetricsService.unsetUsageProfileId()
@@ -187,6 +173,9 @@ class TelemetryWrapper: TelemetryWrapperProtocol,
         glean.initialize(uploadEnabled: Self.isGleanUploadEnabled,
                          configuration: gleanConfig,
                          buildInfo: GleanMetrics.GleanBuild.info)
+
+        // Set the metric configuration from Nimbus.
+        glean.applyServerKnobsConfig(FxNimbus.shared.features.gleanServerKnobs.value().toJSONString())
 
         // Save the profile so we can record settings from it when the notification below fires.
         self.profile = profile
@@ -551,8 +540,6 @@ extension TelemetryWrapper {
         case onboardingSecondaryButton = "onboarding-card-secondary-button"
         case onboardingMultipleChoiceButton = "onboarding-multiple-choice-button"
         case onboardingClose = "onboarding-close"
-        case onboardingWallpaperSelector = "onboarding-wallpaper-selector"
-        case onboardingSelectWallpaper = "onboarding-select-wallpaper"
         // MARK: FXASignIn
         case onboarding = "onboarding"
         case upgradeOnboarding = "upgrade-onboarding"
@@ -1290,6 +1277,7 @@ extension TelemetryWrapper {
         // MARK: App cycle
         case(.action, .foreground, .app, _, _):
             GleanMetrics.AppCycle.foreground.record()
+            GleanMetrics.ServerKnobs.validation.record()
             // record the same event for Nimbus' internal event store
             Experiments.events.recordEvent(BehavioralTargetingEvent.appForeground)
         case(.action, .background, .app, _, _):

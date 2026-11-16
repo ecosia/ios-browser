@@ -12,91 +12,93 @@ import Common
 class AccountSyncHandlerTests: XCTestCase {
     private var profile: MockProfile!
     private var syncManager: ClientSyncManagerSpy!
-    private var queue: MockDispatchQueue!
+    private var mockWindowManager: MockWindowManager!
     let windowUUID: WindowUUID = .XCTestDefaultUUID
 
-    override func setUp() {
-        super.setUp()
-        self.profile = MockProfile()
+    override func setUp() async throws {
+        try await super.setUp()
+        self.profile = makeProfile()
         self.syncManager = profile.syncManager as? ClientSyncManagerSpy
-        self.queue = MockDispatchQueue()
-        // Ecosia: Sync to upstream v147.5 — upstream's setUp bootstraps the DI container so that
-        // createTab()'s Tab.init can resolve WindowManager/DocumentLogger. Our copy predated this. (MOB-4384)
-        DependencyHelperMock().bootstrapDependencies()
+        let mockTabManager =  MockTabManager()
+        DependencyHelperMock().bootstrapDependencies(
+            injectedWindowManager: mockWindowManager,
+            injectedTabManager: mockTabManager
+        )
+        mockTabManager.recentlyAccessedNormalTabs = [createTab(profile: profile)]
+        mockWindowManager = MockWindowManager(
+            wrappedManager: WindowManagerImplementation(),
+            tabManager: mockTabManager
+        )
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         self.syncManager = nil
         self.profile = nil
-        self.queue = nil
-        // Ecosia: match upstream tearDown. (MOB-4384)
+        self.mockWindowManager = nil
         DependencyHelperMock().reset()
+        try await super.tearDown()
     }
 
     func testTabDidGainFocus_doesntSyncWithoutAccount() {
+        let expectation = XCTestExpectation(description: "sync is not called without an account")
+        expectation.isInverted = true
         profile.hasSyncableAccountMock = false
-        let subject = AccountSyncHandler(with: profile, queue: queue)
+        let subject = AccountSyncHandler(with: profile, debounceTime: 0.1, onSyncCompleted: {
+            expectation.fulfill()
+        })
         let tab = createTab(profile: profile)
         subject.tabDidGainFocus(tab)
 
+        wait(for: [expectation], timeout: 1.0)
         XCTAssertEqual(profile.storeAndSyncTabsCalled, 0)
     }
 
     func testTabDidGainFocus_syncWithAccount() {
-        // Ecosia: the sync runs through a trailing Debouncer + a queued store, so wait for the production's
-        // sync-completed callback rather than asserting synchronously. (MOB-4384)
-        let expectation = XCTestExpectation(description: "Sync completed")
-        let subject = AccountSyncHandler(
-            with: profile,
-            debounceTime: 0,
-            queueDelay: 0,
-            onSyncCompleted: { expectation.fulfill() }
-        )
-        let tab = createTab(profile: profile)
-        subject.tabDidGainFocus(tab)
-
-        wait(for: [expectation], timeout: 5)
-        XCTAssertEqual(profile.storeAndSyncTabsCalled, 1)
-    }
-
-    func testTabDidGainFocus_highThrottleTime_executedAtMostOnce() {
-        // Ecosia: with a high debounce, rapid focus events are coalesced and the trailing sync is deferred well
-        // beyond the wait window — so no sync has fired yet within the window. (MOB-4384)
-        let threshold: Double = 1000
-        let stepWaitTime = 2.0
-        let subject = AccountSyncHandler(with: profile, debounceTime: threshold)
-        let tab = createTab(profile: profile)
-
-        subject.tabDidGainFocus(tab)
-        subject.tabDidGainFocus(tab)
-
-        let expectation = XCTestExpectation(description: "SyncNamedCollectionsCalled value expectation")
-        DispatchQueue.main.asyncAfter(deadline: .now() + stepWaitTime) {
-            XCTAssertEqual(self.profile.storeAndSyncTabsCalled, 0)
+        let expectation = XCTestExpectation(description: "storeAndSyncTabs called after listed time of tab gaining focus")
+        let subject = AccountSyncHandler(with: profile, debounceTime: 0.1, onSyncCompleted: {
             expectation.fulfill()
-        }
-        wait(for: [expectation], timeout: stepWaitTime * 2)
-    }
-
-    func testTabDidGainFocus_multipleThrottle_withWaitSyncOnce() {
-        // Ecosia: many rapid focus events are debounced into a single sync; wait for the sync-completed callback.
-        let expectation = XCTestExpectation(description: "Sync completed")
-        let subject = AccountSyncHandler(
-            with: profile,
-            debounceTime: 0.2,
-            queueDelay: 0,
-            onSyncCompleted: { expectation.fulfill() }
-        )
+        })
         let tab = createTab(profile: profile)
         subject.tabDidGainFocus(tab)
-        subject.tabDidGainFocus(tab)
-        subject.tabDidGainFocus(tab)
+
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(profile.storeAndSyncTabsCalled, 1)
+    }
+
+    func testTabDidGainFocus_multipleActions_executedAtMostOnce() {
+        let expectation = XCTestExpectation(
+            description: "storeAndSyncTabs only called once from multiple tab actions")
+        let subject = AccountSyncHandler(
+            with: profile, debounceTime: 0.1, onSyncCompleted: {
+                expectation.fulfill()
+            })
+        let tab = createTab(profile: profile)
+
         subject.tabDidGainFocus(tab)
         subject.tabDidGainFocus(tab)
 
-        wait(for: [expectation], timeout: 5)
+        wait(for: [expectation], timeout: 1.0)
         XCTAssertEqual(profile.storeAndSyncTabsCalled, 1)
+    }
+
+    func testTabDidGainFocus_multipleDebounce_withWithMultipleSyncs() {
+        let expectation = XCTestExpectation(
+            description: "storeAndSyncTabs called multiple times if outside of debounce time")
+        expectation.expectedFulfillmentCount = 2
+        let subject = AccountSyncHandler(
+            with: profile, debounceTime: 0.1, onSyncCompleted: {
+                expectation.fulfill()
+            })
+        let tab = createTab(profile: profile)
+        subject.tabDidGainFocus(tab)
+        subject.tabDidLoseFocus(tab)
+        wait(1.0)
+        subject.tabDidGainFocus(tab)
+        subject.tabDidLoseFocus(tab)
+        subject.tabDidGainFocus(tab)
+
+        wait(for: [expectation], timeout: 1.0)
+        XCTAssertEqual(profile.storeAndSyncTabsCalled, 2)
     }
 }
 

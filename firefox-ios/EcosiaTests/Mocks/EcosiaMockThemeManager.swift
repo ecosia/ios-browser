@@ -36,6 +36,7 @@ final class EcosiaMockThemeManager: ThemeManager {
     var windowUUID: WindowUUID = .XCTestDefaultUUID
 
     var systemThemeIsOn = true
+    var isPrivateThemeOverrideEnabled = false
 
     var automaticBrightnessIsOn: Bool { return false}
 

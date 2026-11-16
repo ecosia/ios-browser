@@ -23,7 +23,7 @@
 "NSPhotoLibraryAddUsageDescription" = "Ezzel lementheti a képeket.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "A Ecosia beszédfelismerés segítségével szöveggé alakítja a hangját a hangalapú kereséshez.";
+"NSSpeechRecognitionUsageDescription" = "Ez lehetővé teszi, hogy a Ecosia leiratozza az Ön hangját.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR-kód leolvasása";

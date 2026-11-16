@@ -8,25 +8,17 @@ import Shared
 @testable import Client
 
 @MainActor
-class DownloadsPanelViewModelTests: XCTestCase {
+final class DownloadsPanelViewModelTests: XCTestCase {
     private var fileFetcher: MockDownloadFileFetcher!
 
-    // Ecosia: Deterministic timestamps that sit clearly inside each DateGroupedTableData bucket regardless of
-    // the current time of day. Boundaries are [24h, 7d, 28d] → buckets [0: ≤24h, 1: 24h–7d (LastSevenDays),
-    // 2: 7d–28d (LastFourWeeks), 3: >28d]. The shared noon-based helpers are boundary-flaky against the
-    // top-of-hour-truncated boundaries (e.g. a noon "yesterday" can land in bucket 0 before noon). (MOB-4384)
-    private let withinLastSevenDays = Date().addingTimeInterval(-2 * 24 * 60 * 60)   // bucket 1
-    private let withinLastFourWeeks = Date().addingTimeInterval(-14 * 24 * 60 * 60)  // bucket 2
-    private let olderThanFourWeeks = Date().addingTimeInterval(-35 * 24 * 60 * 60)   // bucket 3
-
-    override func setUp() {
-        super.setUp()
+    override func setUp() async throws {
+        try await super.setUp()
         fileFetcher = MockDownloadFileFetcher()
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         fileFetcher = nil
+        try await super.tearDown()
     }
 
     func testReloadData_WithResults() {
@@ -44,38 +36,36 @@ class DownloadsPanelViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.hasDownloadedFiles)
     }
 
-    func testIsFirstSection_ForToday() {
-        let todayResults: [Date: Int] = [Date().noon: 2]
-        let viewModel = createSubject(resultsPerSection: todayResults)
+    // Test that "Last 24 hours" is the first section
+    func testIsFirstSection_ForLastTwentyFourHours() {
+        let twelveHoursAgo = Calendar.current.date(byAdding: .hour, value: -12, to: Date()) ?? Date()
+        let twelveHoursAgoResults: [Date: Int] = [twelveHoursAgo: 1]
+        let viewModel = createSubject(resultsPerSection: twelveHoursAgoResults)
         viewModel.reloadData()
 
         XCTAssertTrue(viewModel.isFirstSection(0))
     }
 
-    func testIsFirstSection_ForYesterday() {
-        let todayResults: [Date: Int] = [withinLastSevenDays: 2,
-                                         olderThanFourWeeks: 2]
-        let viewModel = createSubject(resultsPerSection: todayResults)
+    // Test that "Last 7 days" is the first section
+    func testIsFirstSection_ForLastSevenDays() {
+        let threeDaysAgo = Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date()
+        let threeDaysAgoResults: [Date: Int] = [threeDaysAgo: 2,
+                                                Date().lastMonth: 2]
+        let viewModel = createSubject(resultsPerSection: threeDaysAgoResults)
         viewModel.reloadData()
 
         XCTAssertTrue(viewModel.isFirstSection(1))
     }
 
-    func testIsFirstSection_ForLastWeek() {
-        let todayResults: [Date: Int] = [Date().lastWeek: 4,
-                                         Date().lastMonth: 2]
-        let viewModel = createSubject(resultsPerSection: todayResults)
+    // Test that "Last 4 weeks" is the first section
+    func testIsFirstSection_ForLastFourWeeks() {
+        let twoWeeksAgo = Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()
+        let twoWeeksAgoResults: [Date: Int] = [twoWeeksAgo: 4,
+                                               Date().lastMonth: 2]
+        let viewModel = createSubject(resultsPerSection: twoWeeksAgoResults)
         viewModel.reloadData()
 
         XCTAssertTrue(viewModel.isFirstSection(2))
-    }
-
-    func testIsFirstSection_ForLastMonth() {
-        let todayResults: [Date: Int] = [Date().lastMonth: 2]
-        let viewModel = createSubject(resultsPerSection: todayResults)
-        viewModel.reloadData()
-
-        XCTAssertTrue(viewModel.isFirstSection(3))
     }
 
     func testFalseIsFirstSection_WithEarlierResults() {
@@ -88,38 +78,32 @@ class DownloadsPanelViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.isFirstSection(0))
     }
 
-    func testHeaderTitle_ForToday() {
+    func testHeaderTitle_ForLastTwentyFourHours() {
         let viewModel = createSubject()
         XCTAssertEqual(viewModel.headerTitle(for: 0), .LibraryPanel.Sections.LastTwentyFourHours)
     }
 
-    func testHeaderTitle_ForYesterday() {
+    func testHeaderTitle_ForLastSevenDays() {
         let viewModel = createSubject()
         XCTAssertEqual(viewModel.headerTitle(for: 1), .LibraryPanel.Sections.LastSevenDays)
     }
 
-    func testHeaderTitle_ForLastWeek() {
+    func testHeaderTitle_ForLastFourWeeks() {
         let viewModel = createSubject()
         XCTAssertEqual(viewModel.headerTitle(for: 2), .LibraryPanel.Sections.LastFourWeeks)
     }
 
-    /* Ecosia: Section removed in v147 - now only 3 sections
-    func testHeaderTitle_ForLastMonth() {
-        let viewModel = createSubject()
-        XCTAssertEqual(viewModel.headerTitle(for: 3), .LibraryPanel.Sections.LastMonth)
-    }
-    */
-
     func testHeaderTitle_ForInvalidSection() {
         let viewModel = createSubject()
-        XCTAssertNil(viewModel.headerTitle(for: 3))
+        XCTAssertNil(viewModel.headerTitle(for: 4))
     }
 
-    func testGetDownloadFile_ForTodaySecondFile() {
-        let todayResults: [Date: Int] = [Date().noon: 4,
-                                         withinLastSevenDays: 2,
-                                         withinLastFourWeeks: 2]
-        let viewModel = createSubject(resultsPerSection: todayResults)
+    func testGetDownloadFile_ForLastTwentyFourHoursSecondFile() {
+        let twelveHoursAgo = Calendar.current.date(byAdding: .hour, value: -12, to: Date()) ?? Date()
+        let twelveHoursAgoResults: [Date: Int] = [twelveHoursAgo: 4,
+                                                  Date.yesterday: 2,
+                                                  Date().lastWeek: 2]
+        let viewModel = createSubject(resultsPerSection: twelveHoursAgoResults)
         viewModel.reloadData()
 
         guard let downloadFile = viewModel.downloadedFileForIndexPath(IndexPath(row: 1, section: 0)) else {
@@ -128,48 +112,65 @@ class DownloadsPanelViewModelTests: XCTestCase {
         }
 
         XCTAssertEqual(downloadFile.path.absoluteString, "https://test1.file.com")
-        XCTAssertTrue(downloadFile.lastModified.isToday())
+        XCTAssertTrue(downloadFile.lastModified.isWithinLastTwentyFourHours())
     }
 
-    func testGetNumberOfItems_ForToday() {
-        let todayResults: [Date: Int] = [Date().noon: 3]
-        let viewModel = createSubject(resultsPerSection: todayResults)
+    func testGetDownloadFile_ForInvalidIndexReturnsNil() {
+        let viewModel = createSubject(resultsPerSection: [Date(timeIntervalSince1970: 0): 1])
+        viewModel.reloadData()
+        let invalidIndexPaths = [
+            IndexPath(row: 0, section: -1),
+            IndexPath(row: 0, section: 4),
+            IndexPath(row: -1, section: 3),
+            IndexPath(row: 1, section: 3),
+            IndexPath(row: 0, section: 0)
+        ]
+
+        for indexPath in invalidIndexPaths {
+            XCTAssertNil(viewModel.downloadedFileForIndexPath(indexPath), "Expected nil at \(indexPath)")
+        }
+    }
+
+    func testGetNumberOfItems_ForLastTwentyFourHours() {
+        let twelveHoursAgo = Calendar.current.date(byAdding: .hour, value: -12, to: Date()) ?? Date()
+        let twelveHoursAgoResults: [Date: Int] = [twelveHoursAgo: 3]
+        let viewModel = createSubject(resultsPerSection: twelveHoursAgoResults)
         viewModel.reloadData()
 
         XCTAssertEqual(viewModel.getNumberOfItems(for: 0), 3)
     }
 
-    func testGetNumberOfItems_ForYesterday() {
-        let todayResults: [Date: Int] = [withinLastSevenDays: 2]
-        let viewModel = createSubject(resultsPerSection: todayResults)
+    func testGetNumberOfItems_ForLastSevenDays() {
+        let threeDaysAgo = Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date()
+        let threeDaysAgoResults: [Date: Int] = [threeDaysAgo: 2]
+        let viewModel = createSubject(resultsPerSection: threeDaysAgoResults)
         viewModel.reloadData()
 
         XCTAssertEqual(viewModel.getNumberOfItems(for: 1), 2)
     }
 
-    func testGetNumberOfItems_ForLastWeek() {
-        // Ecosia: section 2 (LastFourWeeks) holds items 7–28 days old; -6 days falls in section 1, so use a date
-        // clearly inside the 7–28 day bucket. // was getDate(dayOffset: -6)
-        let todayResults: [Date: Int] = [withinLastFourWeeks: 5]
-        let viewModel = createSubject(resultsPerSection: todayResults)
+    func testGetNumberOfItems_ForLastFourWeeks() {
+        let twoWeeksAgo = Calendar.current.date(byAdding: .day, value: -14, to: Date()) ?? Date()
+        let twoWeeksAgoResults: [Date: Int] = [twoWeeksAgo: 5]
+        let viewModel = createSubject(resultsPerSection: twoWeeksAgoResults)
         viewModel.reloadData()
 
         XCTAssertEqual(viewModel.getNumberOfItems(for: 2), 5)
     }
 
-    func testGetNumberOfItems_ForLastMonth() {
-        // Ecosia: section 3 holds items older than 4 weeks (>28 days); -25 days falls in section 2, so use a date
-        // clearly older than 28 days. // was getDate(dayOffset: -25)
-        let todayResults: [Date: Int] = [olderThanFourWeeks: 4]
-        let viewModel = createSubject(resultsPerSection: todayResults)
+    func testGetNumberOfItems_ForOlder() {
+        let twoMonthsAgo = Calendar.current.date(byAdding: .month, value: -2, to: Date()) ?? Date()
+        let twoMonthsAgoResults: [Date: Int] = [twoMonthsAgo: 4]
+        let viewModel = createSubject(resultsPerSection: twoMonthsAgoResults)
         viewModel.reloadData()
 
         XCTAssertEqual(viewModel.getNumberOfItems(for: 3), 4)
     }
 
-    func testDeleteItem_ForToday() {
-        let todayResults: [Date: Int] = [Date().noon: 4]
-        let viewModel = createSubject(resultsPerSection: todayResults)
+    func testDeleteItem_ForLastTwentyFourHours() {
+        let twelveHoursAgo = Calendar.current.date(byAdding: .hour, value: -12, to: Date()) ?? Date()
+        let twelveHoursAgoResults: [Date: Int] = [twelveHoursAgo: 4]
+        let viewModel = createSubject(resultsPerSection: twelveHoursAgoResults)
         viewModel.reloadData()
         let deletedFile = DownloadedFile(path: URL(string: "https://test0.file.com")!,
                                          size: 20,
@@ -216,5 +217,11 @@ class MockDownloadFileFetcher: DownloadFileFetcher {
                                             size: 20,
                                             lastModified: date)
         return downloadedFile
+    }
+}
+
+extension Date {
+    public func isWithinLastTwentyFourHours(comparisonDate: Date = Date()) -> Bool {
+        return (comparisonDate.lastTwentyFourHours ... comparisonDate).contains(self)
     }
 }

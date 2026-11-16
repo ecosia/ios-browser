@@ -47,7 +47,7 @@ final class InvisibleTabManagerTests: XCTestCase, @unchecked Sendable {
 
     private func createTestTab(url: URL? = URL(string: "https://example.com"),
                                windowUUID: WindowUUID? = nil) -> Tab {
-        let profile = MockProfile()  // Use existing MockProfile from test suite
+        let profile = MockProfile.unmanaged()  // Use existing MockProfile from test suite
         return Tab(profile: profile, isPrivate: false, windowUUID: windowUUID ?? self.windowUUID)
     }
 

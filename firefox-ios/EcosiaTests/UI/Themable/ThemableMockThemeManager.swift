@@ -19,6 +19,7 @@ final class ThemeableMockThemeManager: ThemeManager {
     }
 
     var systemThemeIsOn: Bool = false
+    var isPrivateThemeOverrideEnabled: Bool = false
     var automaticBrightnessIsOn: Bool = false
     var automaticBrightnessValue: Float = 0.5
 

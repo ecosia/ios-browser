@@ -127,11 +127,11 @@ final class TabTrayViewController: UIViewController,
         let selectedIndex = experimentConvertSelectedIndex()
         /* Ecosia: Remove syncedTabs from experiment selector
         let titles = [TabTrayPanelType.privateTabs.label,
-                     TabTrayPanelType.tabs.label,
-                     TabTrayPanelType.syncedTabs.label]
+                      TabTrayPanelType.tabs.label,
+                      TabTrayPanelType.syncedTabs.label]
         */
         let titles = [TabTrayPanelType.privateTabs.label,
-                     TabTrayPanelType.tabs.label]
+                      TabTrayPanelType.tabs.label]
         let selector = TabTraySelectorView(selectedIndex: selectedIndex,
                                            theme: retrieveTheme(),
                                            buttonTitles: titles)
@@ -145,8 +145,8 @@ final class TabTrayViewController: UIViewController,
     private lazy var experimentiPadSegmentControl: TabTrayiPadSelectorView = {
         let selectedIndex = experimentConvertSelectedIndex()
         let titles = [TabTrayPanelType.privateTabs.label,
-                     TabTrayPanelType.tabs.label,
-                     TabTrayPanelType.syncedTabs.label]
+                      TabTrayPanelType.tabs.label,
+                      TabTrayPanelType.syncedTabs.label]
         let selector = TabTrayiPadSelectorView(selectedIndex: selectedIndex,
                                                theme: retrieveTheme(),
                                                buttonTitles: titles)
@@ -215,7 +215,7 @@ final class TabTrayViewController: UIViewController,
 
     @available(iOS 26.0, *)
     private func applyToolbarGlassButtonTints(theme: Theme) {
-        guard isNovaDesignEnabled else { return }
+        guard theme.isNova else { return }
         let glassTint = theme.colors.layerGlassTintNova
         setProminentGlass(deleteButton,
                           StandardImageIdentifiers.Large.delete,
@@ -229,6 +229,7 @@ final class TabTrayViewController: UIViewController,
                           StandardImageIdentifiers.Large.checkmark,
                           background: theme.colors.actionPrimary,
                           glyph: theme.colors.iconInverted)
+        syncTabButton.tintColor = theme.colors.iconPrimary
     }
 
     @available(iOS 26.0, *)
@@ -510,6 +511,11 @@ final class TabTrayViewController: UIViewController,
         return tabTrayState?.isPrivateMode ?? false
     }
 
+    /// This override predates the Nova implementation and must remain unchanged.
+    var isSubjectToNovaPrivateOverride: Bool {
+        return false
+    }
+
     func applyTheme() {
         // Ecosia: A tab tray outliving its unit test can receive a theme change while the test host's
         // AppContainer is reset; the feature flag lookups below would then trap. The app never hits this.
@@ -676,15 +682,16 @@ final class TabTrayViewController: UIViewController,
                 containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                 containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
 
-                segmentedControl.leadingAnchor.constraint(equalTo: containerView.leadingAnchor,
+                segmentedControl.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor,
                                                           constant: UX.segmentedControlHorizontalSpacing),
                 segmentedControl.bottomAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.bottomAnchor),
-                segmentedControl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor,
+                segmentedControl.trailingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.trailingAnchor,
                                                            constant: -UX.segmentedControlHorizontalSpacing),
 
                 experimentSegmentControl.bottomAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.bottomAnchor),
-                experimentSegmentControl.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-                experimentSegmentControl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+                experimentSegmentControl.leadingAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.leadingAnchor),
+                experimentSegmentControl.trailingAnchor.constraint(
+                    equalTo: containerView.safeAreaLayoutGuide.trailingAnchor),
                 experimentSegmentControl.heightAnchor.constraint(equalToConstant: segmentControlHeight)
             ])
 
@@ -802,20 +809,25 @@ final class TabTrayViewController: UIViewController,
 
         /* Ecosia: Remove syncedTabs - no sync panel toolbar items needed
         let isSyncTabsPanel = tabTrayState.isSyncTabsPanel
-        var toolbarItems: [UIBarButtonItem]
+        let items: [UIBarButtonItem]
         if tabTrayUtils.shouldDisplayExperimentUI() {
-            toolbarItems = isSyncTabsPanel ? experimentBottomToolbarItemsForSync : experimentBottomToolbarItems
+            items = isSyncTabsPanel ? experimentBottomToolbarItemsForSync : experimentBottomToolbarItems
         } else {
-            toolbarItems = isSyncTabsPanel ? bottomToolbarItemsForSync : bottomToolbarItems
+            items = isSyncTabsPanel ? bottomToolbarItemsForSync : bottomToolbarItems
         }
         */
-        let toolbarItems: [UIBarButtonItem]
+        let items: [UIBarButtonItem]
         if tabTrayUtils.shouldDisplayExperimentUI() {
-            toolbarItems = experimentBottomToolbarItems
+            items = experimentBottomToolbarItems
         } else {
-            toolbarItems = bottomToolbarItems
+            items = bottomToolbarItems
         }
-        setToolbarItems(toolbarItems, animated: true)
+        setToolbarItemsIfChanged(items)
+    }
+
+    private func setToolbarItemsIfChanged(_ items: [UIBarButtonItem]) {
+        guard items != toolbarItems else { return }
+        setToolbarItems(items, animated: true)
     }
 
     private func setupToolbarForIpad() {
@@ -832,8 +844,8 @@ final class TabTrayViewController: UIViewController,
         navigationItem.rightBarButtonItems = [doneButton, fixedSpace, newTabButton]
 
         navigationController?.isToolbarHidden = true
-        let toolbarItems = tabTrayState.isSyncTabsPanel ? bottomToolbarItemsForSync : bottomToolbarItems
-        setToolbarItems(toolbarItems, animated: true)
+        let items = tabTrayState.isSyncTabsPanel ? bottomToolbarItemsForSync : bottomToolbarItems
+        setToolbarItemsIfChanged(items)
     }
 
     private func createSegmentedControl(
@@ -897,6 +909,14 @@ final class TabTrayViewController: UIViewController,
         } else {
             navigationHandler?.start(panelType: panelType, navigationController: currentPanel)
         }
+    }
+
+    func preloadSelectedPanelForPresentation() {
+        loadViewIfNeeded()
+        let panel = tabTrayUtils.shouldDisplayExperimentUI() ? currentExperimentPanel : currentPanel
+        guard let panel, let tabsPanel = panel.topViewController as? TabDisplayPanelViewController else { return }
+        panel.loadViewIfNeeded()
+        tabsPanel.loadViewIfNeeded()
     }
 
     private func showPanel(_ panel: UIViewController) {
@@ -1081,10 +1101,11 @@ final class TabTrayViewController: UIViewController,
 
     @objc
     private func newTabButtonTapped() {
-        let action = TabPanelViewAction(panelType: tabTrayState.selectedPanel,
-                                        windowUUID: windowUUID,
-                                        actionType: TabPanelViewActionType.addNewTab)
-        store.dispatch(action)
+        guard let type = TabsDisplayViewPanelType(fromTabTrayPanelType: tabTrayState.selectedPanel) else { return }
+        store.dispatch(
+            TabPanelViewModernAction.addNewTab(ofType: type),
+            forWindowUUID: self.windowUUID
+        )
     }
 
     @objc

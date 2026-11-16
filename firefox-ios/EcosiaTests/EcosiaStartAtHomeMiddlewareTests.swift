@@ -14,14 +14,14 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
     private var mockProfile: MockProfile!
     private var mockTabManager: MockTabManager!
     private var mockWindowManager: MockWindowManager!
-    private var mockStore: MockStoreForMiddleware<AppState>!
+    var mockStore: MockStoreForMiddleware<AppState>!
     private var appState: AppState!
 
     override func setUp() async throws {
         try await super.setUp()
         await MainActor.run {
             DependencyHelperMock().bootstrapDependencies()
-            mockProfile = MockProfile()
+            mockProfile = MockProfile.unmanaged()
             mockTabManager = MockTabManager()
             mockTabManager.tabRestoreHasFinished = true
             mockWindowManager = MockWindowManager(
@@ -182,7 +182,7 @@ final class EcosiaStartAtHomeMiddlewareTests: XCTestCase, StoreTestUtility, @unc
     // MARK: - Helpers
     // Ecosia: profile parameter removed from EcosiaStartAtHomeMiddleware because prefs are unused
     // (the middleware always returns shouldStartAtHome: false regardless of any setting).
-    private func createSubject(with mockProfile: Profile = MockProfile()) -> EcosiaStartAtHomeMiddleware {
+    private func createSubject(with mockProfile: Profile = MockProfile.unmanaged()) -> EcosiaStartAtHomeMiddleware {
         let testDate = Date(timeIntervalSince1970: 1_000_065_600)
         let lastSessionDate = Calendar.current.date(
             byAdding: .hour,

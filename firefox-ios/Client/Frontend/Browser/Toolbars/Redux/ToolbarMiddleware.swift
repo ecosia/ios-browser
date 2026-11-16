@@ -90,7 +90,9 @@ final class ToolbarMiddleware {
 
             let toolbarConfig = FxNimbus.shared.features.toolbarRefactorFeature.value()
             let toolbarLayout = ToolbarLayoutStyle.style(from: toolbarConfig.layout)
-            let tabTrayButtonStyle = TabTrayButtonStyle.style(from: toolbarConfig.tabTrayButtonType)
+            let tabTrayButtonStyle: TabTrayButtonStyle = featureFlagsProvider.isEnabled(.tabTrayScreenshotButtonStyle)
+                ? .screenshot
+                : .number
             let position = addressToolbarPositionFromSearchBarPosition(toolbarPosition)
             let borderPosition = getAddressBorderPosition(toolbarPosition: position)
             let displayBorder = shouldDisplayNavigationToolbarBorder(toolbarPosition: position)
@@ -258,6 +260,8 @@ final class ToolbarMiddleware {
     }
 
     @MainActor
+    // Ecosia: Ecosia's extra button handling takes this over Firefox's lower length limit
+    // swiftlint:disable:next function_body_length
     private func handleToolbarButtonTapActions(action: ToolbarMiddlewareAction, state: AppState) {
         guard let toolbarState = state.componentState(ToolbarState.self, for: .toolbar, window: action.windowUUID)
         else { return }
@@ -407,25 +411,6 @@ final class ToolbarMiddleware {
             toolbarTelemetry.forwardButtonLongPressed(isPrivate: toolbarState.isPrivateMode)
             let action = GeneralBrowserAction(windowUUID: action.windowUUID,
                                               actionType: GeneralBrowserActionType.showBackForwardList)
-            store.dispatch(action)
-        case .tabs:
-            toolbarTelemetry.tabTrayButtonLongPressed(isPrivate: toolbarState.isPrivateMode)
-            let action = GeneralBrowserAction(windowUUID: action.windowUUID,
-                                              actionType: GeneralBrowserActionType.showTabsLongPressActions)
-            store.dispatch(action)
-        case .locationView:
-            let action = GeneralBrowserAction(windowUUID: action.windowUUID,
-                                              actionType: GeneralBrowserActionType.showLocationViewLongPressActionSheet)
-            store.dispatch(action)
-        case .reload:
-            let action = GeneralBrowserAction(buttonTapped: action.buttonTapped,
-                                              windowUUID: action.windowUUID,
-                                              actionType: GeneralBrowserActionType.showReloadLongPressAction)
-            store.dispatch(action)
-        case .newTab:
-            toolbarTelemetry.oneTapNewTabButtonLongPressed(isPrivate: toolbarState.isPrivateMode)
-            let action = GeneralBrowserAction(windowUUID: action.windowUUID,
-                                              actionType: GeneralBrowserActionType.showNewTabLongPressActions)
             store.dispatch(action)
         case .readerMode:
             let action = GeneralBrowserAction(windowUUID: action.windowUUID,

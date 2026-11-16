@@ -9,13 +9,12 @@ import Storage
 @MainActor
 final class AppStartupTelemetryBreachListTests: XCTestCase {
     func testSendStartupTelemetry_doesNotLoadLoginsOrBreaches() {
-        let databasePrefix = "breach_list_\(UUID().uuidString.prefix(8))"
-        let profile = MockProfile(databasePrefix: databasePrefix)
+        let profile = makeProfile()
         let telemetry = DefaultAppStartupTelemetry(profile: profile)
 
         telemetry.sendStartupTelemetry()
 
         // MockProfile is final, so check the logins database its lazy `logins` creates on first access
-        XCTAssertFalse(profile.files.exists("\(databasePrefix)_loginsPerField.db"))
+        XCTAssertFalse(profile.files.exists("loginsPerField.db"))
     }
 }

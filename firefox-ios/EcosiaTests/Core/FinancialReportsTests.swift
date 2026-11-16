@@ -15,6 +15,10 @@ final class FinancialReportsTests: XCTestCase {
         mockURLSession = MockURLSessionProtocol()
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     func testFetchAndUpdate() async throws {
         mockURLSession.data = Data("""
             {

@@ -33,6 +33,11 @@ final class EventQueueTests: XCTestCase, @unchecked Sendable {
         self.queue = EventQueue()
     }
 
+    override func tearDown() {
+        self.queue = nil
+        super.tearDown()
+    }
+
     func testBasicEventFiredCheck() {
         XCTAssertFalse(queue.hasSignalled(.startingEvent))
         queue.signal(event: .startingEvent)

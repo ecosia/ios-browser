@@ -13,6 +13,11 @@ class WebviewTelemetryTests: XCTestCase {
         Glean.shared.resetGlean(clearStores: true)
     }
 
+    // Ecosia: Balances the setUp/tearDown pair for SwiftLint
+    override func tearDown() {
+        super.tearDown()
+    }
+
     func testLoadMeasurement() throws {
         let subject = WebViewLoadMeasurementTelemetry()
 

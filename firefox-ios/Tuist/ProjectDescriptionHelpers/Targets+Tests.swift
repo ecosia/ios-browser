@@ -63,7 +63,13 @@ public enum TestTargets {
             product: .unitTests,
             bundleId: "org.mozilla.ios.ClientTests",
             infoPlist: .default,
-            sources: ["firefox-ios-tests/Tests/ClientTests/**/*.swift"],
+            sources: [
+                "firefox-ios-tests/Tests/ClientTests/**/*.swift",
+                // Ecosia: MockProfile uses StorageTests' TemporaryFiles
+                "firefox-ios-tests/Tests/StorageTests/TemporaryFiles.swift",
+                // Ecosia: `asyncValue` and `succeeded()` for Deferred, as in upstream's ClientTests
+                "firefox-ios-tests/Tests/SharedTests/DeferredTestUtils.swift",
+            ],
             resources: [
                 // Ecosia: Test fixtures ClientTests loads from its own bundle (wallpaper JSON, search/pocket
                 // lists, images, search-engine xcassets). Upstream's Client.xcodeproj bundles these; the Tuist
@@ -76,6 +82,7 @@ public enum TestTargets {
                 "firefox-ios-tests/Tests/ClientTests/Frontend/Browser/SearchEngines/SearchEngineTestAssets.xcassets",
             ],
             dependencies: [
+                .package(product: "VPNKit"),
                 .target(name: "Client"),
                 .target(name: "RustMozillaAppServices"),
                 .package(product: "Common"),
@@ -105,7 +112,11 @@ public enum TestTargets {
             product: .unitTests,
             bundleId: "org.mozilla.ios.StoragePerfTests",
             infoPlist: .default,
-            sources: ["firefox-ios-tests/Tests/StoragePerfTests/**/*.swift"],
+            sources: [
+                "firefox-ios-tests/Tests/StoragePerfTests/**/*.swift",
+                // Ecosia: StoragePerfTests uses StorageTests' TemporaryFiles
+                "firefox-ios-tests/Tests/StorageTests/TemporaryFiles.swift",
+            ],
             dependencies: [
                 .target(name: "Storage"),
                 .package(product: "Common"),
@@ -250,6 +261,8 @@ public enum TestTargets {
                 "firefox-ios-tests/Tests/ClientTests/ProfileTest.swift",
                 "firefox-ios-tests/Tests/ClientTests/DependencyInjection/*.swift",
                 "firefox-ios-tests/Tests/ClientTests/Mocks/*.swift",
+                // Ecosia: MockProfile uses StorageTests' TemporaryFiles
+                "firefox-ios-tests/Tests/StorageTests/TemporaryFiles.swift",
                 "firefox-ios-tests/Tests/ClientTests/Microsurvey/Mock/MockMicrosurveySurfaceManager.swift",
                 // Ecosia: 155.1's DependencyHelperMock registers a search-engine provider and a
                 // Merino manager, so the mocks backing them have to be in this target too.
@@ -292,6 +305,8 @@ public enum TestTargets {
                 "firefox-ios-tests/Tests/ClientTests/ProfileTest.swift",
                 "firefox-ios-tests/Tests/ClientTests/DependencyInjection/*.swift",
                 "firefox-ios-tests/Tests/ClientTests/Mocks/*.swift",
+                // Ecosia: MockProfile uses StorageTests' TemporaryFiles
+                "firefox-ios-tests/Tests/StorageTests/TemporaryFiles.swift",
                 "firefox-ios-tests/Tests/ClientTests/Coordinators/Mocks/*.swift",
                 // Ecosia: 155.1's DependencyHelperMock registers a search-engine provider and a
                 // Merino manager, so the mocks backing them have to be in this target too. They live

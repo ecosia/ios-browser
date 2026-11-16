@@ -153,12 +153,11 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
         homepageVC.scrollViewWillBeginDragging(scrollView)
 
         let actionCalled = try XCTUnwrap(
-            mockStore.dispatchedActions.first(where: {
-                $0 is ToolbarAction
-            }) as? ToolbarAction
+            mockStore.dispatchedModernActions.first(where: {
+                $0 is ToolbarModernAction
+            }) as? ToolbarModernAction
         )
-        let actionType = try XCTUnwrap(actionCalled.actionType as? ToolbarActionType)
-        XCTAssertEqual(actionType, ToolbarActionType.cancelEditOnHomepage)
+        XCTAssertEqual(actionCalled.description, ToolbarModernAction.cancelEditOnHomepage.description)
     }
 
     func test_traitCollectionDidChange_triggersHomepageAction() throws {
@@ -337,7 +336,7 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
 
     func test_restoreContentOffset_withStoredOffset_setsCollectionViewOffset() {
         let tabManager = HomepageRestoreContentOffsetTabManager()
-        let tab = MockTab(profile: MockProfile(), windowUUID: .XCTestDefaultUUID)
+        let tab = MockTab(profile: makeProfile(), windowUUID: .XCTestDefaultUUID)
         tabManager.tabs = [tab]
         tabManager.selectedTab = tab
         homepageTabStateStore.updateState(for: tab.tabUUID) { $0.scrollOffsetY = 180 }
@@ -364,7 +363,7 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
 
     func test_restoreContentOffset_withoutStoredOffset_scrollsToTop() {
         let tabManager = HomepageRestoreContentOffsetTabManager()
-        let tab = MockTab(profile: MockProfile(), windowUUID: .XCTestDefaultUUID)
+        let tab = MockTab(profile: makeProfile(), windowUUID: .XCTestDefaultUUID)
         tabManager.tabs = [tab]
         tabManager.selectedTab = tab
         let subject = createSubject(tabManager: tabManager)
@@ -390,7 +389,7 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
 
     func test_restoreContentOffset_whenNotForcedAndSameTab_doesNotRestoreStoredOffset() {
         let tabManager = HomepageRestoreContentOffsetTabManager()
-        let tab = MockTab(profile: MockProfile(), windowUUID: .XCTestDefaultUUID)
+        let tab = MockTab(profile: makeProfile(), windowUUID: .XCTestDefaultUUID)
         tabManager.tabs = [tab]
         tabManager.selectedTab = tab
         homepageTabStateStore.updateState(for: tab.tabUUID) { $0.scrollOffsetY = 180 }
@@ -418,7 +417,7 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
 
     func test_viewDidDisappear_savesVerticalScrollOffset() {
         let tabManager = HomepageRestoreContentOffsetTabManager()
-        let tab = MockTab(profile: MockProfile(), windowUUID: .XCTestDefaultUUID)
+        let tab = MockTab(profile: makeProfile(), windowUUID: .XCTestDefaultUUID)
         tabManager.tabs = [tab]
         tabManager.selectedTab = tab
         let subject = createSubject(tabManager: tabManager)
@@ -445,7 +444,7 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
 
     func test_stopScrollingAndSaveVerticalScrollOffset_savesCurrentOffset() {
         let tabManager = HomepageRestoreContentOffsetTabManager()
-        let tab = MockTab(profile: MockProfile(), windowUUID: .XCTestDefaultUUID)
+        let tab = MockTab(profile: makeProfile(), windowUUID: .XCTestDefaultUUID)
         tabManager.tabs = [tab]
         tabManager.selectedTab = tab
         let subject = createSubject(tabManager: tabManager)
@@ -472,7 +471,7 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
 
     func test_scrollViewDidEndDragging_savesVerticalScrollOffset() {
         let tabManager = HomepageRestoreContentOffsetTabManager()
-        let tab = MockTab(profile: MockProfile(), windowUUID: .XCTestDefaultUUID)
+        let tab = MockTab(profile: makeProfile(), windowUUID: .XCTestDefaultUUID)
         tabManager.tabs = [tab]
         tabManager.selectedTab = tab
         let subject = createSubject(tabManager: tabManager)
@@ -499,7 +498,7 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
 
     func test_scrollViewDidEndDecelerating_savesVerticalScrollOffset() {
         let tabManager = HomepageRestoreContentOffsetTabManager()
-        let tab = MockTab(profile: MockProfile(), windowUUID: .XCTestDefaultUUID)
+        let tab = MockTab(profile: makeProfile(), windowUUID: .XCTestDefaultUUID)
         tabManager.tabs = [tab]
         tabManager.selectedTab = tab
         let subject = createSubject(tabManager: tabManager)
@@ -522,6 +521,30 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
         subject.scrollViewDidEndDecelerating(UIScrollView())
 
         XCTAssertEqual(homepageTabStateStore.state(for: tab.tabUUID).scrollOffsetY, 140)
+    }
+
+    func test_didSelectJumpBackInItem_withOpenTab_dispatchesTapOnCellWithThatTab() throws {
+        let tab = Tab(profile: makeProfile(), windowUUID: .XCTestDefaultUUID)
+        tab.url = URL(string: "https://www.mozilla.org")!
+        let tabManager = MockTabManager()
+        tabManager.tabsByUUID = [tab.tabUUID: tab]
+        let subject = createSubject(tabManager: tabManager)
+
+        try selectJumpBackInItem(for: tab, in: subject)
+
+        let action = try XCTUnwrap(mockStore.dispatchedActions.last as? JumpBackInAction)
+        XCTAssertEqual(action.actionType as? JumpBackInActionType, .tapOnCell)
+        XCTAssertIdentical(action.tab, tab)
+    }
+
+    func test_didSelectJumpBackInItem_withClosedTab_dispatchesNothing() throws {
+        let tab = Tab(profile: makeProfile(), windowUUID: .XCTestDefaultUUID)
+        tab.url = URL(string: "https://www.mozilla.org")!
+        let subject = createSubject(tabManager: MockTabManager())
+
+        try selectJumpBackInItem(for: tab, in: subject)
+
+        XCTAssertTrue(mockStore.dispatchedActions.isEmpty)
     }
 
     func test_newState_updatesWallpaperHeightConstraint_withAvailableWallpaperHeight() throws {
@@ -547,6 +570,39 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
             wallpaperView.constraints.first(where: { $0.firstAttribute == .height && $0.firstItem === wallpaperView })
         )
         XCTAssertEqual(wallpaperHeightConstraint.constant, 300)
+    }
+
+    /// Shows `tab` as the only Jump Back In item on `subject`'s homepage and taps it. Only the actions the tap
+    /// dispatches are left in `mockStore`.
+    private func selectJumpBackInItem(for tab: Tab, in subject: HomepageViewController) throws {
+        var state = HomepageState.reducer.legacyReducer(
+            HomepageState(windowUUID: .XCTestDefaultUUID),
+            TabManagerAction(
+                recentTabs: [tab],
+                windowUUID: .XCTestDefaultUUID,
+                actionType: TabManagerMiddlewareActionType.fetchedRecentTabs
+            )
+        )
+        state = HomepageState.reducer.legacyReducer(
+            state,
+            JumpBackInAction(
+                isEnabled: true,
+                windowUUID: .XCTestDefaultUUID,
+                actionType: JumpBackInActionType.toggleShowSectionSetting
+            )
+        )
+        subject.loadViewIfNeeded()
+        subject.newState(state: state)
+
+        let collectionView = try XCTUnwrap(
+            subject.view.subviews.first(where: { $0 is UICollectionView }) as? UICollectionView
+        )
+        let dataSource = try XCTUnwrap(collectionView.dataSource as? HomepageDiffableDataSource)
+        let config = try XCTUnwrap(state.jumpBackInState.jumpBackInTabs.first)
+        let indexPath = try XCTUnwrap(dataSource.indexPath(for: .jumpBackIn(config)))
+
+        mockStore.dispatchedActions.removeAll()
+        subject.collectionView(collectionView, didSelectItemAt: indexPath)
     }
 
     private func createSubject(
@@ -579,15 +635,6 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
         return AppState()
     }
 
-    func setupStore() {
-        mockStore = MockStoreForMiddleware(state: setupAppState())
-        StoreTestUtilityHelper.setupStore(with: mockStore)
-    }
-
-    func resetStore() {
-        StoreTestUtilityHelper.resetStore()
-    }
-
     private func setupNimbusToolbarRefactorTesting(isEnabled: Bool) {
         FxNimbus.shared.features.toolbarRefactorFeature.with { _, _ in
             return ToolbarRefactorFeature()
@@ -617,6 +664,44 @@ final class HomepageViewControllerTests: XCTestCase, StoreTestUtility, @unchecke
                 actionType: MerinoMiddlewareActionType.retrievedUpdatedHomepageStories
             )
         )
+    }
+
+    // MARK: - Embedded address bar
+    func test_viewDidLoad_withFlagEnabledAndTopPosition_addsEmbeddedAddressBar() {
+        let embeddedAddressBar = loadEmbeddedAddressBar(isFlagEnabled: true, position: .top)
+
+        XCTAssertNotNil(embeddedAddressBar)
+    }
+
+    func test_viewDidLoad_withFlagEnabledAndBottomPosition_doesNotAddEmbeddedAddressBar() {
+        let embeddedAddressBar = loadEmbeddedAddressBar(isFlagEnabled: true, position: .bottom)
+
+        XCTAssertNil(embeddedAddressBar)
+    }
+
+    func test_viewDidLoad_withFlagDisabledAndTopPosition_doesNotAddEmbeddedAddressBar() {
+        let embeddedAddressBar = loadEmbeddedAddressBar(isFlagEnabled: false, position: .top)
+
+        XCTAssertNil(embeddedAddressBar)
+    }
+
+    private func loadEmbeddedAddressBar(isFlagEnabled: Bool, position: SearchBarPosition) -> UIView? {
+        let featureFlags = MockNimbusFeatureFlags()
+        if isFlagEnabled {
+            featureFlags.enabledFlags = [.homepageAnimatedCenterSearchBar]
+        }
+        let userPreferences = MockUserFeaturePreferences()
+        userPreferences.searchBarPosition = position
+        DependencyHelperMock().bootstrapDependencies(
+            injectedFeatureFlagProvider: featureFlags,
+            injectedUserFeaturePreferences: userPreferences
+        )
+
+        let sut = createSubject()
+        sut.loadViewIfNeeded()
+        return sut.view.subviews.first {
+            $0.accessibilityIdentifier == AccessibilityIdentifiers.FirefoxHomepage.EmbeddedAddressBar.view
+        }
     }
 }
 

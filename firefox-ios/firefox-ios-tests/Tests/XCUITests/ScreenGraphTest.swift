@@ -5,13 +5,34 @@
 import MappaMundi
 import XCTest
 import Common
+import Shared
 
+@MainActor
 class ScreenGraphTest: XCTestCase {
     var navigator: MMNavigator<TestUserState>!
     var app: XCUIApplication!
 
-    override func setUp() {
-        super.setUp()
+    func mozWaitForElementToNotExist(_ element: XCUIElement, timeout: TimeInterval? = TIMEOUT) {
+        let startTime = Date()
+
+        while element.exists {
+            if let timeout = timeout, Date().timeIntervalSince(startTime) > timeout {
+                XCTFail("Timed out waiting for element \(element) to not exist")
+                break
+            }
+            usleep(10000)
+        }
+    }
+
+    func waitUntilPageLoad() {
+        let app = XCUIApplication()
+        let progressIndicator = app.progressIndicators.element(boundBy: 0)
+
+        mozWaitForElementToNotExist(progressIndicator, timeout: 90.0)
+    }
+
+    override func setUp() async throws {
+        try await super.setUp()
         app = XCUIApplication()
         navigator = createTestGraph(for: self, with: app).navigator()
         app.terminate()
@@ -24,49 +45,58 @@ class ScreenGraphTest: XCTestCase {
                                LaunchArguments.DisableAnimations]
         app.activate()
     }
+
+    override func tearDown() async throws {
+        navigator = nil
+        app = nil
+        try await super.tearDown()
+    }
 }
 
 extension XCTestCase {
     func wait(forElement element: XCUIElement, timeout: TimeInterval) {
         let predicate = NSPredicate(format: "exists == 1")
-        expectation(for: predicate, evaluatedWith: element)
-        waitForExpectations(timeout: timeout)
+        let expectation = expectation(for: predicate, evaluatedWith: element)
+
+        wait(for: [expectation], timeout: timeout)
     }
 }
 
 extension ScreenGraphTest {
-    // Temporary disable since it is failing intermittently on BB
     func testUserStateChanges() {
         XCTAssertNil(navigator.userState.url, "Current url is empty")
 
         navigator.userState.url = "https://mozilla.org"
         navigator.performAction(TestActions.LoadURLByTyping)
+        waitUntilPageLoad()
         // The UserState is mutated in BrowserTab.
         navigator.goto(BrowserTab)
         navigator.nowAt(BrowserTab)
-        XCTAssertTrue(navigator.userState.url?.starts(with: "www.mozilla.org") ?? false, "Current url recorded by from the url bar is \(navigator.userState.url ?? "nil")")
+        let currentURL = navigator.userState.url as String?
+        XCTAssertTrue(currentURL?.starts(with: "mozilla.org") ?? false, "Current url recorded by from the url bar is \(currentURL ?? "nil")")
     }
 
     func testSimpleToggleAction() {
-        navigator.nowAt(BrowserTab)
+        navigator.userState.url = "https://mozilla.org"
+        navigator.performAction(TestActions.LoadURLByTyping)
+        waitUntilPageLoad()
         // Switch night mode on, by toggling.
         navigator.performAction(TestActions.ToggleNightMode)
         XCTAssertTrue(navigator.userState.nightMode)
 
         navigator.nowAt(BrowserTab)
-        navigator.goto(BrowserTabMenu)
-        XCTAssertEqual(navigator.screenState, BrowserTabMenu)
+        navigator.goto(BrowserTabMenuMore)
+        XCTAssertEqual(navigator.screenState, BrowserTabMenuMore)
 
         // Nothing should happen here, because night mode is already on.
         navigator.toggleOn(navigator.userState.nightMode, withAction: TestActions.ToggleNightMode)
         XCTAssertTrue(navigator.userState.nightMode)
-        XCTAssertEqual(navigator.screenState, BrowserTabMenu)
+        XCTAssertEqual(navigator.screenState, BrowserTabMenuMore)
 
-        navigator.nowAt(BrowserTabMenu)
         // Switch night mode off.
-        navigator.toggleOff(navigator.userState.nightMode, withAction: TestActions.ToggleNightMode)
+        navigator.toggleOff(navigator.userState.nightMode, withAction: TestActions.ToggleNighModeOff)
         XCTAssertFalse(navigator.userState.nightMode)
-        XCTAssertEqual(navigator.screenState, BrowserTabMenu)
+        XCTAssertEqual(navigator.screenState, BrowserTabMenuMore)
     }
 }
 
@@ -82,18 +112,20 @@ class TestUserState: MMUserState {
     var url: String?
     var nightMode = false
     var passcode: String?
-    var newPasscode: String = "111111"
+    var newPasscode = "111111"
 }
 
 let WebPageLoading = "WebPageLoading"
 
 private class TestActions {
-    static let ToggleNightMode = StandardImageIdentifiers.Large.nightMode
+    static let ToggleNightMode = "ToggleNightMode"
+    static let ToggleNighModeOff = "ToggleNightModeOff"
     static let LoadURL = "LoadURL"
     static let LoadURLByTyping = "LoadURLByTyping"
     static let LoadURLByPasting = "LoadURLByPasting"
 }
 
+@MainActor
 public var isTablet: Bool {
     // There is more value in a variable having the same name,
     // so it can be used in both predicates and in code
@@ -101,12 +133,13 @@ public var isTablet: Bool {
     return UIDevice.current.userInterfaceIdiom == .pad
 }
 
+@MainActor
 private func createTestGraph(for test: XCTestCase, with app: XCUIApplication) -> MMScreenGraph<TestUserState> {
     let map = MMScreenGraph(for: test, with: TestUserState.self)
 
     map.addScreenState(FirstRun) { screenState in
         screenState.noop(to: BrowserTab)
-        screenState.tap(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url], to: URLBarOpen)
+        screenState.tap(app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField], to: URLBarOpen)
     }
 
     map.addScreenState(WebPageLoading) { screenState in
@@ -120,23 +153,34 @@ private func createTestGraph(for test: XCTestCase, with app: XCUIApplication) ->
 
     map.addScreenState(BrowserTab) { screenState in
         screenState.onEnter { userState in
-            userState.url = app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].value as? String
+            userState.url = app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].value as? String
         }
 
         screenState.tap(app.buttons[AccessibilityIdentifiers.Toolbar.settingsMenuButton], to: BrowserTabMenu)
-        screenState.tap(app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url], to: URLBarOpen)
+        screenState.tap(app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField], to: URLBarOpen)
 
         screenState.gesture(forAction: TestActions.LoadURLByPasting, TestActions.LoadURL) { userState in
             UIPasteboard.general.string = userState.url ?? defaultURL
-            app.textFields[AccessibilityIdentifiers.Browser.UrlBar.url].press(forDuration: 1.0)
-            app.tables["Context Menu"].cells[AccessibilityIdentifiers.Photon.pasteAndGoAction].tap()
+            app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].press(forDuration: 1.0)
+            app.cells.buttons[AccessibilityIdentifiers.Photon.pasteAndGoAction].waitAndTap()
+        }
+    }
+    map.addScreenState(BrowserTabMenuMore) { screenState in
+        // Web Site Dark Mode
+        screenState.gesture(forAction: TestActions.ToggleNightMode) { userState in
+            userState.nightMode = true
+            app.tables.cells[AccessibilityIdentifiers.MainMenu.nightMode].tap()
+        }
+        screenState.gesture(forAction: TestActions.ToggleNighModeOff) { userState in
+            userState.nightMode = false
+            app.tables.cells[AccessibilityIdentifiers.MainMenu.nightMode].tap()
         }
     }
 
     map.addScreenState(URLBarOpen) { screenState in
         screenState.gesture(forAction: TestActions.LoadURLByTyping, TestActions.LoadURL) { userState in
             let urlString = userState.url ?? defaultURL
-            app.textFields[AccessibilityIdentifiers.Browser.UrlBar.searchTextField].typeText("\(urlString)\r")
+            app.textFields[AccessibilityIdentifiers.Browser.AddressToolbar.searchTextField].typeText("\(urlString)\r")
         }
     }
 
@@ -146,26 +190,21 @@ private func createTestGraph(for test: XCTestCase, with app: XCUIApplication) ->
         screenState.dismissOnUse = true
         screenState.tap(app.tables.cells["Settings"], to: SettingsScreen)
 
-        screenState.tap(
-            app.otherElements.cells.otherElements[StandardImageIdentifiers.Large.nightMode],
-            forAction: TestActions.ToggleNightMode,
-            transitionTo: BrowserTabMenu
-        ) { userState in
-            userState.nightMode = !userState.nightMode
-        }
+        // More Options
+        screenState.gesture(to: BrowserTabMenuMore) { expandTabMenuIfNeeded(in: app) }
 
         screenState.backAction = {
             if isTablet {
                 // There is no Cancel option in iPad.
-                app.otherElements["PopoverDismissRegion"].tap()
+                app.otherElements["PopoverDismissRegion"].waitAndTap()
             } else {
-                app.buttons["PhotonMenu.close"].tap()
+                app.buttons["PhotonMenu.close"].waitAndTap()
             }
         }
     }
 
     let navigationControllerBackAction = {
-        app.navigationBars.element(boundBy: 0).buttons.element(boundBy: 0).tap()
+        app.navigationBars.element(boundBy: 0).buttons.element(boundBy: 0).waitAndTap()
     }
 
     map.addScreenState(SettingsScreen) { screenState in

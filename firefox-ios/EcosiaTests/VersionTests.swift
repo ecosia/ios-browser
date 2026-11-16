@@ -14,6 +14,10 @@ final class VersionTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: Self.appVersionUpdateTestKey)
     }
 
+    override func tearDown() async throws {
+        try await super.tearDown()
+    }
+
     // Test initialization
     func testInitialization() {
         XCTAssertNotNil(Version("1.0.0"))

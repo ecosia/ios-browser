@@ -16,6 +16,10 @@ final class ExperimentsRemoteRecipesTests: XCTestCase {
         try super.tearDownWithError()
     }
 
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+    }
+
     func testLocalRemoteSettingsService_readsRecipesFromLocalFolderOnly() throws {
         try writeLocalRecipe(Self.rolloutRecipe)
         let nimbus = makeNimbus()

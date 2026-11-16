@@ -24,7 +24,7 @@ class CustomSearchEnginesTest: XCTestCase {
     }
 
     func testgetSearchTemplate() {
-        let profile = MockBrowserProfile(localName: "customSearchTests")
+        let profile = makeBrowserProfile(localName: "customSearchTests")
         let customSearchEngineForm = CustomSearchViewController(windowUUID: windowUUID)
         customSearchEngineForm.profile = profile
 
@@ -37,7 +37,7 @@ class CustomSearchEnginesTest: XCTestCase {
 
     @MainActor
     func testaddSearchEngine() async {
-        let profile = MockBrowserProfile(localName: "customSearchTests")
+        let profile = makeBrowserProfile(localName: "customSearchTests")
         let customSearchEngineForm = CustomSearchViewController(windowUUID: windowUUID)
         customSearchEngineForm.profile = profile
         let q = "http://www.google.ca/?#q=%s"
@@ -56,10 +56,10 @@ class CustomSearchEnginesTest: XCTestCase {
 
     @MainActor
     func testaddSearchEngineFailure() async {
-        let profile = MockBrowserProfile(localName: "customSearchTests")
+        let profile = makeBrowserProfile(localName: "customSearchTests")
         let customSearchEngineForm = CustomSearchViewController(windowUUID: windowUUID)
         customSearchEngineForm.profile = profile
-        let q = "isthisvalid.com/hhh%s"
+        let q = "https://isthisvalid.com/hhh"
         let title = "YASE"
 
         do {
@@ -67,6 +67,26 @@ class CustomSearchEnginesTest: XCTestCase {
             XCTFail("Test should have failed to create the engine")
         } catch {
             XCTAssertEqual((error as? CustomSearchError)?.reason, CustomSearchError(.FormInput).reason)
+        }
+    }
+
+    @MainActor
+    func testaddSearchEngineWithoutScheme() async {
+        let profile = makeBrowserProfile(localName: "customSearchTests")
+        let customSearchEngineForm = CustomSearchViewController(windowUUID: windowUUID)
+        customSearchEngineForm.profile = profile
+        let q = "noai.duckduckgo.com/?ia=web&origin=funnelhomewebsite&q=%s"
+        let title = "YASE"
+
+        do {
+            let engine = try await customSearchEngineForm.createEngine(query: q, name: title)
+
+            XCTAssertEqual(
+                engine.searchTemplate,
+                "https://noai.duckduckgo.com/?ia=web&origin=funnelhomewebsite&q={searchTerms}"
+            )
+        } catch {
+            XCTFail("Failed to create engine \(error)")
         }
     }
 }

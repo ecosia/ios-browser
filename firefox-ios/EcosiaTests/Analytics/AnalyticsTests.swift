@@ -19,6 +19,10 @@ final class AnalyticsTests: XCTestCase {
         defaults.removeObject(forKey: "shouldUseMicroInstance")
     }
 
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+    }
+
     // MARK: - hasDayPassedSinceLastCheck Tests
 
     func testFirstCheckAlwaysReturnsTrue() throws {

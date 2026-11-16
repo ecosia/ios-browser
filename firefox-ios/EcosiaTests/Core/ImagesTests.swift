@@ -15,6 +15,10 @@ import XCTest
         images = .init(session)
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     func testDownload() {
         let expect = expectation(description: "")
         let url = URL(string: "avocado.com")!

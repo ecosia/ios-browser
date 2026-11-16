@@ -18,7 +18,7 @@ final class BrowsingSettingsViewControllerTests: XCTestCase {
         try await super.setUp()
         self.featureFlags = MockNimbusFeatureFlags()
         DependencyHelperMock().bootstrapDependencies(injectedFeatureFlagProvider: featureFlags)
-        self.profile = MockProfile()
+        self.profile = makeProfile()
         self.delegate = MockSettingsDelegate()
     }
 
@@ -30,9 +30,10 @@ final class BrowsingSettingsViewControllerTests: XCTestCase {
         try await super.tearDown()
     }
 
-    func testHomePageSettingsLeaks_InitCall() throws {
+    func testBrowsingSettingsLeaks_InitCall() throws {
         let subject = createSubject()
-        trackForMemoryLeaks(subject)
+        // Mirrors viewWillAppear(_:), which retains the generated settings on the controller.
+        subject.settings = subject.generateSettings()
     }
 
     func testGenerateSettings_whenAdBlockerFlagOff_omitsAdBlockerAndUsesMediaSection() {

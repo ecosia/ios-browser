@@ -143,11 +143,11 @@ final class NTPImpactGlassBackgroundView: UIView {
     /// and updates the view. Safe to call every time `applyTheme` runs.
     func loadCurrentWallpaper() {
         let wallpaper = WallpaperManager().currentWallpaper
-        let isLandscape = UIDevice.current.orientation.isLandscape
+        let imageType = WallpaperImageType.current(isLandscape: UIDevice.current.orientation.isLandscape)
         let radius = Self.blurRadius
 
         Task.detached(priority: .userInitiated) { [weak self] in
-            let source: UIImage? = isLandscape ? wallpaper.landscape : wallpaper.portrait
+            let source: UIImage? = wallpaper.image(for: imageType)
             guard let source else { return }
 
             if let cached = await MainActor.run(body: { Self.blurCache.object(forKey: source) }) {

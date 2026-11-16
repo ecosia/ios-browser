@@ -46,7 +46,7 @@ final class InvisibleTabAutoCloseManagerTests: XCTestCase {
     // MARK: - Helper Methods
 
     private func createMockTab(uuid: String = UUID().uuidString, isPrivate: Bool = false, isInvisible: Bool = true) -> Tab {
-        let profile = MockProfile()
+        let profile = MockProfile.unmanaged()
         let tab = Tab(profile: profile, isPrivate: isPrivate, windowUUID: WindowUUID())
         tab.tabUUID = uuid
 

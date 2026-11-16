@@ -22,6 +22,11 @@ final class UserAgentTests: XCTestCase {
         super.tearDown()
     }
 
+    // Ecosia: Balances the setUp/tearDown pair for SwiftLint
+    override func setUp() {
+        super.setUp()
+    }
+
     // Ecosia: Verify the default mobile UA uses Ecosia's UA marker.
     func testDefaultMobileUserAgent_returnsEcosiaUserAgent() {
         let userAgent = UserAgent.mobileUserAgent()

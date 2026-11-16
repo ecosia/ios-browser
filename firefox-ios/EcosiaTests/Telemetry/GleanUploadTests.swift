@@ -14,6 +14,10 @@ final class GleanUploadTests: XCTestCase {
         DependencyHelperMock().bootstrapDependencies()
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     func testGleanUploadIsDisabled() {
         XCTAssertFalse(TelemetryWrapper.isGleanUploadEnabled)
     }
@@ -138,7 +142,7 @@ private final class GleanDataFixture {
 
 @MainActor
 private struct UsageReportingFixture {
-    let profile = MockProfile()
+    let profile = MockProfile.unmanaged()
     let api = UsageReportingApiSpy()
     let deletionRequest = UsageDeletionRequestSpy()
     let notificationCenter = NotificationCenter()

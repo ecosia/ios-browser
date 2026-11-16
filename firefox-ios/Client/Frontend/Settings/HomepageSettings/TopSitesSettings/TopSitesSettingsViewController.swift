@@ -7,8 +7,11 @@ import Common
 import Shared
 
 final class TopSitesSettingsViewController: SettingsTableViewController, UserFeaturePreferenceProvider {
+    private let logger: Logger
+
     // MARK: - Initializers
-    init(windowUUID: WindowUUID) {
+    init(windowUUID: WindowUUID, logger: Logger = DefaultLogger.shared) {
+        self.logger = logger
         super.init(style: .grouped, windowUUID: windowUUID)
 
         self.title = .Settings.Homepage.Shortcuts.ShortcutsPageTitle
@@ -34,15 +37,15 @@ final class TopSitesSettingsViewController: SettingsTableViewController, UserFea
             let toggleSettings = [
                 BoolSetting(
                     prefs: profile.prefs,
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    theme: currentTheme(),
                     prefKey: PrefsKeys.UserFeatureFlagPrefs.TopSiteSection,
                     defaultValue: true,
                     titleText: .Settings.Homepage.Shortcuts.ShortcutsToggle
-                ) { isOn in
+                ) { [windowUUID] isOn in
                     store.dispatch(
                         TopSitesAction(
                             isEnabled: isOn,
-                            windowUUID: self.windowUUID,
+                            windowUUID: windowUUID,
                             actionType: TopSitesActionType.toggleShowSectionSetting
                         )
                     )
@@ -50,14 +53,14 @@ final class TopSitesSettingsViewController: SettingsTableViewController, UserFea
                 /* Ecosia: No sponsored shortcuts in Ecosia; omit the sponsored toggle (MOB-4331).
                 BoolSetting(
                     prefs: profile.prefs,
-                    theme: themeManager.getCurrentTheme(for: windowUUID),
+                    theme: currentTheme(),
                     prefKey: PrefsKeys.FeatureFlags.SponsoredShortcuts,
                     defaultValue: userPreferences.getPreferenceFor(.hntSponsoredShortcuts),
                     titleText: .Settings.Homepage.Shortcuts.SponsoredShortcutsToggle
-                ) { _ in
+                ) { [windowUUID, weak self] _ in
                     store.dispatch(
                         TopSitesAction(
-                            windowUUID: self.windowUUID,
+                            windowUUID: windowUUID,
                             actionType: TopSitesActionType.toggleShowSponsoredSettings
                         )
                     )
@@ -68,7 +71,7 @@ final class TopSitesSettingsViewController: SettingsTableViewController, UserFea
                     ) ?? true
                     if !isSponsoredShortcutsEnabled,
                        let contextId = TelemetryContextualIdentifier.contextId {
-                        self.deleteUserRequest(contextId: contextId)
+                        self?.deleteUserRequest(contextId: contextId)
                     }
                 }
                  */
@@ -88,7 +91,11 @@ final class TopSitesSettingsViewController: SettingsTableViewController, UserFea
     private func deleteUserRequest(contextId: String) {
         Task {
             let remover = UnifiedAdsUserDataRemover()
-            try await remover.deleteUserData(contextID: contextId)
+            do {
+                try await remover.deleteUserData(contextID: contextId)
+            } catch {
+                logger.log("Failed to delete unified ads user data: \(error)", level: .fatal, category: .homepage)
+            }
         }
     }
 }
@@ -121,7 +128,7 @@ extension TopSitesSettingsViewController {
         init(settings: SettingsTableViewController) {
             self.profile = settings.profile
             self.windowUUID = settings.windowUUID
-            let theme = settings.themeManager.getCurrentTheme(for: windowUUID)
+            let theme = settings.currentTheme()
             super.init(
                 title: NSAttributedString(
                     string: .Settings.Homepage.Shortcuts.Rows,

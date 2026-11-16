@@ -227,6 +227,7 @@ class ModernKitOnboardingTests: FeatureFlaggedTestSuite {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/4035645 [Config] nav:bottombar
+    // Regression
     func testModernKitOnboardingToolbarPlacementBottom() throws {
         if iPad() {
             throw XCTSkip("Toolbar customization is not available on iPad")
@@ -343,6 +344,39 @@ class ModernKitOnboardingTests: FeatureFlaggedTestSuite {
 
         // Card 4: Instantly pick up where you left off (Sync)
         onboardingScreen.assertSyncScreen()
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/view/3309014
+    // Regression
+    func testModernKitOnboardingCardsImages() throws {
+        launchApp()
+
+        onboardingScreen.assertTermsOfServiceShowsImage()
+        onboardingScreen.handleTermsOfService()
+
+        // Step 3: Set as Default Browser card shows its illustration
+        onboardingScreen.assertModernWelcomeScreen()
+        onboardingScreen.assertCurrentCardShowsImage()
+        onboardingScreen.goToNextScreenViaSecondary()
+
+        if iPad() {
+            // iPad does not show the address bar card; a11y IDs still increase by one.
+            onboardingScreen.currentScreen += 1
+        } else {
+            // Step 4: Address bar card - its illustrations are part of the Top/Bottom option buttons
+            onboardingScreen.assertToolbarCustomizationScreen()
+            onboardingScreen.assertCurrentCardOptionsShowImages()
+            onboardingScreen.goToNextScreenViaPrimary()
+        }
+
+        // Step 5: Theme card - its illustrations are part of the Automatic/Light/Dark option buttons
+        onboardingScreen.assertModernThemeCustomizationScreen()
+        onboardingScreen.assertCurrentCardOptionsShowImages()
+        onboardingScreen.goToNextScreenViaPrimary()
+
+        // Step 6: Sync card shows its illustration
+        onboardingScreen.assertSyncScreen()
+        onboardingScreen.assertCurrentCardShowsImage()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/4035641
@@ -503,6 +537,7 @@ class ModernKitOnboardingTests: FeatureFlaggedTestSuite {
     // https://mozilla.testrail.io/index.php?/cases/view/4038425
     // Regression
     func testModernKitOnboardingSetAsDefaultBrowser() {
+        markKnownFailure(onIOS: [18], issue: "https://github.com/mozilla-mobile/firefox-ios/issues/35946")
         launchApp()
 
         onboardingScreen.handleTermsOfService()

@@ -51,6 +51,7 @@ final class ToolbarHelperTests: XCTestCase {
         XCTAssertFalse(subject.shouldShowNavigationToolbar(for: traits))
     }
 
+    /* Ecosia: Firefox 159.1 removed `ToolbarHelper.shouldShowTopTabs`; upstream never compiles this file
     func test_shouldShowTopTabs_regularVerticalRegularHorizontal_returnsTrue() async {
         let subject = await ToolbarHelper(userInterfaceIdiom: .pad)
         let traits = traitCollection(vertical: .regular, horizontal: .regular)
@@ -62,6 +63,7 @@ final class ToolbarHelperTests: XCTestCase {
         let traits = traitCollection(vertical: .regular, horizontal: .compact)
         XCTAssertFalse(subject.shouldShowTopTabs(for: traits))
     }
+     */
 
     func test_getLockIconState_secureWebsiteMode_returnsExpectedValues() async {
         let subject = await ToolbarHelper(userInterfaceIdiom: .phone)

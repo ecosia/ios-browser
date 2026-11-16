@@ -255,7 +255,7 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
 
     // MARK: - Search Bar
     func test_initializeAction_configuresSearchBar() throws {
-        setupNimbusSearchBarTesting(isEnabled: true)
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: true)
         let subject = createSubject()
         let action = HomepageAction(
             windowUUID: .XCTestDefaultUUID,
@@ -284,7 +284,7 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
     }
 
     func test_initializeAction_doesNotConfigureSearchBar() throws {
-        setupNimbusSearchBarTesting(isEnabled: false)
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: false)
         let subject = createSubject()
         let action = HomepageAction(
             windowUUID: .XCTestDefaultUUID,
@@ -312,9 +312,32 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
         XCTAssertEqual(configuredSearchBarAction.isSearchBarEnabled, false)
     }
 
+    func test_initializeAction_withBottomAddressBar_doesNotConfigureSearchBar() throws {
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: true)
+        let subject = createSubject(searchBarPosition: .bottom)
+        let action = HomepageAction(
+            windowUUID: .XCTestDefaultUUID,
+            actionType: HomepageActionType.initialize
+        )
+
+        let dispatchExpectation = XCTestExpectation(description: "Search bar configured middleware action dispatched")
+
+        mockStore.dispatchCalled = {
+            dispatchExpectation.fulfill()
+        }
+
+        subject.homepageProvider.legacyMiddleware(AppState(), action)
+
+        wait(for: [dispatchExpectation], timeout: 1)
+
+        let (configuredSearchBarAction, _) = try getActionInfo(for: .configuredSearchBar)
+
+        XCTAssertEqual(configuredSearchBarAction.isSearchBarEnabled, false)
+    }
+
     func test_viewWillTransitionAction_configuresSearchBar() throws {
         let subject = createSubject()
-        setupNimbusSearchBarTesting(isEnabled: true)
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: true)
         let action = HomepageAction(
             windowUUID: .XCTestDefaultUUID,
             actionType: HomepageActionType.viewWillTransition
@@ -342,7 +365,7 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
     }
 
     func test_viewWillTransitionAction_doesNotConfigureSearchBar() throws {
-        setupNimbusSearchBarTesting(isEnabled: false)
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: false)
         let subject = createSubject()
         let action = HomepageAction(
             windowUUID: .XCTestDefaultUUID,
@@ -371,7 +394,7 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
     }
 
     func test_toolbarCancelEditAction_configuresSearchBar() throws {
-        setupNimbusSearchBarTesting(isEnabled: true)
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: true)
         let subject = createSubject()
         let action = ToolbarAction(
             windowUUID: .XCTestDefaultUUID,
@@ -400,7 +423,7 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
     }
 
     func test_toolbarCancelEditAction_doesNotConfigureSearchBar() throws {
-        setupNimbusSearchBarTesting(isEnabled: false)
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: false)
         let subject = createSubject()
         let action = ToolbarAction(
             windowUUID: .XCTestDefaultUUID,
@@ -428,7 +451,7 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
     }
 
     func test_navigateBackAction_configuresSearchBar() throws {
-        setupNimbusSearchBarTesting(isEnabled: true)
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: true)
         let subject = createSubject()
         let action = ToolbarAction(
             windowUUID: .XCTestDefaultUUID,
@@ -457,7 +480,7 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
     }
 
     func test_navigateBackAction_doesNotConfigureSearchBar() throws {
-        setupNimbusSearchBarTesting(isEnabled: false)
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: false)
         let subject = createSubject()
         let action = ToolbarAction(
             windowUUID: .XCTestDefaultUUID,
@@ -485,7 +508,7 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
     }
 
     func test_didCloseTabAction_configuresSearchBar() throws {
-        setupNimbusSearchBarTesting(isEnabled: true)
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: true)
         let subject = createSubject()
         let action = ToolbarAction(
             windowUUID: .XCTestDefaultUUID,
@@ -514,7 +537,7 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
     }
 
     func test_didCloseTabAction_doesNotConfigureSearchBar() throws {
-        setupNimbusSearchBarTesting(isEnabled: false)
+        setupNimbusAnimatedCenterSearchBarTesting(isEnabled: false)
         let subject = createSubject()
         let action = ToolbarAction(
             windowUUID: .XCTestDefaultUUID,
@@ -594,21 +617,25 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
     // MARK: - Helpers
     private func createSubject(
         privacyNoticeHelper: PrivacyNoticeHelperProtocol? = nil,
-        windowManager: WindowManager = AppContainer.shared.resolve()
+        windowManager: WindowManager = AppContainer.shared.resolve(),
+        searchBarPosition: SearchBarPosition = .top
     ) -> HomepageMiddleware {
+        let userPreferences = MockUserFeaturePreferences()
+        userPreferences.searchBarPosition = searchBarPosition
         return HomepageMiddleware(
             homepageTelemetry: HomepageTelemetry(
                 gleanWrapper: mockGleanWrapper
             ),
             privacyNoticeHelper: privacyNoticeHelper,
             notificationCenter: mockNotificationCenter,
-            windowManager: windowManager
+            windowManager: windowManager,
+            userPreferences: userPreferences
         )
     }
 
-    private func setupNimbusSearchBarTesting(isEnabled: Bool) {
+    private func setupNimbusAnimatedCenterSearchBarTesting(isEnabled: Bool) {
         FxNimbus.shared.features.homepageRedesignFeature.with { _, _ in
-            return HomepageRedesignFeature(searchBar: isEnabled)
+            return HomepageRedesignFeature(animatedCenterSearchBar: isEnabled)
         }
     }
 
@@ -640,16 +667,5 @@ final class HomepageMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked Se
                 ]
             )
         )
-    }
-
-    func setupStore() {
-        mockStore = MockStoreForMiddleware(state: setupAppState())
-        StoreTestUtilityHelper.setupStore(with: mockStore)
-    }
-
-    // In order to avoid flaky tests, we should reset the store
-    // similar to production
-    func resetStore() {
-        StoreTestUtilityHelper.resetStore()
     }
 }

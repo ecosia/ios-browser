@@ -230,9 +230,9 @@ class TrackingProtectionViewController: UIViewController,
                   let internalURL = InternalURL(url),
                   internalURL.isCertificateErrorURL,
                   let originalURL = internalURL.originalURLFromErrorPage {
-            CertificatesFetcher().getCertificates(for: originalURL) { certificates in
+            CertificatesFetcher().getCertificates(for: originalURL) { [weak self] certificates in
                 Task { @MainActor in
-                    self.model.certificates = certificates ?? []
+                    self?.model.certificates = certificates ?? []
                 }
             }
         }
@@ -531,7 +531,7 @@ class TrackingProtectionViewController: UIViewController,
     }
 
     private func updateViewDetails() {
-        let headerIcon = FaviconImageViewModel(siteURLString: model.url.absoluteString,
+        let headerIcon = FaviconImageViewModel(siteURLString: model.originalURL.absoluteString,
                                                faviconCornerRadius: TPMenuUX.UX.faviconCornerRadius)
         headerContainer.setupDetails(subtitle: model.websiteTitle,
                                      title: model.displayTitle,
@@ -552,7 +552,7 @@ class TrackingProtectionViewController: UIViewController,
 
     private func updateConnectionStatus() {
         let isInternalCertErrorURL = InternalURL(model.url)?.isCertificateErrorURL ?? false
-        let origin = CertStore.origin(for: model.url) ?? ""
+        let origin = CertStore.origin(for: model.originalURL) ?? ""
         let isManuallyTrusted = profile?.certStore.hasCertificate(forOrigin: origin) ?? false
         model.connectionSecure = model.selectedTab?.webView?.hasOnlySecureContent ?? false
         connectionStatusView.setConnectionStatus(image: model.getConnectionStatusImage(themeType: currentTheme().type),

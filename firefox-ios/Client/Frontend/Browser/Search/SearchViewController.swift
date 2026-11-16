@@ -60,6 +60,8 @@ class SearchViewController: SiteTableViewController,
         static let IconBorderWidth: CGFloat = 0.5
 
         static let AppendButtonSize: CGFloat = 44
+
+        static let resultsAnnouncementDelay: TimeInterval = 2
     }
 
     var searchDelegate: SearchViewControllerDelegate?
@@ -70,6 +72,7 @@ class SearchViewController: SiteTableViewController,
     var searchTelemetry: SearchTelemetry?
 
     private var selectedIndexPath: IndexPath?
+    private let resultsAnnouncementDebouncer = MainActorDebouncer(delay: UX.resultsAnnouncementDelay)
 
     // Views for displaying the bottom scrollable search engine list. searchEngineScrollView is the
     // scrollable container; searchEngineScrollViewContent contains the actual set of search engine buttons.
@@ -190,6 +193,7 @@ class SearchViewController: SiteTableViewController,
     override func viewWillDisappear(_ animated: Bool) {
         searchDelegate?.searchViewControllerWillHide(self)
         searchTelemetry?.stopImpressionTimer()
+        resultsAnnouncementDebouncer.cancel()
         super.viewWillDisappear(animated)
     }
 
@@ -302,6 +306,34 @@ class SearchViewController: SiteTableViewController,
 
     func reloadTableView() {
         tableView.reloadData()
+        scheduleResultsAnnouncement()
+    }
+
+    private func scheduleResultsAnnouncement() {
+        guard UIAccessibility.isVoiceOverRunning, !viewModel.searchQuery.isEmpty else {
+            resultsAnnouncementDebouncer.cancel()
+            return
+        }
+
+        resultsAnnouncementDebouncer.call { [weak self] in
+            self?.announceResultsCount()
+        }
+    }
+
+    private func announceResultsCount() {
+        let resultsCount = (0..<tableView.numberOfSections).reduce(0) { count, section in
+            count + tableView.numberOfRows(inSection: section)
+        }
+        guard resultsCount > 0 else { return }
+
+        let format: String = viewModel.isBottomSearchBar
+            ? .Search.ResultsAboveA11yAnnouncement
+            : .Search.ResultsBelowA11yAnnouncement
+        let announcement = NSAttributedString(
+            string: String(format: format, resultsCount),
+            attributes: [.accessibilitySpeechQueueAnnouncement: true]
+        )
+        UIAccessibility.post(notification: .announcement, argument: announcement)
     }
 
     func reloadSearchEngines() {
@@ -347,10 +379,7 @@ class SearchViewController: SiteTableViewController,
     /// In this state, we surface two types of content:
     /// - Trending searches: popular or curated terms shown to inspire discovery.
     /// - Recent searches: the user’s own past searches for quick re-access.
-    ///
-    /// We clear telemetry here since we're showing users a new set of searches.
     private func loadZeroSearchData() {
-        searchTelemetry?.clearZeroSearchSectionSeen()
         viewModel.loadTrendingSearches()
         viewModel.retrieveRecentSearches()
     }
@@ -537,10 +566,6 @@ class SearchViewController: SiteTableViewController,
         }
 
         return UITableView.automaticDimension
-    }
-
-    private func currentTheme() -> Theme {
-        return themeManager.getCurrentTheme(for: windowUUID)
     }
 
     override func tableView(
@@ -824,7 +849,8 @@ class SearchViewController: SiteTableViewController,
 
         let attributedString = searchPhrase.attributedText(
             boldIn: upperBound..<searchPhrase.endIndex,
-            font: FXFontStyles.Regular.body.scaledFont()
+            font: FXFontStyles.Regular.body.scaledFont(),
+            boldFont: FXFontStyles.Bold.body.scaledFont()
         )
         return attributedString
     }
@@ -894,21 +920,11 @@ class SearchViewController: SiteTableViewController,
         case .openedTabs:
             if viewModel.filteredOpenedTabs.count > indexPath.row {
                 let openedTab = viewModel.filteredOpenedTabs[indexPath.row]
-                twoLineCell.descriptionLabel.isHidden = false
-                twoLineCell.titleLabel.text = openedTab.title ?? openedTab.lastTitle
-                twoLineCell.descriptionLabel.text = String.SearchSuggestionCellSwitchToTabLabel
-                /* Ecosia: Use branded switchTab badge instead of Firefox sync_open_tab.
-                twoLineCell.leftOverlayImageView.image = openAndSyncTabBadge
-                */
-                /* Ecosia: Disable Tap Icon
-                twoLineCell.leftOverlayImageView.image = openTabBadgeImage(for: currentTheme())
-                */
-                twoLineCell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
-                twoLineCell.leftImageView.layer.borderWidth = UX.IconBorderWidth
-                if let urlString = openedTab.url?.absoluteString {
-                    twoLineCell.leftImageView.setFavicon(FaviconImageViewModel(siteURLString: urlString))
-                }
-                twoLineCell.accessoryView = nil
+                configureOpenedTabsCell(
+                    cell: twoLineCell,
+                    title: openedTab.title ?? openedTab.lastTitle,
+                    urlString: openedTab.url?.absoluteString
+                )
                 cell = twoLineCell
             }
         case .remoteTabs:
@@ -916,18 +932,13 @@ class SearchViewController: SiteTableViewController,
                viewModel.filteredRemoteClientTabs.count > indexPath.row {
                 let remoteTab = viewModel.filteredRemoteClientTabs[indexPath.row].tab
                 let remoteClient = viewModel.filteredRemoteClientTabs[indexPath.row].client
-                twoLineCell.descriptionLabel.isHidden = false
-                twoLineCell.titleLabel.text = remoteTab.title
-                twoLineCell.descriptionLabel.text = remoteClient.name
-                /* Ecosia: Use branded switchTab badge instead of Firefox sync_open_tab.
-                twoLineCell.leftOverlayImageView.image = openAndSyncTabBadge
-                */
-                twoLineCell.leftOverlayImageView.image = openTabBadgeImage(for: currentTheme())
-                twoLineCell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
-                twoLineCell.leftImageView.layer.borderWidth = UX.IconBorderWidth
                 let urlString = remoteTab.URL.absoluteString
-                twoLineCell.leftImageView.setFavicon(FaviconImageViewModel(siteURLString: urlString))
-                twoLineCell.accessoryView = nil
+                configureRemoteTabsCell(
+                    cell: twoLineCell,
+                    title: remoteTab.title,
+                    description: remoteClient.name,
+                    urlString: urlString
+                )
                 cell = twoLineCell
             }
         case .history:
@@ -955,19 +966,12 @@ class SearchViewController: SiteTableViewController,
 
         case .firefoxSuggestions:
             let firefoxSuggestion = viewModel.firefoxSuggestions[indexPath.row]
-            twoLineCell.titleLabel.text = firefoxSuggestion.title
-            if firefoxSuggestion.isSponsored {
-                twoLineCell.descriptionLabel.isHidden = false
-                twoLineCell.descriptionLabel.text = .Search.SponsoredSuggestionDescription
-            } else {
-                twoLineCell.descriptionLabel.isHidden = true
-            }
-            twoLineCell.leftOverlayImageView.image = nil
-            twoLineCell.leftImageView.contentMode = .scaleAspectFit
-            twoLineCell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
-            twoLineCell.leftImageView.layer.borderWidth = UX.IconBorderWidth
-            twoLineCell.leftImageView.manuallySetImage(firefoxSuggestion.iconImage ?? UIImage())
-            twoLineCell.accessoryView = nil
+            configureFirefoxSuggestionsCell(
+                cell: twoLineCell,
+                title: firefoxSuggestion.title,
+                isSponsored: firefoxSuggestion.isSponsored,
+                iconImage: firefoxSuggestion.iconImage ?? UIImage()
+            )
             cell = twoLineCell
         }
 
@@ -1001,6 +1005,47 @@ class SearchViewController: SiteTableViewController,
         return viewModel
     }
 
+    private func configureOpenedTabsCell(
+        cell: TwoLineImageOverlayCell,
+        title: String?,
+        urlString: String?
+    ) {
+        cell.descriptionLabel.isHidden = false
+        cell.titleLabel.text = title
+        cell.descriptionLabel.text = String.SearchSuggestionCellSwitchToTabLabel
+        /* Ecosia: Use branded switchTab badge instead of Firefox sync_open_tab.
+        cell.leftOverlayImageView.image = openAndSyncTabBadge
+        */
+        /* Ecosia: Disable Tap Icon
+        cell.leftOverlayImageView.image = openTabBadgeImage(for: currentTheme())
+        */
+        cell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
+        cell.leftImageView.layer.borderWidth = UX.IconBorderWidth
+        if let urlString = urlString {
+            cell.leftImageView.setFavicon(FaviconImageViewModel(siteURLString: urlString))
+        }
+        cell.accessoryView = nil
+    }
+
+    private func configureRemoteTabsCell(
+        cell: TwoLineImageOverlayCell,
+        title: String,
+        description: String,
+        urlString: String
+    ) {
+        cell.descriptionLabel.isHidden = false
+        cell.titleLabel.text = title
+        cell.descriptionLabel.text = description
+        /* Ecosia: Use branded switchTab badge instead of Firefox sync_open_tab.
+        cell.leftOverlayImageView.image = openAndSyncTabBadge
+        */
+        cell.leftOverlayImageView.image = openTabBadgeImage(for: currentTheme())
+        cell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
+        cell.leftImageView.layer.borderWidth = UX.IconBorderWidth
+        cell.leftImageView.setFavicon(FaviconImageViewModel(siteURLString: urlString))
+        cell.accessoryView = nil
+    }
+
     private func configureBookmarksAndHistoryCell(
         _ cell: TwoLineImageOverlayCell,
         _ title: String,
@@ -1014,6 +1059,27 @@ class SearchViewController: SiteTableViewController,
         cell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
         cell.leftImageView.layer.borderWidth = UX.IconBorderWidth
         cell.leftImageView.setFavicon(FaviconImageViewModel(siteURLString: description))
+        cell.accessoryView = nil
+    }
+
+    private func configureFirefoxSuggestionsCell(
+        cell: TwoLineImageOverlayCell,
+        title: String,
+        isSponsored: Bool,
+        iconImage: UIImage
+    ) {
+        cell.titleLabel.text = title
+        if isSponsored {
+            cell.descriptionLabel.isHidden = false
+            cell.descriptionLabel.text = .Search.SponsoredSuggestionDescription
+        } else {
+            cell.descriptionLabel.isHidden = true
+        }
+        cell.leftOverlayImageView.image = nil
+        cell.leftImageView.contentMode = .scaleAspectFit
+        cell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
+        cell.leftImageView.layer.borderWidth = UX.IconBorderWidth
+        cell.leftImageView.manuallySetImage(iconImage)
         cell.accessoryView = nil
     }
 

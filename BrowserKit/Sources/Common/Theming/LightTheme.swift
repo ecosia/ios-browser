@@ -56,10 +56,12 @@ private struct LightColourPalette: EcosiaThemeColourPalette {
     var layerSurfaceMedium = FXColors.White
     var layerSurfaceMediumAlpha = FXColors.White.withAlphaComponent(0.8)
     var layerSurfaceMediumAlt = FXColors.LightGrey40
+    var layerSurfaceMediumAltGlass = FXColors.LightGrey40
     var layerGradientSummary = Gradient(colors: [
         FXColors.Red70,
         FXColors.Orange50
     ])
+    var layerToolbarGlass: UIColor = FXColors.LightGrey10
 
     // MARK: - Actions
     var actionPrimary: UIColor = FXColors.Blue50

@@ -17,20 +17,23 @@ enum FeatureFlagID: String, CaseIterable {
     case adsClient
     case aiKillSwitch
     case backgroundAudio
-    case badCertDomainErrorPage
     case bookmarksSearchFeature
+    case browserDataExport
+    case browserDataImport
+    case cellularDataRestrictedErrorPage
     case customReaderModeScheme
     case deeplinkOptimizationRefactor
     case downloadLiveActivities
     case firefoxJpGuideDefaultSite
     case firefoxSuggestFeature
     case googleLens
+    case googleLensSearchInterstitial
     case hntSponsoredShortcuts
     case homepageAddShortcutTile
     case homepageBookmarksSectionDefault
     case homepageJumpBackinSectionDefault
     case homepagePinnedHeader
-    case homepageSearchBar
+    case homepageAnimatedCenterSearchBar
     case homepageStoryCategories
     case homepageTrackerBlockerModule
     case hostedSummarizer
@@ -38,17 +41,22 @@ enum FeatureFlagID: String, CaseIterable {
     case hostedSummarizerToolbarEntrypoint
     case httpsUpgrade
     case improvedAppStoreReviewTriggerFeature
+    case mergeWindows
     case microsurvey
     case modernOnboardingUI
+    case multiDayOnboarding
     case nativeErrorPage
     case newBookmarkFolderTree
     case novaDesign
-    case noInternetConnectionErrorPage
+    case novaPrivateThemeOverride
     case privacyDashboard
     case quickAnswers
+    case quickAnswersOptInRedesign
     case recentSearches
     case relayIntegration
     case reportBrokenSite
+    case searchConfigV3
+    case searchTermInAddressBar
     case sentFromFirefox
     case sentFromFirefoxTreatmentA
     case shouldUseBrandRefreshConfiguration
@@ -59,6 +67,7 @@ enum FeatureFlagID: String, CaseIterable {
     case summarizerPermissiveGuardrails
     case tabScrollRefactorFeature
     case tabTrayiPadUIExperiments
+    case tabTrayScreenshotButtonStyle
     case tabTrayTranslucency
     case tabTrayUIExperiments
     case tosFeature
@@ -106,35 +115,41 @@ enum FeatureFlagID: String, CaseIterable {
                 .adsClient,
                 .aiKillSwitch,
                 .backgroundAudio,
-                .badCertDomainErrorPage,
                 .bookmarksSearchFeature,
+                .browserDataExport,
+                .browserDataImport,
                 .customReaderModeScheme,
                 .deeplinkOptimizationRefactor,
                 .downloadLiveActivities,
                 .googleLens,
+                .googleLensSearchInterstitial,
                 .homepageAddShortcutTile,
                 .homepagePinnedHeader,
-                .homepageSearchBar,
+                .homepageAnimatedCenterSearchBar,
                 .homepageStoryCategories,
                 .homepageTrackerBlockerModule,
                 .hostedSummarizer,
                 .httpsUpgrade,
                 .improvedAppStoreReviewTriggerFeature,
+                .mergeWindows,
                 .microsurvey,
+                .multiDayOnboarding,
                 .nativeErrorPage,
                 .newBookmarkFolderTree,
-                .novaDesign,
-                .noInternetConnectionErrorPage,
+                .novaPrivateThemeOverride,
                 .privacyDashboard,
                 .quickAnswers,
+                .quickAnswersOptInRedesign,
                 .recentSearches,
                 .relayIntegration,
                 .reportBrokenSite,
+                .searchTermInAddressBar,
                 .sentFromFirefox,
                 .summarizerAppAttestAuth,
                 .summarizerLanguageExpansion,
                 .summarizerPermissiveGuardrails,
                 .tabScrollRefactorFeature,
+                .tabTrayScreenshotButtonStyle,
                 .tabTrayUIExperiments,
                 .touFeature,
                 .translation,

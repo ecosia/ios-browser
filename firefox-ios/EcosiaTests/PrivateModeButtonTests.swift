@@ -18,6 +18,10 @@ final class PrivateModeButtonTests: XCTestCase {
         button = PrivateModeButton(frame: .zero)
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     func testApplyUIMode_Private_LightMode() {
         button.applyUIMode(isPrivate: true, theme: lightTheme)
 

@@ -67,7 +67,6 @@ final class LegacyTabScrollController: NSObject,
             assert(scrollView != nil, "Can't set the scrollView delegate if the webView.scrollView is nil")
             scrollView?.addGestureRecognizer(panGesture)
             scrollView?.delegate = self
-            scrollView?.keyboardDismissMode = .onDrag
             configureRefreshControl()
 
             tab?.onWebViewLoadingStateChanged = { [weak self] in
@@ -133,6 +132,7 @@ final class LegacyTabScrollController: NSObject,
     /// The minimal address bar is enabled under these circumstances:
     /// - On iPad devices (all orientations).
     /// - On iPhone when the navigation toolbar is visible (portrait mode).
+    /// - When the system status bar is on the side of the screen (e.g. folded iPhone Duo).
     ///
     /// When minimal mode is active, an additional height offset is applied to provide
     /// space for displaying the minimized address bar with the domain/subdomain URL.
@@ -147,7 +147,10 @@ final class LegacyTabScrollController: NSObject,
             ToolbarHelper().shouldShowNavigationToolbar(for: scrollView.traitCollection)
         } else { false }
 
-        guard isiPad || isNavToolbarVisible else {
+        // On a folded Duo the status bar sits on the side, so there is no status bar at the top.
+        let hasVerticalSystemBar = scrollView?.traitCollection.hasVerticalSystemBar == true
+
+        guard isiPad || isNavToolbarVisible || hasVerticalSystemBar else {
             return baseOffset
         }
 
@@ -229,16 +232,22 @@ final class LegacyTabScrollController: NSObject,
         return windowUUID
     }
 
-    /// Returns true when the scrollview contentSize height is bigger than device height plus delta
-    /// and voice over is turned off
+    /// Collapsing is disabled while the iPhone Duo is expanded, so the address bar stays fully visible.
+    private var canCollapseToolbar: Bool {
+        return scrollView?.traitCollection.duoExpanded != true
+    }
+
+    /// Returns true when the scrollview contentSize height is bigger than viewport height plus delta,
+    /// voice over is turned off and the toolbar can collapse
     var shouldUpdateUIWhenScrolling: Bool {
+        guard canCollapseToolbar else { return false }
         let voiceOverOff = !UIAccessibility.isVoiceOverRunning
         return hasScrollableContent && voiceOverOff
     }
 
     // If scrollview contentSize is bigger than scrollview height scroll is enabled
     var hasScrollableContent: Bool {
-        return (UIScreen.main.bounds.size.height + 2 * UIConstants.ToolbarHeight) <
+        return (scrollViewHeight + 2 * UIConstants.ToolbarHeight) <
             contentSize.height
     }
 
@@ -390,6 +399,7 @@ final class LegacyTabScrollController: NSObject,
     }
 
     func hideToolbars(animated: Bool) {
+        guard canCollapseToolbar else { return }
         guard toolbarState != .collapsed else { return }
 
         toolbarState = .collapsed

@@ -77,7 +77,6 @@ final class TabScrollHandler: NSObject,
             // FXIOS-9781 This could result in scrolling not closing the toolbar
             assert(scrollView != nil, "Can't set the scrollView delegate if the webView.scrollView is nil")
             scrollView?.delegate = self
-            scrollView?.keyboardDismissMode = .onDrag
             configureRefreshControl()
             tabProvider?.onLoadingStateChanged = { [weak self] in
                 self?.handleOnTabContentLoading()
@@ -112,16 +111,22 @@ final class TabScrollHandler: NSObject,
         return windowUUID
     }
 
-    /// Returns true when the scrollview contentSize height is bigger than device height plus delta
-    /// and voice over is turned off
+    /// Collapsing is disabled while the iPhone Duo is expanded, so the address bar stays fully visible.
+    private var canCollapseToolbar: Bool {
+        return scrollView?.traitCollection.duoExpanded != true
+    }
+
+    /// Returns true when the scrollview contentSize height is bigger than viewport height plus delta,
+    /// voice over is turned off and the toolbar can collapse
     var shouldUpdateUIWhenScrolling: Bool {
+        guard canCollapseToolbar else { return false }
         let voiceOverOff = !UIAccessibility.isVoiceOverRunning
         return hasScrollableContent && voiceOverOff
     }
 
     // If scrollview contentSize is bigger than scrollview height scroll is enabled
     var hasScrollableContent: Bool {
-        return (UIScreen.main.bounds.size.height + 2 * UIConstants.ToolbarHeight) <
+        return (scrollViewHeight + 2 * UIConstants.ToolbarHeight) <
             contentSize.height
     }
 
@@ -147,6 +152,7 @@ final class TabScrollHandler: NSObject,
 
     // TODO: FXIOS-13340 Update to private in the future for now we need to keep support for Legacy protocol
     func hideToolbars(animated: Bool) {
+        guard canCollapseToolbar else { return }
         toolbarDisplayState.update(displayState: .collapsed)
         delegate?.hideToolbar()
     }

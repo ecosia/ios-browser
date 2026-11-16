@@ -52,7 +52,7 @@ final class SceneCoordinatorTests: XCTestCase {
     /* Ecosia: Disable Onboarding dependant tests since LaunchCoordinator.presentIntroOnboarding is temporarily disabled
     func testLaunchWithLaunchType_launchFromScene() {
         let subject = createSubject()
-        subject.launchWith(launchType: .intro(manager: IntroScreenManager(prefs: MockProfile().prefs)))
+        subject.launchWith(launchType: .intro(manager: IntroScreenManager(prefs: makeProfile().prefs)))
 
         XCTAssertEqual(subject.childCoordinators.count, 1)
         XCTAssertNotNil(subject.childCoordinators[0] as? LaunchCoordinator)
@@ -79,7 +79,7 @@ final class SceneCoordinatorTests: XCTestCase {
     /* Ecosia: Disable Onboarding dependant tests since LaunchCoordinator.presentIntroOnboarding is temporarily disabled
     func testChildLaunchCoordinatorIsDone_startsBrowser() throws {
         let subject = createSubject()
-        subject.launchWith(launchType: .intro(manager: IntroScreenManager(prefs: MockProfile().prefs)))
+        subject.launchWith(launchType: .intro(manager: IntroScreenManager(prefs: makeProfile().prefs)))
 
         let childLaunchCoordinator = try XCTUnwrap(subject.childCoordinators[0] as? LaunchCoordinator)
         subject.didFinishLaunch(from: childLaunchCoordinator)

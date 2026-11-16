@@ -13,6 +13,10 @@ import XCTest
         investmentsProjection = InvestmentsProjection.shared
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     func testTotalInvestedAt() async {
         // Arrange
         let date = Date()
