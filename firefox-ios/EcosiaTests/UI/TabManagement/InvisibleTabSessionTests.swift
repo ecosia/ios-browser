@@ -22,7 +22,7 @@ final class InvisibleTabSessionTests: XCTestCase {
         InvisibleTabManager.shared.clearAllInvisibleTabs()
         tabManager = TabAutoCloseTestMockTabManager()
         DependencyHelperMock().bootstrapDependencies(injectedTabManager: tabManager)
-        browserViewController = BrowserViewController(profile: MockProfile(), tabManager: tabManager)
+        browserViewController = BrowserViewController(profile: MockProfile.unmanaged(), tabManager: tabManager)
     }
 
     override func tearDown() {
@@ -89,7 +89,7 @@ final class InvisibleTabSessionTests: XCTestCase {
 
     func testLandedPageInOtherTabDoesNotCloseSessionTab() async throws {
         let tab = try await startSession()
-        let otherTab = Client.Tab(profile: MockProfile(), windowUUID: tabManager.windowUUID)
+        let otherTab = Client.Tab(profile: MockProfile.unmanaged(), windowUUID: tabManager.windowUUID)
 
         TabEvent.post(.didChangeURL(landedURL), for: otherTab)
 

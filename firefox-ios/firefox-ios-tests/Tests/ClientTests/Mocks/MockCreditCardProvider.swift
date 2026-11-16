@@ -21,7 +21,7 @@ final class MockCreditCardProvider: CreditCardProvider, @unchecked Sendable {
     var exampleCreditCard = CreditCard(
         guid: "1",
         ccName: "Allen Burges",
-        ccNumberEnc: "4111111111111111",
+        ccNumber: "4111111111111111",
         ccNumberLast4: "1111",
         ccExpMonth: 3,
         ccExpYear: 2043,
@@ -35,6 +35,10 @@ final class MockCreditCardProvider: CreditCardProvider, @unchecked Sendable {
     private(set) var lastDeletedID: String?
     var deleteResult: (status: Bool, error: Error?) = (false, nil)
     var updateResult: (status: Bool?, error: Error?) = (nil, nil)
+    var creditCards: [CreditCard]?
+    var listCreditCardsError: Error?
+    var shouldDeferListCreditCardsCompletion = false
+    private(set) var deferredListCreditCardsCompletion: (@Sendable ([CreditCard]?, Error?) -> Void)?
 
     func addCreditCard(
         creditCard: UnencryptedCreditCardFields,
@@ -43,15 +47,18 @@ final class MockCreditCardProvider: CreditCardProvider, @unchecked Sendable {
         addCreditCardCalledCount += 1
         completion(exampleCreditCard, nil)
     }
-    func decryptCreditCardNumber(encryptedCCNum: String?) -> String? { return "testCCNum" }
     func deleteCreditCard(id: String, completion: @escaping @Sendable (Bool, (any Error)?) -> Void) {
         deleteCreditCardsCalledCount += 1
         lastDeletedID = id
         completion(deleteResult.status, deleteResult.error)
     }
-    func listCreditCards(completion: @escaping ([CreditCard]?, Error?) -> Void) {
+    func listCreditCards(completion: @escaping @Sendable ([CreditCard]?, Error?) -> Void) {
         listCreditCardsCalledCount += 1
-        completion([exampleCreditCard], nil)
+        if shouldDeferListCreditCardsCompletion {
+            deferredListCreditCardsCompletion = completion
+            return
+        }
+        completion(creditCards ?? [exampleCreditCard], listCreditCardsError)
     }
     func updateCreditCard(
         id: String,
@@ -62,7 +69,7 @@ final class MockCreditCardProvider: CreditCardProvider, @unchecked Sendable {
         completion(updateResult.status, updateResult.error)
     }
 
-    func verifyCreditCards(key: String, completionHandler: @escaping @Sendable (Bool) -> Void) {
+    func verifyCreditCards(completionHandler: @escaping @Sendable (Bool) -> Void) {
         verifyCreditCardsCalled += 1
         completionHandler(creditCardsVerified)
     }

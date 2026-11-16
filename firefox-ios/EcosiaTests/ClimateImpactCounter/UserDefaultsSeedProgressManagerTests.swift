@@ -28,6 +28,10 @@ final class UserDefaultsSeedProgressManagerTests: XCTestCase {
         )
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     // Test the initial state
     func test_initial_seed_progress_state() {
         // Given / When

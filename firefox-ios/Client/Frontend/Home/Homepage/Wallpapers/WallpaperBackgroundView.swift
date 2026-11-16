@@ -20,6 +20,8 @@ class WallpaperBackgroundView: UIView {
         }
     }
 
+    private var lastLayoutSize: CGSize = .zero
+
     // MARK: - Initializers & Setup
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -41,6 +43,15 @@ class WallpaperBackgroundView: UIView {
             pictureView.bottomAnchor.constraint(equalTo: bottomAnchor),
             pictureView.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        // Ecosia: Keep the rounded corners, see `applyEcosiaCornerMask()`
+        applyEcosiaCornerMask()
+        guard bounds.size != lastLayoutSize else { return }
+        lastLayoutSize = bounds.size
+        updateImageToCurrentWallpaper()
     }
 
     // MARK: - Methods
@@ -70,10 +81,9 @@ class WallpaperBackgroundView: UIView {
     // masksToBounds controls whether the *layer's own bounds* are used as a clip rect,
     // but layer.mask is a separate compositing mask that is always honoured by Core Animation
     // regardless of masksToBounds. Setting it here (on every layout pass so it tracks
-    // bounds changes from rotation/safe-area updates) guarantees all four corners stay
+    // bounds changes from rotation/safe-area updates, from `layoutSubviews`) guarantees all four corners stay
     // clipped even after BrowserViewController forces clipsToBounds = false.
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    private func applyEcosiaCornerMask() {
         guard layer.cornerRadius > 0, !bounds.isEmpty else { return }
         clipsToBounds = true
         pictureView.clipsToBounds = true
@@ -93,9 +103,15 @@ class WallpaperBackgroundView: UIView {
     }
 
     private func currentWallpaperImage(from wallpaperState: WallpaperState) -> UIImage? {
+        let configuration = wallpaperState.wallpaperConfiguration
         let isLandscape = UIDevice.current.orientation.isLandscape
-        return isLandscape ?
-        wallpaperState.wallpaperConfiguration.landscapeImage :
-         wallpaperState.wallpaperConfiguration.portraitImage
+
+        let iPadImage = isLandscape ? configuration.iPadLandscapeImage : configuration.iPadPortraitImage
+        let iPhoneImage = isLandscape ? configuration.iPhoneLandscapeImage : configuration.iPhonePortraitImage
+
+        if traitCollection.horizontalSizeClass == .regular {
+            return iPadImage ?? iPhoneImage
+        }
+        return iPhoneImage ?? iPadImage
     }
 }

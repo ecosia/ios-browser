@@ -5,7 +5,7 @@
 
 "use strict";
 import { isProbablyReaderable, Readability } from "@mozilla/readability";
-import {setStyle} from "./ReaderModeStyles.js";
+import {setStyle, restoreStyle} from "./ReaderModeStyles.js";
 import { findRecipeJSONLD } from "./JSONLD.js";
 
 const DEBUG = false;
@@ -272,7 +272,8 @@ Object.defineProperty(window.__firefox__, "reader", {
   value: Object.freeze({
     checkReadability: checkReadability,
     readerize: readerize,
-    setStyle: setStyle
+    setStyle: setStyle,
+    restoreStyle: restoreStyle
   })
 });
 

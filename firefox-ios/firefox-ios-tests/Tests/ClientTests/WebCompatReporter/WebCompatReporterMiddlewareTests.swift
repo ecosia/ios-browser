@@ -12,7 +12,7 @@ import XCTest
 
 @MainActor
 final class WebCompatReporterMiddlewareTests: XCTestCase, StoreTestUtility {
-    private var mockStore: MockStoreForMiddleware<AppState>!
+    var mockStore: MockStoreForMiddleware<AppState>!
     private var gleanWrapper: MockGleanWrapper!
     private var pageContextReader: MockWebCompatPageContextReader!
 
@@ -161,8 +161,9 @@ final class WebCompatReporterMiddlewareTests: XCTestCase, StoreTestUtility {
 
         subject.webCompatReporterProvider.legacyMiddleware(mockStore.state, submitAction())
 
-        // is_private_browsing on top of the device's has_touch_screen and is_tablet.
-        XCTAssertEqual(gleanWrapper.setBooleanCalled, 3)
+        // is_private_browsing on top of the device's has_touch_screen and is_tablet,
+        // plus the app-wide ad_blocker_enabled pref.
+        XCTAssertEqual(gleanWrapper.setBooleanCalled, 4)
 
         releaseMiddlewareProvidersFromMemory(subject)
     }
@@ -173,7 +174,7 @@ final class WebCompatReporterMiddlewareTests: XCTestCase, StoreTestUtility {
 
         subject.webCompatReporterProvider.legacyMiddleware(mockStore.state, submitAction())
 
-        XCTAssertEqual(gleanWrapper.setBooleanCalled, 2)
+        XCTAssertEqual(gleanWrapper.setBooleanCalled, 3)
 
         releaseMiddlewareProvidersFromMemory(subject)
     }
@@ -346,15 +347,6 @@ final class WebCompatReporterMiddlewareTests: XCTestCase, StoreTestUtility {
         )
     }
 
-    func setupStore() {
-        mockStore = MockStoreForMiddleware(state: setupAppState())
-        StoreTestUtilityHelper.setupStore(with: mockStore)
-    }
-
-    func resetStore() {
-        StoreTestUtilityHelper.resetStore()
-    }
-
     // MARK: - Helpers
 
     private func submitAction() -> WebCompatReporterViewAction {
@@ -401,7 +393,7 @@ final class WebCompatReporterMiddlewareTests: XCTestCase, StoreTestUtility {
     }
 
     private func makeTab(url: String) -> Tab {
-        let tab = Tab(profile: MockProfile(), windowUUID: .XCTestDefaultUUID)
+        let tab = Tab(profile: makeProfile(), windowUUID: .XCTestDefaultUUID)
         tab.url = URL(string: url)
         return tab
     }

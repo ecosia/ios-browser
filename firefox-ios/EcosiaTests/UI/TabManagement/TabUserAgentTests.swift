@@ -37,7 +37,7 @@ final class TabUserAgentTests: XCTestCase {
     // upstream merge touching `Tab.swift` could easily drop this without causing a build failure.
     func testCreateWebviewSetsCustomUserAgentBeforeFirstLoad() {
         let url = URL(string: "https://example.com/")!
-        let tab = Client.Tab(profile: MockProfile(), windowUUID: windowUUID)
+        let tab = Client.Tab(profile: MockProfile.unmanaged(), windowUUID: windowUUID)
         tab.url = url
 
         tab.createWebview(configuration: WKWebViewConfiguration())

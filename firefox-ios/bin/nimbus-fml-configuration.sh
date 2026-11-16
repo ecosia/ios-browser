@@ -11,10 +11,7 @@
 CHANNEL=
 case "${CONFIGURATION}" in
     # Firefox configurations
-    Fennec)
-        CHANNEL="developer"
-        ;;
-    Fennec_Testing)
+    Debug)
         CHANNEL="developer"
         ;;
     Fennec_Enterprise)
@@ -30,9 +27,7 @@ case "${CONFIGURATION}" in
         CHANNEL="release"
         ;;
     # Ecosia configurations
-    Debug)
-        CHANNEL="developer"
-        ;;
+    # Ecosia: `Debug` is matched by Firefox's case above, also as "developer"
     BetaDebug)
         CHANNEL="developer"
         ;;

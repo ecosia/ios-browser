@@ -8,11 +8,24 @@ features:
         description: >
           Enables Nova design.
         type: Boolean
+        default: true
+      privateThemeOverride:
+        description: >
+          If true, screens that opt in follow the regular light/dark Nova theme while the user is
+          browsing in private mode, instead of the purple private theme.
+        type: Boolean
         default: false
     defaults:
+      # Ecosia: Nova stays off on every channel; Ecosia keeps its own design. `release` is listed explicitly.
+      - channel: release
+        value:
+          enabled: false
+          privateThemeOverride: false
       - channel: beta
         value:
           enabled: false
+          privateThemeOverride: false
       - channel: developer
         value:
           enabled: false
+          privateThemeOverride: false

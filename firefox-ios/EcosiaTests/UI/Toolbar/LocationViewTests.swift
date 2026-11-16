@@ -8,7 +8,8 @@ import XCTest
 /// Tests for the address bar search query display in collapsed state.
 ///
 /// The address bar must show the user's typed search query rather than the raw URL
-/// whenever a `searchTerm` is available — both when editing and when collapsed.
+/// whenever a `searchTerm` is available — both when editing and when collapsed (Firefox's
+/// `searchTermInAddressBar`, which Ecosia turns on).
 ///
 /// Each case drives the SUT through a single `assertAddressBar(...)` helper. The whole SUT
 /// lifecycle (create → configure → assert behaviour → release) runs inside an explicit
@@ -166,6 +167,8 @@ final class LocationViewTests: XCTestCase {
                 url: url,
                 droppableUrl: nil,
                 searchTerm: searchTerm,
+                // What `AddressToolbarContainerModel` passes with `searchTermInAddressBar` on
+                shouldDisplaySearchTerm: searchTerm != nil,
                 isEditing: isEditing,
                 didStartTyping: false,
                 shouldShowKeyboard: false,

@@ -14,7 +14,7 @@ import XCTest
 @MainActor
 final class OnDeviceSummariesTests: XCTestCase {
 
-    private let profile = MockProfile()
+    private let profile = MockProfile.unmanaged()
 
     override func setUp() {
         super.setUp()

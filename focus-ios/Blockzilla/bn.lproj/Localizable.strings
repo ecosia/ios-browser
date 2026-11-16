@@ -2,13 +2,13 @@
 "About.learnMoreButton" = "আরও জানুন";
 
 /* Label on About screen. %@ is the app name (for example “Firefox Focus” or ”Firefox Klar”). */
-"About.missionLabel" = "%@ Mozilla দ্বারা প্রস্তুতকৃত। আমাদের মিশন হচ্ছে, ইন্টারনেটকে উন্মুক্ত রাখা এবং সেটির গুণগত মান বজায় রাখতে উৎসাহ দেওয়া।";
+"About.missionLabel" = "%@ Mozilla দ্বারা নির্মিত। আমাদের লক্ষ্য একটি সুস্থ ও উন্মুক্ত ইন্টারনেট গড়ে তোলা।";
 
 /* Label on About screen */
 "About.privateBullet1" = "অ্যাপের মধ্যেই অনুসন্ধান এবং ব্রাউজ করুন";
 
 /* Label on About screen */
-"About.privateBullet2" = "ট্রাকারদেরকে অবরুদ্ধ করুন(অথবা ট্রাকারদের অনুমতি দিতে সেটিংস আপডেট করুন)";
+"About.privateBullet2" = "ট্র্যাকার ব্লক করুন (অথবা ট্র্যাকার অনুমোদনের জন্য সেটিংস আপডেট করুন)";
 
 /* Label on About screen */
 "About.privateBullet3" = "সেইসাথে অনুসন্ধান এবং ব্রাউজিংয়ের পূর্ববর্তী তথ্য কুকির সাথে সরাতে মুছুন";
@@ -101,7 +101,10 @@
 "Autocomplete.mySitesDesc" = "আপনার পছন্দসই URLs গুলি %@ অটোকমপ্লিট করতে সক্ষম করুন।";
 
 /* Label for enabling or disabling top sites */
-"Autocomplete.topSites" = "শীর্ষ সাইট";
+"Autocomplete.topSites" = "শীর্ষ সাইটগুলো";
+
+/* Title for the action button shown on the Splash Screen which gives the user the ability to log in with biometrics. */
+"BiometricAuthentication.UnlockButton.Title" = "আনলক করুন";
 
 /* Create a new session after failing a biometric check */
 "BiometricPrompt.newSession" = "নতুন সেশন";
@@ -226,9 +229,6 @@
 /* Description associated to the Send Usage Data toggle on main screen. %@ is the app name (for example "Firefox Focus" or "Firefox Klar"). */
 "Settings.detailTextSendUsageData" = "Mozilla এর প্রচেষ্টা হচ্ছে অত্যাবশ্যকীয় এবং প্রয়োজনীয় তথ্য ও উপাত্ত সংগ্রহ করে, সকলের জন্যে %@ এর আরও উন্নত সংস্করণ তৈরী করা।";
 
-/* Description associated to the Studies toggle on the settings screen. %@ is the app name (for example "Firefox Focus" or "Firefox Klar"). */
-"Settings.detailTextStudies" = "কিছু দিন পর %@ স্টাডিজ ইনস্টল এবং চালাতে পারে।";
-
 /* Title for section in settings menu */
 "Settings.general" = "সাধারণ";
 
@@ -327,9 +327,6 @@
 
 /* Label for Send Usage Data toggle on main screen */
 "Settings.toggleSendUsageData" = "ব্যবহারের উপাত্ত প্রেরণ করে";
-
-/* Label for Studies toggle on the settings screen */
-"Settings.toggleStudies" = "অধ্যয়ন";
 
 /* Label for toggle on settings screen */
 "Settings.toggleTouchID" = "অ্যাপ চালু করার জন্য টাচ আইডি ব্যবহার করুন";

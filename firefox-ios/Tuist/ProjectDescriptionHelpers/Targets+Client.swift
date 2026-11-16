@@ -156,6 +156,7 @@ public enum ClientTarget {
                 .package(product: "TabDataStore"),
                 .package(product: "ToolbarKit"),
                 .package(product: "UnifiedSearchKit"),
+                .package(product: "VPNKit"),
                 .package(product: "WebCompatReporterKit"),
                 .sdk(name: "xml2", type: .library),
                 .sdk(name: "z", type: .library),

@@ -13,11 +13,15 @@ import XCTest
 @MainActor
 final class FirefoxSuggestIngestionTests: XCTestCase {
     private let firefoxSuggest = SpyFirefoxSuggest()
-    private lazy var profile = MockProfile(firefoxSuggest: firefoxSuggest)
+    private lazy var profile = makeProfile(firefoxSuggest: firefoxSuggest)
 
     override func tearDown() {
         DependencyHelperMock().reset()
         super.tearDown()
+    }
+
+    override func setUp() {
+        super.setUp()
     }
 
     func testFirefoxSuggestIsOffByDefault() {

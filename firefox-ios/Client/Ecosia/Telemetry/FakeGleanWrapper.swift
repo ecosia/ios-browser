@@ -71,6 +71,11 @@ struct FakeGleanWrapper: GleanWrapper {
         // Ecosia: No-op
     }
 
+    func recordObject<ObjectValue>(for metric: ObjectMetricType<ObjectValue>,
+                                   value: ObjectValue) where ObjectValue: ObjectSerialize {
+        // Ecosia: No-op
+    }
+
     // MARK: Timing Metrics - All no-ops
 
     func startTiming(for metric: TimingDistributionMetricType) -> GleanTimerId {

@@ -3,8 +3,10 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 @testable import Client
+import Common
 
 import Glean
+import Shared
 import XCTest
 
 @MainActor
@@ -247,7 +249,7 @@ class TelemetryWrapperTests: XCTestCase {
     // MARK: Wallpapers
 
     func test_backgroundWallpaperMetric_defaultBackgroundIsNotSent() {
-        let profile = MockProfile()
+        let profile = makeProfile()
         TelemetryWrapper.shared.setup(profile: profile)
 
         let defaultWallpaper = Wallpaper(id: "fxDefault",
@@ -266,7 +268,7 @@ class TelemetryWrapperTests: XCTestCase {
     }
 
     func test_backgroundWallpaperMetric_themedWallpaperIsSent() {
-        let profile = MockProfile()
+        let profile = makeProfile()
         TelemetryWrapper.shared.setup(profile: profile)
 
         let themedWallpaper = Wallpaper(id: "amethyst",
@@ -537,7 +539,7 @@ class TelemetryWrapperTests: XCTestCase {
         let isAccessibilitySizeEnabledKey = TelemetryWrapper.EventExtraKey.isAccessibilitySizeEnabled.rawValue
         let preferredContentSizeCategoryKey = TelemetryWrapper.EventExtraKey.preferredContentSizeCategory.rawValue
         let extras = [isAccessibilitySizeEnabledKey: "\(1)",
-                    preferredContentSizeCategoryKey: "UICTContentSizeCategoryAccessibilityL"]
+                      preferredContentSizeCategoryKey: "UICTContentSizeCategoryAccessibilityL"]
         TelemetryWrapper.recordEvent(
             category: .action,
             method: .dynamicTextSize,
@@ -1026,6 +1028,35 @@ class TelemetryWrapperTests: XCTestCase {
         testBoolMetricSuccess(metric: GleanMetrics.App.choiceScreenAcquisition,
                               expectedValue: true,
                               failureMessage: "Failed to record choice screen acquisition")
+    }
+
+    // MARK: - Daily usage ping
+
+    func testShouldSendDailyUsagePing_whenTechnicalDataIsOptedOut_staysEnabled() {
+        let prefs = MockProfilePrefs()
+        prefs.setBool(false, forKey: AppConstants.prefSendUsageData)
+
+        let result = TelemetryWrapper().shouldSendDailyUsagePing(prefs: prefs)
+
+        XCTAssertTrue(result, "Opting out of technical data must not disable the daily usage ping")
+    }
+
+    func testShouldSendDailyUsagePing_whenUnset_defaultsToEnabled() {
+        let prefs = MockProfilePrefs()
+
+        let result = TelemetryWrapper().shouldSendDailyUsagePing(prefs: prefs)
+
+        XCTAssertEqual(result, AppConstants.defaultSendDailyUsagePing)
+        XCTAssertNil(prefs.boolForKey(AppConstants.prefSendDailyUsagePing), "Reading must not write a default")
+    }
+
+    func testShouldSendDailyUsagePing_whenExplicitlyDisabled_staysDisabled() {
+        let prefs = MockProfilePrefs()
+        prefs.setBool(false, forKey: AppConstants.prefSendDailyUsagePing)
+
+        let result = TelemetryWrapper().shouldSendDailyUsagePing(prefs: prefs)
+
+        XCTAssertFalse(result)
     }
 }
 

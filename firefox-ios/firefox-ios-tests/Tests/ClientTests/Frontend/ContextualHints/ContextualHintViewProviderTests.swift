@@ -13,14 +13,14 @@ class ContextualHintViewProviderTests: XCTestCase {
 
     private var profile: MockProfile!
 
-    override func setUp() {
-        super.setUp()
-        profile = MockProfile()
+    override func setUp() async throws {
+        profile = makeProfile()
+        try await super.setUp()
     }
 
-    override func tearDown() {
-        super.tearDown()
+    override func tearDown() async throws {
         profile = nil
+        try await super.tearDown()
     }
 
     // MARK: Mark Contextual Hint Configuration

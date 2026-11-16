@@ -14,6 +14,11 @@ class WallpaperManagerTests: XCTestCase {
         super.tearDown()
     }
 
+    // Ecosia: Balances the setUp/tearDown pair for SwiftLint
+    override func setUp() {
+        super.setUp()
+    }
+
     func test_canSettingsBeShown_isFalse() {
         // Given a manager with no locally cached wallpaper thumbnails
         UserDefaults.standard.removeObject(forKey: PrefsKeys.Wallpapers.ThumbnailsAvailable)

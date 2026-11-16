@@ -18,7 +18,7 @@ final class HistoryCoordinatorTests: XCTestCase {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         router = MockRouter(navigationController: UINavigationController())
-        profile = MockProfile()
+        profile = makeProfile()
         notificationCenter = MockNotificationCenter()
         parentCoordinator = MockLibraryCoordinatorDelegate()
         navigationHandler = MockLibraryNavigationHandler()

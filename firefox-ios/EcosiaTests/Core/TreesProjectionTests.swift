@@ -13,6 +13,10 @@ import XCTest
         treesProjection = TreesProjection.shared
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     func testTreesAt() async {
         // Arrange
         let date = Date()

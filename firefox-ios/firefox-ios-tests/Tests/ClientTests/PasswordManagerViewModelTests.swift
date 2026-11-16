@@ -21,7 +21,7 @@ class PasswordManagerViewModelTests: XCTestCase, @unchecked Sendable {
     override func setUp() {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
-        let mockProfile = MockProfile()
+        let mockProfile = makeProfile()
         self.mockLoginProvider = MockLoginProvider()
         let searchController = UISearchController()
         self.viewModel = PasswordManagerViewModel(

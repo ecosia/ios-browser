@@ -15,6 +15,10 @@ final class WhatsNewLocalDataProviderTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: EcosiaInstallType.currentInstalledVersionKey)
     }
 
+    override func tearDownWithError() throws {
+        try super.tearDownWithError()
+    }
+
     // MARK: Fresh Install Tests
     func testFreshInstallShouldNotShowWhatsNewAndMarkPreviousVersionsAsSeen() {
         // Given

@@ -11,9 +11,11 @@ protocol IntroScreenManagerProtocol {
     var shouldShowIntroScreen: Bool { get }
     var isModernOnboardingEnabled: Bool { get }
     var shouldShowVideoIntro: Bool { get }
+    var shouldUseContinuousOnboarding: Bool { get }
     var onboardingVariant: OnboardingVariant { get }
     var onboardingKitVariant: OnboardingKit.OnboardingVariant { get }
     func didSeeIntroScreen()
+    func recordContinuousOnboardingActiveDay()
 }
 
 struct IntroScreenManager: FeatureFlaggable, IntroScreenManagerProtocol {
@@ -42,6 +44,15 @@ struct IntroScreenManager: FeatureFlaggable, IntroScreenManagerProtocol {
 
     var shouldShowVideoIntro: Bool {
         featureFlagsProvider.isEnabled(.videoIntroOnboarding)
+    }
+
+    var shouldUseContinuousOnboarding: Bool {
+        featureFlagsProvider.isEnabled(.multiDayOnboarding)
+    }
+
+    /// Counts the current launch as an active day for the drip (idempotent per calendar day).
+    func recordContinuousOnboardingActiveDay() {
+        OnboardingCardScheduler(prefs: prefs).recordActiveDayIfNeeded()
     }
 
     var shouldUseBrandRefreshConfiguration: Bool {

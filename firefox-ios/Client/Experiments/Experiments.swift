@@ -9,6 +9,7 @@ import Localizations
 
 import struct MozillaAppServices.NimbusAppSettings
 import class MozillaAppServices.NimbusBuilder
+import struct MozillaAppServices.EnrolledExperiment
 import class MozillaAppServices.NimbusDisabled
 import typealias MozillaAppServices.NimbusErrorReporter
 import protocol MozillaAppServices.NimbusEventStore
@@ -328,6 +329,26 @@ enum Experiments {
         nimbus.fetchExperiments()
         */
         disableRemoteExperiments(for: nimbus)
+    }
+
+    /// Maps each feature ID to the branch slug the user is enrolled in. Features the user is not enrolled in are
+    /// omitted. When a feature is in both an experiment and a rollout, the experiment's branch wins since it is the
+    /// one that differentiates the user.
+    static func featureBranches(
+        from experiments: [EnrolledExperiment] = shared.getActiveExperiments()
+    ) -> [String: String] {
+        let rolloutsThenExperiments = experiments.sorted {
+            if $0.isRollout != $1.isRollout { return $0.isRollout }
+            return $0.slug > $1.slug
+        }
+
+        var featureBranches: [String: String] = [:]
+        for experiment in rolloutsThenExperiments {
+            for featureId in experiment.featureIds {
+                featureBranches[featureId] = experiment.branchSlug
+            }
+        }
+        return featureBranches
     }
 }
 

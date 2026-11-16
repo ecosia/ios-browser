@@ -18,6 +18,10 @@ final class UnleashUserDefaultsSeedProgressManagerTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: "LastAppOpenDate")
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     // Test that logged-out users are capped at 3 seeds even with config override
     func test_experimental_cap_respected_with_json_provided_levels() {
         // Update the config to use experimental cap with JSON-provided levels

@@ -15,8 +15,8 @@ import XCTest
 @MainActor
 final class AIFreeSearchingBrowserAITests: XCTestCase, StoreTestUtility {
     // swiftlint:disable:next implicitly_unwrapped_optional
-    private var mockStore: MockStoreForMiddleware<AppState>!
-    private let profile = MockProfile()
+    var mockStore: MockStoreForMiddleware<AppState>!
+    private let profile = MockProfile.unmanaged()
     private var windows: [AIFreeSearchingBrowserAI.WindowObserver] = []
 
     override func setUp() async throws {

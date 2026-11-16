@@ -35,6 +35,7 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
         case header
         case messageCard
         case topSites(TextColor?, NumberOfTilesPerRow, ShouldShowSectionHeader)
+        case notificationCard
         case searchBar
         case jumpBackIn(TextColor?, JumpBackInSectionLayoutConfiguration)
         case trackerBlockerModule
@@ -60,6 +61,7 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
     enum HomeItem: Hashable, Sendable {
         case header(HeaderState, TextColor?, ShowiPadSetup)
         case privacyNotice
+        case notificationCard
         case messageCard(MessageCardConfiguration)
         case topSite(TopSiteConfiguration, TextColor?)
         case addShortcutTile(TextColor?)
@@ -86,6 +88,7 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
             return [
                 HomepageHeaderCell.self,
                 PrivacyNoticeCell.self,
+                NotificationCardCell.self,
                 HomepageMessageCardCell.self,
                 TopSiteCell.self,
                 EmptyTopSiteCell.self,
@@ -178,6 +181,11 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
             snapshot.appendItems([.messageCard(configuration)], toSection: .messageCard)
         }
 
+        if state.searchBarState.shouldShowSearchBar {
+            snapshot.appendSections([.searchBar])
+            snapshot.appendItems([.searchBar], toSection: .searchBar)
+        }
+
         if let topSitesSnapshotData = getTopSites(with: state.topSitesState, and: textColor) {
             let topSitesSection = HomeSection.topSites(
                 textColor,
@@ -188,7 +196,11 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
             snapshot.appendItems(topSitesSnapshotData.items, toSection: topSitesSection)
         }
 
-        if state.trackerBlockerModuleState.shouldShowSection {
+        // While the onboarding notification card is shown we hide the tracker blocker
+        if state.notificationCardState.shouldShowCard {
+            snapshot.appendSections([.notificationCard])
+            snapshot.appendItems([.notificationCard], toSection: .notificationCard)
+        } else if state.trackerBlockerModuleState.shouldShowSection {
             snapshot.appendSections([.trackerBlockerModule])
             snapshot.appendItems(
                 [.trackerBlockerModule(state.trackerBlockerModuleState.blockedTrackerCount)],
@@ -208,11 +220,6 @@ final class HomepageDiffableDataSource: UICollectionViewDiffableDataSource<Homep
 
         snapshot.appendSections([.spacer])
         snapshot.appendItems([.spacer], toSection: .spacer)
-
-        if state.searchBarState.shouldShowSearchBar {
-            snapshot.appendSections([.searchBar])
-            snapshot.appendItems([.searchBar], toSection: .searchBar)
-        }
 
         if let stories = getMerinoStories(with: state.merinoState, selectedNewsfeedCategoryID: selectedNewsfeedCategoryID) {
             let pocketSection = HomeSection.pocket(textColor)

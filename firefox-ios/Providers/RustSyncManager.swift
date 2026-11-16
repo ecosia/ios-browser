@@ -383,7 +383,7 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
     func shouldSyncCreditCards(_ creditCardEngineIncluded: Bool,
                                key: String?,
                                completion: @escaping @Sendable (Bool) -> Void) {
-        guard creditCardEngineIncluded, let encKey = key else {
+        guard creditCardEngineIncluded, key != nil else {
             completion(false)
             return
         }
@@ -392,7 +392,7 @@ public class RustSyncManager: NSObject, SyncManager, @unchecked Sendable {
             // successfully. Otherwise records could exist in the database that can't be decrypted
             // and would prevent credit cards from syncing if they are not scrubbed.
 
-            self.autofill.verifyCreditCards(key: encKey) { successfullyVerified in
+            self.autofill.verifyCreditCards { successfullyVerified in
                 self.prefs.setBool(successfullyVerified, forKey: PrefsKeys.CreditCardsHaveBeenVerified)
                 completion(successfullyVerified)
             }

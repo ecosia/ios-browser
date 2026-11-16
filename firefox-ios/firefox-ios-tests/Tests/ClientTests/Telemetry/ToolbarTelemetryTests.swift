@@ -16,6 +16,11 @@ final class ToolbarTelemetryTests: XCTestCase {
         subject = ToolbarTelemetry()
     }
 
+    // Ecosia: Balances the setUp/tearDown pair for SwiftLint
+    override func tearDown() {
+        super.tearDown()
+    }
+
     func testRecordToolbarWhenClearSearchTappedThenGleanIsCalled() throws {
         subject?.clearSearchButtonTapped(isPrivate: true)
         testEventMetricRecordingSuccess(metric: GleanMetrics.Toolbar.clearSearchButtonTapped)

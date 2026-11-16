@@ -267,7 +267,7 @@ final class TabEcosiaExtensionTests: XCTestCase {
     }
 
     private func makeTab(isPrivate: Bool) -> Client.Tab {
-        Client.Tab(profile: MockProfile(), isPrivate: isPrivate, windowUUID: windowUUID)
+        Client.Tab(profile: MockProfile.unmanaged(), isPrivate: isPrivate, windowUUID: windowUUID)
     }
 }
 

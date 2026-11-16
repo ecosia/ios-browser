@@ -155,7 +155,7 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     // MARK: - Properties and Setup
 
     var analyticsSpy: AnalyticsSpy!
-    var profileMock: MockProfile { MockProfile() }
+    var profileMock: MockProfile { MockProfile.unmanaged() }
     var tabManagerMock: TabManager {
         let mock = MockTabManager()
         // Ecosia: Pass documentLogger explicitly to avoid AppContainer.shared.resolve()

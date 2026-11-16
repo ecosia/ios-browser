@@ -19,7 +19,7 @@ final class ContentBlockerTests: XCTestCase {
         featureFlags = MockNimbusFeatureFlags()
         // Ecosia: reloadAdBlockerList() only runs with the ad blocker flag on; tests that need it off set it.
         featureFlags.enabledFlags = [.adBlocker]
-        profile = MockProfile()
+        profile = makeProfile()
         DependencyHelperMock().bootstrapDependencies(injectedFeatureFlagProvider: featureFlags)
         originalFetcher = ContentBlocker.shared.adBlockerListFetcher
 

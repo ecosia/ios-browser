@@ -106,6 +106,7 @@ extension AppSettingsTableViewController {
             ShowWelcomeScreen(settings: self),
             ToggleImpactIntro(settings: self),
             ToggleWallpaperRotation(settings: self),
+            ToggleAddressBarTabTrayGesture(settings: self),
             ChangeSearchCount(settings: self),
             ResetSearchCount(settings: self),
             ResetDefaultBrowserNudgeCard(settings: self),

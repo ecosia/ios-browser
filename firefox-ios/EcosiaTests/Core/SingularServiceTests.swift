@@ -57,6 +57,10 @@ class SingularServiceTests: XCTestCase {
         service = SingularService(client: httpClientMock)
     }
 
+    override func tearDownWithError() throws {
+        try super.tearDownWithError()
+    }
+
     // Since this is a generic method that supports multiple requests, we re-use the tests
     // MARK: Send Notification Info
     func testSessionInfoFailsOnReceivingErrorResult() async throws {

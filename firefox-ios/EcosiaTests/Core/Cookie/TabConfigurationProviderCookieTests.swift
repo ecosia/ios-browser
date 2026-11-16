@@ -21,7 +21,7 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
         Cookie.setURLProvider(.production)
         let tabManager = MockTabManager()
         self.tabManager = tabManager
-        provider = TabConfigurationProvider(profile: MockProfile(), tabManager: tabManager)
+        provider = TabConfigurationProvider(profile: MockProfile.unmanaged(), tabManager: tabManager)
     }
 
     override func tearDown() async throws {

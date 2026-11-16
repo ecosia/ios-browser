@@ -11,9 +11,9 @@ import TabDataStore
 import TipKit
 import Ecosia
 
+import class Account.Autopush
+import class Account.RustFirefoxAccounts
 import class MozillaAppServices.Viaduct
-import struct MozillaAppServices.RustAdsClient
-import enum MozillaAppServices.MozAdsEnvironment
 
 class AppDelegate: UIResponder,
                    UIApplicationDelegate,
@@ -36,7 +36,11 @@ class AppDelegate: UIResponder,
     */
     lazy var themeManager: ThemeManager = EcosiaThemeManager(
         sharedContainerIdentifier: AppInfo.sharedContainerIdentifier,
-        isNovaDesignOnClosure: { self.featureFlagsProvider.isEnabled(.novaDesign) }
+        isNovaDesignOnClosure: { self.featureFlagsProvider.isEnabled(.novaDesign) },
+        isPrivateThemeOverrideEnabledClosure: {
+            self.featureFlagsProvider.isEnabled(.novaDesign) &&
+            self.featureFlagsProvider.isEnabled(.novaPrivateThemeOverride)
+        }
     )
     lazy var documentLogger = DocumentLogger(logger: logger)
     lazy var appSessionManager: AppSessionProvider = AppSessionManager()
@@ -167,13 +171,13 @@ class AppDelegate: UIResponder,
         backgroundWorkUtility = BackgroundFetchAndProcessingUtility()
         backgroundWorkUtility?.registerUtility(BackgroundSyncUtility(profile: profile, application: application))
         backgroundWorkUtility?.registerUtility(BackgroundNotificationSurfaceUtility())
-
         /* Ecosia: Firefox Suggest is off, so keep its collections out of the daily Remote Settings sync
-        if let firefoxSuggest = profile.firefoxSuggest {
+        suggestBackgroundUtility = BackgroundFirefoxSuggestIngestUtility(firefoxSuggest: profile.firefoxSuggest)
         */
-        if isFirefoxSuggestIngestionEnabled, let firefoxSuggest = profile.firefoxSuggest {
-            suggestBackgroundUtility = BackgroundFirefoxSuggestIngestUtility(firefoxSuggest: firefoxSuggest)
-		}
+        if isFirefoxSuggestIngestionEnabled {
+            suggestBackgroundUtility = BackgroundFirefoxSuggestIngestUtility(firefoxSuggest: profile.firefoxSuggest)
+        }
+
         // Ecosia: Update EcosiaInstallType if needed. This should always happen before `FeatureManagement`
         // so that versionOnInstall and install type are available as Unleash context properties.
         EcosiaInstallType.evaluateCurrentEcosiaInstallType()
@@ -289,6 +293,9 @@ class AppDelegate: UIResponder,
 
         TelemetryWrapper.recordEvent(category: .action, method: .foreground, object: .app)
 
+        ConversionActivityLogger().recordActiveToday()
+        ConversionEventTracker().recordActivityEvents()
+
         // update top sites widget
         updateTopSitesWidget()
 
@@ -301,6 +308,7 @@ class AppDelegate: UIResponder,
             profile?.pollCommands(forcePoll: false)
         }
 
+        verifyAutopushSubscriptions()
         prefetchMerinoStories()
 
         // Ecosia: Foreground analytics + MMP, extracted into a testable unit so unit tests can verify
@@ -452,6 +460,29 @@ class AppDelegate: UIResponder,
             ensureMainThread { [weak self] in
                 self?.isLoadingBackgroundTabs = false
                 self?.backgroundTabLoader.loadBackgroundTabs()
+            }
+        }
+    }
+
+    private func verifyAutopushSubscriptions() {
+        guard Autopush.shouldVerifySubscriptions(prefs: profile.prefs) else { return }
+
+        Task { [profile] in
+            do {
+                let autopush = try await Autopush(files: profile.files)
+                let newSubscriptions = try await autopush.verifyActiveSubscriptions(prefs: profile.prefs)
+                if let fxaSubscription = newSubscriptions[RustFirefoxAccounts.pushScope] {
+                    RustFirefoxAccounts.shared.pushNotifications.updatePushRegistration(
+                        subscriptionResponse: fxaSubscription
+                    )
+                }
+            } catch let error {
+                logger.log(
+                    "Failed to verify push subscriptions",
+                    level: .warning,
+                    category: .setup,
+                    description: error.localizedDescription
+                )
             }
         }
     }

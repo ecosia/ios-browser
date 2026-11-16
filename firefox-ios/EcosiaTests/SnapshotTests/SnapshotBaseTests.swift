@@ -27,7 +27,7 @@ class SnapshotBaseTests: XCTestCase {
         let mockThemeManager = EcosiaMockThemeManager()
         mockThemeManager.windowUUID = .snapshotTestDefaultUUID
         DependencyHelperMock().bootstrapDependencies(themeManager: mockThemeManager)
-        profile = MockProfile()
+        profile = MockProfile.unmanaged()
         themeManager = AppContainer.shared.resolve()
     }
 

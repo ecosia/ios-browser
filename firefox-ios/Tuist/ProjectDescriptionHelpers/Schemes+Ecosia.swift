@@ -157,16 +157,21 @@ public enum EcosiaSchemes {
         // - Ecosia removes the synced tabs panel from the tab tray (TabTrayCoordinator.makeChildPanels):
         "BrowserCoordinatorTests/testShowTabTray_withSyncedTabs_withoutExperiment_showDefaultPresentation()",
         "BrowserCoordinatorTests/testShowTabTray_withSyncedTabs_withExperiment_showDefaultPresentation()",
+        "TabTrayCoordinatorTests/testStartWith_syncedTabs_doesNotPreloadRemoteTabsPanel()",
+        // - Ecosia's NTP never shows Jump Back In or the Tracker Blocker (HomePageSettingViewController, homepage):
+        "HomepageViewControllerTests/test_didSelectJumpBackInItem_withClosedTab_dispatchesNothing()",
+        "HomepageViewControllerTests/test_didSelectJumpBackInItem_withOpenTab_dispatchesTapOnCellWithThatTab()",
+        "HomePageSettingViewControllerTests/testHomepageSettings_generateSettings_trackerBlockerModule_isOrderedBetweenShortcutsAndJumpBackIn()",
+        // - Ecosia has no sponsored shortcuts, so Top Sites settings omit the rows selector (MOB-4331):
+        "TopSitesSettingsViewControllerTests/testGenerateSettings_withProfile_containsToggleAndRowSections()",
+        // - Reads UIPasteboard.general, which blocks on iOS's paste prompt in a full run (passes alone); MOB-5043:
+        "BrowserViewControllerTests/testLocationBarContextMenu_withoutAvailableActions_returnsNil()",
         // - Asserts Firefox's MOZ_CHANNEL_developer flags; EcosiaTesting.xcconfig compiles with MOZ_CHANNEL_FENNEC:
         "CoreBuildFlagsTests/testExpectedCoreFeatures()",
         // - The reset is compiled only for MOZ_CHANNEL_beta / MOZ_CHANNEL_developer, neither of which Ecosia defines:
         "ResetTipsSettingTests/test_resetDatastoreIfNeeded_whenResetIsScheduled_thenClearsPref()",
         // - Ecosia never enters overlay mode for `.topSites` new tabs; main had this test disabled as faulty:
         "ContextualHintEligibilityUtilityTests/test_shouldNotPresentJumpBackHint_WithOverlayMode()",
-        // - Hosted summarizer is disabled in Ecosia (on-device only), so these pass only when the cached Apple
-        //   Intelligence availability happens to be true on the test device:
-        "AddressBarStateTests/test_readerModeStateChangedAction_onWebsite_returnsExpectedState_whenSummarizeFeatureOn()",
-        "AddressBarStateTests/test_summarizeModeStateChangedAction_onWebsite_returnsExpectedState_whenSummarizeFeatureOn()",
 
         // Ecosia: Firefox's Glean telemetry is NOT used at all in Ecosia (Ecosia uses Snowplow via
         // Analytics.shared, tested separately by EcosiaTests/AnalyticsSpyTests). DefaultGleanWrapper delegates

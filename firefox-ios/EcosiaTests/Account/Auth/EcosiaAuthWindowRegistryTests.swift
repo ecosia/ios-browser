@@ -25,6 +25,10 @@ final class EcosiaAuthWindowRegistryTests: XCTestCase {
         windowRegistry.clearAllWindows()
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     // MARK: - Initialization Tests
 
     func testSharedInstance_returnsSameInstance() {

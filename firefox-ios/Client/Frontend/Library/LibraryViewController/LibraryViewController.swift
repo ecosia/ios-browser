@@ -27,6 +27,9 @@ class LibraryViewController: UIViewController, Themeable {
     let windowUUID: WindowUUID
     var currentWindowUUID: UUID? { windowUUID }
 
+    var shouldUsePrivateOverride: Bool { return true }
+    var shouldBeInPrivateTheme: Bool { return false }
+
     // Views
     private var controllerContainerView: UIView = .build { view in }
 
@@ -242,6 +245,7 @@ class LibraryViewController: UIViewController, Themeable {
             )
         }
         librarySegmentControl.selectedSegmentIndex = viewModel.selectedPanel?.rawValue ?? 0
+        view.setNeedsLayout()
     }
 
     private func hideCurrentPanel() {
@@ -404,7 +408,9 @@ class LibraryViewController: UIViewController, Themeable {
     }
 
     private func currentTheme() -> Theme {
-        return themeManager.getCurrentTheme(for: windowUUID)
+        return themeManager.resolveTheme(for: windowUUID,
+                                         shouldUsePrivateOverride: shouldUsePrivateOverride,
+                                         shouldBeInPrivateTheme: shouldBeInPrivateTheme)
     }
 
     func applyTheme() {
@@ -415,6 +421,7 @@ class LibraryViewController: UIViewController, Themeable {
         navigationController?.navigationBar.shadowImage = UIImage()
 
         let theme = currentTheme()
+        navigationController?.overrideUserInterfaceStyle = theme.type.getInterfaceStyle()
         view.backgroundColor = theme.colors.layer1
         navigationController?.navigationBar.barTintColor = theme.colors.layer1
         navigationController?.navigationBar.tintColor = theme.colors.actionPrimary
@@ -449,7 +456,7 @@ class LibraryViewController: UIViewController, Themeable {
     func setNavigationBarHidden(_ value: Bool) {
         navigationController?.setToolbarHidden(value, animated: true)
         navigationController?.setNavigationBarHidden(value, animated: false)
-        let controlbarHeight = librarySegmentControl.frame.height
+        let controlbarHeight = UX.NavigationMenu.height
         librarySegmentControl.transform = value ? .init(translationX: 0, y: -controlbarHeight) : .identity
         controllerContainerView.transform = value ? .init(translationX: 0, y: -controlbarHeight) : .identity
 

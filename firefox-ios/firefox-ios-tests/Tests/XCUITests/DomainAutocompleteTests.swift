@@ -88,9 +88,11 @@ class DomainAutocompleteTests: BaseTestCase {
         navigator.goto(URLBarOpen)
         mozWaitForElementToExist(urlBarAddress)
         urlBarAddress.typeText("moz")
+        mozWaitForValueContains(urlBarAddress, value: "mozilla.org")
 
         // First delete the autocompleted part
         urlBarAddress.typeText("\u{0008}")
+        mozWaitForValueContains(urlBarAddress, value: "moz")
         // Then remove an extra char and check that the autocompletion stops working
         urlBarAddress.typeText("\u{0008}")
         mozWaitForValueContains(urlBarAddress, value: "mo")

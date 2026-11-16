@@ -71,7 +71,7 @@ final class BookmarksViewControllerTests: XCTestCase {
         )
 
         let viewModel = BookmarksPanelViewModel(
-            profile: MockProfile(),
+            profile: MockProfile.unmanaged(),
             // Ecosia: renamed upstream in 155.1 (BookmarksHandlerMock -> MockBookmarksHandler).
             bookmarksHandler: MockBookmarksHandler(folderData: folderData),
             bookmarkFolderGUID: BookmarkRoots.MobileFolderGUID

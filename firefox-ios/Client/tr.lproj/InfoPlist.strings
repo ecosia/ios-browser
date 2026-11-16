@@ -23,7 +23,7 @@
 "NSPhotoLibraryAddUsageDescription" = "Fotoğraf kaydetmenize olanak sağlar.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Ecosia, sesli arama için sesinizi metne dönüştürmek amacıyla konuşma tanıma özelliğini kullanır.";
+"NSSpeechRecognitionUsageDescription" = "Ecosia’un sesinizi metne dönüştürmesini sağlar.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR kodu tara";

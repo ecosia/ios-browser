@@ -47,9 +47,12 @@ class SecurityTests: BaseTestCase {
         static let spoofClickMeURL = "https://justluckidzz.github.io/clickme/poc-8f7d6e5c4b.html"
         static let spoofClickMeHost = "justluckidzz.github.io"
         static let clickHereButton = "CLICK HERE"
+        static let uxssPocURL = "https://firefoxuxss.v12.sh"
+        static let uxssPocHeading = "Firefox Focus UXSS POC"
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3395565
+    // Regression
     func testLoadSpoofingHtmlReturnURL() {
         navigator.openURL(WebStrings.pocHtml)
         waitUntilPageLoad()
@@ -78,6 +81,7 @@ class SecurityTests: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3395566
+    // Regression
     func testNetlify90() {
         navigator.openURL(WebStrings.netlify90URL)
         waitUntilPageLoad()
@@ -89,6 +93,7 @@ class SecurityTests: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3395567
+    // Regression
     func testNetlify204() {
         navigator.openURL(WebStrings.netifly204URL)
         waitUntilPageLoad()
@@ -106,6 +111,7 @@ class SecurityTests: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3395568
+    // Regression
     func testNetlify204Alt() {
         navigator.openURL(WebStrings.netifly204AltURL)
         waitUntilPageLoad()
@@ -130,6 +136,7 @@ class SecurityTests: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3395569
+    // Regression
     func testNetlify204Alt2() {
         navigator.openURL(WebStrings.netifly204Alt2URL)
         waitUntilPageLoad()
@@ -153,6 +160,7 @@ class SecurityTests: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3395570
+    // Regression
     func testNetlify800() {
         navigator.openURL(WebStrings.netifly800URL)
         waitUntilPageLoad()
@@ -165,6 +173,7 @@ class SecurityTests: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3395571
+    // Regression
     func testNetlify1121rReloaded() {
         let progressIndicator = app.progressIndicators.element(boundBy: 0)
         let endTime = Date().addingTimeInterval(TIMEOUT)
@@ -189,6 +198,7 @@ class SecurityTests: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/3395576
+    // Regression
     func testW3schoolsURL() {
         navigator.openURL(WebStrings.w3schoolURL)
         waitUntilPageLoad()
@@ -200,23 +210,27 @@ class SecurityTests: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/4104979
+    // Regression
     func testXssAccountTakeover() {
         let progressIndicator = app.progressIndicators.element(boundBy: 0)
         let endTime = Date().addingTimeInterval(TIMEOUT)
-        navigator.openURL("https://firefoxuxss.v12.sh")
+        let pocHeading = app.webViews.otherElements[WebStrings.uxssPocHeading]
+        navigator.openURL(WebStrings.uxssPocURL)
         browserScreen.assertWebViewLoaded()
 
-        browserScreen.assertWebElements(app.otherElements["Firefox Focus UXSS POC"])
+        browserScreen.assertWebElements(pocHeading)
         [ "Google", "X", "YouTube", "Reddit" ].forEach { button in
-            browserScreen.assertWebElements(app.buttons[button])
+            browserScreen.assertWebElements(app.webViews.buttons[button])
         }
 
         for _ in 0...5 {
             browserScreen.tapWebViewButton(buttonText: "X")
-            browserScreen.assertWebViewLoaded()
+            // Going back before the navigation commits pops the POC page off the stack instead
+            browserScreen.assertWebElements(shouldExist: false, pocHeading)
+            waitUntilPageLoad()
             browserScreen.tapBackButton()
-            browserScreen.assertWebViewLoaded()
-            browserScreen.assertWebElements(app.otherElements["Firefox Focus UXSS POC"])
+            waitUntilPageLoad()
+            browserScreen.assertWebElements(pocHeading)
         }
 
         browserScreen.tapWebViewButton(buttonText: "Google")
@@ -232,6 +246,7 @@ class SecurityTests: BaseTestCase {
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/4141080
+    // Regression
     func testSpoofClickHereLoadsRealAppleSite() {
         navigator.openURL(WebStrings.spoofClickMeURL)
         waitUntilPageLoad()
@@ -245,13 +260,15 @@ class SecurityTests: BaseTestCase {
                        "Attacker-controlled URL should not remain displayed after tapping.")
     }
 
+    /// The form fields are matched through their rendered labels: iOS 16 WebKit does not apply the
+    /// `<label for=>` association to the input itself, leaving the field with no accessibility label.
     private func validateURLAndPageContent(URL: String, elementsShouldExists: Bool) {
         browserScreen.assertAddressBarContains(value: URL)
         browserScreen.assertWebElements(
             shouldExist: elementsShouldExists,
             app.webViews.staticTexts[WebStrings.demoText],
-            app.webViews.textFields[WebStrings.usernameField],
-            app.webViews.secureTextFields[WebStrings.passwordField2]
+            app.webViews.staticTexts[WebStrings.usernameField],
+            app.webViews.staticTexts[WebStrings.passwordField2]
         )
     }
 }

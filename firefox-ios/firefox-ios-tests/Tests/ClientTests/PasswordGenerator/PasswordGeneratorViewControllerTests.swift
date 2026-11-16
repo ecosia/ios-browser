@@ -22,7 +22,7 @@ final class PasswordGeneratorViewControllerTests: XCTestCase {
     }
 
     func testPasswordGeneratorViewController_simpleCreation_hasNoLeaks() {
-        let mockProfile = MockProfile()
+        let mockProfile = makeProfile()
         let currentTab = Tab(profile: mockProfile, windowUUID: windowUUID)
         let URL = URL(string: "https://foo.com")!
         let webView = WKWebViewMock(URL)

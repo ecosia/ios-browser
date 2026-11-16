@@ -101,15 +101,10 @@ public struct PrefsKeys {
         public static let Latest = "latestAppVersion"
     }
 
-    public struct AdsClient {
-        public static let documentsDirectoryMigrationCheck = "adsClientDocumentsDirectoryMigrationCheckUserPrefsKey"
-    }
-
     public struct Wallpapers {
         public static let MetadataLastCheckedDate = "WallpaperMetadataLastCheckedUserPrefsKey"
         public static let CurrentWallpaper = "CurrentWallpaperUserPrefsKey"
         public static let ThumbnailsAvailable = "ThumbnailsAvailableUserPrefsKey"
-        public static let OnboardingSeenKey = "WallpaperOnboardingSeenKeyUserPrefsKey"
 
         public static let legacyAssetMigrationCheck = "legacyAssetMigrationCheckUserPrefsKey"
         public static let v1MigrationCheck = "v1MigrationCheckUserPrefsKey"
@@ -139,6 +134,8 @@ public struct PrefsKeys {
 
     public struct QuickAnswers {
         public static let optInCompleted = "quickAnswers.optInCompleted"
+        public static let entryPointButtonGlowCount = "quickAnswers.entryPointButtonGlowCount"
+        public static let modelOverride = "quickAnswers.modelOverride"
     }
 
     public struct Tips {
@@ -175,6 +172,11 @@ public struct PrefsKeys {
         public static let lastUsedEnvironment = "mlpaLastUsedEnvironment"
     }
 
+    public struct VPNSettings {
+        public static let endpointEnvironment = "vpnEndpointEnvironment"
+        public static let lastUsedEnvironment = "vpnLastUsedEnvironment"
+    }
+
     public struct UserFeatureFlagPrefs {
         public static let ASPocketStories = "ASPocketStoriesUserPrefsKey"
         public static let StartAtHome = "StartAtHomeUserPrefsKey"
@@ -191,7 +193,6 @@ public struct PrefsKeys {
         case mainMenuRedesignKey = "mainMenuRedesignHintKey"
         case navigationKey = "ContextualHintNavigation"
         case relayMaskKey = "ContextualHintRelayMaskKey"
-        case translationKey = "ContextualHintTranslationKey"
         case summarizerToolbarEntryKey = "summarizerToolbarEntryKey"
     }
 
@@ -249,6 +250,9 @@ public struct PrefsKeys {
     // The last timestamp we polled FxA for missing send tabs
     public static let PollCommandsTimestamp = "PollCommandsTimestamp"
 
+    // The last timestamp we verified Autopush connections
+    public static let AutopushVerificationTimestamp = "AutopushVerificationTimestamp"
+
     // Representing whether or not the last user session was private
     public static let LastSessionWasPrivate = "wasLastSessionPrivate"
 
@@ -270,6 +274,19 @@ public struct PrefsKeys {
     // Used to only show the Default Browser Banner, in Main Menu, until is dismissed by the user
     public static let defaultBrowserBannerShown = "defaultBrowserBannerShownKey"
 
+    // Count of distinct active days
+    public static let onboardingActiveDayCount = "onboardingActiveDayCount"
+
+    // The calendar day that count last advanced,
+    public static let onboardingLastActiveDate = "onboardingLastActiveDate"
+
+    // The day whose card was last shown.
+    public static let onboardingLastCardActiveDay = "onboardingLastCardActiveDay"
+
+    // Set when the user declines the notifications card and dismisses the homescreen notification card respectively
+    public static let onboardingNotificationsDeclined = "onboardingNotificationsDeclined"
+    public static let onboardingNotificationCardDismissed = "onboardingNotificationCardDismissed"
+
     // MARK: - Apple Intelligence
     // Used to determine if Apple Intelligence is available
     public static let appleIntelligenceAvailable = "appleIntelligenceAvailableKey"
@@ -278,6 +295,9 @@ public struct PrefsKeys {
 
     // Used for enabling test data for merino stories on non-dev builds
     public static let useMerinoTestData = "useMerinoTestData"
+
+    // Used for showing mock breach alerts on saved logins, for testing the breach alerts UI
+    public static let useMockBreachAlerts = "useMockBreachAlerts"
 
     public struct Usage {
         public static let profileId = "profileId"

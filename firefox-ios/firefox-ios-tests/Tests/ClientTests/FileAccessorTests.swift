@@ -8,30 +8,22 @@ import XCTest
 
 @testable import Client
 
-@MainActor
 class FileAccessorTests: XCTestCase {
     fileprivate var testDir: String!
-    fileprivate var files: ProfileFileAccessor!
+    fileprivate var files: FileAccessor!
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        let docPath: NSString = NSSearchPathForDirectoriesInDomains(
-            .documentDirectory,
-            .userDomainMask,
-            true
-        )[0] as NSString
-        var accessor = ProfileFileAccessor(localName: "filetest")
-        accessor.rootPath = docPath.appendingPathComponent("filetest")
-        files = accessor
+        files = makeTemporaryFiles()
 
         testDir = try files.getAndEnsureDirectory()
         try files.removeFilesInDirectory()
     }
 
     override func tearDown() {
-        super.tearDown()
         files = nil
         testDir = nil
+        super.tearDown()
     }
 
     func testFileAccessor() {
@@ -88,5 +80,40 @@ class FileAccessorTests: XCTestCase {
             success = false
         }
         XCTAssertTrue(success, "Wrote to \(path)")
+    }
+
+    // MARK: - Test artifact containment
+
+    func testTemporaryFilesRootIsUnderTemporaryDirectory() {
+        let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory()).standardizedFileURL
+        let root = URL(fileURLWithPath: TemporaryFiles().rootPath).standardizedFileURL
+        XCTAssertTrue(
+            root.pathComponents.starts(with: temporaryDirectory.pathComponents),
+            "Test artifacts must be written to the temporary directory"
+        )
+    }
+
+    func testTemporaryFilesHaveIsolatedRoots() {
+        XCTAssertNotEqual(TemporaryFiles().rootPath, TemporaryFiles().rootPath)
+    }
+
+    func testOwnedTemporaryFilesCleanUpTheirOriginalRoot() throws {
+        let files = TemporaryFiles(ownsRoot: true)
+        let originalRoot = try files.getAndEnsureDirectory()
+        files.rootPath = TemporaryFiles().rootPath
+
+        files.removeRoot()
+
+        XCTAssertFalse(FileManager.default.fileExists(atPath: originalRoot))
+    }
+
+    func testUnownedTemporaryFilesLeaveTheirRootAlone() throws {
+        let files = TemporaryFiles(ownsRoot: false)
+        let root = try files.getAndEnsureDirectory()
+        defer { try? FileManager.default.removeItem(atPath: root) }
+
+        files.removeRoot()
+
+        XCTAssertTrue(FileManager.default.fileExists(atPath: root))
     }
 }

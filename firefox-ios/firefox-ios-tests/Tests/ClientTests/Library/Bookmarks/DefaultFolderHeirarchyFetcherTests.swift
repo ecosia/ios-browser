@@ -13,7 +13,7 @@ final class DefaultFolderHeirarchyFetcherTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        mockProfile = MockProfile()
+        mockProfile = makeProfile()
         await addFolder(title: testFolderTitle)
     }
 

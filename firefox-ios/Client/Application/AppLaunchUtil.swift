@@ -78,16 +78,11 @@ final class AppLaunchUtil: FeatureFlaggable, Sendable {
 
         setMenuItems()
 
-        // Logs conversion activity and records any conversion events
-        let conversionActivityLogger = ConversionActivityLogger()
-        conversionActivityLogger.recordFirstDayAfterInstallTimestampIfNeeded()
-        conversionActivityLogger.recordActiveToday()
-        ConversionEventTracker().recordActivityEvents()
+        // Active days and conversion events are recorded when the app becomes active
+        ConversionActivityLogger().recordFirstDayAfterInstallTimestampIfNeeded()
 
         // Initialize app services ( including NSS ). Must be called before any other calls to rust components.
         MozillaAppServices.initialize()
-
-        AdsClientDocumentsDirectoryMigration().removeLegacyDatabaseFiles()
 
         /// Migrate TermsOfService prefs to TermsOfUse prefs
         /// before Nimbus is initialized (should be available for experiments)
@@ -112,11 +107,8 @@ final class AppLaunchUtil: FeatureFlaggable, Sendable {
         }
 
         // Save toolbar position to user prefs
-        /* Ecosia: Use Ecosia's search bar location saver. `migrateBottomBarPositionToTopOnIPad` is
-           upstream's new one-shot iPad migration (FXIOS-15668); it is deliberately not called because
-           Ecosia's own MOB-4304 migration puts every device on the bottom Omnibox.
+        /* Ecosia: Use Ecosia's search bar location saver
         let searchBarLocationSaver = SearchBarLocationSaver()
-        searchBarLocationSaver.migrateBottomBarPositionToTopOnIPad(profile: profile)
         searchBarLocationSaver.saveUserSearchBarLocation(profile: profile)
         */
         EcosiaSearchBarLocationSaver().saveUserSearchBarLocation(profile: profile)
@@ -206,6 +198,7 @@ final class AppLaunchUtil: FeatureFlaggable, Sendable {
         AppEventQueue.signal(event: .postLaunchDependenciesComplete)
     }
 
+    @MainActor
     private func setUserAgent() {
         // Record the user agent for use by search suggestion clients.
         SearchViewModel.userAgent = UserAgent.getUserAgent()
@@ -231,7 +224,7 @@ final class AppLaunchUtil: FeatureFlaggable, Sendable {
     /// enabled from greater than two to 2. See FXIOS-12704
     @MainActor
     private func migrateTopSitesRowNumbers() {
-        if featureFlagsProvider.isEnabled(.homepageSearchBar) {
+        if featureFlagsProvider.isEnabled(.homepageAnimatedCenterSearchBar) {
             let defaultNumber = TopSitesRowCountSettingsController.defaultNumberOfRows
             let userNumberOfTopSiteRows = profile.prefs.intForKey(
                 PrefsKeys.NumberOfTopSiteRows

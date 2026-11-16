@@ -172,7 +172,7 @@ final class WallpaperRotationTests: XCTestCase {
 
         // Then
         XCTAssertTrue(configuration.hasImage)
-        XCTAssertNotNil(configuration.portraitImage)
+        XCTAssertNotNil(configuration.iPhonePortraitImage)
         XCTAssertEqual(configuration.textColor, Wallpaper.ecosiaForest.textColor)
     }
 }

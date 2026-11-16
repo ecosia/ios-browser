@@ -23,7 +23,7 @@ class ProfileTest: XCTestCase {
         continueAfterFailure = false
 
         // Setup mock profile 
-        profile = MockProfile(databasePrefix: "profile-test")
+        profile = makeProfile()
     }
 
     override func tearDown() {

@@ -271,6 +271,8 @@ fileprivate extension String {
                 .font: UIFont.systemFont(ofSize: baseFont.pointSize, weight: .semibold)
             ], range: .init(range, in: fullText))
         }
-        return fullText.attributedText(boldString: highlight, font: baseFont)
+        return fullText.attributedText(boldString: highlight,
+                                       font: baseFont,
+                                       boldFont: .boldSystemFont(ofSize: baseFont.pointSize))
     }
 }

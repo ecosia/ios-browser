@@ -203,14 +203,9 @@ class OpenSearchEngineTests: XCTestCase {
             image: testImage,
             searchTemplate: "some link",
             suggestTemplate: nil,
+            trendingTemplate: nil,
             isCustomEngine: true
         )
-    }
-
-    // Ecosia: Use concrete FileAccessor class for v147
-    private class SimpleFileAccessor: FileAccessor {
-        var rootPath: String
-        init(rootPath: String) { self.rootPath = rootPath }
     }
 
     private var customFileEnginePath: String {
@@ -219,18 +214,12 @@ class OpenSearchEngineTests: XCTestCase {
             let profileDirName = "profile.profile"
             let customSearchEnginesFileName = "customEngines.plist"
 
-            var directoryPath: String
-            if let url = FileManager.default.containerURL(
-                forSecurityApplicationGroupIdentifier: sharedContainerIdentifier
-            ) {
-                directoryPath = url.appendingPathComponent(profileDirName).path
-            } else {
-                directoryPath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
-            }
-
-            let fileAccessor = SimpleFileAccessor(rootPath: directoryPath)
-            let profilePath = try fileAccessor.getAndEnsureDirectory() as NSString
-            return profilePath.appendingPathComponent(customSearchEnginesFileName)
+            let directory = FileManager.default
+                .containerURL(forSecurityApplicationGroupIdentifier: sharedContainerIdentifier)?
+                .appendingPathComponent(profileDirName)
+                ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            return directory.appendingPathComponent(customSearchEnginesFileName).path
         }
     }
 }

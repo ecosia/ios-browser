@@ -17,7 +17,7 @@ class GleanPlumbContextProviderTests: XCTestCase {
         super.setUp()
         DependencyHelperMock().bootstrapDependencies()
         userDefaults = MockUserDefaults()
-        profile = MockProfile()
+        profile = makeProfile()
         contextProvider = GleanPlumbContextProvider(profile: profile)
         contextProvider.userDefaults = userDefaults
     }

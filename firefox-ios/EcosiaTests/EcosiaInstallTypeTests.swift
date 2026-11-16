@@ -13,6 +13,10 @@ final class EcosiaInstallTypeTests: XCTestCase {
         UserDefaults.standard.removeObject(forKey: EcosiaInstallType.currentInstalledVersionKey)
     }
 
+    override func tearDownWithError() throws {
+        try super.tearDownWithError()
+    }
+
     func testGetInstallType_WhenUnknown_ShouldReturnUnknown() {
         let type = EcosiaInstallType.get()
         XCTAssertEqual(type, .unknown)

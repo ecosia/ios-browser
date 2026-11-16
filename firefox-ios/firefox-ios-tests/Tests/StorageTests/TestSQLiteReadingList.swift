@@ -7,8 +7,8 @@ import Shared
 @testable import Storage
 import XCTest
 
-class TestSQLiteReadingList: XCTestCase, @unchecked Sendable {
-    let files = MockFiles()
+class TestSQLiteReadingList: XCTestCase {
+    lazy var files = makeTemporaryFiles()
     var db: BrowserDB!
     var readingList: SQLiteReadingList!
 
@@ -16,6 +16,11 @@ class TestSQLiteReadingList: XCTestCase, @unchecked Sendable {
         super.setUp()
         self.db = BrowserDB(filename: "ReadingListTest.db", schema: ReadingListSchema(), files: self.files)
         self.readingList = SQLiteReadingList(db: db)
+    }
+
+    override func tearDown() {
+        db.forceClose()
+        super.tearDown()
     }
 
     func testCreateRecord() {
@@ -54,7 +59,10 @@ class TestSQLiteReadingList: XCTestCase, @unchecked Sendable {
             break
         }
 
-        let result2 = readingList.getRecordWithURL("http://www.anandtech.com/show/9117/analyzing-intel-core-m-performance").value
+        let result2 = readingList
+                      .getRecordWithURL("http://www.anandtech.com/show/9117/analyzing-intel-core-m-performance")
+                      .value
+
         switch result2 {
         case .failure(let error):
             XCTFail(error.description)
@@ -113,12 +121,21 @@ class TestSQLiteReadingList: XCTestCase, @unchecked Sendable {
             break
         }
 
-        readingList.deleteRecord(result1.successValue!) { success in
-            if !success {
-                XCTFail("Failed to delete reading list item")
+        readingList.deleteRecord(result1.successValue!) { [readingList] success in
+            guard let readingList else {
+                XCTFail()
+                return
             }
 
-            let result3 = self.readingList.getRecordWithURL("http://www.anandtech.com/show/9117/analyzing-intel-core-m-performance").value
+            guard success else {
+                XCTFail("Failed to delete reading list item")
+                return
+            }
+
+            let result3 = readingList
+                          .getRecordWithURL("http://www.anandtech.com/show/9117/analyzing-intel-core-m-performance")
+                          .value
+
             switch result3 {
             case .failure:
                 break

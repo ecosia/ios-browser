@@ -20,7 +20,7 @@
 "NSPhotoLibraryAddUsageDescription" = "სურათების შენახვის საშუალებას იძლევა.";
 
 /* Privacy - Speech Recognition Usage Description */
-"NSSpeechRecognitionUsageDescription" = "Ecosia მეტყველების ამომცნობს იყენებს თქვენი ხმის საძიებო ტექსტად ქცევისთვის.";
+"NSSpeechRecognitionUsageDescription" = "ამის მეშვეობით Ecosia თქვენს ხმას ნაწერად აქცევს.";
 
 /* (No Comment) */
 "Scan QR Code" = "QR კოდის წაკითხვა";

@@ -190,8 +190,12 @@ final class EcosiaHomepageAdapter {
         // If no bundled asset, try to load downloaded images
         if portraitImage == nil || landscapeImage == nil {
             let storageUtility = WallpaperStorageUtility()
-            portraitImage = try? storageUtility.fetchImageNamed(currentWallpaper.portraitID)
-            landscapeImage = try? storageUtility.fetchImageNamed(currentWallpaper.landscapeID)
+            portraitImage = try? storageUtility.fetchImageNamed(
+                currentWallpaper.fileName(for: .current(isLandscape: false))
+            )
+            landscapeImage = try? storageUtility.fetchImageNamed(
+                currentWallpaper.fileName(for: .current(isLandscape: true))
+            )
         }
 
         // Fallback to default bundled background if nothing loaded
@@ -227,5 +231,38 @@ final class EcosiaHomepageAdapter {
             logoTextColor: wallpaper.logoTextColor,
             hasImage: true
         )
+    }
+}
+
+extension WallpaperImageType {
+    /// The image for this device's idiom in the given orientation.
+    @MainActor
+    static func current(isLandscape: Bool,
+                        idiom: UIUserInterfaceIdiom = UIDevice.current.userInterfaceIdiom) -> WallpaperImageType {
+        if idiom == .pad {
+            return isLandscape ? .iPadLandscape : .iPadPortrait
+        }
+        return isLandscape ? .iPhoneLandscape : .iPhonePortrait
+    }
+}
+
+extension WallpaperConfiguration {
+    /// Ecosia's backgrounds have one portrait and one landscape image, used on iPhone and iPad alike.
+    init(id: String?,
+         landscapeImage: UIImage?,
+         portraitImage: UIImage?,
+         textColor: UIColor?,
+         cardColor: UIColor?,
+         logoTextColor: UIColor?,
+         hasImage: Bool) {
+        self.init(id: id,
+                  iPhonePortraitImage: portraitImage,
+                  iPhoneLandscapeImage: landscapeImage,
+                  iPadPortraitImage: portraitImage,
+                  iPadLandscapeImage: landscapeImage,
+                  textColor: textColor,
+                  cardColor: cardColor,
+                  logoTextColor: logoTextColor,
+                  hasImage: hasImage)
     }
 }

@@ -141,6 +141,7 @@ final class ReaderPanelEmptyStateView: UIView, ThemeApplicable {
                 readingListLabel.bottomAnchor.constraint(
                     equalTo: emptyStateViewWrapper.bottomAnchor
                 ).priority(.defaultLow),
+                readingListLabel.bottomAnchor.constraint(lessThanOrEqualTo: emptyStateViewWrapper.bottomAnchor),
 
                 // overall positioning of emptyStateViewWrapper
                 emptyStateViewWrapper.leadingAnchor.constraint(

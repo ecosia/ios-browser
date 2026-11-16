@@ -75,7 +75,7 @@ final class AddressListViewModelTests: XCTestCase, @unchecked Sendable {
 
     override func setUp() {
         super.setUp()
-        mockProfile = MockProfile()
+        mockProfile = makeProfile()
         mockLogger = MockLogger()
         mockAutofill = MockAutofill()
         mockThemeManager = MockThemeManager()

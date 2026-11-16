@@ -19,18 +19,30 @@ features:
           The style of the tab tray button in the toolbar.
         type: TabTrayButtonType
         default: number
+      search_term_in_address_bar:
+        description: >
+          Shows the search term instead of the URL in the address bar when the
+          current page is a search results page of the default search engine.
+        type: Boolean
+        default: false
 
     defaults:
+      # Ecosia: Show the query instead of the URL on Ecosia's results pages, on every channel. `release` is listed explicitly.
+      - channel: release
+        value:
+          search_term_in_address_bar: true
       - channel: beta
         value:
           unified_search: false
           layout: version1
           tab_tray_button_type: number
+          search_term_in_address_bar: true
       - channel: developer
         value:
           unified_search: false
           layout: version1
           tab_tray_button_type: number
+          search_term_in_address_bar: true
 
 enums:
   ToolbarLayoutType:

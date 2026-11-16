@@ -118,6 +118,34 @@ final class ToggleWallpaperRotation: HiddenSetting {
     }
 }
 
+/// Turns on Firefox's address-bar swipe to the tab tray and drag-to-close, which Ecosia ships off.
+enum DebugAddressBarTabTrayGesture {
+    private static let enabledKey = "ecosiaDebugAddressBarTabTrayGestureEnabled"
+
+    static var isEnabled: Bool {
+        get { UserDefaults.standard.bool(forKey: enabledKey) }
+        set { UserDefaults.standard.set(newValue, forKey: enabledKey) }
+    }
+}
+
+final class ToggleAddressBarTabTrayGesture: HiddenSetting {
+    override var title: NSAttributedString? {
+        return NSAttributedString(
+            string: "Debug: Toggle - Swipe up on the address bar to open tabs (restart the app)",
+            attributes: [:]
+        )
+    }
+
+    override var status: NSAttributedString? {
+        return NSAttributedString(string: DebugAddressBarTabTrayGesture.isEnabled ? "True" : "False", attributes: [:])
+    }
+
+    override func onClick(_ navigationController: UINavigationController?) {
+        DebugAddressBarTabTrayGesture.isEnabled.toggle()
+        settings.tableView.reloadData()
+    }
+}
+
 final class ResetSearchCount: HiddenSetting {
     override var title: NSAttributedString? {
         return NSAttributedString(string: "Debug: Set search count to 0", attributes: [:])

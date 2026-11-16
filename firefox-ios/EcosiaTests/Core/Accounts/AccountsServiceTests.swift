@@ -17,6 +17,10 @@ final class AccountsServiceTests: XCTestCase {
         accountsService = AccountsService(client: mockHTTPClient)
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     func testRegisterVisit_Success() async throws {
         // Arrange
         let timestamp = "2024-12-07T10:50:26Z"

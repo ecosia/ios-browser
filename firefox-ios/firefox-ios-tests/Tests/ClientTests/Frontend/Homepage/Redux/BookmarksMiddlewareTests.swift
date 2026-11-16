@@ -14,7 +14,7 @@ final class BookmarksMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked S
 
     override func setUp() async throws {
         try await super.setUp()
-        mockProfile = MockProfile()
+        mockProfile = makeProfile()
         DependencyHelperMock().bootstrapDependencies()
         setupStore()
     }
@@ -89,16 +89,5 @@ final class BookmarksMiddlewareTests: XCTestCase, StoreTestUtility, @unchecked S
                 ]
             )
         )
-    }
-
-    func setupStore() {
-        mockStore = MockStoreForMiddleware(state: setupAppState())
-        StoreTestUtilityHelper.setupStore(with: mockStore)
-    }
-
-    // In order to avoid flaky tests, we should reset the store
-    // similar to production
-    func resetStore() {
-        StoreTestUtilityHelper.resetStore()
     }
 }

@@ -34,14 +34,16 @@ for lang in $LOCALES; do
     echo "$(date) Snapshotting $lang"
     mkdir "l10n-screenshots/$lang"
     fastlane snapshot --project firefox-ios/Client.xcodeproj --scheme L10nSnapshotTests \
+        --testPlan L10nSnapshotTests \
         --number_of_retries 0 \
         --skip_open_summary \
-        --xcargs "-maximum-parallel-testing-workers 2 -skipMacroValidation" \
+        --xcargs "-maximum-parallel-testing-workers 2 -skipMacroValidation -collect-test-diagnostics never" \
         --derived_data_path l10n-screenshots-dd \
-        --ios_version "26.5" \
+        --ios_version "27.0" \
         --erase_simulator --localize_simulator \
-        --devices "iPhone 15" --languages "$lang" \
+        --devices "iPhone 18 Pro" --languages "$lang" \
         --output_directory "l10n-screenshots/$lang" \
+        --xcodebuild_formatter xcbeautify \
         $EXTRA_FAST_LANE_ARGS
     echo "Fastlane exited with code: $?"
 done

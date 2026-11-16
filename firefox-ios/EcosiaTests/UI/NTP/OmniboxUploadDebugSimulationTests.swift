@@ -15,6 +15,10 @@ final class OmniboxUploadDebugSimulationTests: XCTestCase {
         super.tearDown()
     }
 
+    override func setUp() {
+        super.setUp()
+    }
+
     func testSimulatedValidationErrorsReflectEnabledToggles() {
         UserDefaults.standard.set(true, forKey: SimulateUploadValidationErrorSetting.debugKey(for: .fileTooLarge))
         UserDefaults.standard.set(true, forKey: SimulateUploadValidationErrorSetting.debugKey(for: .unsupportedFileType))

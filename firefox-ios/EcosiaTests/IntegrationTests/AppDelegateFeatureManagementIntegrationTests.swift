@@ -23,6 +23,10 @@ final class AppDelegateFeatureManagementIntegrationTests: XCTestCase, @unchecked
         Unleash.model = Unleash.Model()
     }
 
+    override func tearDown() {
+        super.tearDown()
+    }
+
     func testInitialStateOfUnleashModel() {
         XCTAssertEqual(Unleash.model.toggles.count, 0)
         XCTAssertEqual(Unleash.model.updated, Date(timeIntervalSince1970: 0))

@@ -13,7 +13,7 @@ class TabCellTests: XCTestCase {
     override func setUp() {
         super.setUp()
         cellDelegate = MockTabCellDelegate()
-        profile = MockProfile()
+        profile = makeProfile()
     }
 
     override func tearDown() {
