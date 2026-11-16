@@ -359,6 +359,25 @@ final class BrowserViewControllerLayoutManagerTests: XCTestCase {
         XCTAssertNil(avoidanceConstraint)
     }
 
+    // Ecosia: The bottom pin stays required when no keyboard constraint can override it
+    func test_setupOverKeyboardContainerConstraints_withoutKeyboardAnchor_pinIsRequired() {
+        let subject = createSubject()
+        subject.setupBottomContainerConstraints()
+        subject.setupOverKeyboardContainerConstraints()
+
+        XCTAssertEqual(subject.overKeyboardContainerConstraint?.priority, .required)
+    }
+
+    // Ecosia: The bottom pin yields to the keyboard constraint when there is one
+    func test_setupOverKeyboardContainerConstraints_withKeyboardAnchor_pinIsDefaultHigh() {
+        setUpFakeKeyboardGuide()
+        let subject = createSubject(keyboardTopAnchor: fakeKeyboardGuide.topAnchor)
+        subject.setupBottomContainerConstraints()
+        subject.setupOverKeyboardContainerConstraints()
+
+        XCTAssertEqual(subject.overKeyboardContainerConstraint?.priority, .defaultHigh)
+    }
+
     func test_updateOverKeyboardContainerConstraints_bottomSearchBarWithKeyboardAnchor_activatesConstraint() {
         setUpFakeKeyboardGuide()
         let subject = createSubject(keyboardTopAnchor: fakeKeyboardGuide.topAnchor)
