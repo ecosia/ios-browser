@@ -139,7 +139,12 @@ final class BrowserViewControllerLayoutManager {
         ])
 
         let constraint = overKeyboardContainer.bottomAnchor.constraint(equalTo: bottomContainer.topAnchor)
+        /* Ecosia: Keep the pin required unless a keyboard constraint can override it. Production passes
+         no `keyboardTopAnchor`, and at `.defaultHigh` a relayout on the NTP (e.g. a top sites update) could
+         drop the empty container to the screen bottom, stretching the homepage behind the toolbar.
         constraint.priority = .defaultHigh
+        */
+        constraint.priority = keyboardTopAnchor == nil ? .required : .defaultHigh
         constraint.isActive = true
 
         scrollController?.overKeyboardContainerConstraint = constraint
