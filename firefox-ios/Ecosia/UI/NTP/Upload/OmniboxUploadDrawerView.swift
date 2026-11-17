@@ -7,16 +7,26 @@ import Common
 
 @available(iOS 16.0, *)
 private enum OmniboxUploadDrawerUX {
-    static let shortcutTileSize: CGFloat = 56
-    static let shortcutTileCornerRadius: CGFloat = 16
-    static let shortcutWidth: CGFloat = 72
-    static let iconSize: CGFloat = 20
-    static let chatModeRowMinHeight: CGFloat = 68
+    /// Initial sheet height used before the content measures its own height.
+    static let fallbackHeight: CGFloat = 480
+    static let uploadIconContainerSize: CGFloat = 56
+    static let uploadIconContainerCornerRadius: CGFloat = 16
+    static let uploadIconSize: CGFloat = 20
+    static let chatModeIconSize: CGFloat = 20
     static let doneButtonSize: CGFloat = 44
     static let doneGlyphSize: CGFloat = 17
     static let sparkleSize: CGFloat = 16
     static let footerHeight: CGFloat = 44
     static let footerCornerRadius: CGFloat = 16
+    /// Chat-mode rows are grouped in one rounded solid card (iOS inset-grouped
+    /// style, matching the search-suggestions list).
+    static let chatModeListCornerRadius: CGFloat = .ecosia.borderRadius._1l
+    static let chatModeIconSpacing: CGFloat = .ecosia.space._1s
+    static let chatModeRowHorizontalPadding: CGFloat = .ecosia.space._m
+    static let chatModeRowVerticalPadding: CGFloat = .ecosia.space._1s
+    static let chatModeRowMinHeight: CGFloat = 68
+    /// Opacity of chat-mode rows that are disabled for signed-out users.
+    static let disabledRowOpacity: CGFloat = 0.4
     static let signInIconWidth: CGFloat = 18
 }
 
@@ -64,6 +74,15 @@ public struct OmniboxUploadDrawerSheet: View {
     }
 }
 
+/// Reports the drawer's intrinsic content height so the sheet can size itself.
+@available(iOS 16.0, *)
+private struct OmniboxDrawerHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat { 0 }
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
 @available(iOS 16.0, *)
 struct OmniboxUploadDrawerView: View {
     private typealias UX = OmniboxUploadDrawerUX
@@ -81,6 +100,7 @@ struct OmniboxUploadDrawerView: View {
     // `Environment` type, which otherwise shadows the SwiftUI property wrapper.
     @SwiftUI.Environment(\.dismiss) private var dismiss
     @State private var theme = OmniboxUploadDrawerViewTheme()
+    @State private var contentHeight = OmniboxUploadDrawerUX.fallbackHeight
 
     init(windowUUID: WindowUUID,
          provider: SearchProvider,
@@ -129,18 +149,17 @@ struct OmniboxUploadDrawerView: View {
         VStack(spacing: 0) {
             VStack(spacing: .ecosia.space._l) {
                 // The "AI tools" title + checkmark and the modes list are Chat
-                // Modes UI; the upload shortcuts stay under the File Upload flag.
+                // Modes UI; the upload tiles stay under the File Upload flag.
                 if ChatModesFeatureFlag.isEnabled {
                     header
                 }
-                VStack(spacing: 0) {
-                    uploadRow
-                    if ChatModesFeatureFlag.isEnabled {
-                        chatModeList
-                    }
+                uploadRow
+                if ChatModesFeatureFlag.isEnabled {
+                    chatModeList
                 }
             }
             if ChatModesFeatureFlag.isEnabled, isEcosiaProvider {
+                // The banner is the last item in the flow, 16dp below the list.
                 footer
                     .padding(.top, .ecosia.space._m)
             }
@@ -149,12 +168,22 @@ struct OmniboxUploadDrawerView: View {
         .padding(.top, .ecosia.space._2l)
         .padding(.bottom, .ecosia.space._2l)
         .frame(maxWidth: .infinity)
-        .dynamicHeightPresentationDetent(padding: 0)
+        // Measure the intrinsic content height so the sheet detent fits exactly,
+        // keeping the banner at the bottom without a floating gap.
+        .background(
+            GeometryReader { proxy in
+                Color.clear.preference(key: OmniboxDrawerHeightKey.self, value: proxy.size.height)
+            }
+        )
+        .onPreferenceChange(OmniboxDrawerHeightKey.self) { height in
+            if height > 0 { contentHeight = height }
+        }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(theme.backgroundColor.ignoresSafeArea())
         .accessibilityElement(children: .contain)
         .accessibilityLabel(String.localized(.aiToolsTitle))
         .ecosiaThemed(windowUUID, $theme)
+        .presentationDetents([.height(contentHeight)])
         .presentationDragIndicator(.visible)
         .presentationBackgroundIfAvailable(theme.backgroundColor)
     }
@@ -175,12 +204,11 @@ struct OmniboxUploadDrawerView: View {
                 Button {
                     dismiss()
                 } label: {
-                    doneButtonBackground(
-                        Image(systemName: "checkmark")
-                            .font(.system(size: UX.doneGlyphSize, weight: .medium))
-                            .foregroundColor(theme.iconTintColor)
-                            .frame(width: UX.doneButtonSize, height: UX.doneButtonSize)
-                    )
+                    Image(systemName: "checkmark")
+                        .font(.system(size: UX.doneGlyphSize, weight: .medium))
+                        .foregroundColor(theme.iconTintColor)
+                        .frame(width: UX.doneButtonSize, height: UX.doneButtonSize)
+                        .background(Circle().fill(theme.doneBackgroundColor))
                 }
                 .accessibilityLabel(String.localized(.done))
                 .accessibilityHint(String.localized(.aiToolsDoneAccessibilityHint))
@@ -189,29 +217,18 @@ struct OmniboxUploadDrawerView: View {
         }
     }
 
-    @ViewBuilder
-    private func doneButtonBackground(_ glyph: some View) -> some View {
-        if #available(iOS 26, *) {
-            glyph.glassEffect(.regular.interactive(), in: Circle())
-        } else {
-            glyph.background(Circle().fill(theme.doneBackgroundColor))
-        }
-    }
-
     // MARK: - Upload sources
 
     private var uploadRow: some View {
-        HStack(alignment: .top, spacing: .ecosia.space._1s) {
+        HStack(alignment: .center, spacing: .ecosia.space._m) {
             ForEach(OmniboxUploadOption.allCases, id: \.self) { option in
                 uploadOptionButton(for: option)
             }
         }
-        .padding(.vertical, .ecosia.space._1s)
     }
 
     private func uploadOptionButton(for option: OmniboxUploadOption) -> some View {
-        let contentColor = isUploadEnabled ? theme.iconTintColor : theme.disabledColor
-        return Button {
+        Button {
             onSelect(option)
         } label: {
             VStack(spacing: .ecosia.space._1s) {
@@ -219,27 +236,27 @@ struct OmniboxUploadDrawerView: View {
                     .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
-                    .foregroundColor(contentColor)
-                    .frame(width: UX.iconSize, height: UX.iconSize)
-                    .frame(width: UX.shortcutTileSize, height: UX.shortcutTileSize)
+                    .foregroundColor(theme.iconTintColor)
+                    .frame(width: UX.uploadIconSize, height: UX.uploadIconSize)
+                    .frame(width: UX.uploadIconContainerSize, height: UX.uploadIconContainerSize)
                     .background(
-                        RoundedRectangle(cornerRadius: UX.shortcutTileCornerRadius)
+                        RoundedRectangle(cornerRadius: UX.uploadIconContainerCornerRadius)
                             .fill(theme.iconBackgroundColor)
                     )
 
                 Text(option.title)
                     .font(.footnote)
-                    .foregroundColor(isUploadEnabled ? theme.labelColor : theme.disabledColor)
+                    .foregroundColor(theme.labelColor)
                     .multilineTextAlignment(.center)
             }
-            .frame(width: UX.shortcutWidth)
             .frame(maxWidth: .infinity)
         }
         // Ecosia uploads require an account and chat-thread history, so the media
-        // pickers are disabled for signed-out users and for users who opted out of
-        // chat threads. Other providers redirect to their own site, which needs no
-        // Ecosia account.
+        // pickers are disabled and dimmed for signed-out users and for users who
+        // opted out of chat threads (same treatment as the advanced modes). Other
+        // providers redirect to their own site, which needs no Ecosia account.
         .disabled(!isUploadEnabled)
+        .opacity(isUploadEnabled ? 1 : UX.disabledRowOpacity)
         .accessibilityLabel(option.accessibilityLabel)
         .accessibilityHint(option.accessibilityHint)
         .accessibilityIdentifier(option.accessibilityIdentifier)
@@ -248,77 +265,80 @@ struct OmniboxUploadDrawerView: View {
     // MARK: - Chat modes
 
     private var chatModeList: some View {
+        // Group all rows in one rounded solid card, separated by inset dividers,
+        // like an iOS inset-grouped list / the search-suggestions overlay.
         VStack(spacing: 0) {
             ForEach(Array(availableModes.enumerated()), id: \.element) { index, mode in
-                chatModeRow(for: mode, showsSeparator: index < availableModes.count - 1)
+                chatModeRow(for: mode)
+                if index < availableModes.count - 1 {
+                    rowSeparator
+                }
             }
         }
-        .background(theme.listBackgroundColor)
-        .clipShape(RoundedRectangle(cornerRadius: .ecosia.borderRadius._1l))
+        .background(
+            RoundedRectangle(cornerRadius: UX.chatModeListCornerRadius)
+                .fill(theme.listBackgroundColor)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: UX.chatModeListCornerRadius))
     }
 
-    private func chatModeRow(for mode: OmniboxChatMode, showsSeparator: Bool) -> some View {
+    private var rowSeparator: some View {
+        Rectangle()
+            .fill(theme.dividerColor)
+            .frame(height: 1)
+            .padding(.horizontal, UX.chatModeRowHorizontalPadding)
+    }
+
+    private func chatModeRow(for mode: OmniboxChatMode) -> some View {
         let isEnabled = isModeEnabled(mode)
-        let isSelected = mode == selectedChatMode
         return Button {
             onSelectChatMode(mode)
         } label: {
-            HStack(spacing: .ecosia.space._1s) {
+            HStack(spacing: UX.chatModeIconSpacing) {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(mode.title)
                         .font(.body)
-                        .foregroundColor(isEnabled ? theme.titleColor : theme.disabledColor)
+                        .foregroundColor(theme.titleColor)
                     Text(mode.subtitle)
                         .font(.footnote)
-                        .foregroundColor(isEnabled ? theme.subtitleColor : theme.disabledColor)
+                        .foregroundColor(theme.subtitleColor)
                         .multilineTextAlignment(.leading)
                 }
 
                 Spacer(minLength: 0)
 
-                chatModeRowAccessory(for: mode, isEnabled: isEnabled, isSelected: isSelected)
-                    .frame(width: UX.iconSize, height: UX.iconSize)
-            }
-            .padding(.vertical, .ecosia.space._1s)
-            .frame(minHeight: UX.chatModeRowMinHeight)
-            .overlay(alignment: .bottom) {
-                if showsSeparator {
-                    Rectangle()
-                        .fill(theme.dividerColor)
-                        .frame(height: 1)
+                // The active mode swaps its icon for a checkmark.
+                if mode == selectedChatMode {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: UX.doneGlyphSize, weight: .medium))
+                        .foregroundColor(theme.selectedCheckmarkColor)
+                        .frame(width: UX.chatModeIconSize, height: UX.chatModeIconSize)
+                        .accessibilityHidden(true)
+                } else {
+                    Image.ecosia(mode.iconName)
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(theme.chatModeIconColor)
+                        .frame(width: UX.chatModeIconSize, height: UX.chatModeIconSize)
+                        .accessibilityHidden(true)
                 }
             }
-            .padding(.horizontal, .ecosia.space._m)
+            .padding(.horizontal, UX.chatModeRowHorizontalPadding)
+            .padding(.vertical, UX.chatModeRowVerticalPadding)
+            .frame(minHeight: UX.chatModeRowMinHeight)
             .contentShape(Rectangle())
         }
         .buttonStyle(ChatModeRowButtonStyle(highlightColor: theme.rowHighlightColor))
-        // Signed-out users can only pick Standard; other modes stay visible but
-        // non-interactive until they sign in.
+        // Signed-out users can only pick Standard; other modes are visible but
+        // non-interactive and dimmed until they sign in.
         .disabled(!isEnabled)
+        .opacity(isEnabled ? 1 : UX.disabledRowOpacity)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(mode.accessibilityLabel)
         .accessibilityHint(mode.accessibilityHint)
-        .accessibilityAddTraits(isSelected ? [.isSelected] : [])
+        .accessibilityAddTraits(mode == selectedChatMode ? [.isSelected] : [])
         .accessibilityIdentifier(mode.accessibilityIdentifier)
-    }
-
-    /// The selected mode swaps its icon for a checkmark; re-tapping it only closes
-    /// the drawer, since deselection happens from the omnibox chip.
-    @ViewBuilder
-    private func chatModeRowAccessory(for mode: OmniboxChatMode, isEnabled: Bool, isSelected: Bool) -> some View {
-        if isSelected {
-            Image(systemName: "checkmark")
-                .font(.system(size: UX.doneGlyphSize, weight: .medium))
-                .foregroundColor(theme.selectedCheckmarkColor)
-                .accessibilityHidden(true)
-        } else {
-            Image.ecosia(mode.iconName)
-                .renderingMode(.template)
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(isEnabled ? theme.rowIconColor : theme.disabledColor)
-                .accessibilityHidden(true)
-        }
     }
 
     // MARK: - Footer
@@ -402,8 +422,7 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
     var labelColor = Color.gray
     var titleColor = Color.black
     var subtitleColor = Color.gray
-    var rowIconColor = Color.gray
-    var disabledColor = Color.gray
+    var chatModeIconColor = Color.gray
     var rowHighlightColor = Color.gray.opacity(0.2)
     var dividerColor = Color.gray.opacity(0.2)
     var footerBackgroundColor = Color.white
@@ -421,12 +440,13 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
         labelColor = Color(colors.textPrimary)
         titleColor = Color(colors.textPrimary)
         subtitleColor = Color(colors.textSecondary)
-        rowIconColor = Color(colors.iconDecorative)
-        disabledColor = Color(colors.stateDisabled)
+        chatModeIconColor = Color(colors.iconDecorative)
         rowHighlightColor = Color(colors.buttonBackgroundTransparentActive)
         dividerColor = Color(colors.borderDecorative)
         footerBackgroundColor = Color(colors.backgroundTertiary)
         doneBackgroundColor = Color(colors.buttonBackgroundTransparentActive)
+        // Solid card behind the grouped chat-mode rows (elevation-1, like the
+        // upload tiles and iOS inset-grouped cells).
         listBackgroundColor = Color(colors.backgroundElevation1)
         selectedCheckmarkColor = Color(colors.brandPrimary)
         // Sign-in CTA uses the same featured grellow pill as the design-system primary button.
