@@ -17,7 +17,6 @@ public struct EcosiaAccessibilityIdentifiers {
 
     public struct NTP {
         public static let rotatingTitle = "ntp_rotating_title"
-        public static let headerLogo = "ntp_header_logo"
         public static let customizeButton = "ntp_customize_button"
 
         public struct ClimateImpact {

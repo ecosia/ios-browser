@@ -7,10 +7,12 @@ import Common
 
 public struct EcosiaAIChatButtonTheme: EcosiaThemeable {
     public var iconColor = Color.primary
+    public var glass = NTPGlassTheme()
 
     public init() {}
 
     public mutating func applyTheme(theme: Theme) {
         iconColor = Color(theme.colors.ecosia.textPrimary)
+        glass.applyTheme(theme: theme)
     }
 }

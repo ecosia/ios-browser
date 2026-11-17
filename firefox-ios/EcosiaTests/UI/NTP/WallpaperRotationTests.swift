@@ -168,11 +168,11 @@ final class WallpaperRotationTests: XCTestCase {
 
     func testConfigurationForBundled_withBundledAsset_hasImageAndColors() {
         // When
-        let configuration = EcosiaHomepageAdapter.configuration(forBundled: .ecosiaForest)
+        let configuration = EcosiaHomepageAdapter.configuration(forBundled: .ecosiaDefault)
 
         // Then
         XCTAssertTrue(configuration.hasImage)
         XCTAssertNotNil(configuration.portraitImage)
-        XCTAssertEqual(configuration.textColor, Wallpaper.ecosiaForest.textColor)
+        XCTAssertEqual(configuration.textColor, Wallpaper.ecosiaDefault.textColor)
     }
 }

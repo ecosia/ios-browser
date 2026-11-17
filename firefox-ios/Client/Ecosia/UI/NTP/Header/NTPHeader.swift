@@ -14,7 +14,7 @@ protocol NTPHeaderDelegate: AnyObject {
     func headerOpenCustomizeHomepage()
 }
 
-/// NTP header cell containing the Ecosia logo and navigation actions
+/// NTP header cell containing the navigation actions
 final class NTPHeader: UICollectionViewCell, ReusableCell {
 
     // MARK: - Properties
@@ -85,16 +85,14 @@ final class NTPHeader: UICollectionViewCell, ReusableCell {
 
 /// Circle-specific glass button style for iOS 15 that avoids `AnyShape` (iOS 16+).
 private struct NTPCircleGlassButtonStyle: ButtonStyle {
-    private static let glassTint = Color(red: 26 / 255, green: 26 / 255, blue: 26 / 255)
-    private static let glassBorder = Color.white.opacity(0x3D / 255.0)
+    let theme: NTPGlassTheme
 
     func makeBody(configuration: Configuration) -> some View {
-        let tintOpacity: Double = configuration.isPressed ? 0.64 : 0.32
         configuration.label
             .background(
                 ZStack {
                     Color.clear.background(.ultraThinMaterial)
-                    Self.glassTint.opacity(tintOpacity)
+                    configuration.isPressed ? theme.tintPressed : theme.tint
                 }
                 // Ecosia: Force the dark-mode variant of ultraThinMaterial so the glass always
                 // reads against the NTP wallpaper regardless of the system colour scheme.
@@ -102,17 +100,25 @@ private struct NTPCircleGlassButtonStyle: ButtonStyle {
                 .clipShape(Circle())
             )
             .clipShape(Circle())
-            .overlay(Circle().stroke(Self.glassBorder, lineWidth: 1))
+            .overlay(Circle().stroke(theme.border, lineWidth: 1))
     }
 }
 
-/// Applies the glass circle button style, selecting the appropriate variant by OS version.
-private struct GlassCircleModifier: ViewModifier {
+/// Uses glass on a wallpaper and a solid button on a plain background.
+private struct CustomizeButtonBackground: ViewModifier {
+    let appearance: NTPGlassAppearance
+    let theme: EcosiaCustomizeButtonTheme
+
     func body(content: Content) -> some View {
-        if #available(iOS 16, *) {
-            content.buttonStyle(NTPGlassButtonStyle(Circle()))
-        } else {
-            content.buttonStyle(NTPCircleGlassButtonStyle())
+        switch appearance {
+        case .wallpaper:
+            if #available(iOS 16, *) {
+                content.buttonStyle(NTPGlassButtonStyle(Circle(), theme: theme.glass))
+            } else {
+                content.buttonStyle(NTPCircleGlassButtonStyle(theme: theme.glass))
+            }
+        case .themed:
+            content.buttonStyle(NTPSolidButtonStyle(Circle(), theme: theme.solid))
         }
     }
 }
@@ -132,34 +138,38 @@ private struct NTPHeaderGlassContainerModifier: ViewModifier {
 
 // MARK: - Customize (Pencil) Button
 
-/// Glass-style circular button with a pencil icon for opening NTP customization.
+struct EcosiaCustomizeButtonTheme: EcosiaThemeable {
+    var glass = NTPGlassTheme()
+    var solid = NTPSolidButtonTheme()
+    var glassContent = NTPGlassContentTheme()
+
+    mutating func applyTheme(theme: Theme) {
+        glass.applyTheme(theme: theme)
+        solid.applyTheme(theme: theme)
+        glassContent.applyTheme(theme: theme)
+    }
+}
+
+/// Circular button with a pencil icon for opening NTP customization.
 struct EcosiaCustomizeButton: View {
     let windowUUID: WindowUUID
     var appearance: NTPGlassAppearance = .wallpaper
     let onTap: () -> Void
-    @State private var theme = NTPGlassContentTheme()
+    @State private var theme = EcosiaCustomizeButtonTheme()
 
     private let buttonSize: CGFloat = .ecosia.space._3l // 40pt
     private let iconSize: CGFloat = 16
-
-    /// Below iOS 26 the custom glass is always dark, so the icon uses the wallpaper content colour.
-    private var iconColor: Color {
-        if #available(iOS 26, *) {
-            return theme.contentColor(for: appearance)
-        }
-        return theme.contentColor(for: .wallpaper)
-    }
 
     var body: some View {
         Button(action: { onTap() }) {
             Image.ecosia("ntp-pencil-edit")
                 .resizable()
                 .renderingMode(.template)
-                .foregroundColor(iconColor)
+                .foregroundColor(theme.glassContent.contentColor(for: appearance))
                 .frame(width: iconSize, height: iconSize)
                 .frame(width: buttonSize, height: buttonSize)
         }
-        .modifier(GlassCircleModifier())
+        .modifier(CustomizeButtonBackground(appearance: appearance, theme: theme))
         .ecosiaThemed(windowUUID, $theme)
         .hapticFeedback()
         .accessibilityLabel(String.localized(.customizeHomepage))
@@ -167,20 +177,11 @@ struct EcosiaCustomizeButton: View {
     }
 }
 
-// MARK: - Ecosia Logo (centered in header)
+private struct AccountNavButtonBoundsKey: PreferenceKey {
+    static let defaultValue: Anchor<CGRect>? = nil
 
-struct NTPHeaderLogoView: View {
-    private let logoHeight: CGFloat = 20
-
-    var body: some View {
-        Image("ecosiaLogoLaunch")
-            .renderingMode(.template)
-            .resizable()
-            .scaledToFit()
-            .foregroundColor(.white)
-            .frame(height: logoHeight)
-            .accessibilityLabel(String.localized(.ecosiaLogoAccessibilityLabel))
-            .accessibilityIdentifier(EcosiaAccessibilityIdentifiers.NTP.headerLogo)
+    static func reduce(value: inout Anchor<CGRect>?, nextValue: () -> Anchor<CGRect>?) {
+        value = value ?? nextValue()
     }
 }
 
@@ -192,56 +193,59 @@ struct NTPHeaderView: View {
     @SwiftUI.Environment(\.accessibilityReduceMotion) var reduceMotion: Bool
 
     var body: some View {
-        ZStack {
-            // Wordmark centered regardless of button widths
-            NTPHeaderLogoView()
-
-            HStack(spacing: .ecosia.space._1s) {
-                EcosiaCustomizeButton(
+        HStack(spacing: .ecosia.space._1s) {
+            EcosiaCustomizeButton(
+                windowUUID: windowUUID,
+                appearance: viewModel.glassAppearance,
+                onTap: handleCustomizeTap
+            )
+            Spacer()
+            if #available(iOS 16, *) {
+                EcosiaAccountNavButton(
+                    seedCount: viewModel.seedCount,
+                    avatarURL: viewModel.userAvatarURL,
+                    enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
+                    showSeedSparkles: viewModel.showSeedSparkles,
+                    glassAppearance: viewModel.glassAppearance,
                     windowUUID: windowUUID,
-                    appearance: viewModel.glassAppearance,
-                    onTap: handleCustomizeTap
+                    onTap: handleTap
                 )
-                Spacer()
+                .anchorPreference(key: AccountNavButtonBoundsKey.self, value: .bounds) { $0 }
+                .sheet(isPresented: $viewModel.showAccountImpactView) {
+                    EcosiaAccountImpactView(
+                        viewModel: EcosiaAccountImpactViewModel(
+                            onLogin: {
+                                viewModel.performLogin()
+                            },
+                            onDismiss: {
+                                viewModel.dismissAccountImpact()
+                            }
+                        ),
+                        windowUUID: windowUUID,
+                        webViewUserAgent: EcosiaInAppWebViewUserAgent.mobileUserAgent()
+                    )
+                    .padding(.horizontal, .ecosia.space._m)
+                    .dynamicHeightPresentationDetent()
+                    .presentationDragIndicator(.visible)
+                }
+            }
+        }
+        .modifier(NTPHeaderGlassContainerModifier())
+        // Outside the glass container so the glass can't render over the balance increment.
+        .overlayPreferenceValue(AccountNavButtonBoundsKey.self) { anchor in
+            GeometryReader { proxy in
                 if #available(iOS 16, *) {
-                    ZStack(alignment: .topLeading) {
-                        EcosiaAccountNavButton(
-                            seedCount: viewModel.seedCount,
-                            avatarURL: viewModel.userAvatarURL,
-                            enableAnimation: !reduceMotion && viewModel.shouldAnimateSeed,
-                            showSeedSparkles: viewModel.showSeedSparkles,
-                            glassAppearance: viewModel.glassAppearance,
-                            windowUUID: windowUUID,
-                            onTap: handleTap
+                    if let anchor, let increment = viewModel.balanceIncrement {
+                        let accountButtonFrame = proxy[anchor]
+                        BalanceIncrementAnimationView(
+                            increment: increment,
+                            windowUUID: windowUUID
                         )
-                        .sheet(isPresented: $viewModel.showAccountImpactView) {
-                            EcosiaAccountImpactView(
-                                viewModel: EcosiaAccountImpactViewModel(
-                                    onLogin: {
-                                        viewModel.performLogin()
-                                    },
-                                    onDismiss: {
-                                        viewModel.dismissAccountImpact()
-                                    }
-                                ),
-                                windowUUID: windowUUID,
-                                webViewUserAgent: EcosiaInAppWebViewUserAgent.mobileUserAgent()
-                            )
-                            .padding(.horizontal, .ecosia.space._m)
-                            .dynamicHeightPresentationDetent()
-                            .presentationDragIndicator(.visible)
-                        }
-                        if let increment = viewModel.balanceIncrement {
-                            BalanceIncrementAnimationView(
-                                increment: increment,
-                                windowUUID: windowUUID
-                            )
-                            .offset(x: 18, y: -8)
-                        }
+                        .offset(x: accountButtonFrame.minX + 18, y: accountButtonFrame.minY - 8)
                     }
                 }
             }
-            .modifier(NTPHeaderGlassContainerModifier())
+            .allowsHitTesting(false)
         }
         .padding(.horizontal, .ecosia.space._m)
         .padding(.vertical, .ecosia.space._m)
