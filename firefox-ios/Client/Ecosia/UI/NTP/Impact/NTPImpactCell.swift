@@ -165,8 +165,9 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         titleHeight.isActive = true
 
         NSLayoutConstraint.activate([
-            tilesStack.leadingAnchor.constraint(equalTo: tilesContainer.leadingAnchor),
-            tilesStack.trailingAnchor.constraint(equalTo: tilesContainer.trailingAnchor),
+            // Cards hug their content and stay centred; they only shrink when the width runs out.
+            tilesStack.centerXAnchor.constraint(equalTo: tilesContainer.centerXAnchor),
+            tilesStack.leadingAnchor.constraint(greaterThanOrEqualTo: tilesContainer.leadingAnchor),
             tilesStack.topAnchor.constraint(equalTo: tilesContainer.topAnchor),
             tilesStack.bottomAnchor.constraint(equalTo: tilesContainer.bottomAnchor),
 
@@ -195,6 +196,17 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     private func updateTitleHeightForCurrentTraits() {
         let isLandscape = traitCollection.verticalSizeClass == .compact
         titleContainerHeightConstraint?.constant = isLandscape ? UX.titleReservedHeightLandscape : UX.titleReservedHeight
+    }
+
+    // MARK: - Card width
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        let rows = impactRows
+        guard !rows.isEmpty else { return }
+        let available = contentView.bounds.width - UX.titleHorizontalInset * 2
+        let maxWidth = (available - UX.cellsSpacing * CGFloat(rows.count - 1)) / CGFloat(rows.count)
+        rows.forEach { $0.setMaxWidth(maxWidth) }
     }
 
     // MARK: - Title

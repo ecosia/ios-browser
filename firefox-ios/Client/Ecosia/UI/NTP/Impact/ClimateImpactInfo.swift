@@ -60,7 +60,7 @@ enum ClimateImpactInfo: Equatable {
         case .totalTrees:
             return .ecosia(named: "tree")?.withRenderingMode(.alwaysTemplate)
         case .totalInvested:
-            return .ecosia(named: "banknote")?.withRenderingMode(.alwaysTemplate)
+            return nil
         }
     }
 

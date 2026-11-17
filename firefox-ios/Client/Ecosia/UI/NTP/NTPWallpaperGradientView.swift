@@ -3,14 +3,15 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import UIKit
-import Ecosia
+import Common
 
-/// Darkens the bottom of the NTP wallpaper so the omnibox and toolbar read against any image.
-final class NTPWallpaperGradientView: UIView {
+/// Fades the bottom of the NTP wallpaper into the toolbar colour behind the search bar.
+final class NTPWallpaperGradientView: UIView, ThemeApplicable {
 
     struct UX {
-        static let heightRatio: CGFloat = 0.4
-        static let bottomAlpha: CGFloat = 0.9
+        static let heightRatio: CGFloat = 0.3
+        // Fully opaque from here down, i.e. behind the bottom toolbar.
+        static let opaqueLocation: NSNumber = 0.65
     }
 
     override class var layerClass: AnyClass { CAGradientLayer.self }
@@ -20,10 +21,7 @@ final class NTPWallpaperGradientView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         isUserInteractionEnabled = false
-        gradientLayer?.colors = [
-            EcosiaColor.Gray90.withAlphaComponent(0).cgColor,
-            EcosiaColor.Gray90.withAlphaComponent(UX.bottomAlpha).cgColor
-        ]
+        gradientLayer?.locations = [0, UX.opaqueLocation]
         gradientLayer?.startPoint = CGPoint(x: 0.5, y: 0)
         gradientLayer?.endPoint = CGPoint(x: 0.5, y: 1)
     }
@@ -38,5 +36,11 @@ final class NTPWallpaperGradientView: UIView {
             bottomAnchor.constraint(equalTo: container.bottomAnchor),
             heightAnchor.constraint(equalTo: container.heightAnchor, multiplier: UX.heightRatio)
         ])
+    }
+
+    func applyTheme(theme: Theme) {
+        // Same colour as the bottom toolbar so the wallpaper blends into it.
+        let color = theme.colors.layerSurfaceLow
+        gradientLayer?.colors = [color.withAlphaComponent(0).cgColor, color.cgColor]
     }
 }

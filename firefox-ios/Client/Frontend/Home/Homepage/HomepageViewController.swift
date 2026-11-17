@@ -419,6 +419,8 @@ final class HomepageViewController: UIViewController,
         view.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
         // Ecosia: Update theme for Ecosia sections
         updateEcosiaTheme()
+        // Ecosia: Bottom gradient fades into the toolbar colour
+        wallpaperGradientView.applyTheme(theme: theme)
     }
 
     // MARK: - Layout

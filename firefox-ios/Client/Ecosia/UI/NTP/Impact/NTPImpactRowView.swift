@@ -95,6 +95,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     var info: ClimateImpactInfo {
         didSet {
             imageView.image = info.image
+            imageContainer.isHidden = info.image == nil
             imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
             titleLabel.text = info.title
             subtitleLabel.text = info.subtitle
@@ -157,19 +158,15 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     }
 
     private func setupConstraints() {
-        // Ecosia: Pin top/bottom equal (not greaterThanOrEqual/lessThanOrEqual) so the row's
-        // height is exactly `labelsStack.height + padding * 2`. Without this the row has
-        // no derivable intrinsic height in the vertical axis, which lets `tilesStack`'s `.fill`
-        // distribution stretch the rows to fill an oversized impact section on iPad
-        // (the previously inequality-only setup gave the row infinite vertical freedom).
         NSLayoutConstraint.activate([
             glassBackground.topAnchor.constraint(equalTo: topAnchor),
             glassBackground.leadingAnchor.constraint(equalTo: leadingAnchor),
             glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
             glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            labelsStack.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
-            labelsStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
+            // Centred so the shorter card keeps its content in the middle when stretched to its neighbour's height.
+            labelsStack.centerYAnchor.constraint(equalTo: centerYAnchor),
+            labelsStack.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: UX.padding),
             labelsStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             labelsStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
 
@@ -186,6 +183,19 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             imageView.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: imageContainer.bottomAnchor),
         ])
+
+        // Hug the content vertically; the shorter card gives these up to match its neighbour.
+        let hugTop = labelsStack.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding)
+        hugTop.priority = .defaultHigh
+        hugTop.isActive = true
+    }
+
+    /// Lets the subtitle stay on one line when it fits and wrap only once the card reaches `width`.
+    func setMaxWidth(_ width: CGFloat) {
+        let labelWidth = max(0, width - UX.padding * 2)
+        guard subtitleLabel.preferredMaxLayoutWidth != labelWidth else { return }
+        subtitleLabel.preferredMaxLayoutWidth = labelWidth
+        subtitleLabel.invalidateIntrinsicContentSize()
     }
 
     // MARK: - ThemeApplicable
@@ -197,6 +207,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         image: UIImage?
     ) {
         imageView.image = image
+        imageContainer.isHidden = image == nil
         titleLabel.text = title
         subtitleLabel.text = subtitle
     }
@@ -213,6 +224,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         imageView.tintColor = .white
         // Re-apply content to ensure rows added after initial layout are fully populated.
         imageView.image = info.image
+        imageContainer.isHidden = info.image == nil
         imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
         titleLabel.text = info.title
         subtitleLabel.text = info.subtitle
