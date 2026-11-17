@@ -28,6 +28,14 @@ final class FeatureConfigurationTests: XCTestCase {
         XCTAssertTrue(isEnabled(.searchTermInAddressBar), "Ecosia results pages show the query, not the URL")
     }
 
+    /// Upstream's interactive variant: `enabled_swipe` would replace it with the plain swipe.
+    func testAddressBarGestureToOpenTabTrayIsOn() {
+        XCTAssertTrue(isEnabled(.addressBarGestureToOpenTabTrayInteractive),
+                      "Swipe up on the address bar opens the tab tray")
+        XCTAssertTrue(isEnabled(.addressBarGestureToOpenTabTrayCloseTab), "Drag a tab to the top to close it")
+        XCTAssertFalse(isEnabled(.addressBarGestureToOpenTabTraySwipe), "The interactive gesture, not the plain swipe")
+    }
+
     // MARK: - Summaries on-device only
 
     /// The hosted summarizer is also switched off in code (`OnDeviceSummariesTests`); this keeps the
@@ -43,23 +51,6 @@ final class FeatureConfigurationTests: XCTestCase {
     func testGoogleLensIsOff() {
         XCTAssertFalse(isEnabled(.googleLens), "Google Lens is not part of Ecosia")
         XCTAssertFalse(isEnabled(.googleLensSearchInterstitial), "Google Lens is not part of Ecosia")
-    }
-
-    func testAddressBarGestureToOpenTabTrayIsOff() throws {
-        try XCTSkipIf(DebugAddressBarTabTrayGesture.isEnabled, "Turned on in this simulator's debug settings")
-        XCTAssertFalse(isEnabled(.addressBarGestureToOpenTabTrayInteractive), "No swipe up to the tab tray")
-        XCTAssertFalse(isEnabled(.addressBarGestureToOpenTabTrayCloseTab), "No drag to close a tab")
-        XCTAssertFalse(isEnabled(.addressBarGestureToOpenTabTraySwipe), "No swipe up to the tab tray")
-    }
-
-    func testDebugSettingTurnsAddressBarGestureOn() {
-        let wasEnabled = DebugAddressBarTabTrayGesture.isEnabled
-        defer { DebugAddressBarTabTrayGesture.isEnabled = wasEnabled }
-
-        DebugAddressBarTabTrayGesture.isEnabled = true
-
-        XCTAssertTrue(isEnabled(.addressBarGestureToOpenTabTrayInteractive))
-        XCTAssertTrue(isEnabled(.addressBarGestureToOpenTabTrayCloseTab))
     }
 
     func testQuickAnswersAreOff() {

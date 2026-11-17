@@ -67,7 +67,10 @@ final class TabWebViewPreview: UIView, ThemeApplicable {
         guard let tab else {
             faviconImageView.isHidden = false
             webPageScreenshotImageView.isHidden = true
+            /* Ecosia: Preview the new tab's homepage with Ecosia's logo, as for the home tab below.
             faviconImageView.image = UIImage(resource: .faviconFox)
+            */
+            showEcosiaHomepageLogo()
             return
         }
 
@@ -79,8 +82,7 @@ final class TabWebViewPreview: UIView, ThemeApplicable {
                 /* Ecosia: Show Ecosia logo instead of Firefox fox icon for home tab previews.
                 faviconImageView.manuallySetImage(UIImage(resource: .faviconFox))
                 */
-                faviconImageView.transform = CGAffineTransform(scaleX: 2.5, y: 2.5)
-                faviconImageView.manuallySetImage(UIImage(named: "ecosiaLogoLaunch") ?? UIImage())
+                showEcosiaHomepageLogo()
             } else {
                 // Ecosia: Resets transform
                 faviconImageView.transform = .identity
@@ -98,6 +100,8 @@ final class TabWebViewPreview: UIView, ThemeApplicable {
     }
 
     func setScreenshot(url: URL? = nil) {
+        // Ecosia: Resets transform, which `showEcosiaHomepageLogo()` scales up
+        faviconImageView.transform = .identity
         faviconImageView.isHidden = url == nil
         webPageScreenshotImageView.isHidden = true
         faviconImageView.setFavicon(FaviconImageViewModel(siteURLString: url?.absoluteString,
@@ -110,6 +114,12 @@ final class TabWebViewPreview: UIView, ThemeApplicable {
 
     func transitionDidEnd() {
         layoutWasInvalidated = false
+    }
+
+    // Ecosia: The placeholder for a homepage, which is Ecosia's NTP, instead of Firefox's logo
+    private func showEcosiaHomepageLogo() {
+        faviconImageView.transform = CGAffineTransform(scaleX: 2.5, y: 2.5)
+        faviconImageView.manuallySetImage(UIImage(named: "ecosiaLogoLaunch") ?? UIImage())
     }
 
     // MARK: - ThemeApplicable
