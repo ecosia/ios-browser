@@ -514,14 +514,10 @@ final class NimbusFeatureFlagLayer: NimbusFeatureFlagLayerProviding, Sendable {
     }
 
     private func checkAddressBarGestureToOpenTabTrayCloseTabFeature() -> Bool {
-           // Ecosia: Off in the YAML; Ecosia's debug settings can turn it on.
-           if DebugAddressBarTabTrayGesture.isEnabled { return true }
            return nimbus.features.addressBarGestureToOpenTabTrayFeature.value().enabledClosetab
        }
 
     private func checkAddressBarGestureToOpenTabTrayInteractiveFeature() -> Bool {
-        // Ecosia: Off in the YAML; Ecosia's debug settings can turn it on.
-        if DebugAddressBarTabTrayGesture.isEnabled { return true }
         return nimbus.features.addressBarGestureToOpenTabTrayFeature.value().enabledInteractive
     }
 

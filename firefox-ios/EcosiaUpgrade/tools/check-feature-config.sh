@@ -57,9 +57,9 @@ decisions=(
   "AdBlockerFeature badgeEnabled false Ad blocker out"
   "NovaDesignFeature enabled false Nova off"
   "GoogleLensFeature searchInterstitialEnabled false Google Lens out"
-  "AddressBarGestureToOpenTabTrayFeature enabledInteractive false Address bar swipe off"
-  "AddressBarGestureToOpenTabTrayFeature enabledClosetab false Address bar swipe off"
-  "AddressBarGestureToOpenTabTrayFeature enabledSwipe false Address bar swipe off"
+  "AddressBarGestureToOpenTabTrayFeature enabledInteractive true Address bar swipe on"
+  "AddressBarGestureToOpenTabTrayFeature enabledClosetab true Address bar swipe on"
+  "AddressBarGestureToOpenTabTrayFeature enabledSwipe false Address bar swipe on (interactive variant)"
   "ToolbarRefactorFeature searchTermInAddressBar true Search term in address bar"
 )
 
