@@ -27,6 +27,16 @@ SNAPSHOT_TESTING_RECORD=all ./perform_snapshot_tests.sh \
 
 Commit both the parent repo and the `SnapshotArtifacts` submodule.
 
+#### How recording works
+
+`SNAPSHOT_TESTING_RECORD` is swift-snapshot-testing's own variable, the same one the [Sentry docs](https://docs.sentry.io/platforms/apple/guides/ios/snapshots/#swift-snapshot-testing) mention. The library reads it in `AssertSnapshot.swift`, where `__record` reads `ProcessInfo.processInfo.environment["SNAPSHOT_TESTING_RECORD"]`. It accepts `all`, `failed`, `missing` or `never`. Any other value, or none, means `missing`.
+
+xcodebuild doesn't pass the shell environment to the test process. It does forward variables prefixed with `TEST_RUNNER_`, with the prefix stripped. That's why `perform_snapshot_tests.sh` exports `TEST_RUNNER_SNAPSHOT_TESTING_RECORD`: the tests then see `SNAPSHOT_TESTING_RECORD`.
+
+`SnapshotTestHelper.isRecordingSnapshots` reads the same variable and falls back to `/tmp/ecosia_snapshot_testing_record`, the file the script writes. When it's recording, the helper points the library at the test class's folder in `SnapshotArtifacts`, creating it if needed. The library's record mode decides what gets written. Before the script exported the `TEST_RUNNER_` variable, only the file reached the tests, so the library stayed on `missing`. Missing references were written, but existing ones were compared and passed within tolerance instead of being replaced.
+
+Use `all` to overwrite every reference the run covers. The helper also treats `1`, `YES` and `true` as recording, but the library doesn't know those values and stays on `missing`.
+
 `environment.json` is a minimal checked-in fixture for local Xcode runs. `perform_snapshot_tests.sh` builds the test bundle once, then writes each test-class batch's configuration from `snapshot_configuration.json` to `/tmp/ecosia_snapshot_environment.json` so the bundle does not need rebuilding between batches (device list in config still includes SE / Pro Max / iPad for other suites). `SnapshotTestHelper` reads that file when present and falls back to the bundled `environment.json` otherwise, so delete it if a stale batch configuration affects a local Xcode run.
 
 ## SnapshotTestHelper
