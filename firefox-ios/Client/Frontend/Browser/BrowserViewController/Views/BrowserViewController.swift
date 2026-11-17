@@ -800,6 +800,8 @@ class BrowserViewController: UIViewController,
 
         bottomContainer.isClearBackground = showNavToolbar && enableBlur
         bottomBlurView.isHidden = (!showNavToolbar && !isBottomSearchBar && enableBlur) || isScrollAlphaZero
+        // Ecosia: The NTP wallpaper fades into the toolbar colour; the glass edge would show as a line
+        if contentContainer.hasHomepage { bottomBlurView.isHidden = true }
         bottomContainer.isHidden = isScrollAlphaZero
 
         if !isToolbarTranslucencyRefactorEnabled {
@@ -2038,8 +2040,8 @@ class BrowserViewController: UIViewController,
     func frontEmbeddedContent(_ viewController: ContentContainable) {
         contentContainer.update(content: viewController)
         statusBarOverlay.resetState(isHomepage: contentContainer.hasHomepage)
-        // Ecosia: Status bar style depends on whether the NTP is showing
-        setNeedsStatusBarAppearanceUpdate()
+        // Ecosia: Status bar and toolbar glass depend on whether the NTP is showing
+        updateEcosiaHomepageChrome()
     }
 
     /// Embed a ContentContainable inside the content container
@@ -2054,8 +2056,8 @@ class BrowserViewController: UIViewController,
         viewController.didMove(toParent: self)
 
         statusBarOverlay.resetState(isHomepage: contentContainer.hasHomepage)
-        // Ecosia: Status bar style depends on whether the NTP is showing
-        setNeedsStatusBarAppearanceUpdate()
+        // Ecosia: Status bar and toolbar glass depend on whether the NTP is showing
+        updateEcosiaHomepageChrome()
 
         // To make sure the content views content is extending under the toolbars we disable clip to bounds
         // for the first two layers of views other than a web view

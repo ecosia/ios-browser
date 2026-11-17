@@ -400,7 +400,7 @@ extension BrowserViewController {
     }
 }
 
-// MARK: NTP status bar
+// MARK: NTP chrome
 @MainActor
 extension BrowserViewController {
 
@@ -409,5 +409,10 @@ extension BrowserViewController {
         guard let homepage = contentContainer.contentController as? HomepageViewController,
               homepage.ecosiaAdapter?.headerViewModel?.glassAppearance == .wallpaper else { return nil }
         return .lightContent
+    }
+
+    func updateEcosiaHomepageChrome() {
+        setNeedsStatusBarAppearanceUpdate()
+        updateBlurViews()
     }
 }
