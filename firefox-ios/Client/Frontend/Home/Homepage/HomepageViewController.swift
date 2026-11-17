@@ -61,9 +61,11 @@ final class HomepageViewController: UIViewController,
     /// Ecosia: Called after the data source is created so customizations (e.g. Ecosia adapter) can be applied.
     var onDataSourceConfigured: ((HomepageDiffableDataSource) -> Void)?
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
+    // Ecosia: Swapped for window-anchored constraints so the wallpaper fills the screen edge to edge
+    private var wallpaperTopConstraint: NSLayoutConstraint?
     private var wallpaperBottomConstraint: NSLayoutConstraint?
-    // Ecosia: Guards against re-applying the iPad cross-hierarchy constraint on each layout pass
-    private var wallpaperExtendedToParent = false
+    // Ecosia: Bottom gradient between the wallpaper image and the NTP content
+    private let wallpaperGradientView = NTPWallpaperGradientView()
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
     private let syncTabContextualHintViewController: ContextualHintViewController
@@ -185,12 +187,6 @@ final class HomepageViewController: UIViewController,
         termsOfUseDelegate?.showTermsOfUse(context: .homepageOpened)
         // Ecosia: Trigger Ecosia data loading
         ecosiaViewWillAppear()
-        // Ecosia: The window-anchored wallpaper constraint installed by
-        // `extendEcosiaWallpaperToParentOnPad` can be torn down when this
-        // VC's view is removed from its superview during tab/content
-        // switches. Reset the gate so the next layout pass re-installs the
-        // constraint and the wallpaper card reaches the screen bottom again.
-        wallpaperExtendedToParent = false
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -226,9 +222,8 @@ final class HomepageViewController: UIViewController,
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        // Ecosia: On iPad the content container ends above the bottom toolbar, so extend
-        // the wallpaper to BVC's view to fill the gap behind the translucent toolbar.
-        extendEcosiaWallpaperToParentOnPad()
+        // Ecosia: Extend the wallpaper behind the status bar and the bottom toolbar.
+        extendEcosiaWallpaperToWindow()
         // Ecosia: Keep the last NTP cells (shortcut tiles, etc.) visible above the
         // floating omnibox pill instead of letting them sit behind it.
         updateNTPCollectionViewBottomInsetForOmnibox()
@@ -385,6 +380,8 @@ final class HomepageViewController: UIViewController,
         } else {
             wallpaperView.wallpaperState = state.wallpaperState
         }
+        // Ecosia: Only darken an actual wallpaper image
+        wallpaperGradientView.isHidden = !(wallpaperView.wallpaperState?.wallpaperConfiguration.hasImage ?? false)
 
         // TODO: - FXIOS-13346 / FXIOS-13343 - fix collection view being reloaded all the time also when data don't change
         // this is a quick workaround to avoid blocking the main thread by calling apply snapshot many times.
@@ -440,22 +437,17 @@ final class HomepageViewController: UIViewController,
             wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         */
-        // Ecosia: Wallpaper card with rounded corners and insets.
-        let vInset = CGFloat.ecosia.space._s
-        let hInset = CGFloat.ecosia.space._2s
-        let bottomConstraint = wallpaperView.bottomAnchor.constraint(
-            equalTo: view.bottomAnchor,
-            constant: -vInset
-        )
+        // Ecosia: Full-bleed wallpaper; `extendEcosiaWallpaperToWindow` stretches it to the screen edges once in a window.
+        let topConstraint = wallpaperView.topAnchor.constraint(equalTo: view.topAnchor)
+        let bottomConstraint = wallpaperView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        wallpaperTopConstraint = topConstraint
         wallpaperBottomConstraint = bottomConstraint
         NSLayoutConstraint.activate([
-            wallpaperView.topAnchor.constraint(equalTo: view.topAnchor, constant: vInset),
-            wallpaperView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: hInset),
+            topConstraint,
+            wallpaperView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomConstraint,
-            wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -hInset)
+            wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
-        // Ecosia: Use helper that propagates the radius to the inner pictureView as well
-        wallpaperView.applyEcosiaCornerRadius(CGFloat.ecosia.borderRadius._1l)
 
         view.sendSubviewToBack(wallpaperView)
     }
@@ -486,11 +478,13 @@ final class HomepageViewController: UIViewController,
         */
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         wallpaperView.addSubview(collectionView)
+        wallpaperView.insertSubview(wallpaperGradientView, belowSubview: collectionView)
+        wallpaperGradientView.pin(toBottomOf: wallpaperView)
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: wallpaperView.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: wallpaperView.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: wallpaperView.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: wallpaperView.bottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 
@@ -939,23 +933,19 @@ final class HomepageViewController: UIViewController,
         updateNTPSearchBarHorizontalInset()
     }
 
-    /* Ecosia: On iPad the content container can end above the screen bottom (behind the
-     translucent bottom toolbar / safe area), and `parent?.view.bottomAnchor` doesn't always
-     reach the actual screen bottom. Anchor the wallpaper card to the host window's bottom
-     instead — that's the only anchor guaranteed to span the full display. iPhone keeps the
-     simple view-local constraint (correct margin and corner radius above the address bar). */
-    private func extendEcosiaWallpaperToParentOnPad() {
-        guard traitCollection.userInterfaceIdiom == .pad,
-              !wallpaperExtendedToParent,
-              let window = view.window else { return }
+    // Ecosia: The content container sits between the status bar and the bottom toolbar,
+    // so only the window's anchors span the full display.
+    private func extendEcosiaWallpaperToWindow() {
+        guard let window = view.window else { return }
+        // UIKit drops window-anchored constraints when the view leaves the window (e.g. while a SERP is shown).
+        if let top = wallpaperTopConstraint, top.isActive, top.secondItem === window { return }
+        wallpaperTopConstraint?.isActive = false
         wallpaperBottomConstraint?.isActive = false
-        let extended = wallpaperView.bottomAnchor.constraint(
-            equalTo: window.bottomAnchor,
-            constant: -CGFloat.ecosia.space._m
-        )
-        extended.isActive = true
-        wallpaperBottomConstraint = extended
-        wallpaperExtendedToParent = true
+        let top = wallpaperView.topAnchor.constraint(equalTo: window.topAnchor)
+        let bottom = wallpaperView.bottomAnchor.constraint(equalTo: window.bottomAnchor)
+        NSLayoutConstraint.activate([top, bottom])
+        wallpaperTopConstraint = top
+        wallpaperBottomConstraint = bottom
     }
 
     // MARK: Tap Gesture Recognizer

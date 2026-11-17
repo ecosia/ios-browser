@@ -20,7 +20,6 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         // In landscape the title fits in fewer lines; reduce reserved height to avoid dead space.
         static let titleReservedHeightLandscape: CGFloat = 60
         static let titleHorizontalInset: CGFloat = .ecosia.space._s
-        static let tilesHorizontalInset: CGFloat = 61
     }
 
     // MARK: - Subviews
@@ -78,9 +77,7 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         return label
     }()
 
-    // Wrapper that applies the extra horizontal inset for tiles (tiles are narrower
-    // than the title). Hiding this view in the parent stack collapses both the tiles
-    // and the inter-item spacing automatically.
+    // Hiding this view in the parent stack collapses both the tiles and the inter-item spacing automatically.
     private let tilesContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -91,9 +88,9 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     private lazy var tilesStack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .vertical
+        stack.axis = .horizontal
         stack.alignment = .fill
-        stack.distribution = .fill
+        stack.distribution = .fillEqually
         stack.spacing = UX.cellsSpacing
         // Ecosia: see `contentStack` comment — hold the intrinsic stack
         // height so the impact rows don't get squeezed during transitions,
@@ -110,7 +107,6 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         didSet { impactRows.forEach { $0.delegate = delegate } }
     }
 
-    private var tileEqualHeightConstraint: NSLayoutConstraint?
     private var titleContainerHeightConstraint: NSLayoutConstraint?
 
     private var impactRows: [NTPImpactRowView] {
@@ -138,10 +134,7 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        updateContainerAxisForCurrentTraits()
-        // Invalidate the cell so the collection view recalculates the section height
-        // after the axis switches. Labels re-wrap correctly because labelsStack uses .fill alignment,
-        // which gives each label an explicit width constraint at all times.
+        updateTitleHeightForCurrentTraits()
         invalidateIntrinsicContentSize()
     }
 
@@ -153,12 +146,7 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         // Title label inside its fixed-height container
         titleContainerView.addSubview(rotatingTitleLabel)
 
-        // Tiles stack inside its horizontally-inset container
         tilesContainer.addSubview(tilesStack)
-
-        // tilesHorizontalInset is measured from the cell edge; subtract titleHorizontalInset
-        // (the contentStack inset) to get the inset required within the container.
-        let tilesIntraBlockInset = UX.tilesHorizontalInset - UX.titleHorizontalInset
 
         // Assemble the vertical content stack
         contentStack.addArrangedSubview(titleContainerView)
@@ -177,8 +165,8 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         titleHeight.isActive = true
 
         NSLayoutConstraint.activate([
-            tilesStack.leadingAnchor.constraint(equalTo: tilesContainer.leadingAnchor, constant: tilesIntraBlockInset),
-            tilesStack.trailingAnchor.constraint(equalTo: tilesContainer.trailingAnchor, constant: -tilesIntraBlockInset),
+            tilesStack.leadingAnchor.constraint(equalTo: tilesContainer.leadingAnchor),
+            tilesStack.trailingAnchor.constraint(equalTo: tilesContainer.trailingAnchor),
             tilesStack.topAnchor.constraint(equalTo: tilesContainer.topAnchor),
             tilesStack.bottomAnchor.constraint(equalTo: tilesContainer.bottomAnchor),
 
@@ -199,22 +187,13 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         centerY.priority = .defaultLow
         centerY.isActive = true
 
-        updateContainerAxisForCurrentTraits()
+        updateTitleHeightForCurrentTraits()
     }
 
     // MARK: - Orientation
 
-    /// Switches the impact tiles between vertical (portrait) and horizontal (landscape) layout.
-    /// In landscape on iPhone (compact vertical size class), tiles appear side by side.
-    private func updateContainerAxisForCurrentTraits() {
+    private func updateTitleHeightForCurrentTraits() {
         let isLandscape = traitCollection.verticalSizeClass == .compact
-        tilesStack.axis = isLandscape ? .horizontal : .vertical
-        // In landscape (horizontal axis), fillEqually splits the available width evenly so
-        // neither tile stretches wider than the other. In portrait (vertical axis), .fill lets each
-        // tile self-size by its content height — equal height is then enforced by tileEqualHeightConstraint.
-        tilesStack.distribution = isLandscape ? .fillEqually : .fill
-        tilesStack.alignment = isLandscape ? .center : .fill
-        tilesStack.spacing = UX.cellsSpacing
         titleContainerHeightConstraint?.constant = isLandscape ? UX.titleReservedHeightLandscape : UX.titleReservedHeight
     }
 
@@ -241,29 +220,18 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
                    theme: Theme) {
         self.delegate = delegate
 
-        tileEqualHeightConstraint?.isActive = false
-        tileEqualHeightConstraint = nil
         tilesStack.removeAllArrangedViews()
 
-        var rows: [NTPImpactRowView] = []
         for info in items {
             let row = NTPImpactRowView(info: info)
             row.delegate = delegate
             tilesStack.addArrangedSubview(row)
-            rows.append(row)
-        }
-
-        if let first = rows.first, let last = rows.last, first !== last {
-            let constraint = first.heightAnchor.constraint(equalTo: last.heightAnchor)
-            constraint.priority = .defaultHigh
-            constraint.isActive = true
-            tileEqualHeightConstraint = constraint
         }
 
         tilesContainer.isHidden = items.isEmpty
 
         updateTitle(title)
-        updateContainerAxisForCurrentTraits()
+        updateTitleHeightForCurrentTraits()
         applyTheme(theme: theme)
     }
 
@@ -283,8 +251,6 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     ) {
         delegate = nil
 
-        tileEqualHeightConstraint?.isActive = false
-        tileEqualHeightConstraint = nil
         tilesStack.removeAllArrangedViews()
 
         var impactRowViews: [NTPImpactRowView] = []
@@ -294,17 +260,10 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
             impactRowViews.append(impactRow)
         }
 
-        if let first = impactRowViews.first, let last = impactRowViews.last, first !== last {
-            let constraint = first.heightAnchor.constraint(equalTo: last.heightAnchor)
-            constraint.priority = .defaultHigh
-            constraint.isActive = true
-            tileEqualHeightConstraint = constraint
-        }
-
         tilesContainer.isHidden = rows.isEmpty
 
         updateTitle(title)
-        updateContainerAxisForCurrentTraits()
+        updateTitleHeightForCurrentTraits()
         applyTheme(theme: theme)
 
         for (impactRow, row) in zip(impactRowViews, rows) {

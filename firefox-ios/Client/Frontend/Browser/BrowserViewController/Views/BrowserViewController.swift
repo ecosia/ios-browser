@@ -620,6 +620,8 @@ class BrowserViewController: UIViewController,
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
+        // Ecosia: Light status bar over the NTP wallpaper
+        if let ecosiaHomepageStatusBarStyle { return ecosiaHomepageStatusBarStyle }
         return switch currentTheme().type {
         case .dark, .nightMode, .privateMode:
                 .lightContent
@@ -2036,6 +2038,8 @@ class BrowserViewController: UIViewController,
     func frontEmbeddedContent(_ viewController: ContentContainable) {
         contentContainer.update(content: viewController)
         statusBarOverlay.resetState(isHomepage: contentContainer.hasHomepage)
+        // Ecosia: Status bar style depends on whether the NTP is showing
+        setNeedsStatusBarAppearanceUpdate()
     }
 
     /// Embed a ContentContainable inside the content container
@@ -2050,6 +2054,8 @@ class BrowserViewController: UIViewController,
         viewController.didMove(toParent: self)
 
         statusBarOverlay.resetState(isHomepage: contentContainer.hasHomepage)
+        // Ecosia: Status bar style depends on whether the NTP is showing
+        setNeedsStatusBarAppearanceUpdate()
 
         // To make sure the content views content is extending under the toolbars we disable clip to bounds
         // for the first two layers of views other than a web view

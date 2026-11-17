@@ -14,7 +14,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     // MARK: - UX Constants
 
     struct UX {
-        static let horizontalSpacing: CGFloat = .ecosia.space._m
+        static let iconTitleSpacing: CGFloat = .ecosia.space._2s
         static let padding: CGFloat = .ecosia.space._s
         static let titleSubtitleGap: CGFloat = .ecosia.space._2s
         static let imageHeight: CGFloat = 24
@@ -30,18 +30,16 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return view
     }()
 
-    private let mainContainerView: UIStackView = {
+    private let titleRow: UIStackView = {
         let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
         stack.axis = .horizontal
         stack.alignment = .center
-        stack.spacing = UX.horizontalSpacing
+        stack.spacing = UX.iconTitleSpacing
         return stack
     }()
 
-    // alignment = .fill gives each label an explicit width constraint from the stack so UILabel
-    // always knows its available width for line-wrapping — including after device rotation.
-    // (With .leading, no width constraint is applied and preferredMaxLayoutWidth stays stale.)
+    // alignment = .fill gives the subtitle an explicit width so it re-wraps after rotation;
+    // the title row is centred by its own wrapper instead.
     private let labelsStack: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -49,6 +47,12 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         stack.alignment = .fill
         stack.spacing = UX.titleSubtitleGap
         return stack
+    }()
+
+    private let titleRowWrapper: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
 
     private lazy var imageContainer: UIView = {
@@ -76,6 +80,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .footnote)
+        label.textAlignment = .center
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
         // Force word-wrap so words are never split mid-word across lines.
@@ -135,23 +140,25 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         glassBackground.layer.cornerRadius = .ecosia.borderRadius._l
         addSubview(glassBackground)
 
-        labelsStack.addArrangedSubview(titleLabel)
+        imageContainer.addSubview(imageView)
+        titleRow.addArrangedSubview(imageContainer)
+        titleRow.addArrangedSubview(titleLabel)
+        titleRow.translatesAutoresizingMaskIntoConstraints = false
+        titleRowWrapper.addSubview(titleRow)
+
+        labelsStack.addArrangedSubview(titleRowWrapper)
         labelsStack.addArrangedSubview(subtitleLabel)
         labelsStack.isAccessibilityElement = true
         labelsStack.shouldGroupAccessibilityChildren = true
         labelsStack.accessibilityLabel = info.accessibilityLabel
         labelsStack.accessibilityIdentifier = info.accessibilityIdentifier
 
-        imageContainer.addSubview(imageView)
-        mainContainerView.addArrangedSubview(imageContainer)
-        mainContainerView.addArrangedSubview(labelsStack)
-
-        addSubview(mainContainerView)
+        addSubview(labelsStack)
     }
 
     private func setupConstraints() {
         // Ecosia: Pin top/bottom equal (not greaterThanOrEqual/lessThanOrEqual) so the row's
-        // height is exactly `mainContainerView.height + padding * 2`. Without this the row has
+        // height is exactly `labelsStack.height + padding * 2`. Without this the row has
         // no derivable intrinsic height in the vertical axis, which lets `tilesStack`'s `.fill`
         // distribution stretch the rows to fill an oversized impact section on iPad
         // (the previously inequality-only setup gave the row infinite vertical freedom).
@@ -161,10 +168,15 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
             glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            mainContainerView.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
-            mainContainerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
-            mainContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
-            mainContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
+            labelsStack.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
+            labelsStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding),
+            labelsStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
+            labelsStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
+
+            titleRow.topAnchor.constraint(equalTo: titleRowWrapper.topAnchor),
+            titleRow.bottomAnchor.constraint(equalTo: titleRowWrapper.bottomAnchor),
+            titleRow.centerXAnchor.constraint(equalTo: titleRowWrapper.centerXAnchor),
+            titleRow.leadingAnchor.constraint(greaterThanOrEqualTo: titleRowWrapper.leadingAnchor),
 
             imageContainer.heightAnchor.constraint(equalToConstant: UX.imageHeight),
             imageContainer.widthAnchor.constraint(equalTo: imageContainer.heightAnchor),
