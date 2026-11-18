@@ -247,7 +247,7 @@ private enum ImpactCellSnapshotFixture {
         NTPImpactSnapshotRow(
             info: .totalInvested(value: 89_942_822),
             title: "€89,942,822",
-            subtitle: "dedicated to climate action"
+            subtitle: "funding climate projects"
         )
     ]
 }
