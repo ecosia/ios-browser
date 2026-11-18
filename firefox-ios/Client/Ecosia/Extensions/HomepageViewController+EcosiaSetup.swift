@@ -297,9 +297,9 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         // runloop catches the case where the URL bar is still animating
         // out at this point: the container is the wrong size during this
         // call, but correct by the time the next loop tick fires.
-        invalidateEcosiaLayout()
+        homepageCollectionView?.collectionViewLayout.invalidateLayout()
         DispatchQueue.main.async { [weak self] in
-            self?.invalidateEcosiaLayout()
+            self?.homepageCollectionView?.collectionViewLayout.invalidateLayout()
         }
 
         // Ecosia: Force snapshot rebuild so changes to User-backed flags
@@ -309,25 +309,6 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             state: homepageState,
             jumpBackInDisplayConfig: getJumpBackInDisplayConfig()
         )
-    }
-
-    /// Recomputes the section sizes and re-measures the self-sizing cells against the current container.
-    /// A plain `invalidateLayout()` keeps cached self-sized heights, so a cell measured while the NTP sat
-    /// behind a web page (shorter container, e.g. after a cold start) would keep its stale height.
-    func invalidateEcosiaLayout() {
-        guard let collectionView = homepageCollectionView else { return }
-        collectionView.collectionViewLayout.invalidateLayout()
-        let context = UICollectionViewLayoutInvalidationContext()
-        context.invalidateItems(at: collectionView.indexPathsForVisibleItems)
-        collectionView.collectionViewLayout.invalidateLayout(with: context)
-    }
-
-    func invalidateEcosiaLayoutIfHeightChanged() {
-        guard let height = homepageCollectionView?.bounds.height,
-              height > 0,
-              height != ecosiaMeasuredCollectionHeight else { return }
-        ecosiaMeasuredCollectionHeight = height
-        invalidateEcosiaLayout()
     }
 
     /// Enables scrolling in iPhone landscape (compact vertical size class) where the NTP
