@@ -254,8 +254,8 @@ private enum ImpactCellSnapshotFixture {
 
 // MARK: - Impact cell snapshot container
 
-/// Hosts `NTPImpactCell` on the NTP dark-green backdrop with portrait traits so impact
-/// rows stack vertically (not the landscape side-by-side layout).
+/// Hosts `NTPImpactCell` on the NTP dark-green backdrop with portrait traits, so the rotating
+/// title keeps its portrait height above the side-by-side impact cards.
 private final class NTPImpactCellSnapshotContainerView: UIView {
 
     private let impactCell: NTPImpactCell
