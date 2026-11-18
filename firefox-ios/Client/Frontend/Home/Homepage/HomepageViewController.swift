@@ -1160,6 +1160,8 @@ final class HomepageViewController: UIViewController,
 
     // MARK: - UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // Ecosia: Don't keep the pressed state on the tapped cell once it navigates away
+        collectionView.deselectItem(at: indexPath, animated: false)
         guard let item = dataSource?.itemIdentifier(for: indexPath) else {
             self.logger.log(
                 "Item selected at \(indexPath) but does not navigate anywhere",
