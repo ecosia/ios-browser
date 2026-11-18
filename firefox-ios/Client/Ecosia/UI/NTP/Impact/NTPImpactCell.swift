@@ -198,17 +198,6 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         titleContainerHeightConstraint?.constant = isLandscape ? UX.titleReservedHeightLandscape : UX.titleReservedHeight
     }
 
-    // MARK: - Card width
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let rows = impactRows
-        guard !rows.isEmpty else { return }
-        let available = contentView.bounds.width - UX.titleHorizontalInset * 2
-        let maxWidth = (available - UX.cellsSpacing * CGFloat(rows.count - 1)) / CGFloat(rows.count)
-        rows.forEach { $0.setMaxWidth(maxWidth) }
-    }
-
     // MARK: - Title
 
     func updateTitle(_ title: String?) {

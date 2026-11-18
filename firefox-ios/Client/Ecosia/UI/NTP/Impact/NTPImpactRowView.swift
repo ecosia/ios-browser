@@ -167,6 +167,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             // Centred so the shorter card keeps its content in the middle when stretched to its neighbour's height.
             labelsStack.centerYAnchor.constraint(equalTo: centerYAnchor),
             labelsStack.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: UX.padding),
+            labelsStack.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -UX.padding),
             labelsStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             labelsStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
 
@@ -186,16 +187,11 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
 
         // Hug the content vertically; the shorter card gives these up to match its neighbour.
         let hugTop = labelsStack.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding)
-        hugTop.priority = .defaultHigh
-        hugTop.isActive = true
-    }
-
-    /// Lets the subtitle stay on one line when it fits and wrap only once the card reaches `width`.
-    func setMaxWidth(_ width: CGFloat) {
-        let labelWidth = max(0, width - UX.padding * 2)
-        guard subtitleLabel.preferredMaxLayoutWidth != labelWidth else { return }
-        subtitleLabel.preferredMaxLayoutWidth = labelWidth
-        subtitleLabel.invalidateIntrinsicContentSize()
+        let hugBottom = labelsStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding)
+        [hugTop, hugBottom].forEach {
+            $0.priority = .defaultHigh
+            $0.isActive = true
+        }
     }
 
     // MARK: - ThemeApplicable

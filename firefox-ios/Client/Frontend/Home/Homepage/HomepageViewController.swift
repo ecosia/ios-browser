@@ -61,9 +61,6 @@ final class HomepageViewController: UIViewController,
     /// Ecosia: Called after the data source is created so customizations (e.g. Ecosia adapter) can be applied.
     var onDataSourceConfigured: ((HomepageDiffableDataSource) -> Void)?
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
-    // Ecosia: Swapped for window-anchored constraints so the wallpaper fills the screen edge to edge
-    private var wallpaperTopConstraint: NSLayoutConstraint?
-    private var wallpaperBottomConstraint: NSLayoutConstraint?
     // Ecosia: Bottom gradient between the wallpaper image and the NTP content
     private let wallpaperGradientView = NTPWallpaperGradientView()
 
@@ -439,17 +436,10 @@ final class HomepageViewController: UIViewController,
             wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         */
-        // Ecosia: Full-bleed wallpaper; `extendEcosiaWallpaperToWindow` stretches it to the screen edges once in a window.
-        let topConstraint = wallpaperView.topAnchor.constraint(equalTo: view.topAnchor)
-        let bottomConstraint = wallpaperView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        wallpaperTopConstraint = topConstraint
-        wallpaperBottomConstraint = bottomConstraint
-        NSLayoutConstraint.activate([
-            topConstraint,
-            wallpaperView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            bottomConstraint,
-            wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
+        // Ecosia: Full-bleed wallpaper laid out by frame; `extendEcosiaWallpaperToWindow` stretches it to the screen edges.
+        // No autoresizing mask, so the frame never feeds back into the size of `view` through Auto Layout.
+        wallpaperView.translatesAutoresizingMaskIntoConstraints = true
+        wallpaperView.autoresizingMask = []
 
         view.sendSubviewToBack(wallpaperView)
     }
@@ -935,19 +925,13 @@ final class HomepageViewController: UIViewController,
         updateNTPSearchBarHorizontalInset()
     }
 
-    // Ecosia: The content container sits between the status bar and the bottom toolbar,
-    // so only the window's anchors span the full display.
+    // Ecosia: The content container sits between the status bar and the bottom toolbar, so size the wallpaper
+    // to the window. Set by frame in the same layout pass: constraints to the window are dropped while a page
+    // is shown and came back a frame late on return, making the NTP jump.
     private func extendEcosiaWallpaperToWindow() {
         guard let window = view.window else { return }
-        // UIKit drops window-anchored constraints when the view leaves the window (e.g. while a SERP is shown).
-        if let top = wallpaperTopConstraint, top.isActive, top.secondItem === window { return }
-        wallpaperTopConstraint?.isActive = false
-        wallpaperBottomConstraint?.isActive = false
-        let top = wallpaperView.topAnchor.constraint(equalTo: window.topAnchor)
-        let bottom = wallpaperView.bottomAnchor.constraint(equalTo: window.bottomAnchor)
-        NSLayoutConstraint.activate([top, bottom])
-        wallpaperTopConstraint = top
-        wallpaperBottomConstraint = bottom
+        let frame = view.convert(window.bounds, from: window)
+        if wallpaperView.frame != frame { wallpaperView.frame = frame }
     }
 
     // MARK: Tap Gesture Recognizer
