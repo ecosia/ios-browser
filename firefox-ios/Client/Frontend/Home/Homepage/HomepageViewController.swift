@@ -66,6 +66,8 @@ final class HomepageViewController: UIViewController,
     private var wallpaperBottomConstraint: NSLayoutConstraint?
     // Ecosia: Bottom gradient between the wallpaper image and the NTP content
     private let wallpaperGradientView = NTPWallpaperGradientView()
+    // Ecosia: Collection view height the self-sizing NTP cells were last measured against
+    var ecosiaMeasuredCollectionHeight: CGFloat = 0
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
     private let syncTabContextualHintViewController: ContextualHintViewController
@@ -205,7 +207,7 @@ final class HomepageViewController: UIViewController,
         // squeezed. Invalidating here, after the URL bar has been removed
         // and the bounds are final, lets the impact card stretch to its full
         // size and pushes TopSites back to its proper position.
-        homepageCollectionView?.collectionViewLayout.invalidateLayout()
+        invalidateEcosiaLayout()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -227,6 +229,8 @@ final class HomepageViewController: UIViewController,
         // Ecosia: Keep the last NTP cells (shortcut tiles, etc.) visible above the
         // floating omnibox pill instead of letting them sit behind it.
         updateNTPCollectionViewBottomInsetForOmnibox()
+        // Ecosia: Re-measure the NTP cells when the available height changes, e.g. after a cold start behind a web page
+        invalidateEcosiaLayoutIfHeightChanged()
 
         /// FXIOS-13970: Legacy homepage layout was appearing blank on iOS 15. The root cause was from applying the diffable
         /// data source snapshot before the view had finished it's first layout pass, causing the snapshot to be ignored.
