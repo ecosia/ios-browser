@@ -58,7 +58,7 @@ enum ClimateImpactInfo: Equatable {
     var image: UIImage? {
         switch self {
         case .totalTrees:
-            return .ecosia(named: "tree")?.withRenderingMode(.alwaysTemplate)
+            return .ecosia(named: "tree-care")?.withRenderingMode(.alwaysTemplate)
         case .totalInvested:
             return nil
         }
