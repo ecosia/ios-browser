@@ -415,7 +415,8 @@ extension TopSiteCell: Blurrable {
             rootContainer.removeVisualEffectView()
             ecosiaRemoveGlassTintView()
             rootContainer.backgroundColor = .clear
-            rootContainer.addBlurEffect(using: .systemUltraThinMaterial)
+            // Ecosia: Dark material so tiles read as dark glass like the impact cards in either theme
+            rootContainer.addBlurEffect(using: .systemUltraThinMaterialDark)
             rootContainer.clipsToBounds = true
             // Insert dark tint above the UIVisualEffectView (index 0) but below the favicon.
             let tintView = UIView()

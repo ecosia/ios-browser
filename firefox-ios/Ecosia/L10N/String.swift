@@ -134,7 +134,7 @@ extension String {
         case treesPlantedByEcosia = "trees planted by Ecosia"
         case treesPlantedByEcosiaCapitalized = "Trees planted by Ecosia"
         case numberAsStringWithPlusSymbol = "%@+"
-        case dedicatedToClimateAction = "dedicated to climate action"
+        case fundingClimateProjects = "funding climate projects"
         case activeProjects = "Active projects"
         case countries = "Countries"
         case treesPlantedPlural = "Tree(s) planted"

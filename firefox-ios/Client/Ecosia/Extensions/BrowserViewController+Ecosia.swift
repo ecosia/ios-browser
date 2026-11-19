@@ -399,3 +399,20 @@ extension BrowserViewController {
         }
     }
 }
+
+// MARK: NTP chrome
+@MainActor
+extension BrowserViewController {
+
+    /// The NTP wallpaper reaches behind the status bar, so its content stays light whatever the theme.
+    var ecosiaHomepageStatusBarStyle: UIStatusBarStyle? {
+        guard let homepage = contentContainer.contentController as? HomepageViewController,
+              homepage.ecosiaAdapter?.headerViewModel?.glassAppearance == .wallpaper else { return nil }
+        return .lightContent
+    }
+
+    func updateEcosiaHomepageChrome() {
+        setNeedsStatusBarAppearanceUpdate()
+        updateBlurViews()
+    }
+}

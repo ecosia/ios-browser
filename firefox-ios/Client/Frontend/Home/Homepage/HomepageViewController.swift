@@ -61,9 +61,8 @@ final class HomepageViewController: UIViewController,
     /// Ecosia: Called after the data source is created so customizations (e.g. Ecosia adapter) can be applied.
     var onDataSourceConfigured: ((HomepageDiffableDataSource) -> Void)?
     private lazy var wallpaperView: WallpaperBackgroundView = .build { _ in }
-    private var wallpaperBottomConstraint: NSLayoutConstraint?
-    // Ecosia: Guards against re-applying the iPad cross-hierarchy constraint on each layout pass
-    private var wallpaperExtendedToParent = false
+    // Ecosia: Bottom gradient between the wallpaper image and the NTP content
+    private let wallpaperGradientView = NTPWallpaperGradientView()
 
     private let jumpBackInContextualHintViewController: ContextualHintViewController
     private let syncTabContextualHintViewController: ContextualHintViewController
@@ -185,12 +184,6 @@ final class HomepageViewController: UIViewController,
         termsOfUseDelegate?.showTermsOfUse(context: .homepageOpened)
         // Ecosia: Trigger Ecosia data loading
         ecosiaViewWillAppear()
-        // Ecosia: The window-anchored wallpaper constraint installed by
-        // `extendEcosiaWallpaperToParentOnPad` can be torn down when this
-        // VC's view is removed from its superview during tab/content
-        // switches. Reset the gate so the next layout pass re-installs the
-        // constraint and the wallpaper card reaches the screen bottom again.
-        wallpaperExtendedToParent = false
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -226,9 +219,8 @@ final class HomepageViewController: UIViewController,
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        // Ecosia: On iPad the content container ends above the bottom toolbar, so extend
-        // the wallpaper to BVC's view to fill the gap behind the translucent toolbar.
-        extendEcosiaWallpaperToParentOnPad()
+        // Ecosia: Extend the wallpaper behind the status bar and the bottom toolbar.
+        extendEcosiaWallpaperToWindow()
         // Ecosia: Keep the last NTP cells (shortcut tiles, etc.) visible above the
         // floating omnibox pill instead of letting them sit behind it.
         updateNTPCollectionViewBottomInsetForOmnibox()
@@ -385,6 +377,8 @@ final class HomepageViewController: UIViewController,
         } else {
             wallpaperView.wallpaperState = state.wallpaperState
         }
+        // Ecosia: Only darken an actual wallpaper image
+        wallpaperGradientView.isHidden = !(wallpaperView.wallpaperState?.wallpaperConfiguration.hasImage ?? false)
 
         // TODO: - FXIOS-13346 / FXIOS-13343 - fix collection view being reloaded all the time also when data don't change
         // this is a quick workaround to avoid blocking the main thread by calling apply snapshot many times.
@@ -422,6 +416,8 @@ final class HomepageViewController: UIViewController,
         view.backgroundColor = theme.colors.ecosia.backgroundPrimaryDecorative
         // Ecosia: Update theme for Ecosia sections
         updateEcosiaTheme()
+        // Ecosia: Bottom gradient fades into the toolbar colour
+        wallpaperGradientView.applyTheme(theme: theme)
     }
 
     // MARK: - Layout
@@ -440,22 +436,10 @@ final class HomepageViewController: UIViewController,
             wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         */
-        // Ecosia: Wallpaper card with rounded corners and insets.
-        let vInset = CGFloat.ecosia.space._s
-        let hInset = CGFloat.ecosia.space._2s
-        let bottomConstraint = wallpaperView.bottomAnchor.constraint(
-            equalTo: view.bottomAnchor,
-            constant: -vInset
-        )
-        wallpaperBottomConstraint = bottomConstraint
-        NSLayoutConstraint.activate([
-            wallpaperView.topAnchor.constraint(equalTo: view.topAnchor, constant: vInset),
-            wallpaperView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: hInset),
-            bottomConstraint,
-            wallpaperView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -hInset)
-        ])
-        // Ecosia: Use helper that propagates the radius to the inner pictureView as well
-        wallpaperView.applyEcosiaCornerRadius(CGFloat.ecosia.borderRadius._1l)
+        // Ecosia: Full-bleed wallpaper laid out by frame; `extendEcosiaWallpaperToWindow` stretches it to the screen edges.
+        // No autoresizing mask, so the frame never feeds back into the size of `view` through Auto Layout.
+        wallpaperView.translatesAutoresizingMaskIntoConstraints = true
+        wallpaperView.autoresizingMask = []
 
         view.sendSubviewToBack(wallpaperView)
     }
@@ -486,11 +470,13 @@ final class HomepageViewController: UIViewController,
         */
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         wallpaperView.addSubview(collectionView)
+        wallpaperView.insertSubview(wallpaperGradientView, belowSubview: collectionView)
+        wallpaperGradientView.pin(toBottomOf: wallpaperView)
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: wallpaperView.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: wallpaperView.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: wallpaperView.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: wallpaperView.bottomAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
     }
 
@@ -939,23 +925,13 @@ final class HomepageViewController: UIViewController,
         updateNTPSearchBarHorizontalInset()
     }
 
-    /* Ecosia: On iPad the content container can end above the screen bottom (behind the
-     translucent bottom toolbar / safe area), and `parent?.view.bottomAnchor` doesn't always
-     reach the actual screen bottom. Anchor the wallpaper card to the host window's bottom
-     instead — that's the only anchor guaranteed to span the full display. iPhone keeps the
-     simple view-local constraint (correct margin and corner radius above the address bar). */
-    private func extendEcosiaWallpaperToParentOnPad() {
-        guard traitCollection.userInterfaceIdiom == .pad,
-              !wallpaperExtendedToParent,
-              let window = view.window else { return }
-        wallpaperBottomConstraint?.isActive = false
-        let extended = wallpaperView.bottomAnchor.constraint(
-            equalTo: window.bottomAnchor,
-            constant: -CGFloat.ecosia.space._m
-        )
-        extended.isActive = true
-        wallpaperBottomConstraint = extended
-        wallpaperExtendedToParent = true
+    // Ecosia: The content container sits between the status bar and the bottom toolbar, so size the wallpaper
+    // to the window. Set by frame in the same layout pass: constraints to the window are dropped while a page
+    // is shown and came back a frame late on return, making the NTP jump.
+    private func extendEcosiaWallpaperToWindow() {
+        guard let window = view.window else { return }
+        let frame = view.convert(window.bounds, from: window)
+        if wallpaperView.frame != frame { wallpaperView.frame = frame }
     }
 
     // MARK: Tap Gesture Recognizer
@@ -1164,6 +1140,8 @@ final class HomepageViewController: UIViewController,
 
     // MARK: - UICollectionViewDelegate
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // Ecosia: Don't keep the pressed state on the tapped cell once it navigates away
+        collectionView.deselectItem(at: indexPath, animated: false)
         guard let item = dataSource?.itemIdentifier(for: indexPath) else {
             self.logger.log(
                 "Item selected at \(indexPath) but does not navigate anywhere",
