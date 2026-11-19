@@ -26,7 +26,9 @@
       "Bash(gh pr merge *)",
       "Bash(git push --force *)",
       "Bash(xcrun simctl erase *)",
-      "Bash(xcrun simctl delete *)"
+      "Bash(xcrun simctl delete *)",
+      "Artifact",
+      "Workflow"
     ]
   }
 }
