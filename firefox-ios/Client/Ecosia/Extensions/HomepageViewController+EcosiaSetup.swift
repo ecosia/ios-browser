@@ -424,7 +424,12 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
         let wallpaperConfig = adapter.getNTPBackgroundConfiguration()
         // The header glass depends on whether a wallpaper is behind it.
+        let previousAppearance = adapter.headerViewModel?.glassAppearance
         adapter.headerViewModel?.updateGlassAppearance(hasWallpaper: wallpaperConfig.hasImage)
+        if adapter.headerViewModel?.glassAppearance != previousAppearance {
+            // The browser's status bar style follows the header glass.
+            parent?.setNeedsStatusBarAppearanceUpdate()
+        }
         let state = WallpaperState(windowUUID: windowUUID, wallpaperConfiguration: wallpaperConfig)
         return state
     }
