@@ -64,9 +64,7 @@ final class SettingsCoordinatorTests: XCTestCase {
         subject.start(with: .homePage)
 
         XCTAssertEqual(mockRouter.pushCalled, 1)
-        // Ecosia: Update tests
-        // XCTAssertTrue(mockRouter.pushedViewController is HomePageSettingViewController)
-        XCTAssertTrue(mockRouter.pushedViewController is NTPCustomizationSettingsViewController)
+        XCTAssertTrue(mockRouter.pushedViewController is HomePageSettingViewController)
     }
 
     func testMailtoSettingsRoute_showsMailtoSettingsPage() throws {
@@ -409,9 +407,7 @@ final class SettingsCoordinatorTests: XCTestCase {
         subject.pressedHome()
 
         XCTAssertEqual(mockRouter.pushCalled, 1)
-        // Ecosia: Update tests
-        // XCTAssertTrue(mockRouter.pushedViewController is HomePageSettingViewController)
-        XCTAssertTrue(mockRouter.pushedViewController is NTPCustomizationSettingsViewController)
+        XCTAssertTrue(mockRouter.pushedViewController is HomePageSettingViewController)
     }
 
     func testGeneralSettingsDelegate_pushedMailApp() {

@@ -192,6 +192,7 @@ final class HomePageSettingViewController: SettingsTableViewController,
         }
         */
 
+        /* Ecosia: Ecosia's NTP never shows stories, so the Stories toggle must not appear (MOB-5282).
         // TODO: FXIOS-12980: Replace "Stories" title with "Top Stories" string once it is translated in v143
         if isPocketSectionEnabled, let profile {
             let pocketSetting = BoolSetting(
@@ -211,6 +212,7 @@ final class HomePageSettingViewController: SettingsTableViewController,
             }
             sectionItems.append(pocketSetting)
         }
+         */
 
         return SettingSection(
             title: NSAttributedString(
