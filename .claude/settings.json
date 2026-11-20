@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Code_iOS_Simulator",
+      "Bash(xcodebuild *)",
+      "Bash(xcrun simctl list *)",
+      "Bash(xcrun simctl io *)",
+      "Bash(xcrun xcresulttool *)",
+      "Bash(xcode-select -p)",
+      "Bash(xcpretty *)",
+      "Bash(swiftlint *)",
+      "Bash(npm run build)",
+      "Bash(./check_snapshot_updates.sh *)",
+      "Bash(./generate_snapshot_coverage_docs.sh)",
+      "Bash(plutil -lint *)",
+      "Bash(git status *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr checks *)"
+    ],
+    "ask": [
+      "Bash(sh tuist-setup.sh *)",
+      "Bash(gh pr merge *)",
+      "Bash(git push --force *)",
+      "Bash(xcrun simctl erase *)",
+      "Bash(xcrun simctl delete *)",
+      "Artifact",
+      "Workflow",
+      "Bash(./setup_build_tools.sh *)",
+      "Bash(./rust_components_local.sh *)",
+      "Bash(./FirefoxTelemetryUtility.sh *)",
+      "Bash(./iOSNimbusFeatureUtility.sh *)",
+      "Bash(python3 ecosify-strings.py *)",
+      "Bash(./content_blocker_update.sh *)",
+      "Bash(sh ./bootstrap.sh *)",
+      "Bash(./bootstrap.sh *)"
+    ],
+    "deny": [
+      "Bash(fastlane *)",
+      "Bash(bundle exec fastlane *)",
+      "Bash(./monorepo-migration/*)",
+      "Bash(git filter-repo *)",
+      "Bash(./checkout.sh *)",
+      "Bash(sh ./checkout.sh *)",
+      "Bash(./update_version.sh *)",
+      "Bash(gh *mozilla-mobile*)"
+    ]
+  }
+}
