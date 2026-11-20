@@ -566,6 +566,8 @@ class BrowserViewController: UIViewController,
             return .default
         }
         #endif
+        // Ecosia: Light status bar over the NTP wallpaper
+        if let ecosiaHomepageStatusBarStyle { return ecosiaHomepageStatusBarStyle }
         return switch currentTheme().type {
         case .dark, .nightMode, .privateMode:
                 .lightContent
@@ -753,6 +755,8 @@ class BrowserViewController: UIViewController,
         overKeyboardContainer.isClearBackground = isBottomSearchBar || !isKeyboardShowing || shouldClearBackground
         bottomContainer.isClearBackground = true
         bottomBlurView.isHidden = isScrollAlphaZero
+        // Ecosia: The NTP wallpaper fades into the toolbar colour; the glass edge would show as a line
+        if contentContainer.hasHomepage { bottomBlurView.isHidden = true }
         bottomContainer.isHidden = isScrollAlphaZero
 
         // Below iOS 26 the bottom toolbar collapses by translating off-screen, so the blur stays.
@@ -2016,6 +2020,8 @@ class BrowserViewController: UIViewController,
         updateVerticalBarBackground()
         statusBarOverlay.resetState(isHomepage: contentContainer.hasHomepage)
         updateContentContainerTopConstraint()
+        // Ecosia: Status bar and toolbar glass depend on whether the NTP is showing
+        updateEcosiaHomepageChrome()
 
         // Documentation found in https://mozilla-hub.atlassian.net/browse/FXIOS-10952
         // FXIOS-11036 - Investigate improvement to JavaScript alert dequeueing
@@ -2040,6 +2046,8 @@ class BrowserViewController: UIViewController,
         updateVerticalBarBackground()
         statusBarOverlay.resetState(isHomepage: contentContainer.hasHomepage)
         updateContentContainerTopConstraint()
+        // Ecosia: Status bar and toolbar glass depend on whether the NTP is showing
+        updateEcosiaHomepageChrome()
 
         // To make sure the content views content is extending under the toolbars we disable clip to bounds
         // for the first two layers of views other than a web view
