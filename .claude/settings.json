@@ -9,7 +9,6 @@
       "Bash(xcode-select -p)",
       "Bash(xcpretty *)",
       "Bash(swiftlint *)",
-      "Bash(sh tuist-setup.sh *)",
       "Bash(npm run build)",
       "Bash(./check_snapshot_updates.sh *)",
       "Bash(./generate_snapshot_coverage_docs.sh)",
@@ -23,6 +22,7 @@
       "Bash(gh pr checks *)"
     ],
     "ask": [
+      "Bash(sh tuist-setup.sh *)",
       "Bash(gh pr merge *)",
       "Bash(git push --force *)",
       "Bash(xcrun simctl erase *)",
