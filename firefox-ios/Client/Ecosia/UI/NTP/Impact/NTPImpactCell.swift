@@ -14,11 +14,18 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         static let cellsSpacing: CGFloat = .ecosia.space._1s
         static let titleToTilesGap: CGFloat = .ecosia.space._m
         static let titleFont: UIFont = .ecosiaFamilyBrand(size: .ecosia.font._4l)
-        // Fixed height for up to 3 lines of brand font (~39.6pt line height × 3 ≈ 119pt).
-        // Keeps the tiles stable when the rotating title changes.
-        static let titleReservedHeight: CGFloat = 120
-        // In landscape the title fits in fewer lines; reduce reserved height to avoid dead space.
-        static let titleReservedHeightLandscape: CGFloat = 60
+        // The title gets a fixed height so the tiles stay put when the rotating title changes.
+        // It is measured from the font: a hard-coded 120pt assumed a 39.6pt line, but the brand
+        // font's line is about 42.3pt, so only 2 lines fitted and a 3rd was clipped.
+        static let titleMaxLines = 3
+        // In landscape the title is wider, so fewer lines fit and less space is reserved.
+        static let titleMaxLinesLandscape = 2
+        static var titleReservedHeight: CGFloat { reservedTitleHeight(lines: titleMaxLines) }
+        static var titleReservedHeightLandscape: CGFloat { reservedTitleHeight(lines: titleMaxLinesLandscape) }
+
+        static func reservedTitleHeight(lines: Int) -> CGFloat {
+            ceil(titleFont.lineHeight * CGFloat(lines))
+        }
         static let titleHorizontalInset: CGFloat = .ecosia.space._s
     }
 
@@ -69,8 +76,10 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         label.font = UX.titleFont
         label.textColor = .white
         label.textAlignment = .center
-        label.numberOfLines = 0
-        label.lineBreakMode = .byWordWrapping
+        // A title longer than the reserved lines shrinks to fit. UILabel only shrinks
+        // multi-line text with a line limit and a truncating line break mode.
+        label.numberOfLines = UX.titleMaxLines
+        label.lineBreakMode = .byTruncatingTail
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.7
         label.accessibilityIdentifier = EcosiaAccessibilityIdentifiers.NTP.rotatingTitle
@@ -196,6 +205,7 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     private func updateTitleHeightForCurrentTraits() {
         let isLandscape = traitCollection.verticalSizeClass == .compact
         titleContainerHeightConstraint?.constant = isLandscape ? UX.titleReservedHeightLandscape : UX.titleReservedHeight
+        rotatingTitleLabel.numberOfLines = isLandscape ? UX.titleMaxLinesLandscape : UX.titleMaxLines
     }
 
     // MARK: - Title
