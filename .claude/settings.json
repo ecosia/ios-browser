@@ -46,7 +46,7 @@
       "Bash(./checkout.sh *)",
       "Bash(sh ./checkout.sh *)",
       "Bash(./update_version.sh *)",
-      "Bash(gh * mozilla-mobile*)"
+      "Bash(gh *mozilla-mobile*)"
     ]
   }
 }
