@@ -62,61 +62,68 @@ final class EcosiaAuthUIStateProviderImpactCacheTests: XCTestCase {
         XCTAssertNil(resolved)
     }
 
-    // MARK: - Logout clears the cache (via the real notification flow)
+    // MARK: - Logout clears the cache (via the auth event stream)
 
-    func test_userLoggedOutNotification_clearsLoggedInImpactCache() async {
+    func test_loggedOutEvent_clearsLoggedInImpactCache() {
         MockLoggedInImpactCache.save(ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8))
+        let auth = MockAuthSessionProvider(hasResolvedAuthState: true)
+        let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider(), auth: auth)
 
-        let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider())
-        let notification = Notification(
-            name: .EcosiaAuthStateChanged,
-            object: nil,
-            userInfo: ["actionType": EcosiaAuthActionType.userLoggedOut]
-        )
-        await provider.handleAuthStateChange(notification)
+        withExtendedLifetime(provider) {
+            auth.send(.loggedOut)
+        }
 
         XCTAssertEqual(MockLoggedInImpactCache.clearCallCount, 1)
     }
 
-    // MARK: - authStateLoaded refreshes published state from the current snapshot
+    // MARK: - Auth events move the published isLoggedIn mirror
 
-    func test_authStateLoadedNotification_refreshesAwayFromStaleCachedSnapshot_onceCacheIsCleared() async {
+    func test_authEvents_updateIsLoggedIn() {
+        let auth = MockAuthSessionProvider()
+        let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider(), auth: auth)
+
+        auth.send(.stateResolved(isLoggedIn: true))
+        XCTAssertTrue(provider.isLoggedIn)
+
+        auth.send(.loggedOut)
+        XCTAssertFalse(provider.isLoggedIn)
+
+        auth.send(.loggedIn)
+        XCTAssertTrue(provider.isLoggedIn)
+    }
+
+    // MARK: - stateResolved refreshes published state from the current snapshot
+
+    func test_stateResolvedEvent_refreshesAwayFromStaleCachedSnapshot_onceCacheIsCleared() {
         // Simulates init() running while a previous account's snapshot was still cached (the
         // async gap before EcosiaAuthenticationService's own clear completes) - the provider
-        // should move off that stale value once authStateLoaded confirms logged-out and the
+        // should move off that stale value once .stateResolved confirms logged-out and the
         // cache is (by then, cleared by the service itself) empty.
         MockLoggedInImpactCache.save(ImpactSnapshot(seedCount: 120, currentLevelNumber: 4, currentProgress: 0.8))
-        let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider())
+        let auth = MockAuthSessionProvider()
+        let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider(), auth: auth)
         XCTAssertEqual(provider.seedCount, 120, "Sanity check: init picked up the stale cache")
 
         UserDefaultsSeedProgressManager.resetLocalSeedProgress()
         UserDefaultsSeedProgressManager.addSeeds(2)
         MockLoggedInImpactCache.reset() // Simulates EcosiaAuthenticationService already clearing it
 
-        let notification = Notification(
-            name: .EcosiaAuthStateChanged,
-            object: nil,
-            userInfo: ["actionType": EcosiaAuthActionType.authStateLoaded]
-        )
-        await provider.handleAuthStateChange(notification)
+        auth.send(.stateResolved(isLoggedIn: false))
 
         XCTAssertEqual(provider.seedCount, 2)
         XCTAssertEqual(provider.currentLevelNumber, 1)
     }
 
-    func test_authStateLoadedNotification_isNoOp_forAnOrdinaryGuest() async {
-        // A guest resolves to authStateLoaded/isLoggedIn=false on every single cold launch too -
+    func test_stateResolvedEvent_isNoOp_forAnOrdinaryGuest() {
+        // A guest resolves to .stateResolved(isLoggedIn: false) on every single cold launch too -
         // this must not disturb their own accumulated local progress.
         UserDefaultsSeedProgressManager.resetLocalSeedProgress()
         UserDefaultsSeedProgressManager.addSeeds(1)
 
-        let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider())
-        let notification = Notification(
-            name: .EcosiaAuthStateChanged,
-            object: nil,
-            userInfo: ["actionType": EcosiaAuthActionType.authStateLoaded]
-        )
-        await provider.handleAuthStateChange(notification)
+        let auth = MockAuthSessionProvider()
+        let provider = EcosiaAuthUIStateProvider(accountsProvider: AccountsProvider(), auth: auth)
+
+        auth.send(.stateResolved(isLoggedIn: false))
 
         XCTAssertEqual(provider.seedCount, 1)
     }

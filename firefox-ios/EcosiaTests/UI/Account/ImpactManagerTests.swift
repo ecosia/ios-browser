@@ -31,10 +31,10 @@ final class ImpactManagerTests: XCTestCase {
 
     // MARK: - Register visit
 
-    func test_userLoggedIn_registersVisitWithCurrentAccessToken() async {
+    func test_loggedIn_registersVisitWithCurrentAccessToken() async {
         let finished = expectRegisterVisitToFinish()
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [finished], timeout: 1)
 
         XCTAssertEqual(accountsProvider.receivedAccessTokens, ["token"])
@@ -44,7 +44,7 @@ final class ImpactManagerTests: XCTestCase {
         accountsProvider.result = .success(makeVisitResponse(levelNumber: 3, earnedTowardsNextLevel: 50, toUnlockNextLevel: 200))
         let finished = expectRegisterVisitToFinish()
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [finished], timeout: 1)
 
         XCTAssertEqual(manager.currentLevelNumber, 3)
@@ -55,7 +55,7 @@ final class ImpactManagerTests: XCTestCase {
         accountsProvider.result = .success(makeVisitResponse(seedBalance: 42))
         let finished = expectRegisterVisitToFinish()
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [finished], timeout: 1)
 
         XCTAssertEqual(manager.seedCount, 42)
@@ -65,7 +65,7 @@ final class ImpactManagerTests: XCTestCase {
         accountsProvider.result = .success(makeVisitResponse(seedBalance: 42, levelNumber: 3, earnedTowardsNextLevel: 50, toUnlockNextLevel: 200))
         let finished = expectRegisterVisitToFinish()
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [finished], timeout: 1)
 
         XCTAssertEqual(MockLoggedInImpactCache.stored, ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.25))
@@ -75,7 +75,7 @@ final class ImpactManagerTests: XCTestCase {
         accountsProvider.result = .failure(URLError(.notConnectedToInternet))
         let finished = expectRegisterVisitToFinish()
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [finished], timeout: 1)
 
         XCTAssertTrue(manager.hasRegisterVisitError)
@@ -85,7 +85,7 @@ final class ImpactManagerTests: XCTestCase {
     func test_registerVisitSuccess_clearsPreviousRegisterVisitError() async {
         accountsProvider.result = .failure(URLError(.notConnectedToInternet))
         let failed = expectRegisterVisitToFinish()
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [failed], timeout: 1)
         XCTAssertTrue(manager.hasRegisterVisitError, "Sanity check: the first visit failed")
 
@@ -97,19 +97,19 @@ final class ImpactManagerTests: XCTestCase {
         XCTAssertFalse(manager.hasRegisterVisitError)
     }
 
-    func test_userLoggedIn_withoutAccessToken_doesNotRegisterVisit() async {
+    func test_loggedIn_withoutAccessToken_doesNotRegisterVisit() async {
         auth.accessToken = nil
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await expectNoRegisterVisit()
 
         XCTAssertTrue(accountsProvider.receivedAccessTokens.isEmpty)
     }
 
-    func test_userLoggedIn_withEmptyAccessToken_doesNotRegisterVisit() async {
+    func test_loggedIn_withEmptyAccessToken_doesNotRegisterVisit() async {
         auth.accessToken = ""
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await expectNoRegisterVisit()
 
         XCTAssertTrue(accountsProvider.receivedAccessTokens.isEmpty)
@@ -122,7 +122,7 @@ final class ImpactManagerTests: XCTestCase {
         accountsProvider.onRegisterVisit = { [auth] in auth.accessToken = "renewed-token" }
         let finished = expectRegisterVisitToFinish()
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [finished], timeout: 1)
 
         XCTAssertEqual(manager.currentLevelNumber, 3)
@@ -138,7 +138,7 @@ final class ImpactManagerTests: XCTestCase {
         let finished = expectRegisterVisitToFinish()
         finished.isInverted = true
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [finished], timeout: 0.5)
 
         XCTAssertEqual(manager.currentLevelNumber, 1)
@@ -151,7 +151,7 @@ final class ImpactManagerTests: XCTestCase {
         let finished = expectRegisterVisitToFinish()
         finished.isInverted = true
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [finished], timeout: 0.5)
 
         XCTAssertEqual(manager.currentLevelNumber, 1)
@@ -167,7 +167,7 @@ final class ImpactManagerTests: XCTestCase {
         let finished = expectRegisterVisitToFinish()
         finished.isInverted = true
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [finished], timeout: 0.5)
 
         XCTAssertEqual(manager.currentLevelNumber, 1)
@@ -185,13 +185,13 @@ final class ImpactManagerTests: XCTestCase {
         XCTAssertTrue(accountsProvider.receivedAccessTokens.isEmpty)
     }
 
-    func test_refreshSeedState_beforeAuthResolves_registersVisitOnAuthStateLoaded() async {
+    func test_refreshSeedState_beforeAuthResolves_registersVisitOnStateResolved() async {
         auth.hasResolvedAuthState = false
         manager.refreshSeedState()
         auth.hasResolvedAuthState = true
         let finished = expectRegisterVisitToFinish()
 
-        manager.handleAuthStateChange(actionType: .authStateLoaded)
+        send(.stateResolved(isLoggedIn: true))
         await fulfillment(of: [finished], timeout: 1)
 
         XCTAssertEqual(accountsProvider.receivedAccessTokens, ["token"])
@@ -203,15 +203,15 @@ final class ImpactManagerTests: XCTestCase {
         auth.hasResolvedAuthState = true
         let finished = expectRegisterVisitToFinish()
 
-        manager.handleAuthStateChange(actionType: .authStateLoaded)
-        manager.handleAuthStateChange(actionType: .authStateLoaded)
+        send(.stateResolved(isLoggedIn: true))
+        send(.stateResolved(isLoggedIn: true))
         await fulfillment(of: [finished], timeout: 1)
         await expectNoRegisterVisit()
 
         XCTAssertEqual(accountsProvider.receivedAccessTokens.count, 1)
     }
 
-    func test_refreshSeedState_beforeAuthResolves_collectsDailySeedOnAuthStateLoaded_whenLoggedOut() {
+    func test_refreshSeedState_beforeAuthResolves_collectsDailySeedOnStateResolved_whenLoggedOut() {
         auth.isLoggedIn = false
         auth.accessToken = nil
         auth.hasResolvedAuthState = false
@@ -219,12 +219,12 @@ final class ImpactManagerTests: XCTestCase {
         XCTAssertEqual(UserDefaultsSeedProgressManager.loadTotalSeedsCollected(), 0, "Sanity check: nothing collected before auth resolves")
 
         auth.hasResolvedAuthState = true
-        manager.handleAuthStateChange(actionType: .authStateLoaded)
+        send(.stateResolved(isLoggedIn: false))
 
         XCTAssertEqual(UserDefaultsSeedProgressManager.loadTotalSeedsCollected(), 1)
     }
 
-    func test_refreshSeedState_registersVisit_whenAuthResolvedWithoutNotification() async {
+    func test_refreshSeedState_registersVisit_whenAuthResolvedBeforeItsEvent() async {
         auth.hasResolvedAuthState = false
         manager.refreshSeedState()
         auth.hasResolvedAuthState = true
@@ -248,65 +248,87 @@ final class ImpactManagerTests: XCTestCase {
 
     // MARK: - One visit per auth resolution
 
-    func test_userLoggedInThenAuthStateLoaded_forSameResolution_registersOneVisit() async {
+    func test_loggedInThenStateResolved_forSameResolution_registersOneVisit() async {
         auth.hasResolvedAuthState = false
         manager.refreshSeedState()
         auth.hasResolvedAuthState = true
         let finished = expectRegisterVisitToFinish()
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
-        manager.handleAuthStateChange(actionType: .authStateLoaded)
+        send(.loggedIn)
+        send(.stateResolved(isLoggedIn: true))
         await fulfillment(of: [finished], timeout: 1)
         await expectNoRegisterVisit()
 
         XCTAssertEqual(accountsProvider.receivedAccessTokens.count, 1)
     }
 
-    func test_authStateLoadedThenUserLoggedIn_forSameResolution_registersOneVisit() async {
+    func test_stateResolvedThenLoggedIn_forSameResolution_registersOneVisit() async {
         auth.hasResolvedAuthState = false
         manager.refreshSeedState()
         auth.hasResolvedAuthState = true
         let finished = expectRegisterVisitToFinish()
 
-        manager.handleAuthStateChange(actionType: .authStateLoaded)
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.stateResolved(isLoggedIn: true))
+        send(.loggedIn)
         await fulfillment(of: [finished], timeout: 1)
         await expectNoRegisterVisit()
 
         XCTAssertEqual(accountsProvider.receivedAccessTokens.count, 1)
     }
 
-    func test_userLoggedIn_afterLogout_registersVisitAgain() async {
+    func test_loggedIn_afterLogout_registersVisitAgain() async {
         let firstLogin = expectRegisterVisitToFinish()
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [firstLogin], timeout: 1)
 
         auth.isLoggedIn = false
         auth.accessToken = nil
-        manager.handleAuthStateChange(actionType: .userLoggedOut)
+        send(.loggedOut)
 
         auth.isLoggedIn = true
         auth.accessToken = "second-token"
         let secondLogin = expectRegisterVisitToFinish()
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [secondLogin], timeout: 1)
 
         XCTAssertEqual(accountsProvider.receivedAccessTokens, ["token", "second-token"])
     }
 
-    func test_secondUserLoggedIn_withoutLogout_doesNotRegisterVisit() async {
+    func test_secondLoggedIn_withoutLogout_doesNotRegisterVisit() async {
         // Current behaviour, not a requirement: the resolution flag is only reset on logout.
         let firstLogin = expectRegisterVisitToFinish()
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await fulfillment(of: [firstLogin], timeout: 1)
 
-        manager.handleAuthStateChange(actionType: .userLoggedIn)
+        send(.loggedIn)
         await expectNoRegisterVisit()
 
         XCTAssertEqual(accountsProvider.receivedAccessTokens.count, 1)
     }
 
+    // MARK: - Seed progress
+
+    func test_seedProgressUpdate_whenLoggedOut_updatesSeedCount() async {
+        auth.isLoggedIn = false
+        auth.accessToken = nil
+        manager.loadInitialSnapshot()
+        let updated = expectation(description: "Seed count updated")
+        manager.$seedCount
+            .first { $0 == 1 }
+            .sink { _ in updated.fulfill() }
+            .store(in: &cancellables)
+
+        UserDefaultsSeedProgressManager.addSeeds(1)
+        await fulfillment(of: [updated], timeout: 2)
+    }
+
     // MARK: - Helpers
+
+    /// Builds `manager` first if needed, so it is subscribed before the event goes out.
+    private func send(_ event: AuthEvent) {
+        _ = manager
+        auth.send(event)
+    }
 
     /// `hasRegisterVisitError` is assigned on every completed visit, success or failure.
     private func expectRegisterVisitToFinish(count: Int = 1) -> XCTestExpectation {
