@@ -42,10 +42,9 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     // MARK: - Private Properties
 
-    private var authStateObserver: NSObjectProtocol?
     private var userProfileObserver: NSObjectProtocol?
-    private var seedProgressObserver: NSObjectProtocol?
     private var impactObserver: AnyCancellable?
+    private var authEventsObserver: AnyCancellable?
     /// Mirrors `EcosiaAuthenticationService.hasResolvedAuthState`: whether `isLoggedIn` is a
     /// confirmed value yet, or still the initial default from before the stored-credentials
     /// check on launch completes.
@@ -58,6 +57,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         return userProfile?.pictureURL
     }
     private let impactManager: ImpactManager
+    private let auth: AuthSessionProviderProtocol
 
     // MARK: - Singleton
 
@@ -71,21 +71,25 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
         }
     }()
 
-    public init(accountsProvider: AccountsProviderProtocol, impactManager: ImpactManager? = nil) {
-        self.impactManager = impactManager ?? ImpactManager(accountsProvider: accountsProvider)
+    public init(
+        accountsProvider: AccountsProviderProtocol,
+        auth: AuthSessionProviderProtocol = EcosiaAuthSessionProvider(),
+        impactManager: ImpactManager? = nil
+    ) {
+        self.auth = auth
+        self.impactManager = impactManager ?? ImpactManager(accountsProvider: accountsProvider, auth: auth)
         impactObserver = self.impactManager.objectWillChange.sink { [weak self] _ in
             self?.objectWillChange.send()
         }
 
-        // Observers must be registered before the synchronous reads below: EcosiaAuthenticationService
-        // resolves on its own Task, so it could otherwise finish and post its notification in the gap
-        // between reading its state here and registering to hear about later updates - permanently
-        // missing that one notification and leaving hasResolvedAuthState stuck false.
+        // Subscriptions must be in place before the synchronous reads below: EcosiaAuthenticationService
+        // resolves on its own Task, and events aren't replayed, so a resolution landing between the read
+        // and the subscription would be missed for good, leaving hasResolvedAuthState stuck false.
         setupAuthStateMonitoring()
 
         // Initialize state synchronously to prevent flickering
-        self.isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-        self.hasResolvedAuthState = EcosiaAuthenticationService.shared.hasResolvedAuthState
+        self.isLoggedIn = auth.isLoggedIn
+        self.hasResolvedAuthState = auth.hasResolvedAuthState
         self.userProfile = EcosiaAuthenticationService.shared.userProfile
         self.avatarURL = normalizedAvatarURL
         self.username = userProfile?.name
@@ -95,13 +99,7 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
 
     deinit {
         MainActor.assumeIsolated {
-            if let observer = authStateObserver {
-                NotificationCenter.default.removeObserver(observer)
-            }
             if let observer = userProfileObserver {
-                NotificationCenter.default.removeObserver(observer)
-            }
-            if let observer = seedProgressObserver {
                 NotificationCenter.default.removeObserver(observer)
             }
         }
@@ -134,14 +132,10 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     // MARK: - Private Methods
 
     private func setupAuthStateMonitoring() {
-        // Listen for auth state changes
-        authStateObserver = NotificationCenter.default.addObserver(
-            forName: .EcosiaAuthStateChanged,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            Task { [notification] in
-                await self?.handleAuthStateChange(notification)
+        // `impactManager` subscribed first, so it has handled the event by the time this mirror moves.
+        authEventsObserver = auth.authEvents.sink { [weak self] event in
+            MainActor.assumeIsolated {
+                self?.handleAuthEvent(event)
             }
         }
 
@@ -155,44 +149,24 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
                 await self?.handleUserProfileUpdate()
             }
         }
-
-        // Listen for seed progress updates (for logged-out users)
-        seedProgressObserver = NotificationCenter.default.addObserver(
-            forName: UserDefaultsSeedProgressManager.progressUpdatedNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            Task {
-                await self?.handleSeedProgressUpdate()
-            }
-        }
     }
 
-    /// Not `private`: tests call this directly on their own instance instead of posting a real
-    /// `NotificationCenter` notification, which `.shared` would also receive and react to.
-    func handleAuthStateChange(_ notification: Notification) async {
-        // Every dispatch of this notification means EcosiaAuthenticationService has a confirmed
-        // isLoggedIn value now, whether this is the launch-time resolution or a later login/logout.
-        isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+    private func handleAuthEvent(_ event: AuthEvent) {
+        // Every auth event carries a confirmed isLoggedIn, whether this is the launch-time
+        // resolution or a later login/logout.
+        isLoggedIn = event.isLoggedIn
         hasResolvedAuthState = true
-
-        impactManager.handleAuthStateChange(actionType: notification.userInfo?["actionType"] as? EcosiaAuthActionType)
     }
 
     @MainActor
     private func handleUserProfileUpdate() {
         Task { @MainActor in
-            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
+            isLoggedIn = auth.isLoggedIn
             impactManager.refreshLoggedInState()
         }
         userProfile = EcosiaAuthenticationService.shared.userProfile
         username = userProfile?.name
         avatarURL = normalizedAvatarURL
-    }
-
-    @MainActor
-    private func handleSeedProgressUpdate() {
-        impactManager.handleSeedProgressUpdate()
     }
 
     // MARK: - Public Methods
@@ -202,8 +176,8 @@ public class EcosiaAuthUIStateProvider: ObservableObject {
     public func refreshSeedState() {
         if !hasResolvedAuthState {
             // Same re-sync as `ImpactManager.refreshSeedState()`, for the published mirror.
-            isLoggedIn = EcosiaAuthenticationService.shared.isLoggedIn
-            hasResolvedAuthState = EcosiaAuthenticationService.shared.hasResolvedAuthState
+            isLoggedIn = auth.isLoggedIn
+            hasResolvedAuthState = auth.hasResolvedAuthState
         }
         impactManager.refreshSeedState()
     }

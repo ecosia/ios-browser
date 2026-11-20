@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 import Foundation
+import Combine
 import Auth0
 import WebKit
 import Common
@@ -81,6 +82,12 @@ public final class EcosiaAuthenticationService: @unchecked Sendable {
             NotificationCenter.default.post(name: .EcosiaUserProfileUpdated, object: nil)
         }
     }
+
+    /// One event per auth transition, independent of how many browser windows are registered.
+    /// Sent on the main actor; no replay.
+    public var authEvents: AnyPublisher<AuthEvent, Never> { authEventsSubject.eraseToAnyPublisher() }
+
+    private let authEventsSubject = PassthroughSubject<AuthEvent, Never>()
 
     /// For testing: Skip fetching user info from Auth0 to avoid HTTP calls
     var skipUserInfoFetch: Bool = false
@@ -526,15 +533,20 @@ extension EcosiaAuthenticationService {
             clearLoggedInImpactCacheIfNeeded(actionType: actionType)
         }
 
+        // After the cache clear, so a subscriber reloading its snapshot never reads the previous account's.
+        let event = AuthEvent(actionType: actionType, isLoggedIn: isLoggedIn)
+        await MainActor.run {
+            authEventsSubject.send(event)
+        }
+
         // Dispatch to the new state management system
         EcosiaBrowserWindowAuthManager.shared.dispatchAuthState(isLoggedIn: isLoggedIn, actionType: actionType, accountOrigin: accountOrigin)
     }
 
-    /// Clears the shared logged-in impact cache directly, here, rather than relying on a UI
-    /// observer to react to the notification dispatched above: `EcosiaBrowserWindowAuthManager`
-    /// only notifies registered browser windows, and can have none registered yet when this
-    /// resolves (e.g. very early in launch) - in which case no observer would ever hear about it
-    /// and the cache would stay stale on disk for the next launch to read.
+    /// Clears the shared logged-in impact cache directly, here, rather than leaving it to an
+    /// `authEvents` subscriber: `ImpactManager` is built lazily with the first UI, so none may be
+    /// subscribed yet when this resolves (e.g. very early in launch), and events aren't replayed -
+    /// the cache would stay stale on disk for the next launch to read.
     private func clearLoggedInImpactCacheIfNeeded(actionType: EcosiaAuthActionType) {
         switch actionType {
         case .userLoggedOut:

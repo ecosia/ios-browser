@@ -525,7 +525,42 @@ final class AuthTests: XCTestCase {
         XCTAssertNil(LoggedInImpactCache.load())
     }
 
+    func testLogout_emitsLoggedOut_afterClearingLoggedInImpactCache() async throws {
+        await setupLoggedInState()
+        LoggedInImpactCache.save(ImpactSnapshot(seedCount: 42, currentLevelNumber: 3, currentProgress: 0.5))
+        defer { LoggedInImpactCache.clear() }
+        let emitted = expectation(description: "loggedOut emitted")
+        var cacheWasClearedWhenEmitted = false
+        let subscription = auth.authEvents
+            .filter { $0 == .loggedOut }
+            .sink { _ in
+                cacheWasClearedWhenEmitted = LoggedInImpactCache.load() == nil
+                emitted.fulfill()
+            }
+        defer { subscription.cancel() }
+
+        try await auth.logout()
+        await fulfillment(of: [emitted], timeout: 1)
+
+        XCTAssertTrue(cacheWasClearedWhenEmitted)
+    }
+
     // MARK: - Retrieve Stored Credentials Tests
+
+    func testRetrieveStoredCredentials_emitsStateResolved_beforeReturning() async {
+        // Init's own retrieval finds no credentials, so its (possibly late) event is filtered out below.
+        await waitForInitCredentialRetrieval()
+        mockProvider.hasStoredCredentials = true
+        var stateResolvedCount = 0
+        let subscription = auth.authEvents
+            .filter { $0 == .stateResolved(isLoggedIn: true) }
+            .sink { _ in stateResolvedCount += 1 }
+        defer { subscription.cancel() }
+
+        await auth.retrieveStoredCredentials()
+
+        XCTAssertEqual(stateResolvedCount, 1)
+    }
 
     func testRetrieveStoredCredentials_withValidCredentials_updatesState() async {
         // Arrange
