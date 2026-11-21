@@ -942,6 +942,19 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(Analytics.fileUploadSizeKb(byteCount: 1536), 2)
     }
 
+    // MARK: - Custom App Icon
+    func test_changeAppIcon_trackingValuesAreSetCorrectly() throws {
+        User.shared.sendAnonymousUsageData = true
+
+        analyticsSpy.changeAppIcon(to: "AppIconDark")
+
+        let event = try lastStructuredEvent()
+        XCTAssertEqual(event.category, Analytics.Category.settings.rawValue)
+        XCTAssertEqual(event.action, Analytics.Action.change.rawValue)
+        XCTAssertEqual(event.label, Analytics.Label.Settings.appIcon.rawValue)
+        XCTAssertEqual(event.property, "AppIconDark")
+    }
+
     /// Multi-field payloads ride in `se_property` as a JSON string; parse it back for assertions.
     private func decodeProperty(_ event: Structured, file: StaticString = #filePath, line: UInt = #line) throws -> [String: Any] {
         let property = try XCTUnwrap(event.property, "event must carry a property payload", file: file, line: line)
