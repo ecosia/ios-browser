@@ -43,6 +43,24 @@ final class URLProviderTests: XCTestCase {
         Language.current = def
     }
 
+    // MOB-5282: Help opened the English help site on a German device.
+    func testFAQ_followsLanguage() {
+        let def = Language.current
+        defer { Language.current = def }
+
+        Language.current = .en
+        XCTAssertEqual(urlProvider.faq.absoluteString, "https://support.ecosia.org/")
+
+        Language.current = .de
+        XCTAssertEqual(urlProvider.faq.absoluteString, "https://de.support.ecosia.org/")
+
+        Language.current = .fr
+        XCTAssertEqual(urlProvider.faq.absoluteString, "https://fr.support.ecosia.org/")
+
+        Language.current = .it
+        XCTAssertEqual(urlProvider.faq.absoluteString, "https://support.ecosia.org/")
+    }
+
     // MARK: - Auth0 Configuration Tests
 
     func testAuth0Domain_production() {
