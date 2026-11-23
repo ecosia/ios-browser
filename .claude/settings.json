@@ -24,7 +24,8 @@
     "ask": [
       "Bash(sh tuist-setup.sh *)",
       "Bash(gh pr merge *)",
-      "Bash(git push --force *)",
+      "Bash(git push)",
+      "Bash(git push *)",
       "Bash(xcrun simctl erase *)",
       "Bash(xcrun simctl delete *)",
       "Artifact",
@@ -41,11 +42,10 @@
     "deny": [
       "Bash(fastlane *)",
       "Bash(bundle exec fastlane *)",
-      "Bash(./monorepo-migration/*)",
+      "Bash(*monorepo-migration/*)",
       "Bash(git filter-repo *)",
-      "Bash(./checkout.sh *)",
-      "Bash(sh ./checkout.sh *)",
-      "Bash(./update_version.sh *)",
+      "Bash(*checkout.sh*)",
+      "Bash(*update_version.sh*)",
       "Bash(gh *mozilla-mobile*)"
     ]
   }
