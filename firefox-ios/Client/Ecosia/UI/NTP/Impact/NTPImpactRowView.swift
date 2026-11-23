@@ -18,6 +18,9 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         static let padding: CGFloat = .ecosia.space._s
         static let titleSubtitleGap: CGFloat = .ecosia.space._2s
         static let imageHeight: CGFloat = 24
+        static let titleFont: UIFont = .ecosiaFamilyBrand(size: .ecosia.font._3l)
+        // Headline 4: 1.2 line height (28.8pt); the font's own line height is 28.2pt.
+        static let titleLineHeight: CGFloat = 28.8
         static let glassBorderWidth: CGFloat = 1
     }
 
@@ -70,7 +73,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .ecosiaFamilyBrand(size: .ecosia.font._3l)
+        label.font = UX.titleFont
         label.adjustsFontSizeToFitWidth = true
         label.adjustsFontForContentSizeCategory = true
         label.setContentHuggingPriority(.defaultLow, for: .horizontal)
@@ -97,7 +100,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             imageView.image = info.image
             imageContainer.isHidden = info.image == nil
             imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
-            titleLabel.text = info.title
+            setTitle(info.title)
             subtitleLabel.text = info.subtitle
         }
     }
@@ -204,7 +207,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     ) {
         imageView.image = image
         imageContainer.isHidden = image == nil
-        titleLabel.text = title
+        setTitle(title)
         subtitleLabel.text = subtitle
     }
 
@@ -222,8 +225,18 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         imageView.image = info.image
         imageContainer.isHidden = info.image == nil
         imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
-        titleLabel.text = info.title
+        setTitle(info.title)
         subtitleLabel.text = info.subtitle
+    }
+
+    private func setTitle(_ title: String) {
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.minimumLineHeight = UX.titleLineHeight
+        paragraph.maximumLineHeight = UX.titleLineHeight
+        titleLabel.attributedText = NSAttributedString(string: title, attributes: [
+            .font: UX.titleFont,
+            .paragraphStyle: paragraph
+        ])
     }
 
     // MARK: - Private Setup
