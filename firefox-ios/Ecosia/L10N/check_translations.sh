@@ -29,23 +29,24 @@ if [[ ! -f "$EN_FILE" ]]; then
 fi
 
 # Extract sorted keys from a .strings file.
-# Uses Python for reliable cross-platform handling of UTF-8 and UTF-16 (with BOM).
-# The 'utf-8-sig' codec strips a UTF-8 BOM if present; 'utf-16' auto-detects endianness from BOM.
+# Uses Python for reliable cross-platform handling of UTF-8 and UTF-16.
+# The encoding is read from the byte order mark, because Transifex writes UTF-16 files,
+# including the English source. Decoding a UTF-16 file as UTF-8 finds no keys, so the
+# check passed without comparing anything.
 extract_keys() {
   local file="$1"
-  local encoding="${2:-utf-8-sig}"
-  python3 - "$file" "$encoding" <<'EOF'
+  python3 - "$file" <<'EOF'
 import sys, re
 
 file_path = sys.argv[1]
-encoding  = sys.argv[2]
-try:
-    with open(file_path, encoding=encoding) as f:
-        content = f.read()
-except (UnicodeDecodeError, LookupError):
-    # Fallback: try plain utf-8
-    with open(file_path, encoding="utf-8", errors="replace") as f:
-        content = f.read()
+with open(file_path, "rb") as f:
+    raw = f.read()
+if raw[:2] in (b"\xff\xfe", b"\xfe\xff"):
+    content = raw.decode("utf-16")
+else:
+    content = raw.decode("utf-8-sig", errors="replace")
+# Some files carry a second byte order mark; drop it so the first key still matches.
+content = content.replace("\ufeff", "")
 
 # Match the left-hand side of each "key" = "value"; line
 keys = re.findall(r'^"[^"]*"', content, re.MULTILINE)
@@ -54,9 +55,9 @@ for k in sorted(keys):
 EOF
 }
 
-# Extract English keys (UTF-8 with optional BOM)
+# Extract English keys
 EN_KEYS_FILE=$(mktemp)
-extract_keys "$EN_FILE" "utf-8-sig" > "$EN_KEYS_FILE"
+extract_keys "$EN_FILE" > "$EN_KEYS_FILE"
 
 EN_KEY_COUNT=$(wc -l < "$EN_KEYS_FILE" | tr -d ' ')
 echo "📋 Found $EN_KEY_COUNT keys in English source file"
@@ -74,9 +75,9 @@ for LANG in "${SUPPORTED_LANGUAGES[@]}"; do
     continue
   fi
 
-  # Extract keys from the translated file (UTF-16 with BOM)
+  # Extract keys from the translated file
   LANG_KEYS_FILE=$(mktemp)
-  extract_keys "$LANG_FILE" "utf-16" > "$LANG_KEYS_FILE"
+  extract_keys "$LANG_FILE" > "$LANG_KEYS_FILE"
 
   # Find keys present in English but missing in the translation.
   # LC_ALL=C ensures byte-order comparison consistent across macOS and Linux.
