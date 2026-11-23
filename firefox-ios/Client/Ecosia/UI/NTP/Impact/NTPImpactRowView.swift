@@ -80,6 +80,14 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         return label
     }()
 
+    // Proportional digits make the live counter change width as it ticks. Reserving the width of the
+    // widest digits keeps the card and the icon still; the font shrinks only when the card runs out of room.
+    private lazy var titleWidthConstraint: NSLayoutConstraint = {
+        let constraint = titleLabel.widthAnchor.constraint(equalToConstant: 0)
+        constraint.priority = .defaultHigh - 1
+        return constraint
+    }()
+
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .footnote)
@@ -186,6 +194,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             imageView.leadingAnchor.constraint(equalTo: imageContainer.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: imageContainer.bottomAnchor),
+            titleWidthConstraint,
         ])
 
         // Hug the content vertically; the shorter card gives these up to match its neighbour.
@@ -233,11 +242,27 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         let paragraph = NSMutableParagraphStyle()
         paragraph.minimumLineHeight = UX.titleLineHeight
         paragraph.maximumLineHeight = UX.titleLineHeight
-        titleLabel.attributedText = NSAttributedString(string: title, attributes: [
-            .font: UX.titleFont,
-            .paragraphStyle: paragraph
-        ])
+        // Next to the icon the number hugs it so the gap stays the same; the reserved slack goes to the end.
+        paragraph.alignment = imageContainer.isHidden ? .center : .natural
+        let attributes: [NSAttributedString.Key: Any] = [.font: UX.titleFont, .paragraphStyle: paragraph]
+        titleLabel.attributedText = NSAttributedString(string: title, attributes: attributes)
+        titleWidthConstraint.constant = Self.stableWidth(of: title, attributes: attributes)
     }
+
+    /// Width of `title` with every digit swapped for the font's widest digit, so it only changes
+    /// when the number gains a digit.
+    private static func stableWidth(of title: String, attributes: [NSAttributedString.Key: Any]) -> CGFloat {
+        let template = String(title.map { $0.isNumber ? widestDigit : $0 })
+        return ceil((template as NSString).size(withAttributes: attributes).width)
+    }
+
+    private static let widestDigit: Character = {
+        let attributes: [NSAttributedString.Key: Any] = [.font: UX.titleFont]
+        return "0123456789".max {
+            (String($0) as NSString).size(withAttributes: attributes).width
+                < (String($1) as NSString).size(withAttributes: attributes).width
+        } ?? "0"
+    }()
 
     // MARK: - Private Setup
 
