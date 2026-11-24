@@ -404,7 +404,8 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
         titleColor = Color(colors.textPrimary)
         subtitleColor = Color(colors.textSecondary)
         chatModeIconColor = Color(colors.iconDecorative)
-        rowHighlightColor = Color(colors.buttonBackgroundTransparentActive)
+        // Native table cells (e.g. the main menu) highlight with systemGray4 when pressed.
+        rowHighlightColor = Color(UIColor.systemGray4)
         dividerColor = Color(colors.borderDecorative)
         doneBackgroundColor = Color(colors.buttonBackgroundTransparentActive)
         // Solid card behind the grouped chat-mode rows (elevation-1, like the
