@@ -33,7 +33,7 @@ enum ClimateImpactInfo: Equatable {
         case .totalTrees:
             return .localized(.treesPlantedByEcosia)
         case .totalInvested:
-            return .localized(.dedicatedToClimateAction)
+            return .localized(.fundingClimateProjects)
         }
     }
 
@@ -42,7 +42,7 @@ enum ClimateImpactInfo: Equatable {
         case .totalTrees(let value):
             return value.spelledOutString + " " + .localized(.treesPlantedByEcosia)
         case .totalInvested(let value):
-            return value.spelledOutString + " " + .localized(.dedicatedToClimateAction)
+            return value.spelledOutString + " " + .localized(.fundingClimateProjects)
         }
     }
 
@@ -58,9 +58,9 @@ enum ClimateImpactInfo: Equatable {
     var image: UIImage? {
         switch self {
         case .totalTrees:
-            return .ecosia(named: "tree")?.withRenderingMode(.alwaysTemplate)
+            return .ecosia(named: "tree-care")?.withRenderingMode(.alwaysTemplate)
         case .totalInvested:
-            return .ecosia(named: "banknote")?.withRenderingMode(.alwaysTemplate)
+            return nil
         }
     }
 

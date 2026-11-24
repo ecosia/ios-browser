@@ -701,6 +701,7 @@ class TabManagerImplementation: NSObject,
             newTab.restoreTemporaryDocumentSession(documentSession)
         }
 
+        /* Ecosia: a tab with no URL is one that never loaded a page, and a breadcrumb per such tab crowds useful context out of Sentry
         if newTab.url == nil {
             logger.log("Tab restored has empty URL",
                        level: .debug,
@@ -711,6 +712,7 @@ class TabManagerImplementation: NSObject,
                        ]
             )
         }
+         */
 
         // Restore screenshot
         restoreScreenshot(tab: newTab)
@@ -818,11 +820,13 @@ class TabManagerImplementation: NSObject,
 
         let tabData = tabsToSave.map { tab in
             let tabId =  UUID(uuidString: tab.tabUUID) ?? UUID()
+            /* Ecosia: a tab with no URL is one that never loaded a page, and a breadcrumb per such tab on every save crowds useful context out of Sentry
             if tab.url == nil {
                 logger.log("Tab has empty tab.URL for saving for tab id \(tabId). It was last used \(Date.fromTimestamp(tab.lastExecutedTime))",
                            level: .debug,
                            category: .tabs)
             }
+             */
 
             return TabData(id: tabId,
                            title: tab.lastTitle,
