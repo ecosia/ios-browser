@@ -240,7 +240,9 @@ rbenv install
 gem install bundler:2.7.2
 bundle install
 ```
+
 Check with `ruby -v`: it should print the version in `.ruby-version`. If it prints a different version, rbenv isn't active in your shell.
+
 Run `bundle exec fastlane match --readonly` to add certs and profiles to your system. You can append  `-p "keychain password"` to avoid keychain prompts during the process. The passphrase to decrypt the repo is in Bitwarden under the name: `iOS Fastlane match passphrase`.
 
 **Command:**
