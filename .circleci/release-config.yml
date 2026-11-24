@@ -40,6 +40,24 @@ macos_common: &macos_common
     xcode: "26.4.0"
   resource_class: m4pro.medium
 
+commands:
+  switch-to-image-ruby:
+    description: Use a Ruby 4.0 release preinstalled on the macOS image
+    steps:
+      - macos/switch-ruby:
+          # The orb picks the first installed version containing this text, so the trailing dot stops
+          # "4.0" from also matching a Ruby such as 3.4.0.
+          version: "4.0."
+      # The committed .ruby-version names an exact patch release that the image may not have, and
+      # rbenv prefers it over the global version. RBENV_VERSION overrides it, so later steps keep
+      # the image's Ruby instead of failing with "version is not installed".
+      - run:
+          name: Keep the image's Ruby over .ruby-version
+          command: |
+            if command -v rbenv >/dev/null 2>&1; then
+              echo "export RBENV_VERSION=$(rbenv global)" >> "$BASH_ENV"
+            fi
+
 jobs:
   execute-critical-health-checks-ios:
     docker:
@@ -109,8 +127,7 @@ jobs:
               echo "🚀 PRODUCTION MODE: Will upload to TestFlight"
               echo "export TESTFLIGHT_DRY_RUN=false" >> $BASH_ENV
             fi
-      - macos/switch-ruby:
-          version: "3.2"
+      - switch-to-image-ruby
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run:
