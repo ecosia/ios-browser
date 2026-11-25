@@ -175,9 +175,8 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
             glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            // Centred so the shorter card keeps its content in the middle when stretched to its neighbour's height.
-            labelsStack.centerYAnchor.constraint(equalTo: centerYAnchor),
-            labelsStack.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: UX.padding),
+            // Top-aligned so both counters line up when the shorter card is stretched to its neighbour's height.
+            labelsStack.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
             labelsStack.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -UX.padding),
             labelsStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             labelsStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
@@ -197,13 +196,16 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             titleWidthConstraint,
         ])
 
-        // Hug the content vertically; the shorter card gives these up to match its neighbour.
-        let hugTop = labelsStack.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding)
-        let hugBottom = labelsStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding)
-        [hugTop, hugBottom].forEach {
-            $0.priority = .defaultHigh
-            $0.isActive = true
+        // Hug the content vertically; the shorter card gives this up to match its neighbour.
+        // The labels must not stretch instead, or the number would re-centre inside a taller label.
+        [titleLabel, subtitleLabel].forEach {
+            $0.setContentHuggingPriority(.defaultHigh + 1, for: .vertical)
+            $0.setContentCompressionResistancePriority(.required, for: .vertical)
         }
+        titleRow.heightAnchor.constraint(equalTo: titleLabel.heightAnchor).isActive = true
+        let hugBottom = labelsStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding)
+        hugBottom.priority = .defaultHigh
+        hugBottom.isActive = true
     }
 
     // MARK: - ThemeApplicable
