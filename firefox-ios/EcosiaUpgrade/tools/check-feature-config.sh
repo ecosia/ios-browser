@@ -61,6 +61,12 @@ decisions=(
   "AddressBarGestureToOpenTabTrayFeature enabledClosetab true Address bar swipe on"
   "AddressBarGestureToOpenTabTrayFeature enabledSwipe false Address bar swipe on (interactive variant)"
   "ToolbarRefactorFeature searchTermInAddressBar true Search term in address bar"
+  "ReportBrokenSiteFeature enabled false Report Broken Site out"
+  "PrivacyDashboardFeature enabled false Privacy dashboard out"
+  "MultiDayOnboardingFeature useMultiDayOnboarding false Multi-day onboarding out"
+  "SearchConfigV3Feature enabled false Search config v3 out"
+  "CheckForReinstallsFeature enabled false Reinstall check out"
+  "WallpaperEngagementSheetFeature enabled false Wallpaper engagement sheet out"
 )
 
 out=$(mktemp -d)

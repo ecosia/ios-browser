@@ -10,9 +10,15 @@ features:
         type: Boolean
         default: true
     defaults:
+      # Ecosia: Report Broken Site is off on every channel, with `release` listed explicitly. The report is a
+      # Glean ping to Mozilla (`WebCompatReportRecorder`), and Ecosia's Glean never uploads, so the row would
+      # send nothing (inventory 159.1, MOB-5043).
+      - channel: release
+        value:
+          enabled: false
       - channel: beta
         value:
-          enabled: true
+          enabled: false
       - channel: developer
         value:
-          enabled: true
+          enabled: false

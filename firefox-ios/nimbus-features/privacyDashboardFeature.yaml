@@ -10,9 +10,14 @@ features:
         type: Boolean
         default: false
     defaults:
+      # Ecosia: The homepage privacy dashboard is off on every channel, with `release` listed explicitly.
+      # Ecosia's homepage has its own impact and privacy content (inventory 159.1, MOB-5043).
+      - channel: release
+        value:
+          enabled: false
       - channel: beta
         value:
           enabled: false
       - channel: developer
         value:
-          enabled: true
+          enabled: false
