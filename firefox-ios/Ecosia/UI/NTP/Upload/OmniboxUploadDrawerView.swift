@@ -15,9 +15,7 @@ private enum OmniboxUploadDrawerUX {
     static let chatModeIconSize: CGFloat = 20
     static let doneButtonSize: CGFloat = 44
     static let doneGlyphSize: CGFloat = 17
-    static let sparkleSize: CGFloat = 16
     static let footerHeight: CGFloat = 44
-    static let footerCornerRadius: CGFloat = 16
     /// Chat-mode rows are grouped in one rounded solid card (iOS inset-grouped
     /// style, matching the search-suggestions list).
     static let chatModeListCornerRadius: CGFloat = .ecosia.borderRadius._1l
@@ -158,18 +156,15 @@ struct OmniboxUploadDrawerView: View {
                     chatModeList
                 }
             }
-            if ChatModesFeatureFlag.isEnabled, isEcosiaProvider {
-                // The banner is the last item in the flow, 16dp below the list.
-                footer
-                    .padding(.top, .ecosia.space._m)
+            if ChatModesFeatureFlag.isEnabled, isEcosiaProvider, !isAuthenticated {
+                signInFooter
             }
         }
         .padding(.horizontal, .ecosia.space._m)
         .padding(.top, .ecosia.space._2l)
         .padding(.bottom, .ecosia.space._2l)
         .frame(maxWidth: .infinity)
-        // Measure the intrinsic content height so the sheet detent fits exactly,
-        // keeping the banner at the bottom without a floating gap.
+        // Measure the intrinsic content height so the sheet detent fits exactly.
         .background(
             GeometryReader { proxy in
                 Color.clear.preference(key: OmniboxDrawerHeightKey.self, value: proxy.size.height)
@@ -341,41 +336,7 @@ struct OmniboxUploadDrawerView: View {
         .accessibilityIdentifier(mode.accessibilityIdentifier)
     }
 
-    // MARK: - Footer
-
-    /// Signed-in users get the "redirect to AI Chat" notice; signed-out users
-    /// get a sign-in disclaimer with a CTA that unlocks the advanced modes.
-    @ViewBuilder
-    private var footer: some View {
-        if isAuthenticated {
-            redirectNoticeFooter
-        } else {
-            signInFooter
-        }
-    }
-
-    private var redirectNoticeFooter: some View {
-        HStack(spacing: .ecosia.space._1s) {
-            Text(String.localized(.aiToolsRedirectNotice))
-                .font(.footnote)
-                .foregroundColor(theme.subtitleColor)
-            Spacer(minLength: 0)
-            Image.ecosia("ai-sparkle")
-                .renderingMode(.template)
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(theme.iconTintColor)
-                .frame(width: UX.sparkleSize, height: UX.sparkleSize)
-        }
-        .padding(.horizontal, .ecosia.space._m)
-        .frame(height: UX.footerHeight)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: UX.footerCornerRadius)
-                .fill(theme.footerBackgroundColor)
-        )
-        .accessibilityElement(children: .combine)
-    }
+    // MARK: - Sign-in footer
 
     private var signInFooter: some View {
         HStack(alignment: .center, spacing: .ecosia.space._m) {
@@ -384,10 +345,13 @@ struct OmniboxUploadDrawerView: View {
                 .foregroundColor(theme.titleColor)
                 .multilineTextAlignment(.leading)
                 .fixedSize(horizontal: false, vertical: true)
-                .padding(.leading, .ecosia.space._1s)
             Spacer(minLength: 0)
             signInButton
         }
+        // Leading inset matches the chat-mode rows so the footer lines up with their text.
+        .padding(.leading, UX.chatModeRowHorizontalPadding)
+        .padding(.trailing, .ecosia.space._s)
+        .padding(.vertical, .ecosia.space._s)
         .frame(maxWidth: .infinity)
     }
 
@@ -425,7 +389,6 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
     var chatModeIconColor = Color.gray
     var rowHighlightColor = Color.gray.opacity(0.2)
     var dividerColor = Color.gray.opacity(0.2)
-    var footerBackgroundColor = Color.white
     var doneBackgroundColor = Color.gray.opacity(0.2)
     var listBackgroundColor = Color.white
     var selectedCheckmarkColor = Color.green
@@ -441,9 +404,9 @@ struct OmniboxUploadDrawerViewTheme: EcosiaThemeable {
         titleColor = Color(colors.textPrimary)
         subtitleColor = Color(colors.textSecondary)
         chatModeIconColor = Color(colors.iconDecorative)
-        rowHighlightColor = Color(colors.buttonBackgroundTransparentActive)
+        // Native table cells (e.g. the main menu) highlight with systemGray4 when pressed.
+        rowHighlightColor = Color(UIColor.systemGray4)
         dividerColor = Color(colors.borderDecorative)
-        footerBackgroundColor = Color(colors.backgroundTertiary)
         doneBackgroundColor = Color(colors.buttonBackgroundTransparentActive)
         // Solid card behind the grouped chat-mode rows (elevation-1, like the
         // upload tiles and iOS inset-grouped cells).
