@@ -12,8 +12,6 @@ let trackingProtectionTestUrl = "https://senglehardt.com/test/trackingprotection
 // Selectors
 let buttonSettings = "Settings"
 let buttonDone = "Done"
-let reloadButton = "TabLocationView.reloadButton"
-let reloadWithWithoutProtectionButton = "shieldSlashLarge"
 let secureTrackingProtectionOnLabel = "Privacy & Security Settings"
 let secureTrackingProtectionOffLabel = "Secure connection. Enhanced Tracking Protection is off."
 
@@ -21,6 +19,7 @@ class TrackingProtectionTests: BaseTestCase {
     var browserScreen: BrowserScreen!
     var trackingProtectionScreen: TrackingProtectionScreen!
     var settingsScreen: SettingScreen!
+    var toolbarScreen: ToolbarScreen!
 
     /// Most tests start in Tracking Protection settings and launch the app themselves through a
     /// Settings deeplink, so the app is not launched here.
@@ -42,25 +41,7 @@ class TrackingProtectionTests: BaseTestCase {
     }
 
     private func reloadWithWithoutTrackingProtection(label: String) {
-        mozWaitForElementToExist(app.buttons.element(matching: .button, identifier: reloadButton), timeout: 10)
-        app.buttons.element(matching: .button, identifier: reloadButton).press(forDuration: 3)
-        if label == "Without Tracking Protection" {
-            mozWaitForElementToExist(app.buttons[reloadWithWithoutProtectionButton], timeout: 5)
-            XCTAssertEqual(
-                "Reload Without Tracking Protection",
-                app.buttons.element(matching: .any, identifier: reloadWithWithoutProtectionButton).label
-            )
-        } else {
-            mozWaitForElementToExist(app.buttons[reloadWithWithoutProtectionButton], timeout: 5)
-            XCTAssertEqual(
-                "Reload With Tracking Protection",
-                app.buttons.element(
-                    matching: .any,
-                    identifier: reloadWithWithoutProtectionButton
-                ).label
-            )
-        }
-        app.buttons.element(matching: .any, identifier: reloadWithWithoutProtectionButton).waitAndTap()
+        toolbarScreen.reloadTrackingProtectionFromReloadMenu(expectedLabel: label)
         waitUntilPageLoad()
         mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon], timeout: 5)
     }
@@ -138,7 +119,7 @@ class TrackingProtectionTests: BaseTestCase {
     func testTrackingProtectionButtonMenu() {
         browserScreen = BrowserScreen(app: app)
         trackingProtectionScreen = TrackingProtectionScreen(app: app)
-        let toolbarScreen = ToolbarScreen(app: app)
+        toolbarScreen = ToolbarScreen(app: app)
         let mainMenu = MainMenuScreen(app: app)
         let sslScreen = SSLWarningScreen(app: app)
 
@@ -168,6 +149,74 @@ class TrackingProtectionTests: BaseTestCase {
         sslScreen.tapVisitSiteAnyway()
         sslScreen.waitForPageToLoadAfterBypass()
         browserScreen.assertAddressBar_LockIconOffExist()
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/view/3167401
+    // Regression
+    func testSecureSiteConnectionElements() {
+        // Step 1: the secure page is opened
+        openPageForConnectionPanel("https://www.mozilla.org/")
+        browserScreen.assertAddressBar_LockIconExist()
+
+        // Step 2: the panel shows the site, the secure connection, the ETP switch and Privacy settings
+        assertConnectionPanelAndProtectionSettings(domain: "mozilla.org", secure: true)
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/view/3167402
+    // Regression
+    func testInsecureSiteConnectionElements() {
+        // Step 1: the insecure (plain HTTP) page is opened
+        openPageForConnectionPanel(path(forTestPage: TestPages.mozillaBook))
+        XCTAssertTrue(browserScreen.bookOfMozillaPageContentExists(), "The website did not load")
+
+        // Step 2: the panel shows the site, the insecure connection, the ETP switch and Privacy settings
+        assertConnectionPanelAndProtectionSettings(domain: "localhost", secure: false)
+    }
+
+    // https://mozilla.testrail.io/index.php?/cases/view/3167403
+    // Regression
+    func testConnectionDisplayedAsSecure() {
+        // Step 1: the secure page loads with the secure connection shield
+        openPageForConnectionPanel("https://www.mozilla.org/")
+        browserScreen.assertAddressBar_LockIconExist()
+
+        // Step 2: after switching to Strict and going back, the connection is still shown as secure
+        openConnectionPanel()
+        trackingProtectionScreen.tapPrivacySettings()
+        trackingProtectionScreen.selectStrictProtectionLevel()
+        trackingProtectionScreen.closeTrackingProtectionSettings()
+        waitUntilPageLoad()
+        browserScreen.assertAddressBar_LockIconExist()
+        openConnectionPanel()
+        trackingProtectionScreen.assertPanelConnectionIs(secure: true)
+        trackingProtectionScreen.closePanel()
+    }
+
+    private func openPageForConnectionPanel(_ url: String) {
+        browserScreen = BrowserScreen(app: app)
+        trackingProtectionScreen = TrackingProtectionScreen(app: app)
+        toolbarScreen = ToolbarScreen(app: app)
+
+        app.launch()
+        navigator.nowAt(NewTabScreen)
+        navigator.openURL(url)
+        waitUntilPageLoad()
+        waitForTabsButton()
+    }
+
+    private func openConnectionPanel() {
+        toolbarScreen.tapSettingsMenuButton()
+        MainMenuScreen(app: app).tapSiteProtections()
+    }
+
+    private func assertConnectionPanelAndProtectionSettings(domain: String, secure: Bool) {
+        openConnectionPanel()
+        trackingProtectionScreen.assertPanelHeader(domain: domain)
+        trackingProtectionScreen.assertPanelConnectionIs(secure: secure)
+        trackingProtectionScreen.assertPanelTrackingProtectionSwitchValue(isOn: true)
+        trackingProtectionScreen.tapPrivacySettings()
+        trackingProtectionScreen.assertTrackingProtectionSettingsOpenedFromPanel()
+        trackingProtectionScreen.closeTrackingProtectionSettings()
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2318742
@@ -202,6 +251,7 @@ class TrackingProtectionTests: BaseTestCase {
     // https://mozilla.testrail.io/index.php?/cases/view/2307063
     // Regression
     func testStrictTrackingProtection() {
+        toolbarScreen = ToolbarScreen(app: app)
         launchIntoSettings()
         navigator.goto(TrackingProtectionSettings)
         // Enable Strict Protection Level
@@ -217,13 +267,13 @@ class TrackingProtectionTests: BaseTestCase {
                 secureTrackingProtectionOnLabel
             )
             navigator.nowAt(BrowserTab)
-            reloadWithWithoutTrackingProtection(label: "Without Tracking Protection")
+            reloadWithWithoutTrackingProtection(label: .TrackingProtectionReloadWithout)
             mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon], timeout: 5)
             XCTAssertEqual(
                 app.buttons[AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon].label,
                 secureTrackingProtectionOnLabel
             )
-            reloadWithWithoutTrackingProtection(label: "With Tracking Protection")
+            reloadWithWithoutTrackingProtection(label: .TrackingProtectionReloadWith)
             mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon], timeout: 5)
             XCTAssertEqual(
                 app.buttons[AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon].label,
@@ -236,13 +286,13 @@ class TrackingProtectionTests: BaseTestCase {
                 secureTrackingProtectionOnLabel
             )
             navigator.nowAt(BrowserTab)
-            reloadWithWithoutTrackingProtection(label: "With Tracking Protection")
+            reloadWithWithoutTrackingProtection(label: .TrackingProtectionReloadWith)
             mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon], timeout: 5)
             XCTAssertEqual(
                 app.buttons[AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon].label,
                 secureTrackingProtectionOnLabel
             )
-            reloadWithWithoutTrackingProtection(label: "Without Tracking Protection")
+            reloadWithWithoutTrackingProtection(label: .TrackingProtectionReloadWithout)
             mozWaitForElementToExist(app.buttons[AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon], timeout: 5)
             XCTAssertEqual(
                 app.buttons[AccessibilityIdentifiers.Browser.AddressToolbar.lockIcon].label,

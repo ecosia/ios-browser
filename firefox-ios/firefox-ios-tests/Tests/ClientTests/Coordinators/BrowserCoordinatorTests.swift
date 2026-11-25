@@ -410,6 +410,32 @@ final class BrowserCoordinatorTests: XCTestCase,
         XCTAssertEqual(mockTemporaryDocument.downloadAsyncCalled, 1)
     }
 
+    // MARK: - shareableFilename
+
+    func testShareableFilename_urlWithExtension_usesLastPathComponent() {
+        let url = URL(string: "https://example.com/docs/report.pdf")!
+
+        XCTAssertEqual(BrowserCoordinator.shareableFilename(for: url, mimeType: nil), "report.pdf")
+    }
+
+    func testShareableFilename_percentEncodedTraversal_keepsOnlyLastComponent() {
+        let url = URL(string: "https://example.com/docs/..%2F..%2Fescaped.pdf")!
+
+        XCTAssertEqual(BrowserCoordinator.shareableFilename(for: url, mimeType: nil), "escaped.pdf")
+    }
+
+    func testShareableFilename_traversalWithoutExtension_fallsBackToMimeType() {
+        let url = URL(string: "https://example.com/docs/..%2F..")!
+
+        XCTAssertEqual(BrowserCoordinator.shareableFilename(for: url, mimeType: "application/pdf"), "document.pdf")
+    }
+
+    func testShareableFilename_noExtensionAndNoMimeType_fallsBackToDocument() {
+        let url = URL(string: "https://example.com/docs/view")!
+
+        XCTAssertEqual(BrowserCoordinator.shareableFilename(for: url, mimeType: nil), "document")
+    }
+
     func testShowCreditCardAutofill_addsCredentialAutofillCoordinator() {
         let subject = createSubject()
 
@@ -1016,6 +1042,20 @@ final class BrowserCoordinatorTests: XCTestCase,
 
     // MARK: - Search route
 
+    func testHandleSearchQuery_withWidgetSearchOption_passesOptionToBrowser() {
+        let subject = createSubject()
+        subject.browserViewController = browserViewController
+        subject.browserHasLoaded()
+
+        let result = testCanHandleAndHandle(
+            subject,
+            route: .searchQuery(query: "test query", isPrivate: false, options: [.widgetSearch])
+        )
+
+        XCTAssertTrue(result)
+        XCTAssertEqual(browserViewController.handleQueryOptions, [.widgetSearch])
+    }
+
     func testHandleSearchQuery_returnsTrue() {
         let query = "test query"
         let subject = createSubject()
@@ -1373,6 +1413,25 @@ final class BrowserCoordinatorTests: XCTestCase,
 
         XCTAssertEqual(mockRouter.dismissCalled, 1)
         XCTAssertTrue(subject.childCoordinators.isEmpty)
+    }
+
+    // MARK: - WallpaperEngagementCoordinatorDelegate
+
+    func testWallpaperEngagementDidTapCTA_removesChildAndShowsWallpaperSettings() {
+        let subject = createSubject()
+        let wallpaperCoordinator = WallpaperEngagementCoordinator(
+            router: mockRouter,
+            windowUUID: windowUUID,
+            tabManager: tabManager,
+            prefs: profile.prefs
+        )
+        subject.add(child: wallpaperCoordinator)
+
+        subject.wallpaperEngagementDidTapCTA(from: wallpaperCoordinator)
+
+        XCTAssertEqual(subject.childCoordinators.count, 1)
+        XCTAssertTrue(subject.childCoordinators.first is SettingsCoordinator)
+        XCTAssertEqual(mockRouter.presentCalled, 1)
     }
 
     // MARK: - Report broken site

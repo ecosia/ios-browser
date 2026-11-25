@@ -28,6 +28,9 @@ final class ToolbarScreen {
     private var summarizeButton: XCUIElement { sel.SUMMARIZE_BUTTON.element(in: app) }
     private var summarizeContextualHint: XCUIElement { sel.SUMMARIZE_CONTEXTUAL_HINT.element(in: app) }
     private var googleLensTipTitle: XCUIElement { sel.GOOGLE_LENS_TIP_TITLE.element(in: app) }
+    private var googleLensButton: XCUIElement { sel.GOOGLE_LENS_BUTTON.element(in: app) }
+    private var googleLensTakePhotoAction: XCUIElement { sel.GOOGLE_LENS_TAKE_PHOTO_ACTION.element(in: app) }
+    private var googleLensPhotoLibraryAction: XCUIElement { sel.GOOGLE_LENS_PHOTO_LIBRARY_ACTION.element(in: app) }
 
     func assertSettingsButtonExists(timeout: TimeInterval = TIMEOUT) {
         let settingsButton = sel.SETTINGS_MENU_BUTTON.element(in: app)
@@ -155,14 +158,33 @@ final class ToolbarScreen {
         sel.RELOAD_BUTTON.element(in: app).waitAndTap()
     }
 
-    /// Long-presses Reload and taps the first menu row (Request Desktop/Mobile Site), retrying once.
+    /// Long-presses Reload and taps Request Desktop/Mobile Site, retrying the press once.
     /// Content blocker reloads swap Reload for Stop mid-press: https://github.com/mozilla-mobile/firefox-ios/issues/35933
     func toggleRequestDesktopSiteFromReloadMenu() {
         let requestDesktopSiteMenuItem = ContextMenuSelectors().REQUEST_DESKTOP_SITE.element(in: app)
+        longPressReloadUntilMenuItemExists(requestDesktopSiteMenuItem)
+        requestDesktopSiteMenuItem.waitAndTap()
+    }
+
+    /// Long-presses Reload and taps Reload With/Without Tracking Protection, retrying the press once.
+    /// The safelist toggle reloads the tab seconds later, mid-press: https://github.com/mozilla-mobile/firefox-ios/issues/35933
+    func reloadTrackingProtectionFromReloadMenu(expectedLabel: String) {
+        let menuItem = ContextMenuSelectors().RELOAD_TRACKING_PROTECTION.element(in: app)
+        longPressReloadUntilMenuItemExists(menuItem)
+        XCTAssertEqual(menuItem.label, expectedLabel)
+        menuItem.waitAndTap()
+    }
+
+    /// Long-presses Reload until `menuItem` shows, pressing a second time if the first press opened no menu.
+    private func longPressReloadUntilMenuItemExists(_ menuItem: XCUIElement) {
         let reloadButton = sel.RELOAD_BUTTON.element(in: app)
         BaseTestCase().mozWaitForElementToExist(reloadButton)
         reloadButton.press(forDuration: 1)
-        requestDesktopSiteMenuItem.waitAndTap()
+        if !BaseTestCase().mozWaitForElementToExist(menuItem, timeout: TIMEOUT_PICKER_PROBE, failOnTimeout: false) {
+            BaseTestCase().mozWaitForElementToExist(reloadButton)
+            reloadButton.press(forDuration: 1)
+        }
+        BaseTestCase().mozWaitForElementToExist(menuItem)
     }
 
     func getToolbarSettingsMenuButtonElement() -> XCUIElement {
@@ -209,6 +231,31 @@ final class ToolbarScreen {
     func assertSummarizeContextualHintIsDisplayed(timeout: TimeInterval = TIMEOUT_LONG) {
         BaseTestCase().mozWaitForElementToExist(summarizeContextualHint, timeout: timeout)
         XCTAssertNotNil(closeButton(nextTo: summarizeContextualHint), "The contextual hint has no \"x\" button")
+    }
+
+    func assertGoogleLensButtonExists(timeout: TimeInterval = TIMEOUT) {
+        BaseTestCase().mozWaitForElementToExist(googleLensButton, timeout: timeout)
+    }
+
+    func assertGoogleLensButtonDoesNotExist(timeout: TimeInterval = TIMEOUT) {
+        BaseTestCase().mozWaitForElementToNotExist(googleLensButton, timeout: timeout)
+    }
+
+    func tapGoogleLensButton() {
+        googleLensButton.waitAndTap()
+    }
+
+    /// The rows are counted through the identifier prefix they share, so an extra Lens action fails the count.
+    func assertGoogleLensMenuShowsOnlyPhotoOptions() {
+        let titles = String.AddressToolbar.GoogleLens.ContextMenu.self
+        BaseTestCase().waitForElementsToExist([googleLensPhotoLibraryAction, googleLensTakePhotoAction])
+        XCTAssertEqual(googleLensPhotoLibraryAction.label, titles.PhotoLibraryActionTitle)
+        XCTAssertEqual(googleLensTakePhotoAction.label, titles.TakePhotoActionTitle)
+        XCTAssertEqual(
+            sel.GOOGLE_LENS_MENU_ACTIONS.query(in: app).count,
+            2,
+            "The Google Lens menu should have exactly two rows"
+        )
     }
 
     /// TipKit shows this tip once per simulator, the first time the address bar is focused, and it stays
@@ -268,6 +315,69 @@ final class ToolbarScreen {
         case .active:
             translateActiveButton.waitAndTap()
         }
+    }
+
+    /// Share and translate are the address bar's leading page actions, laid out side by side in that order.
+    func assertTranslateButtonIsNextToShareButton() {
+        BaseTestCase().waitForElementsToExist([shareButton, translateButton])
+        XCTAssertTrue(translateButton.isRightOf(rightElement: shareButton), "Translate button should be right of share")
+        XCTAssertEqual(
+            shareButton.frame.midY,
+            translateButton.frame.midY,
+            accuracy: 2,
+            "Translate and share buttons should be on the same row"
+        )
+    }
+
+    func longPressTranslateButton(with mode: TranslationButtonType = .inactive, duration: TimeInterval = 1.5) {
+        let button: XCUIElement
+        switch mode {
+        case .inactive:
+            button = translateButton
+        case .loading:
+            button = translateLoadingButton
+        case .active:
+            button = translateActiveButton
+        }
+        BaseTestCase().mozWaitForElementToExist(button)
+        button.press(forDuration: duration)
+    }
+
+    /// Checks the picker lists exactly one target language between its title and "Preferred Languages…".
+    func assertTranslationLanguagePickerShowsSingleLanguage(_ languageOption: String) {
+        let title = sel.TRANSLATE_LANGUAGE_PICKER_TITLE.value
+        waitForTranslationLanguagePicker(titled: title)
+        BaseTestCase().waitForElementsToExist([
+            sel.translateLanguagePickerOption(languageOption, inPickerTitled: title).element(in: app),
+            sel.TRANSLATE_PREFERRED_LANGUAGES_OPTION.element(in: app)
+        ])
+        let languageOptions = sel.translateLanguagePickerLanguageOptions(inPickerTitled: title).query(in: app)
+        XCTAssertEqual(languageOptions.count, 1, "Expected only '\(languageOption)' as a target language")
+    }
+
+    /// Checks the picker shown for a translated page: "Page Translated to …", "Show Original",
+    /// the remaining preferred languages and "Preferred Languages…".
+    func assertActiveTranslationLanguagePicker(translatedTo language: String, otherLanguages: [String]) {
+        let title = String(format: String.Translations.LanguagePicker.PageTranslatedTitle, language)
+        waitForTranslationLanguagePicker(titled: title)
+        let options = [sel.TRANSLATE_SHOW_ORIGINAL_OPTION.value] + otherLanguages
+            + [sel.TRANSLATE_PREFERRED_LANGUAGES_OPTION.value]
+        BaseTestCase().waitForElementsToExist(
+            options.map { sel.translateLanguagePickerOption($0, inPickerTitled: title).element(in: app) }
+        )
+    }
+
+    func tapShowOriginal() {
+        sel.TRANSLATE_SHOW_ORIGINAL_OPTION.element(in: app).waitAndTap()
+    }
+
+    func assertTranslationLanguagePickerIsDismissed() {
+        BaseTestCase().mozWaitForElementToNotExist(sel.TRANSLATE_PREFERRED_LANGUAGES_OPTION.element(in: app))
+    }
+
+    /// The picker's element type differs on iOS 17 (see actionSheet(titled:)), so wait for its title before scoping to it.
+    private func waitForTranslationLanguagePicker(titled title: String) {
+        BaseTestCase().mozWaitForElementToExist(sel.translateLanguagePickerTitle(title).element(in: app))
     }
 
     /// Selects English in the translation language picker action sheet when it is shown.

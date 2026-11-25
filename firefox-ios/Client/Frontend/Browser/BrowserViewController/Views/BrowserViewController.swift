@@ -106,6 +106,9 @@ class BrowserViewController: UIViewController,
     /// position (`overKeyboardContainer.top` for bottom bar, `view.bottom` for top bar)
     private var searchControllerBottomConstraint: NSLayoutConstraint?
     var searchSessionState: SearchSessionState?
+    /// The SAP to associate with the next address bar search, for search-config-v3.
+    /// Set when a widget search opens the address bar (cleared when editing session ends)
+    private var pendingSearchAccessPoint: SearchAccessPoint?
     var searchLoader: SearchLoader?
     var iOS15FindInPageBar: FindInPageBar? /* TODO: Remove once we drop iOS 15 support */
     var zoomPageBar: ZoomPageBar?
@@ -312,7 +315,8 @@ class BrowserViewController: UIViewController,
 
     // MARK: Telemetry Variables
 
-    private(set) lazy var searchTelemetry = SearchTelemetry(tabManager: tabManager)
+    private(set) lazy var searchTelemetry = SearchTelemetry(tabManager: tabManager,
+                                                            searchEnginesManager: searchEnginesManager)
     private(set) lazy var webviewTelemetry = WebViewLoadMeasurementTelemetry()
     private(set) lazy var tabsTelemetry = TabsTelemetry()
 
@@ -419,6 +423,11 @@ class BrowserViewController: UIViewController,
     let tabManager: TabManager
     var googleLensSearches = [TabUUID: GoogleLensSearchState]()
     let googleLensTelemetry: GoogleLensTelemetry
+    /// The origin captured when a web context menu was shown, kept until its matching dismiss is
+    /// reported. `ContextMenuHelper.elements` can be overwritten by the JS bridge while a menu is open,
+    /// so `dismissed` telemetry must reuse this instead of re-deriving it from that mutable state. See FXIOS-14918.
+    var pendingContextMenuTelemetry: (url: URL, origin: ContextMenuTelemetry.OriginExtra)?
+    let contextMenuTelemetry: ContextMenuTelemetry
     let crashTracker: CrashTracker
     let ratingPromptManager: RatingPromptManager
     private(set) var browserViewControllerState: BrowserViewControllerState?
@@ -509,6 +518,7 @@ class BrowserViewController: UIViewController,
         self.appAuthenticator = appAuthenticator
         self.searchEnginesManager = searchEnginesManager
         self.googleLensTelemetry = GoogleLensTelemetry(gleanWrapper: gleanWrapper)
+        self.contextMenuTelemetry = ContextMenuTelemetry(gleanWrapper: gleanWrapper)
         self.bookmarksSaver = DefaultBookmarksSaver(profile: profile)
         self.bookmarksHandler = profile.places
         self.zoomManager = ZoomPageManager(windowUUID: tabManager.windowUUID)
@@ -548,7 +558,9 @@ class BrowserViewController: UIViewController,
     }
 
     override var prefersStatusBarHidden: Bool {
-        return false
+        // Hiding status bar in unfolded Duo lets have the minimized address bar smaller.
+        // This UX behavior matches Safari
+        return traitCollection.duoExpanded && !scrollController.isToolbarFullyExpanded
     }
 
     #if compiler(>=6.4)
@@ -794,6 +806,13 @@ class BrowserViewController: UIViewController,
 
     func toolbarDisplayStateDidChange() {
         updateToolbarTranslucency()
+        updateStatusBarVisibility()
+    }
+
+    func updateStatusBarVisibility() {
+        UIView.animate(withDuration: 0.2) {
+            self.setNeedsStatusBarAppearanceUpdate()
+        }
     }
 
     /// Updates the toolbar's translucency effects.
@@ -1091,8 +1110,9 @@ class BrowserViewController: UIViewController,
             handleAutoTranslatePrompt(state: state)
         }
 
-        if let readerMode = tabManager.selectedTab?.getContentScript(name: ReaderMode.name()) as? ReaderMode {
-            if readerMode.state == .active && !contentContainer.hasHomepage {
+        if let selectedTab = tabManager.selectedTab,
+           selectedTab.getContentScript(name: ReaderMode.name()) is ReaderMode {
+            if isShowingReaderMode(tab: selectedTab) && !contentContainer.hasHomepage {
                 showReaderModeBar(animated: false)
             } else {
                 hideReaderModeBar(animated: false)
@@ -1436,13 +1456,8 @@ class BrowserViewController: UIViewController,
         updateBlurViews()
         addOrUpdateMaskViewIfNeeded()
 
-        store.dispatch(
-            ToolbarAction(
-                isTranslucent: toolbarHelper.shouldBlur(),
-                windowUUID: windowUUID,
-                actionType: ToolbarActionType.translucencyDidChange
-            )
-        )
+        store.dispatch(ToolbarModernAction.translucencyDidChange(isTranslucent: toolbarHelper.shouldBlur()),
+                       forWindowUUID: windowUUID)
     }
 
     /// As part of the homepage search bar work, we want to only hide the toolbar when the homepage search bar appears.
@@ -1643,10 +1658,11 @@ class BrowserViewController: UIViewController,
         super.viewDidLayoutSubviews()
         let systemTopBarLayoutGuide = browserLayoutManager.updateHeaderBarLayout(
             isBottomSearchBar: isBottomSearchBar,
-            toolbarHeight: addressToolbarContainer.bounds.height
+            addressToolbar: addressToolbarContainer
         )
         addressToolbarContainer.updateSystemTopBarLayoutGuide(systemTopBarLayoutGuide, isBottomSearchBar: isBottomSearchBar)
         addressToolbarContainer.progressBarAnchorView = tabStripBelowAddressBar
+        header.scrollCollapsibleView = tabStripBelowAddressBar
 
         // Documentation found in https://mozilla-hub.atlassian.net/browse/FXIOS-10952
         checkForJSAlerts()
@@ -2370,6 +2386,7 @@ class BrowserViewController: UIViewController,
         createSearchControllerIfNeeded()
 
         guard let searchController = self.searchController else { return }
+        searchController.searchAccessPoint = pendingSearchAccessPoint ?? .default
 
         // If searchController is already presented only update the bottom anchor
         // based in `bottomSearchBar` position
@@ -2392,6 +2409,9 @@ class BrowserViewController: UIViewController,
         ])
 
         searchController.didMove(toParent: self)
+
+        UIView.performWithoutAnimation { view.layoutIfNeeded() }
+        searchController.animateAppearance()
 
         // We need to hide the Homepage content
         // from accessibility, otherwise it will
@@ -2441,6 +2461,16 @@ class BrowserViewController: UIViewController,
         searchLoader = nil
 
         contentContainer.accessibilityElementsHidden = false
+    }
+
+    private func deferOverlayContentPresentation(_ present: @escaping (BrowserViewController) -> Void) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self, overlayManager.inOverlayMode else { return }
+            present(self)
+            // The keyboard and toolbar animations are in flight at this point. Lay the new content out
+            // immediately, outside any animation block, so its first frame isn't animated in from the origin.
+            UIView.performWithoutAnimation { view.layoutIfNeeded() }
+        }
     }
 
     func finishEditingAndSubmit(_ url: URL, visitType: VisitType, forTab tab: Tab) {
@@ -2588,13 +2618,7 @@ class BrowserViewController: UIViewController,
         )?.shouldAnimate
 
         guard shouldAnimate == false else { return }
-        store.dispatch(
-            ToolbarAction(
-                shouldAnimate: true,
-                windowUUID: windowUUID,
-                actionType: ToolbarActionType.animationStateChanged
-            )
-        )
+        store.dispatch(ToolbarModernAction.animationStateChanged(shouldAnimate: true), forWindowUUID: windowUUID)
     }
 
     // MARK: - Webview property changed
@@ -2787,19 +2811,10 @@ class BrowserViewController: UIViewController,
               let webViewURL = webView.url,
               selectedTabURL == webViewURL else { return }
 
-        let hasSecureContent = webView.hasOnlySecureContent
-        let lockIconState = toolbarHelper.getLockIconState(
-            hasOnlySecureContent: hasSecureContent,
-            isWebsiteMode: tabManager.selectedTab?.url?.isReaderModeURL == false
-        )
-
-        let action = ToolbarAction(
-            lockIconButtonA11yId: lockIconState.a11yId,
-            lockIconImageName: lockIconState.imageName,
-            lockIconNeedsTheming: lockIconState.needsTheming,
-            windowUUID: windowUUID,
-            actionType: ToolbarActionType.lockIconChanged)
-        store.dispatch(action)
+        let isWebsiteMode = tabManager.selectedTab?.url?.isReaderModeURL == false
+        store.dispatch(
+            ToolbarModernAction.lockIconChanged(hasOnlySecureContent: webView.hasOnlySecureContent,
+                                                isWebsiteMode: isWebsiteMode), forWindowUUID: windowUUID)
     }
 
     // MARK: - Update UI
@@ -2843,29 +2858,18 @@ class BrowserViewController: UIViewController,
             StandardImageIdentifiers.Small.notificationDotFill : nil
         }
 
-        var lockIconButtonA11yId: String?
-        var lockIconImageName: String?
-        var lockIconNeedsTheming = true
+        let hasOnlySecureContent = tab.webView?.hasOnlySecureContent
+        let isWebsiteMode = hasOnlySecureContent == nil ? nil : tab.url?.isReaderModeURL == false
 
-        if let hasSecureContent = tab.webView?.hasOnlySecureContent {
-            let lockIconState = toolbarHelper.getLockIconState(
-                hasOnlySecureContent: hasSecureContent,
-                isWebsiteMode: tab.url?.isReaderModeURL == false
-            )
-            lockIconImageName = lockIconState.imageName
-            lockIconButtonA11yId = lockIconState.a11yId
-            lockIconNeedsTheming = lockIconState.needsTheming
-        }
-
+        // TODO: Move the lock icon inputs to a modern action once `urlDidChange` migrates
         let action = ToolbarAction(
             url: tab.url?.displayURL,
             isPrivate: tab.isPrivate,
             isShowingNavigationToolbar: toolbarHelper.shouldShowNavigationToolbar(for: traitCollection),
             canGoBack: tab.canGoBack,
             canGoForward: tab.canGoForward,
-            lockIconButtonA11yId: lockIconButtonA11yId,
-            lockIconImageName: lockIconImageName,
-            lockIconNeedsTheming: lockIconNeedsTheming,
+            hasOnlySecureContent: hasOnlySecureContent,
+            isWebsiteMode: isWebsiteMode,
             safeListedURLImageName: safeListedURLImageName,
             translationConfiguration: tab.translationConfiguration ?? TranslationConfiguration(
                 prefs: profile.prefs,
@@ -3002,7 +3006,7 @@ class BrowserViewController: UIViewController,
             )
             overlayManager.openNewTab(url: nil, newTabSettings: .topSites)
         case .zeroSearch:
-            showZeroSearchView()
+            deferOverlayContentPresentation { $0.showZeroSearchView() }
         case .shortcutsLibrary:
             navigationHandler?.showShortcutsLibrary()
         case .quickAnswers(let transitionType):
@@ -3053,13 +3057,7 @@ class BrowserViewController: UIViewController,
         case .tabTray:
             updateZoomPageBarVisibility(visible: false)
             focusOnTabSegment()
-            store.dispatch(
-                ToolbarAction(
-                    shouldAnimate: false,
-                    windowUUID: windowUUID,
-                    actionType: ToolbarActionType.animationStateChanged
-                )
-            )
+            store.dispatch(ToolbarModernAction.animationStateChanged(shouldAnimate: false), forWindowUUID: windowUUID)
         // Ecosia: Handle QR code scanner display
         case .qrCode:
             navigationHandler?.showQRCode(delegate: self, rootNavigationController: nil)
@@ -3457,8 +3455,9 @@ class BrowserViewController: UIViewController,
     }
 
     func submitSearchText(_ text: String, forTab tab: Tab) {
+        let accessPoint = pendingSearchAccessPoint ?? .default
         guard let engine = searchEnginesManager.defaultEngine,
-              let searchURL = engine.searchURLForQuery(text)
+              let searchURL = engine.searchURLForQuery(text, accessPoint: accessPoint)
         else {
             DefaultLogger.shared.log("Error handling URL entry: \"\(text)\".", level: .warning, category: .tabs)
             return
@@ -3468,7 +3467,7 @@ class BrowserViewController: UIViewController,
 
         Experiments.events.recordEvent(BehavioralTargetingEvent.performedSearch)
 
-        let engineTelemetryID: String = engine.telemetryID
+        let engineTelemetryID: String = engine.telemetryID(for: accessPoint)
         GleanMetrics.Search
             .counts["\(engineTelemetryID).\(SearchLocation.actionBar.rawValue)"]
             .add()
@@ -3584,17 +3583,27 @@ class BrowserViewController: UIViewController,
 
     // MARK: - Handle Deeplink open URL / query
 
-    func handle(query: String, isPrivate: Bool, shouldOpenNewTab: Bool = true) {
+    func handle(query: String,
+                isPrivate: Bool,
+                shouldOpenNewTab: Bool = true,
+                options: Set<Route.SearchOptions>? = nil) {
         cancelEditMode()
         if shouldOpenNewTab {
             openBlankNewTab(focusLocationField: false, isPrivate: isPrivate)
         }
+        if options?.contains(.widgetSearch) == true {
+            pendingSearchAccessPoint = .widget
+        }
         openBrowser(searchTerm: query)
+        pendingSearchAccessPoint = nil
     }
 
     func handle(url: URL?, isPrivate: Bool, options: Set<Route.SearchOptions>? = nil) {
         navigationHandler?.popToBVC()
         cancelEditMode()
+        if url == nil, options?.contains(.widgetSearch) == true {
+            pendingSearchAccessPoint = .widget
+        }
         if let url {
             switchToTabForURLOrOpen(url, isPrivate: isPrivate)
         } else {
@@ -3726,8 +3735,9 @@ class BrowserViewController: UIViewController,
             // This let's the user spam the Cmd+T button without lots of responder changes.
             guard let self, tab == self.tabManager.selectedTab else { return }
 
+            store.dispatch(ToolbarModernAction.animationStateChanged(shouldAnimate: true),
+                           forWindowUUID: self.windowUUID)
             let action = ToolbarAction(searchTerm: searchText,
-                                       shouldAnimate: true,
                                        windowUUID: self.windowUUID,
                                        actionType: ToolbarActionType.didStartEditingUrl)
             store.dispatch(action)
@@ -3756,11 +3766,11 @@ class BrowserViewController: UIViewController,
         }
     }
 
-    func openSearchNewTab(isPrivate: Bool = false, _ text: String) {
+    func openSearchNewTab(isPrivate: Bool = false, _ text: String, accessPoint: SearchAccessPoint = .default) {
         navigationHandler?.popToBVC()
 
         guard let engine = searchEnginesManager.defaultEngine,
-              let searchURL = engine.searchURLForQuery(text)
+              let searchURL = engine.searchURLForQuery(text, accessPoint: accessPoint)
         else {
             DefaultLogger.shared.log("Error handling URL entry: \"\(text)\".", level: .warning, category: .tabs)
             return
@@ -4289,6 +4299,10 @@ class BrowserViewController: UIViewController,
         didSubmitSearchText(searchTerm)
     }
 
+    func addressToolbarDidHideEditingAccessoryButton() {
+        dismissGoogleLensTip()
+    }
+
     func openSuggestions(searchTerm: String) {
         if searchTerm.isEmpty {
             showZeroSearchView()
@@ -4375,7 +4389,7 @@ class BrowserViewController: UIViewController,
             // we handle that in `showZeroSearchView()` and avoid embedding homepage here.
             let isPrivateMode = tabManager.selectedTab?.isPrivate ?? false
             if !isRecentOrTrendingSearchEnabled || isPrivateMode {
-                showEmbeddedHomepage(inline: false, isPrivate: isPrivateMode)
+                deferOverlayContentPresentation { $0.showEmbeddedHomepage(inline: false, isPrivate: isPrivateMode) }
             }
         }
 
@@ -4399,6 +4413,7 @@ class BrowserViewController: UIViewController,
             }
         }
         destroySearchController()
+        pendingSearchAccessPoint = nil
         updateInContentHomePanel(tabManager.selectedTab?.url as URL?)
 
         (view as? ThemeApplicable)?.applyTheme(theme: currentTheme())
@@ -4714,7 +4729,7 @@ extension BrowserViewController: LegacyTabDelegate {
     }
 
     func tab(_ tab: Tab, didSelectSearchWithFirefoxForSelection selection: String) {
-        openSearchNewTab(isPrivate: tab.isPrivate, selection)
+        openSearchNewTab(isPrivate: tab.isPrivate, selection, accessPoint: .context)
     }
 
     // MARK: - KVO Observation
@@ -4906,6 +4921,18 @@ extension BrowserViewController: SearchViewControllerDelegate {
 
     func searchEnginesDidUpdate() {
         updateForDefaultSearchEngineDidChange()
+
+        // Engines load async, so refresh top sites to rebuild the
+        // Google top site with the loaded engine partner codes.
+        let windowManager: WindowManager = AppContainer.shared.resolve()
+        for windowUUID in windowManager.windows.keys {
+            store.dispatch(
+                HomepageAction(
+                    windowUUID: windowUUID,
+                    actionType: HomepageMiddlewareActionType.topSitesUpdated
+                )
+            )
+        }
     }
 
     func setLocationView(text: String, search: Bool) {
@@ -5114,7 +5141,7 @@ extension BrowserViewController: TabManagerDelegate {
         if let url = selectedTab.webView?.url, InternalURL.scheme != url.scheme,
            let readerMode = selectedTab.getContentScript(name: ReaderMode.name()) as? ReaderMode {
             updateReaderModeState(for: selectedTab, readerModeState: readerMode.state)
-            if readerMode.state == .active {
+            if isShowingReaderMode(tab: selectedTab) {
                 showReaderModeBar(animated: false)
             } else {
                 hideReaderModeBar(animated: false)
@@ -5245,10 +5272,7 @@ extension BrowserViewController: TabManagerDelegate {
               toolbarState.numberOfTabs != count
         else { return }
 
-        let action = ToolbarAction(numberOfTabs: count,
-                                   windowUUID: windowUUID,
-                                   actionType: ToolbarActionType.numberOfTabsChanged)
-        store.dispatch(action)
+        store.dispatch(ToolbarModernAction.numberOfTabsChanged(count: count), forWindowUUID: windowUUID)
     }
 }
 
@@ -5318,7 +5342,7 @@ extension BrowserViewController {
 
 extension BrowserViewController: KeyboardHelperDelegate {
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardWillShowWithState state: KeyboardState) {
-        keyboardState = state
+        updateKeyboardState(state)
 
         updateConstraintsForKeyboard()
         updateBottomContentStackViewConstraints()
@@ -5352,7 +5376,7 @@ extension BrowserViewController: KeyboardHelperDelegate {
                 : .accessoryViewVisibilityChanged(isVisible: false)
             store.dispatch(action, forWindowUUID: windowUUID)
         }
-        keyboardState = nil
+        updateKeyboardState(nil)
         updateConstraintsForKeyboard()
         updateBottomContentStackViewConstraints()
 
@@ -5373,7 +5397,7 @@ extension BrowserViewController: KeyboardHelperDelegate {
     }
 
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardDidHideWithState state: KeyboardState) {
-        keyboardState = nil
+        updateKeyboardState(nil)
         /* Ecosia: Always cancel the keyboard request when the keyboard hides. Overlay
            editing can continue (see shouldCancelEditing) but highlight must not
            re-request first responder — that leaves the keyboard-spacer gap under the bar.
@@ -5391,25 +5415,16 @@ extension BrowserViewController: KeyboardHelperDelegate {
     }
 
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardWillChangeWithState state: KeyboardState) {
-        let wasKeyboardShowing = keyboardState != nil
-        // Frame changes are also posted for a hidden keyboard (e.g. on rotation), so only keep
-        // the state while the keyboard is actually on screen.
-        keyboardState = state.intersectionHeightForView(view) > 0 ? state : nil
+        updateKeyboardState(state)
         // Keep the keyboard spacer and bottom constraints in sync as the keyboard frame changes
         // (e.g. accessory-view height changes, interactive scroll-to-dismiss). Without this the
         // spacer holds its previous height and leaves a gap below the address bar.
         updateConstraintsForKeyboard()
         updateBottomContentStackViewConstraints()
-        let isKeyboardShowing = keyboardState != nil
-        if isKeyboardShowing != wasKeyboardShowing {
-            UIView.performWithoutAnimation {
-                updateBlurViews()
-            }
-        }
     }
 
     func keyboardHelper(_ keyboardHelper: KeyboardHelper, keyboardDidShowWithState state: KeyboardState) {
-        keyboardState = state
+        updateKeyboardState(state)
 
         let toolbarState = store.state.componentState(ToolbarState.self, for: .toolbar, window: windowUUID)
         if toolbarState?.addressToolbar.isEditing == true {
@@ -5423,6 +5438,18 @@ extension BrowserViewController: KeyboardHelperDelegate {
             animations: {
                 self.bottomContentStackView.layoutIfNeeded()
             })
+    }
+
+    private func updateKeyboardState(_ state: KeyboardState?) {
+        let wasKeyboardShowing = keyboardState != nil
+        // Show and frame change notifications can describe a hidden keyboard (e.g. on rotation),
+        // so only keep the state while the keyboard is actually on screen.
+        keyboardState = state.flatMap { $0.intersectionHeightForView(view) > 0 ? $0 : nil }
+        guard (keyboardState != nil) != wasKeyboardShowing else { return }
+
+        UIView.performWithoutAnimation {
+            updateBlurViews()
+        }
     }
 
     private func cancelEditingMode() {

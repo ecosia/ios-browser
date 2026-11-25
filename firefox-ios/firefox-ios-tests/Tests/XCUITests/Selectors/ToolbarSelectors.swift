@@ -18,9 +18,20 @@ protocol ToolbarSelectorsSet {
     var TRANSLATE_LOADING_BUTTON: Selector { get }
     var TRANSLATE_ACTIVE_BUTTON: Selector { get }
     var TRANSLATE_LANGUAGE_ENGLISH_OPTION: Selector { get }
+    var TRANSLATE_LANGUAGE_PICKER_TITLE: Selector { get }
+    var TRANSLATE_PREFERRED_LANGUAGES_OPTION: Selector { get }
+    var TRANSLATE_SHOW_ORIGINAL_OPTION: Selector { get }
+    func translateLanguagePickerTitle(_ title: String) -> Selector
+    func translateLanguagePicker(titled title: String) -> Selector
+    func translateLanguagePickerOption(_ label: String, inPickerTitled title: String) -> Selector
+    func translateLanguagePickerLanguageOptions(inPickerTitled title: String) -> Selector
     var SUMMARIZE_BUTTON: Selector { get }
     var CONTEXTUAL_HINT_CLOSE_BUTTON: Selector { get }
     var GOOGLE_LENS_TIP_TITLE: Selector { get }
+    var GOOGLE_LENS_BUTTON: Selector { get }
+    var GOOGLE_LENS_TAKE_PHOTO_ACTION: Selector { get }
+    var GOOGLE_LENS_PHOTO_LIBRARY_ACTION: Selector { get }
+    var GOOGLE_LENS_MENU_ACTIONS: Selector { get }
     var SUMMARIZE_CONTEXTUAL_HINT: Selector { get }
     var all: [Selector] { get }
 }
@@ -40,10 +51,18 @@ struct ToolbarSelectors: ToolbarSelectorsSet {
         static let translateLoadingButton = AccessibilityIdentifiers.Toolbar.translateLoadingButton
         static let translateActiveButton = AccessibilityIdentifiers.Toolbar.translateActiveButton
         static let translateLanguageEnglishOption = "English"
+        static let translateLanguagePickerTitle = String.Translations.LanguagePicker.Title
+        static let translatePreferredLanguagesOption = String.Translations.LanguagePicker.PreferredLanguagesTitle
+        static let translateShowOriginalOption = String.Translations.LanguagePicker.ShowOriginal
         static let summarizeButton = AccessibilityIdentifiers.Toolbar.summarizeButton
         static let summarizeContextualHint = "Tap to summarize this page. Touch and hold for Reader View."
         static let contextualHintCloseButton = "Close"
         static let googleLensTipTitle = "Search With Google Lens"
+        static let googleLensButton = AccessibilityIdentifiers.Browser.AddressToolbar.googleLensButton
+        static let googleLensTakePhotoAction = AccessibilityIdentifiers.Browser.AddressToolbar.googleLensTakePhotoAction
+        static let googleLensPhotoLibraryAction =
+            AccessibilityIdentifiers.Browser.AddressToolbar.googleLensPhotoLibraryAction
+        static let googleLensIdentifierPrefix = "AddressToolbar.googleLens"
     }
 
     let SETTINGS_MENU_BUTTON = Selector.buttonId(
@@ -125,6 +144,62 @@ struct ToolbarSelectors: ToolbarSelectorsSet {
         groups: ["translation"]
     )
 
+    let TRANSLATE_LANGUAGE_PICKER_TITLE = Selector.staticTextByExactLabel(
+        IDs.translateLanguagePickerTitle,
+        description: "'Translate Page to…' title of the translation language picker",
+        groups: ["translation"]
+    )
+
+    let TRANSLATE_PREFERRED_LANGUAGES_OPTION = Selector.buttonId(
+        IDs.translatePreferredLanguagesOption,
+        description: "'Preferred Languages…' option in the translation language picker",
+        groups: ["translation"]
+    )
+
+    let TRANSLATE_SHOW_ORIGINAL_OPTION = Selector.buttonId(
+        IDs.translateShowOriginalOption,
+        description: "'Show Original' option in the translated-page language picker",
+        groups: ["translation"]
+    )
+
+    func translateLanguagePickerTitle(_ title: String) -> Selector {
+        Selector.staticTextByExactLabel(
+            title,
+            description: "'\(title)' title of the translation language picker",
+            groups: ["translation"]
+        )
+    }
+
+    func translateLanguagePicker(titled title: String) -> Selector {
+        Selector.actionSheet(
+            titled: title,
+            description: "Translation language picker action sheet titled '\(title)'",
+            groups: ["translation"]
+        )
+    }
+
+    func translateLanguagePickerOption(_ label: String, inPickerTitled title: String) -> Selector {
+        Selector.buttonByLabel(
+            label,
+            in: translateLanguagePicker(titled: title),
+            description: "'\(label)' option in the translation language picker titled '\(title)'",
+            groups: ["translation"]
+        )
+    }
+
+    /// Every option except "Preferred Languages…" and Cancel, i.e. the target languages.
+    func translateLanguagePickerLanguageOptions(inPickerTitled title: String) -> Selector {
+        Selector.element(
+            .button,
+            in: translateLanguagePicker(titled: title),
+            matching: NSPredicate(format: "NOT (label IN %@)",
+                                  [IDs.translatePreferredLanguagesOption, String.CancelString]),
+            value: title,
+            description: "Target language options in the translation language picker titled '\(title)'",
+            groups: ["translation"]
+        )
+    }
+
     let SUMMARIZE_BUTTON = Selector.buttonId(
         IDs.summarizeButton,
         description: "Summarize (lightning) button in the address bar",
@@ -150,6 +225,32 @@ struct ToolbarSelectors: ToolbarSelectorsSet {
         groups: ["toolbar"]
     )
 
+    let GOOGLE_LENS_BUTTON = Selector.buttonId(
+        IDs.googleLensButton,
+        description: "Google Lens button shown in the address bar while editing with no text",
+        groups: ["toolbar"]
+    )
+
+    let GOOGLE_LENS_TAKE_PHOTO_ACTION = Selector.buttonId(
+        IDs.googleLensTakePhotoAction,
+        description: "Take Photo row of the menu opened by the Google Lens button",
+        groups: ["toolbar"]
+    )
+
+    let GOOGLE_LENS_PHOTO_LIBRARY_ACTION = Selector.buttonId(
+        IDs.googleLensPhotoLibraryAction,
+        description: "Photo Library row of the menu opened by the Google Lens button",
+        groups: ["toolbar"]
+    )
+
+    // Every row of the Google Lens menu, matched by the identifier prefix the rows share with the button.
+    let GOOGLE_LENS_MENU_ACTIONS = Selector.buttonIdBeginsWith(
+        IDs.googleLensIdentifierPrefix,
+        excluding: IDs.googleLensButton,
+        description: "All rows of the menu opened by the Google Lens button",
+        groups: ["toolbar"]
+    )
+
     var all: [Selector] { [
         SETTINGS_MENU_BUTTON,
         TABS_BUTTON,
@@ -164,9 +265,16 @@ struct ToolbarSelectors: ToolbarSelectorsSet {
         TRANSLATE_LOADING_BUTTON,
         TRANSLATE_ACTIVE_BUTTON,
         TRANSLATE_LANGUAGE_ENGLISH_OPTION,
+        TRANSLATE_LANGUAGE_PICKER_TITLE,
+        TRANSLATE_PREFERRED_LANGUAGES_OPTION,
+        TRANSLATE_SHOW_ORIGINAL_OPTION,
         SUMMARIZE_BUTTON,
         SUMMARIZE_CONTEXTUAL_HINT,
         CONTEXTUAL_HINT_CLOSE_BUTTON,
-        GOOGLE_LENS_TIP_TITLE
+        GOOGLE_LENS_TIP_TITLE,
+        GOOGLE_LENS_BUTTON,
+        GOOGLE_LENS_TAKE_PHOTO_ACTION,
+        GOOGLE_LENS_PHOTO_LIBRARY_ACTION,
+        GOOGLE_LENS_MENU_ACTIONS
     ] }
 }

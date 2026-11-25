@@ -36,12 +36,12 @@ protocol SearchViewControllerDelegate: AnyObject {
     func searchViewControllerWillHide(_ searchViewController: SearchViewController)
 }
 
-class SearchViewController: SiteTableViewController,
-                            KeyboardHelperDelegate,
-                            SearchViewDelegate,
-                            FeatureFlaggable,
-                            UserFeaturePreferenceProvider,
-                            Notifiable {
+final class SearchViewController: SiteTableViewController,
+                                  KeyboardHelperDelegate,
+                                  SearchViewDelegate,
+                                  FeatureFlaggable,
+                                  UserFeaturePreferenceProvider,
+                                  Notifiable {
     typealias ExtraKey = TelemetryWrapper.EventExtraKey
 
     private struct UX {
@@ -62,9 +62,14 @@ class SearchViewController: SiteTableViewController,
         static let AppendButtonSize: CGFloat = 44
 
         static let resultsAnnouncementDelay: TimeInterval = 2
+
+        static let appearanceAnimationDuration: TimeInterval = 0.2
+        static let appearanceVerticalOffset: CGFloat = 12
     }
 
     var searchDelegate: SearchViewControllerDelegate?
+    /// The search access point used to select search-config-v3 partner codes for searches started from this view.
+    var searchAccessPoint: SearchAccessPoint = .default
     let viewModel: SearchViewModel
     private var tabManager: TabManager
     private let logger: Logger
@@ -82,7 +87,7 @@ class SearchViewController: SiteTableViewController,
     private var bottomConstraintWithoutKeyboard: NSLayoutConstraint?
 
     private var isCompact: Bool {
-        return UIScreen.main.traitCollection.horizontalSizeClass == .compact
+        return traitCollection.horizontalSizeClass == .compact
     }
 
     private let searchEngineStackView: UIStackView = .build { stackView in
@@ -338,6 +343,9 @@ class SearchViewController: SiteTableViewController,
 
     func reloadSearchEngines() {
         searchEngineStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        // Settle the rebuilt bar's layout right away, and without animation, so the new buttons don't get
+        // their first frames from a later, possibly animated, layout pass.
+        defer { settleSearchEngineBarLayout() }
 
         // Add search button first
         searchEngineStackView.addArrangedSubview(searchButton)
@@ -375,6 +383,26 @@ class SearchViewController: SiteTableViewController,
         }
     }
 
+    private func settleSearchEngineBarLayout() {
+        guard isViewLoaded, view.window != nil else { return }
+        UIView.performWithoutAnimation {
+            searchEngineContainerView.layoutIfNeeded()
+        }
+    }
+
+    func animateAppearance() {
+        view.alpha = 0
+        if !UIAccessibility.isReduceMotionEnabled {
+            view.transform = CGAffineTransform(translationX: 0, y: UX.appearanceVerticalOffset)
+        }
+        UIView.animate(withDuration: UX.appearanceAnimationDuration,
+                       delay: 0,
+                       options: [.curveEaseOut, .allowUserInteraction, .beginFromCurrentState]) {
+            self.view.alpha = 1
+            self.view.transform = .identity
+        }
+    }
+
     /// Loads data for the zero search state (when the user hasn't typed anything yet, but address url bar is highlighted).
     /// In this state, we surface two types of content:
     /// - Trending searches: popular or curated terms shown to inspire discovery.
@@ -394,14 +422,14 @@ class SearchViewController: SiteTableViewController,
 
         let engine = viewModel.quickSearchEngines[index - 1]
 
-        guard let url = engine.searchURLForQuery(viewModel.searchQuery) else {
+        guard let url = engine.searchURLForQuery(viewModel.searchQuery, accessPoint: searchAccessPoint) else {
             assertionFailure()
             return
         }
 
         let extras = [
             ExtraKey.recordSearchLocation.rawValue: SearchLocation.quickSearch,
-            ExtraKey.recordSearchEngineID.rawValue: engine.telemetryID as Any
+            ExtraKey.recordSearchEngineID.rawValue: engine.telemetryID(for: searchAccessPoint) as Any
         ] as [String: Any]
         TelemetryWrapper.gleanRecordEvent(category: .action,
                                           method: .tap,
@@ -473,7 +501,7 @@ class SearchViewController: SiteTableViewController,
             guard let defaultEngine = viewModel.searchEnginesManager?.defaultEngine else { return }
 
             guard let recentSearch = viewModel.recentSearches[safe: indexPath.row],
-                  let url = defaultEngine.searchURLForQuery(recentSearch)
+                  let url = defaultEngine.searchURLForQuery(recentSearch, accessPoint: searchAccessPoint)
             else { return }
             searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: recentSearch)
             searchTelemetry?.recentSearchesTapped(at: indexPath.row)
@@ -482,7 +510,7 @@ class SearchViewController: SiteTableViewController,
             guard let defaultEngine = viewModel.searchEnginesManager?.defaultEngine else { return }
 
             guard let trendingSearch = viewModel.trendingSearches[safe: indexPath.row],
-                  let url = defaultEngine.searchURLForQuery(trendingSearch)
+                  let url = defaultEngine.searchURLForQuery(trendingSearch, accessPoint: searchAccessPoint)
             else { return }
             searchDelegate?.searchViewController(self, didSelectURL: url, searchTerm: trendingSearch)
             searchTelemetry?.trendingSearchesTapped(at: indexPath.row)
@@ -503,12 +531,12 @@ class SearchViewController: SiteTableViewController,
                   let suggestion = suggestions[safe: indexPath.row],
             */
             guard let suggestion = safeSuggestion(forRow: indexPath.row),
-                  let url = defaultEngine.searchURLForQuery(suggestion)
+                  let url = defaultEngine.searchURLForQuery(suggestion, accessPoint: searchAccessPoint)
             else { return }
 
             let extras = [
                 ExtraKey.recordSearchLocation.rawValue: SearchLocation.suggestion,
-                ExtraKey.recordSearchEngineID.rawValue: defaultEngine.telemetryID as Any
+                ExtraKey.recordSearchEngineID.rawValue: defaultEngine.telemetryID(for: searchAccessPoint) as Any
             ] as [String: Any]
             TelemetryWrapper.gleanRecordEvent(category: .action,
                                               method: .tap,
@@ -920,10 +948,11 @@ class SearchViewController: SiteTableViewController,
         case .openedTabs:
             if viewModel.filteredOpenedTabs.count > indexPath.row {
                 let openedTab = viewModel.filteredOpenedTabs[indexPath.row]
+                let openedTabURL = openedTab.url?.decodeReaderModeURL ?? openedTab.url
                 configureOpenedTabsCell(
                     cell: twoLineCell,
-                    title: openedTab.title ?? openedTab.lastTitle,
-                    urlString: openedTab.url?.absoluteString
+                    title: displayTitle(for: openedTab),
+                    urlString: openedTabURL?.absoluteString
                 )
                 cell = twoLineCell
             }
@@ -932,10 +961,11 @@ class SearchViewController: SiteTableViewController,
                viewModel.filteredRemoteClientTabs.count > indexPath.row {
                 let remoteTab = viewModel.filteredRemoteClientTabs[indexPath.row].tab
                 let remoteClient = viewModel.filteredRemoteClientTabs[indexPath.row].client
-                let urlString = remoteTab.URL.absoluteString
+                let urlString = (remoteTab.URL.decodeReaderModeURL ?? remoteTab.URL).absoluteString
+                let remoteTitle = remoteTab.title.isEmpty ? urlString : remoteTab.title
                 configureRemoteTabsCell(
                     cell: twoLineCell,
-                    title: remoteTab.title,
+                    title: remoteTitle,
                     description: remoteClient.name,
                     urlString: urlString
                 )
@@ -1046,15 +1076,29 @@ class SearchViewController: SiteTableViewController,
         cell.accessoryView = nil
     }
 
+    /// Pages without a title fall back to their URL so the row isn't blank.
+    private func displayTitle(for tab: Tab) -> String {
+        return [tab.title, tab.lastTitle]
+            .compactMap { $0 }
+            .first(where: { !$0.isEmpty }) ?? (tab.url?.decodeReaderModeURL ?? tab.url)?.absoluteString ?? ""
+    }
+
     private func configureBookmarksAndHistoryCell(
         _ cell: TwoLineImageOverlayCell,
         _ title: String,
         _ description: String,
         _ isBookmark: Bool = false
     ) {
-        cell.descriptionLabel.isHidden = false
-        cell.titleLabel.text = title
-        cell.descriptionLabel.text = description
+        // Pages without a title should still show something meaningful: fall back
+        // to the URL as the title and skip the (duplicated) description line.
+        if title.isEmpty {
+            cell.titleLabel.text = description
+            cell.descriptionLabel.isHidden = true
+        } else {
+            cell.titleLabel.text = title
+            cell.descriptionLabel.isHidden = false
+            cell.descriptionLabel.text = description
+        }
         cell.leftOverlayImageView.image = isBookmark ? bookmarkedBadge : nil
         cell.leftImageView.layer.borderColor = UX.IconBorderColor.cgColor
         cell.leftImageView.layer.borderWidth = UX.IconBorderWidth

@@ -20,14 +20,15 @@ struct NavigationToolbarContainerModel: Equatable {
 
     @MainActor
     init(
-        state: ToolbarState,
+        lens: AddressToolbarContainerLens,
         longPressMenuProvider: @escaping @MainActor (ToolbarActionConfiguration.ActionType) -> UIMenu? = { _ in nil },
         windowUUID: WindowUUID
     ) {
+        let state = lens.toolbarState
         self.displayBorder = state.navigationToolbar.displayBorder
         self.canShowNavigationHint = state.canShowNavigationHint
         self.isTranslucent = state.isTranslucent
-        self.actions = state.navigationToolbar.actions.map { action in
+        self.actions = lens.navigationToolbarActions.map { action in
             return ToolbarElement(
                 iconName: action.iconName,
                 title: action.actionLabel,
@@ -53,7 +54,6 @@ struct NavigationToolbarContainerModel: Equatable {
                                                                                       windowUUID: windowUUID),
                 longPressBehavior: NavigationToolbarContainerModel.makeLongPressBehavior(
                     action: action,
-                    isShowingTopTabs: state.isShowingTopTabs,
                     longPressMenuProvider: longPressMenuProvider,
                     windowUUID: windowUUID
                 ),
@@ -90,11 +90,10 @@ struct NavigationToolbarContainerModel: Equatable {
     @MainActor
     private static func makeLongPressBehavior(
         action: ToolbarActionConfiguration,
-        isShowingTopTabs: Bool,
         longPressMenuProvider: @escaping @MainActor (ToolbarActionConfiguration.ActionType) -> UIMenu?,
         windowUUID: WindowUUID
     ) -> ToolbarLongPressBehavior {
-        guard action.canPerformLongPressAction(isShowingTopTabs: isShowingTopTabs) else {
+        guard action.canPerformLongPressAction else {
             return .none
         }
 

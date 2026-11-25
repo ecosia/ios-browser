@@ -24,6 +24,7 @@ only_rules: # Only enforce these rules, ignore all others
   - contains_over_first_not_nil
   - contains_over_range_nil_comparison
   - control_statement
+  - custom_rules
   # - convenience_type
   # - cyclomatic_complexity
   # - deployment_target
@@ -208,8 +209,7 @@ only_rules: # Only enforce these rules, ignore all others
   # - xct_specific_matcher
   # - xctfail_message
   - yoda_condition
-  # Ecosia: enabled
-  - custom_rules
+  # Ecosia: `custom_rules` was enabled here; upstream enables it in the list above since 160.0
 
 closure_body_length:
   warning: 34
@@ -235,6 +235,16 @@ custom_rules:
   no_hiding_in_strings:
     regex: "(Analytics.shared =)"
     match_kinds: string
+  # Ecosia: upstream's own `custom_rules` block (160.0) merged into Ecosia's, as YAML allows one key.
+  # Targeting a specific device breaks as soon as a new device ships. Disable it explicitly with
+  # `// swiftlint:disable:next no_is_duo` where there is no trait-based alternative.
+  no_is_duo:
+    name: "No isDuo"
+    regex: '\bisDuo\b'
+    match_kinds:
+      - identifier
+    message: "Prefer using size classes and device traits over targeting specific devices"
+    severity: error
 
 file_header:
   required_string: |

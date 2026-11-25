@@ -485,6 +485,11 @@ struct AccessibilityIdentifiers {
         }
     }
 
+    struct WallpaperEngagementSheet {
+        static let closeButton = "WallpaperEngagementSheet.closeButton"
+        static let ctaButton = "WallpaperEngagementSheet.ctaButton"
+    }
+
     struct Onboarding {
         static let backgroundImage = "Onboarding.BackgroundImage"
         static let onboarding = "onboarding."
@@ -849,6 +854,10 @@ struct AccessibilityIdentifiers {
         struct QuickAnswers {
             static let title = "Settings.QuickAnswers.Title"
             static let learnMoreButton = "Settings.QuickAnswers.LearnMoreButton"
+        }
+
+        struct VPN {
+            static let title = "Settings.VPN.Title"
         }
 
         struct BlockImages {

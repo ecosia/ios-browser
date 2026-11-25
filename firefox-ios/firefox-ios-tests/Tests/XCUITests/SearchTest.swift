@@ -154,15 +154,18 @@ class SearchTests: FeatureFlaggedTestBase {
         // Copy, Paste and Go to url
         app.launch()
         typeOnSearchBar(text: "www.mozilla.org")
-        if #available(iOS 17, *), ProcessInfo.processInfo.operatingSystemVersion.majorVersion == 17
-            || iPad() {
+        if iPad() {
             urlBarAddress.waitAndTap()
             urlBarAddress.waitAndTap()
         } else {
             urlBarAddress.press(forDuration: 1)
         }
         if !app.menuItems["Select All"].mozWaitForElementToExist(timeout: 3, failOnTimeout: false) {
-            urlBarAddress.waitAndTap()
+            if iPad() {
+                urlBarAddress.waitAndTap()
+            } else {
+                urlBarAddress.press(forDuration: 1)
+            }
         }
         app.menuItems["Select All"].waitAndTap()
         app.menuItems["Copy"].waitAndTap()
@@ -226,6 +229,9 @@ class SearchTests: FeatureFlaggedTestBase {
     // https://mozilla.testrail.io/index.php?/cases/view/2306940
     // Smoketest
     func testSearchEngine() {
+        // The engine is verified through the host shown in the address bar, so keep the search term
+        // from replacing the URL there regardless of the channel default for this flag.
+        addLaunchArgument(jsonFileName: "searchTermInAddressBarOff", featureName: "toolbar-refactor-feature")
         app.launch()
         navigator.nowAt(NewTabScreen)
         // Change to the each search engine and verify the search uses it
@@ -240,6 +246,8 @@ class SearchTests: FeatureFlaggedTestBase {
     // https://mozilla.testrail.io/index.php?/cases/view/2436091
     // Regression
     func testSearchWithFirefoxOption() {
+        // The engine is verified through the host shown in the address bar
+        addLaunchArgument(jsonFileName: "searchTermInAddressBarOff", featureName: "toolbar-refactor-feature")
         app.launch()
         navigator.openURL(path(forTestPage: TestPages.mozillaBook))
         waitUntilPageLoad()
@@ -296,11 +304,14 @@ class SearchTests: FeatureFlaggedTestBase {
     func testSearchAfterTypingTwoWords() {
         let browserScreen = BrowserScreen(app: app)
         let fooText = "foo bar"
+        // With the flag on, the address bar shows the search term instead of the URL once the
+        // results page of the search engine has loaded.
+        addLaunchArgument(jsonFileName: "searchTermInAddressBarOn", featureName: "toolbar-refactor-feature")
         app.launch()
         navigator.goto(URLBarOpen)
         app.typeText(fooText)
         app.typeText(XCUIKeyboardKey.return.rawValue)
-        browserScreen.assertAddressBarContains(value: "google", timeout: TIMEOUT)
+        browserScreen.assertAddressBarContains(value: fooText, timeout: TIMEOUT)
     }
 
     // https://mozilla.testrail.io/index.php?/cases/view/2306943
@@ -381,6 +392,11 @@ class SearchTests: FeatureFlaggedTestBase {
             navigator.performAction(Action.SelectToolbarBottom)
             navigator.goto(HomePanelsScreen)
             navigator.goto(URLBarOpen)
+            // Workaround: closing the Google Lens tip leaves edit mode on without the keyboard, so refocus.
+            // Remove once https://github.com/mozilla-mobile/firefox-ios/issues/36249 is fixed.
+            if toolbarScreen.dismissGoogleLensTipIfPresented() {
+                browserScreen.tapOnAddressBar()
+            }
 
             // URL bar is moved to the bottom of the screen
             let menuSettingsButton = toolbarScreen.getToolbarSettingsMenuButtonElement()
@@ -489,6 +505,8 @@ class SearchTests: FeatureFlaggedTestBase {
     func testSearchSuggestions() throws {
         guard #available(iOS 17.0, *) else { return }
 
+        // The engine is verified through the host shown in the address bar
+        addLaunchArgument(jsonFileName: "searchTermInAddressBarOff", featureName: "toolbar-refactor-feature")
         // Tap on URL Bar and type "g"
         app.launch()
         typeTextAndValidateSearchSuggestions(text: "g", isSwitchOn: true)

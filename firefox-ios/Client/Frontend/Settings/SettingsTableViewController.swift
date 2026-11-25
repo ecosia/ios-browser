@@ -997,6 +997,7 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
 
         tableView.register(cellType: ThemedLeftAlignedTableViewCell.self)
         tableView.register(cellType: ThemedSubtitleTableViewCell.self)
+        tableView.register(cellType: ThemedSwitchTableViewCell.self)
         tableView.register(
             ThemedTableSectionHeaderFooterView.self,
             forHeaderFooterViewReuseIdentifier: ThemedTableSectionHeaderFooterView.cellIdentifier
@@ -1119,6 +1120,14 @@ class SettingsTableViewController: ThemedTableViewController, Notifiable {
                 for: indexPath
             ) as? ThemedLearnMoreTableViewCell else {
                 return ThemedLearnMoreTableViewCell()
+            }
+            return cell
+        } else if setting is BoolSetting {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: ThemedSwitchTableViewCell.cellIdentifier,
+                for: indexPath
+            ) as? ThemedSwitchTableViewCell else {
+                return ThemedSwitchTableViewCell()
             }
             return cell
         } else if setting.style == .subtitle {

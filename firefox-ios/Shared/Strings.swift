@@ -85,6 +85,34 @@ extension String {
                 value: "Cancel",
                 comment: "When tapping on a link, on a website in order to download a file and that file is a calendar file, an alert comes up asking to confirm if you want to add the event to the device calendar. This is the cancel action for the alert, cancelling the action to add the event to the calendar.")
         }
+
+        public struct ConfigurationProfile {
+            public static let Title = MZLocalizedString(
+                key: "Alerts.ConfigurationProfile.Title.v160.1",
+                tableName: "Alerts",
+                value: "Download configuration profile?",
+                comment: "Title of dialogue window. Prompts the user to confirm they want to download a configuration profile that can be installed in device settings.")
+            public static let Body = MZLocalizedString(
+                key: "Alerts.ConfigurationProfile.Body.v160.1",
+                tableName: "Alerts",
+                value: "%@ is asking to download a configuration profile. You can review and install it in Settings.",
+                comment: "Message of dialogue window. Prompts the user to confirm they want to download a configuration profile that can be installed in device settings. %@ is the name/domain of the website initiating the download, for example 'google.com'")
+            public static let BodyDefault = MZLocalizedString(
+                key: "Alerts.ConfigurationProfile.BodyDefault.v160.1",
+                tableName: "Alerts",
+                value: "This site is asking to download a configuration profile. You can review and install it in Settings.",
+                comment: "Message of dialogue window. Prompts the user to confirm they want to download a configuration profile that can be installed in device settings. This variant is displayed when the website initiating the download doesn't have a base domain to display.")
+            public static let ContinueButton = MZLocalizedString(
+                key: "Alerts.ConfigurationProfile.Button.Continue.v160.1",
+                tableName: "Alerts",
+                value: "Continue",
+                comment: "Primary Button in dialogue window. If tapped, confirms the user wants to download the configuration profile and the download starts.")
+            public static let CancelButton = MZLocalizedString(
+                key: "Alerts.ConfigurationProfile.Button.Cancel.v160.1",
+                tableName: "Alerts",
+                value: "Cancel",
+                comment: "Secondary Button in dialogue window. If tapped, cancels the download and closes the window.")
+        }
     }
 }
 
@@ -1071,6 +1099,16 @@ extension String {
                 tableName: "FirefoxHomepage",
                 value: "We’ve updated our %@ to reflect the latest features in %@. %@",
                 comment: "Body label for the Privacy Notice card showed at the top of the homepage notifying users that the Privacy Notice has been updated. The %1$@ placeholder is for the string “Privacy Notice” which will contain a link to the updated privacy notice. The %2$@ placeholder is for the app name (e.g. Firefox). The %3$@ placeholder is for the string “Learn More” which will contain a link to specifically what has changed in the updated Privacy Notice")
+            public static let Headline = MZLocalizedString(
+                key: "FirefoxHome.PrivacyNotice.Headline.v160",
+                tableName: "FirefoxHomepage",
+                value: "Privacy Notice updated",
+                comment: "Heading for the Privacy Notice update card, displayed to notify users of recent changes to the terms.")
+            public static let MarkdownBody = MZLocalizedString(
+                key: "FirefoxHome.PrivacyNotice.Body.Markdown.v160",
+                tableName: "FirefoxHomepage",
+                value: "We’ve updated our [Privacy Notice](PRIVACY_NOTICE_URL) to reflect the latest features in %@.",
+                comment: "Body text for the Privacy Notice update card. This string uses markdown links: [Link text here](URL_PLACEHOLDER_HERE). Translate only the text *inside* square brackets: [Privacy Notice]. For example, “[隐私政策](PRIVACY_NOTICE_URL)”. The PRIVACY_NOTICE_URL placeholder links to the updated policy. The %@ placeholder is the app name (e.g. Firefox). More info: https://www.markdownguide.org/basic-syntax/#links")
             public static let PrivacyNoticeLink = MZLocalizedString(
                 key: "FirefoxHome.PrivacyNotice.PrivacyNoticeLink.v148",
                 tableName: "FirefoxHomepage",
@@ -3042,6 +3080,13 @@ extension String {
                 comment: "Button shown below a Quick Answers result that the user taps to ask a follow-up question about the answer."
             )
 
+            public static let NewQuestionButton = MZLocalizedString(
+                key: "QuickAnswers.ContentView.NewQuestionButton.v161",
+                tableName: "QuickAnswers",
+                value: "Ask a New Question",
+                comment: "Button shown below a Quick Answers result that the user taps to ask a new, unrelated question."
+            )
+
             public static let Answering = MZLocalizedString(
                 key: "QuickAnswers.ContentView.Answering.v158",
                 tableName: "QuickAnswers",
@@ -3347,6 +3392,20 @@ extension String {
                 tableName: "Settings",
                 value: "Connecting…",
                 comment: "Shown next to the VPN switch on the VPN settings screen while the VPN is connecting, right after the user turns it on."
+            )
+
+            public static let Connected = MZLocalizedString(
+                key: "VPN.Settings.Connected.v161",
+                tableName: "Settings",
+                value: "VPN connected",
+                comment: "Announced by VoiceOver on the VPN settings screen when the VPN finishes connecting after the user turns on the VPN switch."
+            )
+
+            public static let DataLimitAccessibilityValue = MZLocalizedString(
+                key: "VPN.Settings.DataLimit.AccessibilityValue.v161",
+                tableName: "Settings",
+                value: "%1$@ of %2$@ gigabytes used. Resets on the first of every month.",
+                comment: "Read aloud by VoiceOver for the Data Limit section on the VPN settings screen. %1$@ is the amount of VPN data used this month and %2$@ is the monthly limit, both in gigabytes (for example, “1.0 of 5.0 gigabytes used”). The second sentence explains that the user’s free monthly VPN data resets on the first day of each month."
             )
 
             public static let DataLimitTitle = MZLocalizedString(
@@ -6682,6 +6741,22 @@ extension String {
             tableName: "EngagementNotification",
             value: "Find something nearby. Or discover something fun.",
             comment: "Body of notification sent to user after inactivity to encourage them to use the search feature.")
+    }
+}
+
+// MARK: - Wallpapers
+extension String {
+    public struct Wallpapers {
+        public static let EngagementSheetTitle = MZLocalizedString(
+            key: "Wallpapers.EngagementSheet.Title.v161",
+            tableName: "Wallpapers",
+            value: "Try New Wallpapers to Make %@ Yours",
+            comment: "New wallpapers bottom banner: Title of the banner announcing new designs so users can personalize their experience. %@ is the app name (e.g. Firefox).")
+        public static let EngagementSheetButton = MZLocalizedString(
+            key: "Wallpapers.EngagementSheet.Button.v161",
+            tableName: "Wallpapers",
+            value: "Explore Wallpapers",
+            comment: "New wallpapers bottom banner: Primary button - tapping it opens the wallpaper settings screen.")
     }
 }
 
