@@ -272,7 +272,6 @@ extension String {
         case uploadCameraAccessMessage = "Ecosia needs camera access so you can take a photo to attach."
         case uploadCameraUnavailableMessage = "A camera is not available on this device."
         case aiToolsTitle = "AI tools"
-        case aiToolsRedirectNotice = "These features will redirect to AI Chat"
         case aiToolsDoneAccessibilityHint = "Dismisses the AI tools menu"
         case chatModeStandard = "Standard AI Chat"
         case chatModeThinkLonger = "Think longer"
