@@ -131,6 +131,7 @@ platform :ios do
       configuration: "Development_TestFlight"
     )
     upload_dsym_to_sentry
+    inject_appstore_connect_api
     pilot(
       skip_waiting_for_build_processing: true, 
       apple_id: "1541358670",
