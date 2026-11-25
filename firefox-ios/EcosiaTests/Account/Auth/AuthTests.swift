@@ -550,6 +550,14 @@ final class AuthTests: XCTestCase {
     func testRetrieveStoredCredentials_emitsStateResolved_beforeReturning() async {
         // Init's own retrieval finds no credentials, so its (possibly late) event is filtered out below.
         await waitForInitCredentialRetrieval()
+        let deadline = Date().addingTimeInterval(1)
+        while !auth.hasResolvedAuthState && Date() < deadline {
+            try? await Task.sleep(nanoseconds: 10_000_000)
+        }
+        guard auth.hasResolvedAuthState else {
+            XCTFail("Init-time auth state did not resolve")
+            return
+        }
         mockProvider.hasStoredCredentials = true
         var stateResolvedCount = 0
         let subscription = auth.authEvents
