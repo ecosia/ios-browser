@@ -753,11 +753,13 @@ final class TabManagerImplementation: NSObject,
             tab.restoreTemporaryDocumentSession(documentSession)
         }
 
+        /* Ecosia: a tab with no URL is one that never loaded a page, and a breadcrumb per such tab crowds useful context out of Sentry
         if tab.url == nil {
             logger.log("Tab restored has empty URL. tabID: \(tabData.id.uuidString), lastUsedTime: \(tabData.lastUsedTime)",
                        level: .debug,
                        category: .tabs)
         }
+         */
     }
 
     private func handleTabSelectionAfterRestore(tabToSelect: Tab?) {
@@ -958,11 +960,13 @@ final class TabManagerImplementation: NSObject,
 
         let tabData = tabsToSave.map { tab in
             let tabId =  UUID(uuidString: tab.tabUUID) ?? UUID()
+            /* Ecosia: a tab with no URL is one that never loaded a page, and a breadcrumb per such tab on every save crowds useful context out of Sentry
             if tab.url == nil {
                 logger.log("Tab has empty tab.URL for saving for tab id \(tabId). It was last used \(Date.fromTimestamp(tab.lastExecutedTime))",
                            level: .debug,
                            category: .tabs)
             }
+             */
 
             // Never persist a raw internal error-page URL as a tab's restorable siteUrl,
             // substitute the original failing URL so restoration points at the real site.
