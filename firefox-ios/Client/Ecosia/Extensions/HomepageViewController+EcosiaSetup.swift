@@ -56,8 +56,8 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
             // Anchor the scrim tightly to the pill: 12pt above so the fade
             // region sits just above the omnibox, and 40pt below so the
             // tail extends ~20pt past the keyboard's top edge (the pill
-            // itself sits `restingBottomOffset` = 20pt above the keyboard,
-            // so `pill.bottom + 40 ≈ keyboard.top + 20`). That extra strip
+            // itself sits `focusedBottomOffset` = 12pt above the keyboard,
+            // so `pill.bottom + 40 ≈ keyboard.top + 28`). That extra strip
             // is occluded by the keyboard window proper, but the rounded
             // corner area of the keyboard (transparent outside the corner
             // radius on iPhone 13+) reveals the backdrop behind it — without
@@ -70,7 +70,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
 
         let bottomConstraint = searchBar.bottomAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.bottomAnchor,
-            constant: -.ecosia.space._l
+            constant: -Self.restingBottomOffset
         )
         let horizontalInset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
         let leadingConstraint = searchBar.leadingAnchor.constraint(
@@ -112,6 +112,7 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         }
         searchBar.onFocusChange = { [weak self] focused in
             self?.ntpSearchBarBackdrop?.setVisible(focused, animated: true)
+            self?.updateNTPSearchBarHorizontalInset(focused: focused, animated: true)
         }
 
         installOmniboxTapOutsideDismiss()
@@ -319,22 +320,29 @@ extension HomepageViewController: @MainActor HomepageDataModelDelegate {
         homepageCollectionView?.isScrollEnabled = isPhoneLandscape
     }
 
-    /// Re-applies the iPad horizontal inset to the omnibox after a rotation or
-    /// size-class change (e.g. iPad split-screen resize). On iPhone-class
-    /// surfaces the value collapses back to the default `_s` (12pt) margin.
-    func updateNTPSearchBarHorizontalInset() {
-        let inset = Self.ntpSearchBarHorizontalInset(for: traitCollection)
+    /// Re-applies the omnibox horizontal inset after a focus change, rotation or
+    /// size-class change (e.g. iPad split-screen resize).
+    func updateNTPSearchBarHorizontalInset(focused: Bool? = nil, animated: Bool = false) {
+        let focused = focused ?? ntpSearchBar?.isFirstResponder ?? false
+        let inset = Self.ntpSearchBarHorizontalInset(for: traitCollection, focused: focused)
+        guard ntpSearchBarLeadingConstraint?.constant != inset else { return }
         ntpSearchBarLeadingConstraint?.constant = inset
         ntpSearchBarTrailingConstraint?.constant = -inset
+        guard animated else { return }
+        // Matches the backdrop fade in `NTPSearchBarBackdropView.setVisible`.
+        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut]) {
+            self.view.layoutIfNeeded()
+        }
     }
 
     /// 160pt of breathing room on iPad regular-width surfaces so the pill doesn't
     /// stretch the full width of a 1024pt display; everything else (iPhone, iPad
-    /// narrow split-screen) uses the design-system `_s` (12pt) margin.
-    static func ntpSearchBarHorizontalInset(for traitCollection: UITraitCollection) -> CGFloat {
+    /// narrow split-screen) uses 16pt at rest and 12pt while focused.
+    static func ntpSearchBarHorizontalInset(for traitCollection: UITraitCollection, focused: Bool = false) -> CGFloat {
         let isWideIPad = traitCollection.userInterfaceIdiom == .pad
             && traitCollection.horizontalSizeClass == .regular
-        return isWideIPad ? 160 : .ecosia.space._s
+        if isWideIPad { return 160 }
+        return focused ? .ecosia.space._s : .ecosia.space._m
     }
 
     /// Called from `viewDidLayoutSubviews`. The omnibox cushion is now baked
@@ -459,7 +467,8 @@ extension HomepageViewController: UIGestureRecognizerDelegate {
 // MARK: - KeyboardHelperDelegate
 // Ecosia: Keeps the omnibox glued just above the keyboard while editing.
 extension HomepageViewController: KeyboardHelperDelegate {
-    private static let restingBottomOffset: CGFloat = .ecosia.space._l
+    private static let restingBottomOffset: CGFloat = .ecosia.space._m
+    private static let focusedBottomOffset: CGFloat = .ecosia.space._s
 
     public func keyboardHelper(
         _ keyboardHelper: KeyboardHelper,
@@ -468,7 +477,7 @@ extension HomepageViewController: KeyboardHelperDelegate {
         let keyboardHeight = state.intersectionHeightForView(view)
         guard keyboardHeight > 0, let bottomConstraint = ntpSearchBarBottomConstraint else { return }
         let safeAreaBottom = view.safeAreaInsets.bottom
-        bottomConstraint.constant = -(keyboardHeight - safeAreaBottom + Self.restingBottomOffset)
+        bottomConstraint.constant = -(keyboardHeight - safeAreaBottom + Self.focusedBottomOffset)
         UIView.animate(
             withDuration: state.animationDuration,
             delay: 0,

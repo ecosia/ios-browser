@@ -14,6 +14,8 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
         static let cellsSpacing: CGFloat = .ecosia.space._1s
         static let titleToTilesGap: CGFloat = .ecosia.space._m
         static let titleFont: UIFont = .ecosiaFamilyBrand(size: .ecosia.font._4l)
+        // Headline 3: 1.1 line height (39.6pt); the font's own line height is 42.3pt.
+        static let titleLineHeight: CGFloat = 39.6
         // Fixed height for up to 3 lines of brand font (~39.6pt line height × 3 ≈ 119pt).
         // Keeps the tiles stable when the rotating title changes.
         static let titleReservedHeight: CGFloat = 120
@@ -129,7 +131,7 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        rotatingTitleLabel.text = nil
+        rotatingTitleLabel.attributedText = nil
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -201,7 +203,21 @@ final class NTPImpactCell: UICollectionViewCell, ThemeApplicable, ReusableCell {
     // MARK: - Title
 
     func updateTitle(_ title: String?) {
-        rotatingTitleLabel.text = title
+        guard let title else {
+            rotatingTitleLabel.attributedText = nil
+            return
+        }
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.minimumLineHeight = UX.titleLineHeight
+        paragraph.maximumLineHeight = UX.titleLineHeight
+        paragraph.alignment = .center
+        paragraph.lineBreakMode = .byWordWrapping
+        // Plain `text` gets the standard strategy (no orphaned last word); a custom paragraph style does not.
+        paragraph.lineBreakStrategy = .standard
+        rotatingTitleLabel.attributedText = NSAttributedString(string: title, attributes: [
+            .font: UX.titleFont,
+            .paragraphStyle: paragraph
+        ])
     }
 
     // MARK: - ThemeApplicable

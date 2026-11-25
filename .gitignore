@@ -175,3 +175,6 @@ BrowserKit/Package.resolved
 # CI diagnostics written into the workspace by .github/actions/perform_unit_tests
 raw_build_for_testing.log
 test_target_linkage.log
+
+# Claude
+.claude/settings.local.json
