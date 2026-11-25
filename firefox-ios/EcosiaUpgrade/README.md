@@ -26,3 +26,7 @@ git merge-tree --write-tree --merge-base="$base" HEAD <new-tag>
 ## `inventory/`
 
 One change inventory per upgrade target, named after the target release: [`159.1.md`](inventory/159.1.md). It lists what Firefox changed between the base and the target, release by release, marks each new feature and Nimbus flag **keep**, **out** or **needs product decision**, and ranks Ecosia's customized files by conflict risk. Write it before the merge; the merge works through it.
+
+## `test-plan/`
+
+The flows that check an upgrade against production, one Markdown file per area with a Mermaid diagram, readable by people and runnable by an agent on the iOS Simulator: [test-plan/README.md](test-plan/README.md). Each flow is an agent flow unless it names the test that automates it or the reason a person has to run it. It replaces the Miro test plan (Confluence "Firefox Upgrades", step 6). `tools/test_plan.py --check` keeps it complete; runs go in `test-plan/runs/<target>/`.

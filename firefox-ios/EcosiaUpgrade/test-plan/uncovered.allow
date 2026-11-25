@@ -1,0 +1,5 @@
+# +Ecosia extension files that need no flow. One per line: <path><TAB><reason>.
+# Read by tools/test_plan.py --check. Each entry needs a reason a reviewer can check.
+firefox-ios/Client/Ecosia/Extensions/SnapKit+Ecosia.swift	layout constant (constraint priority 999), no behaviour of its own
+firefox-ios/Client/Ecosia/Extensions/UIButton+Ecosia.swift	background-colour helper; its buttons are checked where they appear
+firefox-ios/Ecosia/Extensions/Bundle+Ecosia.swift	returns the Ecosia framework bundle; a wrong bundle shows as missing images in theme.icons

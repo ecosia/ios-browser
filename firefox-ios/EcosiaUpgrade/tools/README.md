@@ -11,7 +11,7 @@ Command-line scripts for moving the app to a new Firefox release. Like everythin
 - **Output:** results go to stdout, one item per line or as Markdown, and summaries go to stderr.
 - **Exit codes:** `0` the check passed, `1` the check failed (the output lists what needs a look), `2` the script could not run (git failed, an input is missing), `64` usage error.
 - Python scripts use the standard library only. Run them as `python3 -I <script>` or directly. They write no `__pycache__`.
-- Tests: `python3 -I firefox-ios/EcosiaUpgrade/tools/tools.test.py` and `firefox-ios/EcosiaUpgrade/tools/sync-main.test.sh`.
+- Tests: `python3 -I firefox-ios/EcosiaUpgrade/tools/tools.test.py` (also covers `test_plan.py`) and `firefox-ios/EcosiaUpgrade/tools/sync-main.test.sh`.
 
 ## Before the merge: what Ecosia changed
 
@@ -105,11 +105,23 @@ Shows what users see for `Info.plist` strings, such as purpose strings, in every
 ## Main sync and verification
 
 - **`sync-main.sh [--base-ref <ref>]`**: merges `main` into the upgrade branch. See its header for exit codes. Tested by `sync-main.test.sh`.
+<<<<<<< HEAD
 - **`verify.sh`**: generates the project, builds, runs the unit tests and lints the way CI does, then runs `check-feature-config.sh`. See its header for exit codes.
 - **`check-feature-config.sh [--fml <path to nimbus-fml>]`**: checks Ecosia's decisions about Firefox's features (translations, the search term in the address bar and the address-bar swipe on; hosted summarizer, App Attest, Google Lens, Quick Answers, VPN, ad blocker, Nova, Report Broken Site, the privacy dashboard, multi-day onboarding, search config v3, the reinstall check and the wallpaper engagement sheet off) on the developer, beta and release Nimbus channels. Unit tests (`FeatureConfigurationTests`) only see developer.
+=======
+- **`verify.sh`**: generates the project, builds, runs the unit tests and lints the way CI does, then runs `check-feature-config.sh` and `test_plan.py --check`. See its header for exit codes.
+- **`check-feature-config.sh [--fml <path to nimbus-fml>]`**: checks Ecosia's decisions about Firefox's features (translations on; hosted summarizer, App Attest, Google Lens, Quick Answers, VPN, ad blocker and Nova off) on the developer, beta and release Nimbus channels. Unit tests (`FeatureConfigurationTests`) only see developer.
+>>>>>>> 827d0416f0 ([MOB-5044] Move the upgrade test plan from Miro into the repo)
   - **Input:** `nimbus-features/*.yaml`, and the `nimbus-fml` binary a build caches under `firefox-ios/build/nimbus/`.
   - **Output:** one line per decision that doesn't hold: `<channel> <feature> <variable>: expected X, found Y`.
   - **Exit:** 0 when every decision holds, 1 when one doesn't, 2 when `nimbus-fml` fails or a feature is missing from its output, 64 on a usage error or when there's no `nimbus-fml` binary yet.
+
+## Test plan
+
+- **`test_plan.py --check | --map | --affected <rev-range> | --todo <release>`**: checks and uses the upgrade test plan in [`../test-plan/`](../test-plan/README.md).
+  - **Input:** `test-plan/areas/*.md`, `test-plan/targets/*.md`, `test-plan/uncovered.allow`, and the test sources for `automated:` names.
+  - **Output:** `--check` prints one problem per line and the agent / automated / human counts on stderr; `--map` rewrites `test-plan/map.md`; `--affected` prints `<flow id>\t<file>` for each flow whose file's `Covers:` paths the range changed; `--todo` prints a run sheet.
+  - **Exit:** 0 ok, 1 `--check` found problems, 2 when it can't run (no plan, no target file), 64 on a usage error. `verify.sh` runs `--check`.
 
 ## Shared modules
 
