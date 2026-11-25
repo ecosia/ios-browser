@@ -423,8 +423,10 @@ extension BrowserViewController {
 extension BrowserViewController {
 
     /// The NTP wallpaper reaches behind the status bar, so its content stays light whatever the theme.
+    /// The omnibox suggestions cover the wallpaper, so they keep the theme's style.
     var ecosiaHomepageStatusBarStyle: UIStatusBarStyle? {
-        guard let homepage = contentContainer.contentController as? HomepageViewController,
+        guard !isShowingOmniboxSuggestions,
+              let homepage = contentContainer.contentController as? HomepageViewController,
               homepage.ecosiaAdapter?.headerViewModel?.glassAppearance == .wallpaper else { return nil }
         return .lightContent
     }

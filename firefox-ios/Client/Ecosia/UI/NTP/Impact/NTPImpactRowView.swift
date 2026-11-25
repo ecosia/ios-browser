@@ -18,6 +18,9 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         static let padding: CGFloat = .ecosia.space._s
         static let titleSubtitleGap: CGFloat = .ecosia.space._2s
         static let imageHeight: CGFloat = 24
+        static let titleFont: UIFont = .ecosiaFamilyBrand(size: .ecosia.font._3l)
+        // Headline 4: 1.2 line height (28.8pt); the font's own line height is 28.2pt.
+        static let titleLineHeight: CGFloat = 28.8
         static let glassBorderWidth: CGFloat = 1
     }
 
@@ -70,11 +73,19 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .ecosiaFamilyBrand(size: .ecosia.font._3l)
+        label.font = UX.titleFont
         label.adjustsFontSizeToFitWidth = true
         label.adjustsFontForContentSizeCategory = true
         label.setContentHuggingPriority(.defaultLow, for: .horizontal)
         return label
+    }()
+
+    // Proportional digits make the live counter change width as it ticks. Reserving the width of the
+    // widest digits keeps the card and the icon still; the font shrinks only when the card runs out of room.
+    private lazy var titleWidthConstraint: NSLayoutConstraint = {
+        let constraint = titleLabel.widthAnchor.constraint(equalToConstant: 0)
+        constraint.priority = .defaultHigh - 1
+        return constraint
     }()
 
     private lazy var subtitleLabel: UILabel = {
@@ -97,7 +108,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             imageView.image = info.image
             imageContainer.isHidden = info.image == nil
             imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
-            titleLabel.text = info.title
+            setTitle(info.title)
             subtitleLabel.text = info.subtitle
         }
     }
@@ -164,9 +175,8 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             glassBackground.trailingAnchor.constraint(equalTo: trailingAnchor),
             glassBackground.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-            // Centred so the shorter card keeps its content in the middle when stretched to its neighbour's height.
-            labelsStack.centerYAnchor.constraint(equalTo: centerYAnchor),
-            labelsStack.topAnchor.constraint(greaterThanOrEqualTo: topAnchor, constant: UX.padding),
+            // Top-aligned so both counters line up when the shorter card is stretched to its neighbour's height.
+            labelsStack.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding),
             labelsStack.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: -UX.padding),
             labelsStack.leadingAnchor.constraint(equalTo: leadingAnchor, constant: UX.padding),
             labelsStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -UX.padding),
@@ -183,15 +193,19 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
             imageView.leadingAnchor.constraint(equalTo: imageContainer.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: imageContainer.bottomAnchor),
+            titleWidthConstraint,
         ])
 
-        // Hug the content vertically; the shorter card gives these up to match its neighbour.
-        let hugTop = labelsStack.topAnchor.constraint(equalTo: topAnchor, constant: UX.padding)
-        let hugBottom = labelsStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding)
-        [hugTop, hugBottom].forEach {
-            $0.priority = .defaultHigh
-            $0.isActive = true
+        // Hug the content vertically; the shorter card gives this up to match its neighbour.
+        // The labels must not stretch instead, or the number would re-centre inside a taller label.
+        [titleLabel, subtitleLabel].forEach {
+            $0.setContentHuggingPriority(.defaultHigh + 1, for: .vertical)
+            $0.setContentCompressionResistancePriority(.required, for: .vertical)
         }
+        titleRow.heightAnchor.constraint(equalTo: titleLabel.heightAnchor).isActive = true
+        let hugBottom = labelsStack.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UX.padding)
+        hugBottom.priority = .defaultHigh
+        hugBottom.isActive = true
     }
 
     // MARK: - ThemeApplicable
@@ -204,7 +218,7 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
     ) {
         imageView.image = image
         imageContainer.isHidden = image == nil
-        titleLabel.text = title
+        setTitle(title)
         subtitleLabel.text = subtitle
     }
 
@@ -222,9 +236,35 @@ final class NTPImpactRowView: UIView, ThemeApplicable {
         imageView.image = info.image
         imageContainer.isHidden = info.image == nil
         imageView.accessibilityIdentifier = info.imageAccessibilityIdentifier
-        titleLabel.text = info.title
+        setTitle(info.title)
         subtitleLabel.text = info.subtitle
     }
+
+    private func setTitle(_ title: String) {
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.minimumLineHeight = UX.titleLineHeight
+        paragraph.maximumLineHeight = UX.titleLineHeight
+        // Next to the icon the number hugs it so the gap stays the same; the reserved slack goes to the end.
+        paragraph.alignment = imageContainer.isHidden ? .center : .natural
+        let attributes: [NSAttributedString.Key: Any] = [.font: UX.titleFont, .paragraphStyle: paragraph]
+        titleLabel.attributedText = NSAttributedString(string: title, attributes: attributes)
+        titleWidthConstraint.constant = Self.stableWidth(of: title, attributes: attributes)
+    }
+
+    /// Width of `title` with every digit swapped for the font's widest digit, so it only changes
+    /// when the number gains a digit.
+    private static func stableWidth(of title: String, attributes: [NSAttributedString.Key: Any]) -> CGFloat {
+        let template = String(title.map { $0.isNumber ? widestDigit : $0 })
+        return ceil((template as NSString).size(withAttributes: attributes).width)
+    }
+
+    private static let widestDigit: Character = {
+        let attributes: [NSAttributedString.Key: Any] = [.font: UX.titleFont]
+        return "0123456789".max {
+            (String($0) as NSString).size(withAttributes: attributes).width
+                < (String($1) as NSString).size(withAttributes: attributes).width
+        } ?? "0"
+    }()
 
     // MARK: - Private Setup
 

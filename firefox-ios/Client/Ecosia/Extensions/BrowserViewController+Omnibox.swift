@@ -426,9 +426,37 @@ extension BrowserViewController {
         }
         guard searchController?.parent != nil else { return }
         hideSearchController()
+        setNeedsStatusBarAppearanceUpdate()
     }
 
     fileprivate static let omniboxSuggestionsClearance: CGFloat = .ecosia.space._1s
+
+    /// The NTP wallpaper reaches behind the status bar, but the suggestions belong to their own
+    /// surface, so fill the status bar area with the suggestions background while they are shown.
+    /// The filler lives inside the suggestions view and leaves with it.
+    fileprivate func coverStatusBarWithSuggestionsBackground(_ searchController: SearchViewController) {
+        let suggestionsView: UIView = searchController.view
+        suggestionsView.subviews.filter { $0 is OmniboxStatusBarFillerView }.forEach { $0.removeFromSuperview() }
+        guard let window = suggestionsView.window else { return }
+        let filler = OmniboxStatusBarFillerView()
+        filler.translatesAutoresizingMaskIntoConstraints = false
+        filler.backgroundColor = searchController.tableView.backgroundColor ?? suggestionsView.backgroundColor
+        filler.isUserInteractionEnabled = false
+        suggestionsView.clipsToBounds = false
+        suggestionsView.addSubview(filler)
+        NSLayoutConstraint.activate([
+            filler.topAnchor.constraint(equalTo: window.topAnchor),
+            filler.bottomAnchor.constraint(equalTo: suggestionsView.topAnchor),
+            filler.leadingAnchor.constraint(equalTo: suggestionsView.leadingAnchor),
+            filler.trailingAnchor.constraint(equalTo: suggestionsView.trailingAnchor)
+        ])
+    }
+
+    /// Whether the NTP omnibox suggestions are on screen.
+    var isShowingOmniboxSuggestions: Bool {
+        guard let searchController else { return false }
+        return searchController.parent is HomepageViewController
+    }
 
     fileprivate func attachOmniboxSuggestions(anchorView: UIView) {
         guard let searchController else { return }
@@ -449,6 +477,8 @@ extension BrowserViewController {
             searchController.view.trailingAnchor.constraint(equalTo: host.trailingAnchor),
             searchController.view.bottomAnchor.constraint(equalTo: host.bottomAnchor)
         ])
+        coverStatusBarWithSuggestionsBackground(searchController)
+        setNeedsStatusBarAppearanceUpdate()
 
         // z-order back→front: suggestions overlay, focused-state scrim,
         // omnibox pill. The scrim sits above the suggestions so the bottom
@@ -828,3 +858,5 @@ extension BrowserViewController: OmniboxUploadPickerDelegate, OmniboxAttachmentU
         showEcosiaErrorToasts(messages: messages)
     }
 }
+
+private final class OmniboxStatusBarFillerView: UIView {}
