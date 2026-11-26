@@ -81,7 +81,7 @@ jobs:
             fi
             gh pr create --base "$TARGET" --head main \
               --title "Sync main into $TARGET" \
-              --body "Automatic merge of main into $TARGET. Merge with a merge commit, never squash or rebase."
+              --body "Automatic merge of main into $TARGET. Merge with a merge commit, never squash or rebase. [Sync with main workflow](https://ecosia.atlassian.net/wiki/spaces/MOB/pages/5008654361/Sync-with-main+Workflow+setup)"
             pr=$(gh pr list --base "$TARGET" --head main --state open --json number --jq '.[0].number')
           fi
           if [ "$SYNC_CODE" = "2" ]; then
