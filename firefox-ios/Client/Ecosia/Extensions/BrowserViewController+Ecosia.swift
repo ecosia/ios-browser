@@ -417,11 +417,6 @@ extension BrowserViewController {
         return .lightContent
     }
 
-    /// Reduce Transparency turns the glass off, but the NTP wallpaper still runs behind the top chrome.
-    var ecosiaExtendsContentUnderChrome: Bool {
-        toolbarHelper.shouldBlur() || contentContainer.hasHomepage
-    }
-
     func updateEcosiaHomepageChrome() {
         setNeedsStatusBarAppearanceUpdate()
         updateBlurViews()
