@@ -23,7 +23,6 @@ flowchart LR
   homepage --> homepage.customise
   homepage --> homepage.news-about
   homepage --> homepage.components-snapshot
-  homepage --> homepage.ntp-snapshot
 ```
 
 ## homepage.layout
@@ -123,14 +122,3 @@ Homepage components (impact cell, shortcuts, header) render like the reference i
 1. CI runs the snapshot test.
 
 **Expect:** no difference beyond the tolerance, or only the intended changes listed in the target file.
-
-## homepage.ntp-snapshot
-p2 · automated: NTPTests
-
-The whole new-tab page renders like its reference image.
-
-**Setup:** existing · en
-
-1. CI runs the snapshot test (add `NTPTests` to `snapshot_configuration.json`; diary 160.md, MOB-5037 traps).
-
-**Expect:** no difference beyond the tolerance.

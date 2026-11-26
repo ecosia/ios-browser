@@ -25,6 +25,7 @@ from pathlib import Path
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import source_scan  # noqa: E402
 import upgrade_common as uc  # noqa: E402
 
 PLAN_DIR = "firefox-ios/EcosiaUpgrade/test-plan"
@@ -44,6 +45,7 @@ EXTENSION_GLOBS = (
 
 # Where `automated:` tests live.
 TEST_DIRS = ("firefox-ios/EcosiaTests", "firefox-ios/firefox-ios-tests/Tests")
+SNAPSHOT_CONFIG = "firefox-ios/EcosiaTests/SnapshotTests/snapshot_configuration.json"
 
 FLOW_ID = re.compile(r"^[a-z0-9][a-z0-9-]*(\.[a-z0-9][a-z0-9.-]*)+$")
 PRIORITY = re.compile(r"^p[123]$")
@@ -111,7 +113,6 @@ def parse_file(path):
     """PlanFile from a Markdown area or target file."""
     lines = Path(path).read_text().splitlines()
     title, covers, diagram, flows, problems = None, [], [], [], []
-    in_targets = os.path.basename(os.path.dirname(path)) == "targets"
     in_covers = in_mermaid = in_fence = False
     flow, expect_meta = None, False
     for n, raw in enumerate(lines, 1):
@@ -150,7 +151,7 @@ def parse_file(path):
                 flow = Flow(heading, path, n)
                 flows.append(flow)
                 expect_meta = True
-            elif heading not in SECTION_HEADINGS or not in_targets:
+            elif heading not in SECTION_HEADINGS or not in_targets(path):
                 problems.append(f"{n}: '## {heading}' is neither a flow id (<area>.<slug>, lowercase "
                                 f"and dashes) nor a target file's section ({', '.join(sorted(SECTION_HEADINGS))})")
             continue
@@ -187,6 +188,10 @@ def plan_files(plan_dir):
     return [parse_file(p) for p in paths]
 
 
+def in_targets(path):
+    return os.path.basename(os.path.dirname(path)) == "targets"
+
+
 def covered(path, covers):
     return any(path == c or (c.endswith("/") and path.startswith(c)) for c in covers)
 
@@ -202,14 +207,29 @@ def read_allow(plan_dir):
     return allow
 
 
-def test_exists(repo, name):
+def snapshot_classes(repo):
+    """Snapshot test classes CI runs: the ones snapshot_configuration.json lists."""
+    path = os.path.join(repo, SNAPSHOT_CONFIG)
+    if not os.path.exists(path):
+        return set()
+    return set(re.findall(r'"name":\s*"([A-Za-z0-9_]+)"', Path(path).read_text()))
+
+
+def test_problem(repo, name):
+    """Why `automated: <name>` doesn't point at a test CI runs, or None. Comments don't count."""
     cls, _, method = name.partition("/")
     for d in TEST_DIRS:
         for path in glob.glob(os.path.join(repo, d, "**", "*.swift"), recursive=True):
-            text = Path(path).read_text(errors="replace")
-            if re.search(rf"\bclass {re.escape(cls)}\b", text):
-                return not method or re.search(rf"\bfunc {re.escape(method)}\s*\(", text) is not None
-    return False
+            code = source_scan.code_only(Path(path).read_text(errors="replace"))
+            if not re.search(rf"\bclass {re.escape(cls)}\b", code):
+                continue
+            wanted = re.escape(method) if method else r"test\w*"
+            if not re.search(rf"\bfunc {wanted}\s*\(", code):
+                return f"no active test {'method ' + method if method else 'methods'} in {cls}"
+            if f"{os.sep}SnapshotTests{os.sep}" in path and cls not in snapshot_classes(repo):
+                return f"{cls} is not in {SNAPSHOT_CONFIG}, so CI never runs it"
+            return None
+    return f"test class not found: {cls}"
 
 
 def check(repo, plan_dir):
@@ -238,8 +258,12 @@ def check(repo, plan_dir):
             seen[f.id] = f.path
             if f.id not in nodes:
                 problems.append(f"{where}: not in the file's mermaid diagram")
-            if f.automated and not test_exists(repo, f.automated):
-                problems.append(f"{where}: automated test not found: {f.automated}")
+            if f.automated and (why := test_problem(repo, f.automated)):
+                problems.append(f"{where}: automated: {f.automated}: {why}")
+            prefix = f.id.split(".")[0]
+            expected = "target" if in_targets(pf.path) else Path(pf.path).stem
+            if prefix != expected:
+                problems.append(f"{where}: id must start with '{expected}.' in this file")
     present = {Path(pf.path).stem for pf in files if os.path.dirname(pf.path).endswith("areas")}
     for area in REQUIRED_AREAS:
         if area not in present:
@@ -271,8 +295,9 @@ def counts(files):
     return f"{len(flows)} flows: {by['agent']} agent · {by['automated']} automated · {by['human']} human"
 
 
-def node(fid):
-    return re.sub(r"[^A-Za-z0-9]", "_", fid)
+def node(text, kind="F"):
+    """A Mermaid node id, unique per text: ids hold only [a-z0-9.-], so '_' never occurs in them."""
+    return kind + "_" + text.replace("-", "_h").replace(".", "_d")
 
 
 def render_map(files, plan_dir):
@@ -287,7 +312,7 @@ def render_map(files, plan_dir):
     for pf in files:
         stem = Path(pf.path).stem
         kind = "target" if os.path.basename(os.path.dirname(pf.path)) == "targets" else "area"
-        area = node(f"{kind}_{stem}")
+        area = node(f"{kind}.{stem}", kind="A")
         out.append(f'  plan --> {area}["{pf.title}"]')
         for f in pf.flows:
             out.append(f'  {area} --> {node(f.id)}["{f.id}"]:::{f.runner}')

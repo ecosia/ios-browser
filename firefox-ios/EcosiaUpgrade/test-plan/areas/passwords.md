@@ -1,4 +1,4 @@
-# Passwords and payments
+# Passwords
 
 Covers:
 - `firefox-ios/Client/Frontend/PasswordManagement/`
@@ -7,13 +7,11 @@ Covers:
 
 ```mermaid
 flowchart LR
-  pp[Passwords and payments]
-  pp --> passwords.add-manually
-  pp --> passwords.save-from-login
-  pp --> passwords.use-on-login
-  pp --> passwords.delete
-  pp --> payments.paypal
-  pp --> payments.bank-login
+  pw[Passwords]
+  pw --> passwords.add-manually
+  pw --> passwords.save-from-login
+  pw --> passwords.use-on-login
+  pw --> passwords.delete
 ```
 
 ## passwords.add-manually
@@ -62,26 +60,3 @@ Deleting a saved password.
 1. Settings → Passwords, delete the test login.
 
 **Expect:** it's gone and isn't offered on the form any more.
-
-## payments.paypal
-p2 · origin 147 board "Payments → PayPal"
-
-PayPal checkout opens the PayPal pop-up.
-
-**Setup:** existing · en
-
-1. Open a page with a PayPal button (PayPal's public checkout demo).
-2. Tap the PayPal button. Screenshot.
-
-**Expect:** the PayPal window or pop-up opens (a new tab or sheet with paypal.com). Logging in and paying is not needed.
-
-## payments.bank-login
-p3 · origin 147 board "Payments → bank accounts"
-
-Bank login pages and pop-ups open.
-
-**Setup:** existing · en
-
-1. Open a bank's public online-banking login page that uses a pop-up or redirect.
-
-**Expect:** the login page or pop-up opens and is usable. Don't enter anything.

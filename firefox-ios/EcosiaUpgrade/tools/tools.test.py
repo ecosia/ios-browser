@@ -290,7 +290,7 @@ class TestPlanTests(unittest.TestCase):
                    AREA.replace("testIt", "testGone").replace("A+Ecosia.swift`", "B+Ecosia.swift`"))
         self.write("firefox-ios/Client/Ecosia/Extensions/B+Ecosia.swift", "")
         problems = "\n".join(self.check())
-        self.assertIn("automated test not found: SomeTests/testGone", problems)
+        self.assertIn("automated: SomeTests/testGone: no active test method testGone in SomeTests", problems)
         self.assertIn("A+Ecosia.swift: +Ecosia extension with no flow", problems)
 
     def test_allow_list_needs_reasons_and_goes_stale(self):
@@ -307,6 +307,24 @@ class TestPlanTests(unittest.TestCase):
         self.assertIn("out of date", "\n".join(test_plan.check(self.repo, self.plan)[0]))
         self.assertEqual(test_plan.counts(test_plan.plan_files(self.plan)),
                          "2 flows: 0 agent · 1 automated · 1 human")
+
+    def test_commented_out_and_unregistered_tests_do_not_count(self):
+        self.write("firefox-ios/EcosiaTests/SomeTests.swift", "class SomeTests {\n/* func testIt() {} */\n}\n")
+        self.assertIn("no active test method testIt", "\n".join(self.check()))
+        self.write("firefox-ios/EcosiaTests/SomeTests.swift", "")
+        self.write("firefox-ios/EcosiaTests/SnapshotTests/SomeTests.swift", "class SomeTests { func testIt() {} }\n")
+        self.assertIn("SomeTests is not in", "\n".join(self.check()))
+        self.write(test_plan.SNAPSHOT_CONFIG, '{"testClasses": [{"name": "SomeTests"}]}')
+        self.assertEqual(self.check(), [])
+
+    def test_flow_prefix_must_match_its_file(self):
+        self.write(f"{test_plan.PLAN_DIR}/areas/settings.md", AREA.replace("settings.two", "homepage.two"))
+        self.assertIn("homepage.two: id must start with 'settings.'", "\n".join(self.check()))
+
+    def test_map_nodes_stay_distinct(self):
+        self.assertNotEqual(test_plan.node("a-b.c"), test_plan.node("a.b-c"))
+        self.assertNotEqual(test_plan.node("a--b.c"), test_plan.node("a.b.c"))
+        self.assertNotEqual(test_plan.node("area.x", kind="A"), test_plan.node("area.x"))
 
     def test_required_area_without_file(self):
         test_plan.REQUIRED_AREAS = ("settings", "search")

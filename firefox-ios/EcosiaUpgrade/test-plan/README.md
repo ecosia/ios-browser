@@ -20,7 +20,7 @@ test-plan/
 Every flow is an **agent flow** unless its metadata line says otherwise:
 
 - **agent** (no marker, the default): an agent with the simulator runs it and judges from screenshots, as [AGENT.md](AGENT.md) describes. A person can run it the same way.
-- **`automated: <test>`**: a unit, snapshot or UI test covers it in CI, so runs skip it. `<test>` is the test class or `Class/testMethod`; `test_plan.py --check` fails if it doesn't exist.
+- **`automated: <test>`**: a unit, snapshot or UI test covers it in CI, so runs skip it. `<test>` is the test class or `Class/testMethod`; `test_plan.py --check` fails if it doesn't exist, is commented out, or is a snapshot test missing from `snapshot_configuration.json`.
 - **`human: <reason>`**: only when neither an agent nor a test can do it, and the reason says why, for example `human: Braze push`. The reason is required.
 
 Every run reports the split (for example "52 agent · 9 automated · 3 human"). The goal is that the human share shrinks from one upgrade to the next and the automated share grows: a `human:` reason is a candidate ticket to remove it, and an agent flow that keeps finding regressions is a candidate for a UI or snapshot test.
@@ -57,7 +57,7 @@ Homepage settings are the same screen from every entry point.
 - **Title:** `# <Area>`.
 - **`Covers:`** the files the area exercises: Ecosia's `+Ecosia` extensions, the Firefox files they extend, and Ecosia-owned files where a regression would show here. `--affected` uses it to pick the flows a diff touches.
 - **Diagram:** one `mermaid` block with every flow id of the file as a node (it is what the Miro mind map showed; GitHub renders it).
-- **Flow:** a `## <area>.<slug>` heading (lowercase, dashes), then the metadata line, a one-line summary, `**Setup:**`, numbered steps and `**Expect:**`. Every other `##` heading is an error, except a target file's `## Intended changes` and `## Migrations`.
+- **Flow:** a `## <area>.<slug>` heading (lowercase, dashes; `<area>` is the file's name, `target` in a target file), then the metadata line, a one-line summary, `**Setup:**`, numbered steps and `**Expect:**`. Every other `##` heading is an error, except a target file's `## Intended changes` and `## Migrations`.
 - **Metadata line:** fields joined by ` · `: the priority (`p1` checked on every upgrade, `p2` when the area changed, `p3` smoke), optionally `origin <ticket or source>`, and at most one of `automated: <test>` / `human: <reason>`.
 - **Setup** words the runbook understands: `fresh install` (erase the simulator first), `update from main` (install main, create state, install the upgrade build over it), `existing` (any state), `en` / `de` (each listed locale is one run), `compare with main` (run on a main build side by side), `signed in as "<test account>"` (see [Test accounts](#test-accounts)), `network off`.
 - **Steps** are plain language. Name an accessibility identifier in backticks where one exists (`EcosiaAccessibilityIdentifiers`, Firefox's `AccessibilityIdentifiers`); it makes converting the flow to XCUITest mechanical.
@@ -97,4 +97,4 @@ $tools/test_plan.py --affected origin/main..HEAD   # flows whose Covers files ch
 $tools/test_plan.py --todo 160.1           # run sheet: every flow plus the target file
 ```
 
-`--check` runs in `verify.sh`. It fails when a flow is malformed, an id repeats or is missing from its diagram, a required area has no file, an `automated:` test doesn't exist, or a `+Ecosia` extension file is neither covered nor listed in `uncovered.allow`.
+`--check` runs in `verify.sh`. It fails when a flow is malformed, an id repeats or is missing from its diagram, a required area has no file, an id doesn't start with its file's area, an `automated:` test doesn't exist or CI doesn't run it, or a `+Ecosia` extension file is neither covered nor listed in `uncovered.allow`.
