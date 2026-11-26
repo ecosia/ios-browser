@@ -271,7 +271,12 @@ class TestPlanTests(unittest.TestCase):
                    AREA.replace("## settings.two", "## settings.two!") + "\n## Migrations\n\nText.\n")
         problems = "\n".join(self.check())
         self.assertIn("'## settings.two!' is neither a flow id", problems)
-        self.assertNotIn("'## Migrations'", problems)
+        self.assertIn("'## Migrations' is neither a flow id", problems)  # sections belong in targets/ only
+
+    def test_target_file_sections_are_allowed(self):
+        self.write(f"{test_plan.PLAN_DIR}/targets/1.0.md",
+                   AREA.replace("settings.", "target.") + "\n## Intended changes\n\nText.\n")
+        self.assertNotIn("Intended changes", "\n".join(self.check()))
 
     def test_id_missing_from_diagram_and_duplicates(self):
         self.write(f"{test_plan.PLAN_DIR}/areas/settings.md", AREA.replace("  s --> settings.two\n", ""))

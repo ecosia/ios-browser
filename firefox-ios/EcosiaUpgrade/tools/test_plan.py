@@ -47,7 +47,7 @@ TEST_DIRS = ("firefox-ios/EcosiaTests", "firefox-ios/firefox-ios-tests/Tests")
 
 FLOW_ID = re.compile(r"^[a-z0-9][a-z0-9-]*(\.[a-z0-9][a-z0-9.-]*)+$")
 PRIORITY = re.compile(r"^p[123]$")
-# Level-2 headings that aren't flows; every other `##` heading must be a valid flow id.
+# Level-2 headings a target file may have besides flows; anywhere else every `##` heading must be a flow id.
 SECTION_HEADINGS = frozenset({"Intended changes", "Migrations"})
 META_FIELD = re.compile(r"^(origin(?=\s)|automated:|human:)(.*)$")
 STEP = re.compile(r"^\d+\.\s+\S")
@@ -111,6 +111,7 @@ def parse_file(path):
     """PlanFile from a Markdown area or target file."""
     lines = Path(path).read_text().splitlines()
     title, covers, diagram, flows, problems = None, [], [], [], []
+    in_targets = os.path.basename(os.path.dirname(path)) == "targets"
     in_covers = in_mermaid = in_fence = False
     flow, expect_meta = None, False
     for n, raw in enumerate(lines, 1):
@@ -149,9 +150,9 @@ def parse_file(path):
                 flow = Flow(heading, path, n)
                 flows.append(flow)
                 expect_meta = True
-            elif heading not in SECTION_HEADINGS:
+            elif heading not in SECTION_HEADINGS or not in_targets:
                 problems.append(f"{n}: '## {heading}' is neither a flow id (<area>.<slug>, lowercase "
-                                f"and dashes) nor a section ({', '.join(sorted(SECTION_HEADINGS))})")
+                                f"and dashes) nor a target file's section ({', '.join(sorted(SECTION_HEADINGS))})")
             continue
         if flow is None:
             continue
