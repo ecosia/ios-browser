@@ -266,6 +266,13 @@ class TestPlanTests(unittest.TestCase):
         self.assertIn("either automated or human", problems)
         self.assertIn("no **Expect:** line", problems)
 
+    def test_malformed_flow_heading_is_reported(self):
+        self.write(f"{test_plan.PLAN_DIR}/areas/settings.md",
+                   AREA.replace("## settings.two", "## settings.two!") + "\n## Migrations\n\nText.\n")
+        problems = "\n".join(self.check())
+        self.assertIn("'## settings.two!' is neither a flow id", problems)
+        self.assertNotIn("'## Migrations'", problems)
+
     def test_id_missing_from_diagram_and_duplicates(self):
         self.write(f"{test_plan.PLAN_DIR}/areas/settings.md", AREA.replace("  s --> settings.two\n", ""))
         self.write(f"{test_plan.PLAN_DIR}/areas/other.md", AREA.replace("# Settings", "# Other"))

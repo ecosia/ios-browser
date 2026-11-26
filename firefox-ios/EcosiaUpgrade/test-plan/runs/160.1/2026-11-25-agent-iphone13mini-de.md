@@ -2,13 +2,13 @@
 
 **Upgrade build:** `upgrade/firefox` at `794076d4d9`, scheme `Ecosia`, Debug · **Main build:** `main` as of 2026-11-20, `6913354a7e` (built that day by the MOB-5282 session; later `main` commits change only logs, Transifex strings and Ruby), same scheme and configuration.
 
-**Purpose:** the first agent run of this plan (MOB-5044), proving the format on flows from the MOB-5282 QA round. The upgrade build doesn't have the MOB-5282 fixes yet, so the flows should find what QA found by hand. Seven flows run, the rest not run.
+**Purpose:** the first agent run of this plan (MOB-5044), proving the format on flows from the MOB-5282 QA round. The upgrade build doesn't have the MOB-5282 fixes yet, so the flows should find what QA found by hand. Seven flows run, the rest not run. The sheet was regenerated on 2026-11-26 after the plan was rebased onto 160.1 (six `automated:` flag-lock flows added, `target.new-flags-off` folded into them); the results below were recorded on the build named here.
 
 **Simulators:** "iPhone 13 mini MOB-5282" (upgrade) and "iPhone 13 mini MOB-5282 main", German (`AppleLanguages de-DE`), app reinstalled before the run (fresh install). Screenshots: `<flow id>-<build>.png`, kept outside git for MOB-5044's ticket.
 
-**Summary:** 3 pass · 4 fail (3 upgrade regressions: detail font, translate icon, start-screen default; 1 also on main: homepage settings entry points) · 86 not run · 9 automated (left to CI). The detail font and translate icon are MOB-5282 items 3 and 1, both already fixed on `dc-mob-5282-qa-fixes`. The start-screen default is new: Firefox 159.1 changed it upstream and the merge took it silently.
+**Summary:** 3 pass · 4 fail (3 upgrade regressions: detail font, translate icon, start-screen default; 1 also on main: homepage settings entry points) · 85 not run · 15 automated (left to CI). The detail font and translate icon are MOB-5282 items 3 and 1, both already fixed on `dc-mob-5282-qa-fixes`. The start-screen default is new: Firefox 159.1 changed it upstream and the merge took it silently.
 
-102 flows: 90 agent · 9 automated · 3 human. Results: pass, fail, blocked, not run.
+107 flows: 89 agent · 15 automated · 3 human. Results: pass, fail, blocked, not run.
 
 | Flow | Priority | Runner | Result | Note | Evidence |
 | --- | --- | --- | --- | --- | --- |
@@ -72,6 +72,12 @@
 | `removed-features.vpn-off` | p1 | automated | automated (CI) |  |  |
 | `removed-features.ad-blocker-off` | p1 | automated | automated (CI) |  |  |
 | `removed-features.nova-off` | p2 | automated | automated (CI) |  |  |
+| `removed-features.report-broken-site-off` | p2 | automated | automated (CI) |  |  |
+| `removed-features.privacy-dashboard-off` | p2 | automated | automated (CI) |  |  |
+| `removed-features.multi-day-onboarding-off` | p2 | automated | automated (CI) |  |  |
+| `removed-features.search-config-v3-off` | p1 | automated | automated (CI) |  |  |
+| `removed-features.reinstall-check-off` | p2 | automated | automated (CI) |  |  |
+| `removed-features.wallpaper-sheet-off` | p2 | automated | automated (CI) |  |  |
 | `search.default-engine` | p1 | agent | not run |  |  |
 | `search.from-address-bar` | p1 | agent | not run |  |  |
 | `search.suggestions` | p2 | agent | not run |  |  |
@@ -112,5 +118,4 @@
 | `target.settings-switch-rows` | p1 | agent | not run |  |  |
 | `target.videos-inline` | p2 | agent | not run |  |  |
 | `target.iphone-duo` | p2 | agent | not run |  |  |
-| `target.new-flags-off` | p1 | agent | not run |  |  |
 | `target.qa-round-mob-5282` | p1 | agent | not run |  |  |

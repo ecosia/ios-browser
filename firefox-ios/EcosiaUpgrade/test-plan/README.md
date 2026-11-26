@@ -57,7 +57,7 @@ Homepage settings are the same screen from every entry point.
 - **Title:** `# <Area>`.
 - **`Covers:`** the files the area exercises: Ecosia's `+Ecosia` extensions, the Firefox files they extend, and Ecosia-owned files where a regression would show here. `--affected` uses it to pick the flows a diff touches.
 - **Diagram:** one `mermaid` block with every flow id of the file as a node (it is what the Miro mind map showed; GitHub renders it).
-- **Flow:** a `## <area>.<slug>` heading (lowercase, dashes), then the metadata line, a one-line summary, `**Setup:**`, numbered steps and `**Expect:**`.
+- **Flow:** a `## <area>.<slug>` heading (lowercase, dashes), then the metadata line, a one-line summary, `**Setup:**`, numbered steps and `**Expect:**`. Every other `##` heading is an error, except a target file's `## Intended changes` and `## Migrations`.
 - **Metadata line:** fields joined by ` · `: the priority (`p1` checked on every upgrade, `p2` when the area changed, `p3` smoke), optionally `origin <ticket or source>`, and at most one of `automated: <test>` / `human: <reason>`.
 - **Setup** words the runbook understands: `fresh install` (erase the simulator first), `update from main` (install main, create state, install the upgrade build over it), `existing` (any state), `en` / `de` (each listed locale is one run), `compare with main` (run on a main build side by side), `signed in as "<test account>"` (see [Test accounts](#test-accounts)), `network off`.
 - **Steps** are plain language. Name an accessibility identifier in backticks where one exists (`EcosiaAccessibilityIdentifiers`, Firefox's `AccessibilityIdentifiers`); it makes converting the flow to XCUITest mechanical.

@@ -47,6 +47,8 @@ TEST_DIRS = ("firefox-ios/EcosiaTests", "firefox-ios/firefox-ios-tests/Tests")
 
 FLOW_ID = re.compile(r"^[a-z0-9][a-z0-9-]*(\.[a-z0-9][a-z0-9.-]*)+$")
 PRIORITY = re.compile(r"^p[123]$")
+# Level-2 headings that aren't flows; every other `##` heading must be a valid flow id.
+SECTION_HEADINGS = frozenset({"Intended changes", "Migrations"})
 META_FIELD = re.compile(r"^(origin(?=\s)|automated:|human:)(.*)$")
 STEP = re.compile(r"^\d+\.\s+\S")
 
@@ -75,8 +77,9 @@ class Flow:
 
 
 class PlanFile:
-    def __init__(self, path, title, covers, diagram, flows):
+    def __init__(self, path, title, covers, diagram, flows, problems=()):
         self.path, self.title, self.covers, self.diagram, self.flows = path, title, covers, diagram, flows
+        self.problems = list(problems)  # "<line>: <text>" for the file as a whole
 
 
 def parse_meta(flow, text):
@@ -107,7 +110,7 @@ def parse_meta(flow, text):
 def parse_file(path):
     """PlanFile from a Markdown area or target file."""
     lines = Path(path).read_text().splitlines()
-    title, covers, diagram, flows = None, [], [], []
+    title, covers, diagram, flows, problems = None, [], [], [], []
     in_covers = in_mermaid = in_fence = False
     flow, expect_meta = None, False
     for n, raw in enumerate(lines, 1):
@@ -146,6 +149,9 @@ def parse_file(path):
                 flow = Flow(heading, path, n)
                 flows.append(flow)
                 expect_meta = True
+            elif heading not in SECTION_HEADINGS:
+                problems.append(f"{n}: '## {heading}' is neither a flow id (<area>.<slug>, lowercase "
+                                f"and dashes) nor a section ({', '.join(sorted(SECTION_HEADINGS))})")
             continue
         if flow is None:
             continue
@@ -171,7 +177,7 @@ def parse_file(path):
             f.problems.append("no **Expect:** line")
         if not f.summary:
             f.problems.append("no one-line summary")
-    return PlanFile(path, title, covers, "\n".join(diagram), flows)
+    return PlanFile(path, title, covers, "\n".join(diagram), flows, problems)
 
 
 def plan_files(plan_dir):
@@ -212,6 +218,7 @@ def check(repo, plan_dir):
     rel = lambda p: os.path.relpath(p, repo)  # noqa: E731
     seen = {}
     for pf in files:
+        problems.extend(f"{rel(pf.path)}:{p}" for p in pf.problems)
         if not pf.title:
             problems.append(f"{rel(pf.path)}:1: no '# Title' line")
         if not pf.flows:
