@@ -5,6 +5,7 @@
 import XCTest
 import SwiftUI
 import SnowplowTracker
+import ViewInspector
 @testable import Client
 @testable import Ecosia
 
@@ -42,17 +43,18 @@ class AppIconViewTest: XCTestCase {
             XCTAssertNotNil(UIImage.ecosia(named: icon.imageSetAssetName), "Missing image for \(icon)")
         }
     }
-    
-    func test_appIconView_invokesEcosiaTracking() {
+
+    func test_appIconView_invokesEcosiaTrackingCallback() throws {
         let analyticsSpy = makeAnalyticsSpyContextSUT()
-        let expectation = self.expectation(description: "Event tracked")
-        let event = Structured(category: Analytics.Category.settings.rawValue, action: Analytics.Action.Activity.launch.rawValue)
-        
-        let view = AppIconView(appIcon: .ecosiaLight, isSelected: false, windowUUID: UUID(), setAppIcon: { _ in })
-        
-        wait(for: [expectation], timeout: 2)
-        
-        //TODO: test the view constructor invokes tracking (analyticsSpy.changeAppIcon(...))
-        XCTAssertEqual(analyticsSpy.referralActionCalled, .click, "Analytics should track referral action as .click.")
+        // let expectedEvent = Structured(category: Analytics.Category.settings.rawValue, action: Analytics.Action.change.rawValue)
+
+        var callbackInvoked = false
+
+        let appIconView = AppIconView(appIcon: AppIcon.ecosiaDark, isSelected: true, windowUUID: UUID(), setAppIcon: { (AppIcon) -> Void in
+            callbackInvoked = true
+        })
+
+        try appIconView.inspect().find(ViewType.Button.self).tap()
+        XCTAssertTrue(callbackInvoked)
     }
 }
