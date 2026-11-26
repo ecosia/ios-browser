@@ -651,7 +651,10 @@ final class HomepageViewController: UIViewController,
     }
 
     private func configureCollectionView() {
-        let collectionView = HomepageCollectionView(frame: view.bounds, collectionViewLayout: createLayout())
+        /* Ecosia: Re-lay out all sections on size changes so TopSites stay in place (see NTPCollectionView)
+        let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
+        */
+        let collectionView = NTPCollectionView(frame: view.bounds, collectionViewLayout: createLayout())
 
         HomepageItem.cellTypes.forEach {
             collectionView.register($0, forCellWithReuseIdentifier: $0.cellIdentifier)
@@ -1213,9 +1216,12 @@ final class HomepageViewController: UIViewController,
     // Ecosia: The content container sits between the status bar and the bottom toolbar, so size the wallpaper
     // to the window. Set by frame in the same layout pass: constraints to the window are dropped while a page
     // is shown and came back a frame late on return, making the NTP jump.
+    // Only while the NTP is the shown content: with tab swiping it stays in the hierarchy under the webview,
+    // and the overflow would shine through the translucent status bar area until the page has rendered.
     private func extendEcosiaWallpaperToWindow() {
         guard let window = view.window else { return }
-        let frame = view.convert(window.bounds, from: window)
+        let isShownContent = (view.superview as? ContentContainer)?.contentController === self
+        let frame = isShownContent ? view.convert(window.bounds, from: window) : view.bounds
         if wallpaperView.frame != frame { wallpaperView.frame = frame }
     }
 
