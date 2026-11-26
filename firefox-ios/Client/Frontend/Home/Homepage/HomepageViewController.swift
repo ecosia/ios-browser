@@ -481,7 +481,10 @@ final class HomepageViewController: UIViewController,
     }
 
     private func configureCollectionView() {
+        /* Ecosia: Re-lay out all sections on size changes so TopSites stay in place (see NTPCollectionView)
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
+        */
+        let collectionView = NTPCollectionView(frame: view.bounds, collectionViewLayout: createLayout())
 
         HomepageItem.cellTypes.forEach {
             collectionView.register($0, forCellWithReuseIdentifier: $0.cellIdentifier)
