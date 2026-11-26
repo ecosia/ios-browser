@@ -45,9 +45,6 @@ class AppIconViewTest: XCTestCase {
     }
 
     func test_appIconView_invokesEcosiaTrackingCallback() throws {
-        let analyticsSpy = makeAnalyticsSpyContextSUT()
-        // let expectedEvent = Structured(category: Analytics.Category.settings.rawValue, action: Analytics.Action.change.rawValue)
-
         var callbackInvoked = false
 
         let appIconView = AppIconView(appIcon: AppIcon.ecosiaDark, isSelected: true, windowUUID: UUID(), setAppIcon: { (AppIcon) -> Void in
