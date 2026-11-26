@@ -755,10 +755,23 @@ class BrowserViewController: UIViewController,
         guard toolbarHelper.shouldBlur() else {
             topBlurView.alpha = 0
             bottomBlurView.isHidden = true
+            /* Ecosia: Keep the NTP wallpaper visible behind the header and status bar without glass
             header.isClearBackground = false
             overKeyboardContainer.isClearBackground = false
             bottomContainer.isClearBackground = false
             contentContainer.mask = nil
+            */
+            header.isClearBackground = ecosiaExtendsContentUnderChrome
+            overKeyboardContainer.isClearBackground = false
+            bottomContainer.isClearBackground = false
+            if ecosiaExtendsContentUnderChrome {
+                addOrUpdateMaskViewIfNeeded()
+            } else {
+                contentContainer.mask = nil
+            }
+            let theme = themeManager.getCurrentTheme(for: windowUUID)
+            header.applyTheme(theme: theme)
+            statusBarOverlay.applyTheme(theme: theme)
             return
         }
 
@@ -828,7 +841,10 @@ class BrowserViewController: UIViewController,
     // Adds or updates the mask for the content container that ensures the content is extending
     // under the toolbars but not leading and trailing (would show during swiping tabs)
     func addOrUpdateMaskViewIfNeeded() {
+        /* Ecosia: The NTP extends under the toolbars without glass too
         guard toolbarHelper.shouldBlur() else { return }
+        */
+        guard ecosiaExtendsContentUnderChrome else { return }
 
         let frame = CGRect(x: 0,
                            y: -contentContainer.frame.origin.y,
@@ -2061,7 +2077,10 @@ class BrowserViewController: UIViewController,
 
         // To make sure the content views content is extending under the toolbars we disable clip to bounds
         // for the first two layers of views other than a web view
+        /* Ecosia: The NTP extends under the toolbars without glass too
         if toolbarHelper.shouldBlur() && !viewController.isKind(of: WebviewViewController.self) {
+        */
+        if ecosiaExtendsContentUnderChrome && !viewController.isKind(of: WebviewViewController.self) {
             // Only update clipsToBounds if the first view layer has it turned on currently
             if isToolbarTranslucencyRefactorEnabled, viewController.view.clipsToBounds {
                 viewController.view.clipsToBounds = false
