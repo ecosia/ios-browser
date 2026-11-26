@@ -51,6 +51,9 @@ With Claude Code's iOS Simulator tool (`mcp__Claude_Code_iOS_Simulator__control`
 - **Home screen:** swipe up from the bottom edge (start within 4 pt of it). The HOME button action did nothing on Face ID devices (2026-11-25).
 - Run each flow on both simulators before judging it: do the steps on the upgrade simulator, then the same steps on main, and compare the screenshots.
 - **Opening a URL:** don't type it on a German simulator: the simulated keyboard turns `/` into `-` (2026-11-25). Open it through the app's scheme instead: `xcrun simctl openurl <udid> "ecosia://open-url?url=<percent-encoded URL>"` (it opens a new tab).
+- **The first scheme URL asks first:** iOS shows "In „Ecosia" öffnen?" once per install; tap Öffnen.
+- **Typing on a new simulator:** the tool's `text` action may refuse ("would have to paste"). Tap the on-screen keyboard's keys instead (focus the field first so the keyboard is up); for URLs use the scheme above.
+- **Counters load late:** the seed and impact counters can differ between builds for the first minute after onboarding. Take the screenshot again before calling it a difference.
 - **Taps during a sheet's dismissal are lost.** After closing a sheet or screen, take a screenshot before the next tap.
 - **Simulator access:** the simulator tool asks the user once per simulator. Create the run's simulators while the user is there, or reuse ones they already allowed (reinstall the app for `fresh install`).
 - Use the step's accessibility identifier where the tool can't see one, to describe what you tapped in the run file.
