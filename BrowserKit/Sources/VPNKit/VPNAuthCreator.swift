@@ -25,10 +25,12 @@ public struct VPNAuthCreator: VPNAuthCreating {
     private let appAttestService: AppAttestServiceProtocol
     private let tokenStore: VPNTokenStore
     private let bundleIdentifier: String
+    private let telemetry: VPNTelemetry
 
     /// `keyStore` is resolved in the body rather than defaulted inline, because a public default
     /// argument cannot reference the private constants above.
     public init(
+        telemetry: VPNTelemetry,
         keyStore: AppAttestKeyIDStore? = nil,
         appAttestService: AppAttestServiceProtocol = DCAppAttestService.shared,
         tokenStore: VPNTokenStore = KeychainVPNTokenStore(),
@@ -41,6 +43,7 @@ public struct VPNAuthCreator: VPNAuthCreating {
         self.appAttestService = appAttestService
         self.tokenStore = tokenStore
         self.bundleIdentifier = bundleIdentifier
+        self.telemetry = telemetry
     }
 
     public func makeAuthService(using prefs: Prefs) -> VPNAuthenticating? {
@@ -65,7 +68,8 @@ public struct VPNAuthCreator: VPNAuthCreating {
         return VPNAuthService(
             appAttestClient: client,
             sessionRefresher: server,
-            tokenStore: tokenStore
+            tokenStore: tokenStore,
+            telemetry: telemetry
         )
     }
 
@@ -90,8 +94,7 @@ public struct VPNAuthCreator: VPNAuthCreating {
     /// Also clears stored credentials when the environment changes, so the app re-attests against
     /// the correct server.
     private func resolveEnvironment(using prefs: Prefs) -> VPNEnvironment {
-        let environmentKey = prefs.stringForKey(PrefsKeys.VPNSettings.endpointEnvironment) ?? ""
-        let environment = VPNEnvironment(rawValue: environmentKey) ?? .prod
+        let environment = VPNEnvironment(prefs: prefs)
 
         prefs.resetIfEnvironmentChanged(
             environment.rawValue,

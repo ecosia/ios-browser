@@ -75,6 +75,7 @@ class AppSettingsTableViewController: SettingsTableViewController,
     private var applicationHelper: ApplicationHelper
     private let logger: Logger
     private let gleanUsageReportingMetricsService: GleanUsageReportingMetricsService
+    private let installationTelemetryService: InstallationTelemetryService
     private var hasAppearedBefore = false
     private let searchEnginesManager: SearchEnginesManagerProvider
     /* Ecosia: Internal so the Ecosia search section can list the Page Summaries row
@@ -102,13 +103,15 @@ class AppSettingsTableViewController: SettingsTableViewController,
         applicationHelper: ApplicationHelper = DefaultApplicationHelper(),
         summarizerNimbusUtils: SummarizerNimbusUtils = DefaultSummarizerNimbusUtils(),
         logger: Logger = DefaultLogger.shared,
-        searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve()
+        searchEnginesManager: SearchEnginesManager = AppContainer.shared.resolve(),
+        installationTelemetryService: InstallationTelemetryService = AppContainer.shared.resolve()
     ) {
         self.summarizerNimbusUtils = summarizerNimbusUtils
         self.appAuthenticator = appAuthenticator
         self.applicationHelper = applicationHelper
         self.logger = logger
         self.gleanUsageReportingMetricsService = gleanUsageReportingMetricsService
+        self.installationTelemetryService = installationTelemetryService
         self.searchEnginesManager = searchEnginesManager
 
         super.init(windowUUID: tabManager.windowUUID)
@@ -285,10 +288,11 @@ class AppSettingsTableViewController: SettingsTableViewController,
             settingsDelegate: parentCoordinator
         )
 
-        sendTechnicalDataSettings.settingDidChange = { value in
+        sendTechnicalDataSettings.settingDidChange = { [weak self] value in
             DefaultGleanWrapper().setUpload(isEnabled: value)
             Experiments.setTelemetrySetting(value)
             studiesSetting.updateSetting(for: value)
+            self?.installationTelemetryService.update()
         }
         sendTechnicalDataSetting = sendTechnicalDataSettings
 
@@ -540,6 +544,11 @@ class AppSettingsTableViewController: SettingsTableViewController,
                     store.dispatch(action)
                 }
             )
+        }
+
+        // VPN backend is only possible on iOS 17 and later
+        if #available(iOS 17.0, *), featureFlagsProvider.isEnabled(.vpnFeature) {
+            privacySettings.append(VPNSetting(settings: self, settingsDelegate: parentCoordinator))
         }
 
         privacySettings.append(ContentBlockerSetting(settings: self, settingsDelegate: parentCoordinator))

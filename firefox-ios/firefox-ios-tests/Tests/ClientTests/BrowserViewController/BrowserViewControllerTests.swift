@@ -677,7 +677,61 @@ class BrowserViewControllerTests: XCTestCase, StoreTestUtility {
         XCTAssertEqual(dispatchActionType, GeneralBrowserActionType.didTapReaderModeBarSummarizerButton)
     }
 
+    func testNewState_whenSelectedTabIsNotReaderModePage_andReaderModeStateIsStillActive_hidesReaderModeBar() {
+        let subject = createSubject()
+        setupSelectedTabWithReaderMode(url: URL(string: "https://example.com/article"), readerModeState: .active)
+        subject.readerModeBar = ReaderModeBarView(frame: .zero)
+
+        subject.newState(state: BrowserViewControllerState(windowUUID: .XCTestDefaultUUID))
+
+        XCTAssertNil(subject.readerModeBar)
+    }
+
+    func testNewState_whenSelectedTabIsReaderModePage_andReaderModeStateIsNotActiveYet_showsReaderModeBar() {
+        let subject = createSubject()
+        let readerModeURL = URL(string: "https://example.com/article")?
+            .encodeReaderModeURL(ReaderModeSchemeHandler.baseURL)
+        setupSelectedTabWithReaderMode(url: readerModeURL, readerModeState: .available)
+
+        subject.newState(state: BrowserViewControllerState(windowUUID: .XCTestDefaultUUID))
+
+        XCTAssertNotNil(subject.readerModeBar)
+    }
+
     // MARK: - Toolbar
+
+    @MainActor
+    func testAddressToolbarDidHideEditingAccessoryButton_dismissesGoogleLensTipAndCancelsObservation() {
+        let subject = MockBrowserViewController(profile: profile, tabManager: tabManager)
+        let tipViewController = UIViewController()
+        let observationTask = Task<Void, Never> { }
+        subject.googleLensTipViewController = tipViewController
+        subject.viewControllerToPresent = tipViewController
+        subject.googleLensTipObservationTask = observationTask
+
+        subject.addressToolbarDidHideEditingAccessoryButton()
+
+        XCTAssertEqual(subject.dismissCalled, 1)
+        XCTAssertNil(subject.googleLensTipViewController)
+        XCTAssertTrue(observationTask.isCancelled)
+        XCTAssertNil(subject.googleLensTipObservationTask)
+    }
+
+    @MainActor
+    func testAddressToolbarDidHideEditingAccessoryButton_cancelsPendingTipWithoutDismissingAnotherModal() {
+        let subject = MockBrowserViewController(profile: profile, tabManager: tabManager)
+        let otherViewController = UIViewController()
+        let observationTask = Task<Void, Never> { }
+        subject.viewControllerToPresent = otherViewController
+        subject.googleLensTipObservationTask = observationTask
+
+        subject.addressToolbarDidHideEditingAccessoryButton()
+
+        XCTAssertEqual(subject.dismissCalled, 0)
+        XCTAssertTrue(subject.presentedViewController === otherViewController)
+        XCTAssertTrue(observationTask.isCancelled)
+        XCTAssertNil(subject.googleLensTipObservationTask)
+    }
 
     func testToolbarLongPressMenu_hasExpectedSectionsAndActions() throws {
         let gleanWrapper = MockGleanWrapper()
@@ -806,6 +860,15 @@ class BrowserViewControllerTests: XCTestCase, StoreTestUtility {
 
         trackForMemoryLeaks(subject, file: file, line: line)
         return subject
+    }
+
+    private func setupSelectedTabWithReaderMode(url: URL?, readerModeState: ReaderModeState) {
+        let tab = MockTab(profile: profile, windowUUID: .XCTestDefaultUUID)
+        let readerMode = ReaderMode(tab: tab)
+        readerMode.state = readerModeState
+        tab.addContentScript(readerMode, name: ReaderMode.name())
+        tab.url = url
+        tabManager.selectedTab = tab
     }
 
     private func setupNimbusToolbarRefactorTesting(isEnabled: Bool) {

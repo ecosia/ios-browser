@@ -62,6 +62,7 @@ class TrackingProtectionViewController: UIViewController,
     weak var trackingProtectionMenuDelegate: TrackingProtectionMenuDelegate?
 
     private var foxImageHeightConstraint: NSLayoutConstraint?
+    private var currentCustomMenuHeight: CGFloat = 0
 
     private lazy var scrollView: UIScrollView = .build { scrollView in
         scrollView.showsVerticalScrollIndicator = false
@@ -191,6 +192,7 @@ class TrackingProtectionViewController: UIViewController,
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        updateMenuDetent()
         self.view.invalidateIntrinsicContentSize()
         if !hasSetPointOrigin {
             hasSetPointOrigin = true
@@ -236,6 +238,18 @@ class TrackingProtectionViewController: UIViewController,
                 }
             }
         }
+    }
+
+    private func updateMenuDetent() {
+        guard #available(iOS 16.0, *),
+              navigationController?.topViewController === self,
+              let sheet = navigationController?.sheetPresentationController ?? sheetPresentationController else { return }
+        let contentHeight = headerContainer.frame.maxY + scrollView.contentSize.height
+        guard abs(contentHeight - currentCustomMenuHeight) > 1 else { return }
+        currentCustomMenuHeight = contentHeight
+        sheet.detents = [.custom { context in
+            min(contentHeight, context.maximumDetentValue)
+        }]
     }
 
     private func setupView() {
@@ -318,8 +332,8 @@ class TrackingProtectionViewController: UIViewController,
         let scrollViewConstraints = [
             scrollView.topAnchor.constraint(equalTo: headerContainer.bottomAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         ]
 
         constraints.append(contentsOf: scrollViewConstraints)
@@ -340,8 +354,8 @@ class TrackingProtectionViewController: UIViewController,
     private func setupHeaderView() {
         view.addSubview(headerContainer)
         let headerConstraints = [
-            headerContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            headerContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            headerContainer.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            headerContainer.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             headerContainer.topAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.topAnchor,
                 constant: asPopover ? TPMenuUX.UX.popoverTopDistance : 0
@@ -360,11 +374,11 @@ class TrackingProtectionViewController: UIViewController,
         baseView.addSubviews(connectionDetailsHeaderView)
         let connectionHeaderConstraints = [
             connectionDetailsHeaderView.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
+                equalTo: baseView.leadingAnchor,
                 constant: TPMenuUX.UX.horizontalMargin
             ),
             connectionDetailsHeaderView.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
+                equalTo: baseView.trailingAnchor,
                 constant: -TPMenuUX.UX.horizontalMargin
             ),
             connectionDetailsHeaderView.topAnchor.constraint(
@@ -395,11 +409,11 @@ class TrackingProtectionViewController: UIViewController,
             trackersView.trailingAnchor.constraint(equalTo: trackersConnectionContainer.trailingAnchor),
             connectionStatusView.trailingAnchor.constraint(equalTo: trackersConnectionContainer.trailingAnchor),
             trackersConnectionContainer.leadingAnchor.constraint(
-                equalTo: view.leadingAnchor,
+                equalTo: baseView.leadingAnchor,
                 constant: TPMenuUX.UX.horizontalMargin
             ),
             trackersConnectionContainer.trailingAnchor.constraint(
-                equalTo: view.trailingAnchor,
+                equalTo: baseView.trailingAnchor,
                 constant: -TPMenuUX.UX.horizontalMargin
             ),
             /* Ecosia: Anchor to baseView top since connection details header is removed
@@ -652,16 +666,6 @@ class TrackingProtectionViewController: UIViewController,
         // connectionDetailsHeaderView.adjustLayout()
         toggleView.adjustLayout()
         configureProtectionSettingsView()
-
-        if #available(iOS 16.0, *), UIDevice.current.userInterfaceIdiom == .phone {
-            headerContainer.layoutIfNeeded()
-            scrollView.layoutIfNeeded()
-            let contentHeight = headerContainer.frame.height + scrollView.contentSize.height
-            let customDetent = UISheetPresentationController.Detent.custom { context in
-                return contentHeight
-            }
-            self.sheetPresentationController?.detents = [customDetent]
-        }
 
         view.setNeedsLayout()
         view.layoutIfNeeded()

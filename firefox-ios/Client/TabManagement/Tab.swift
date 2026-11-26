@@ -394,7 +394,7 @@ class Tab: NSObject,
     var nightMode: Bool {
         didSet {
             guard nightMode != oldValue else { return }
-            webView?.isOpaque = !nightMode
+            webView?.updateBackgroundForNightMode(nightMode)
             webView?.evaluateJavascriptInCustomContentWorld(
                 NightModeHelper.jsCallbackBuilder(nightMode),
                 in: .world(name: NightModeHelper.name())
@@ -904,8 +904,7 @@ class Tab: NSObject,
         webView?.backgroundColor =  theme.colors.layer1
         // Let WebKit manage the scroll background as the page and opacity change.
         webView?.scrollView.backgroundColor = nil
-        webView?.isOpaque = !nightMode
-        webView?.underPageBackgroundColor = nightMode ? .black : nil
+        webView?.updateBackgroundForNightMode(nightMode)
     }
 
     // MARK: - Static Helpers
@@ -1129,7 +1128,7 @@ class Tab: NSObject,
         class TAB_LEAK_DETECTED: UIButton { }
 
         guard let root = keyWindow.rootViewController else { fatalError() }
-        let uiTestScreen = UIScreen.main.bounds
+        let uiTestScreen = keyWindow.bounds
         let viewFrame = CGRect(x: uiTestScreen.width / 2.0,
                                y: uiTestScreen.height / 2.0,
                                width: 5,

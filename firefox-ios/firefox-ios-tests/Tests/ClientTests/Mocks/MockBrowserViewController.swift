@@ -21,6 +21,7 @@ class MockBrowserViewController: BrowserViewController {
 
     var handleQueryCalled = false
     var handleQuery: String?
+    var handleQueryOptions: Set<Route.SearchOptions>?
     var showLibraryCalled = false
     var showLibraryPanel: LibraryPanelType?
 
@@ -58,6 +59,7 @@ class MockBrowserViewController: BrowserViewController {
     var mockContentContainer = MockContentContainer()
 
     var viewControllerToPresent: UIViewController?
+    var dismissCalled = 0
 
     // Mock control for frame navigation
     var mockIsMainFrameNavigation = true
@@ -85,6 +87,12 @@ class MockBrowserViewController: BrowserViewController {
         self.viewControllerToPresent = viewControllerToPresent
     }
 
+    override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+        dismissCalled += 1
+        viewControllerToPresent = nil
+        completion?()
+    }
+
     override var contentContainer: ContentContainer {
         return mockContentContainer
     }
@@ -109,9 +117,13 @@ class MockBrowserViewController: BrowserViewController {
         openBlankNewTabCount += 1
     }
 
-    override func handle(query: String, isPrivate: Bool, shouldOpenNewTab: Bool = true) {
+    override func handle(query: String,
+                         isPrivate: Bool,
+                         shouldOpenNewTab: Bool = true,
+                         options: Set<Route.SearchOptions>? = nil) {
         handleQueryCalled = true
         handleQuery = query
+        handleQueryOptions = options
         handleQueryCount += 1
     }
 

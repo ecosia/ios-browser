@@ -220,4 +220,6 @@ private final class MockLocationViewDelegate: LocationViewDelegate {
     func locationTextFieldNeedsSearchReset() {}
     // Ecosia: new `LocationViewDelegate` requirement in 155.1.
     func locationViewDidDisplayEditingAccessoryButton(_ button: UIButton, contextualHintType: String) {}
+    // New `LocationViewDelegate` requirement in 160.1.
+    func locationViewDidHideEditingAccessoryButton() {}
 }
