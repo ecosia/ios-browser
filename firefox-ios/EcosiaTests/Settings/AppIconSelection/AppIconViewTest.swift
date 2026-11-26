@@ -4,10 +4,8 @@
 
 import XCTest
 import SwiftUI
-import SnowplowTracker
 import ViewInspector
 @testable import Client
-@testable import Ecosia
 
 // MARK: - AnalyticsSpy
 

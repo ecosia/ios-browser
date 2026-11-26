@@ -1094,13 +1094,13 @@ final class AnalyticsSpyTests: XCTestCase, @unchecked Sendable {
     func test_changeAppIcon_trackingValuesAreSetCorrectly() throws {
         User.shared.sendAnonymousUsageData = true
 
-        analyticsSpy.changeAppIcon(to: "AppIconDark")
+        analyticsSpy.changeAppIcon(to: AppIcon.ecosiaDark.telemetryName)
 
         let event = try lastStructuredEvent()
         XCTAssertEqual(event.category, Analytics.Category.settings.rawValue)
         XCTAssertEqual(event.action, Analytics.Action.change.rawValue)
         XCTAssertEqual(event.label, Analytics.Label.Settings.appIcon.rawValue)
-        XCTAssertEqual(event.property, "AppIconDark")
+        XCTAssertEqual(event.property, AppIcon.ecosiaDark.telemetryName)
     }
 
     /// Multi-field payloads ride in `se_property` as a JSON string; parse it back for assertions.
