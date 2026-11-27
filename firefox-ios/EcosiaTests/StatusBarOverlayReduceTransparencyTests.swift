@@ -57,16 +57,21 @@ final class StatusBarOverlayReduceTransparencyTests: XCTestCase {
 private struct ToolbarHelperStub: ToolbarHelperInterface {
     let isBlurring: Bool
 
-    var isToolbarRefactorEnabled: Bool { true }
-    var isToolbarTranslucencyEnabled: Bool { true }
-    var isToolbarTranslucencyRefactorEnabled: Bool { true }
     var isSwipingTabsEnabled: Bool { false }
     var userInterfaceIdiom: UIUserInterfaceIdiom { .phone }
+
+    @MainActor
     var isReduceTransparencyEnabled: Bool { !isBlurring }
+
+    @MainActor
     var glassEffectAlpha: CGFloat { isBlurring ? 0 : 1 }
 
+    @MainActor
+    var novaToolbarGlassEffectAlpha: CGFloat { glassEffectAlpha }
+
     func shouldShowNavigationToolbar(for traitCollection: UITraitCollection) -> Bool { true }
-    func shouldShowTopTabs(for traitCollection: UITraitCollection) -> Bool { false }
+    func shouldShowTabStrip(for traitCollection: UITraitCollection) -> Bool { false }
+
+    @MainActor
     func shouldBlur() -> Bool { isBlurring }
-    func backgroundAlpha() -> CGFloat { isBlurring ? 0.85 : 1 }
 }
