@@ -65,6 +65,14 @@ Lists the files Ecosia created on `main` that the branch no longer has. A file t
 - **Output:** `<path>\t<blob on each side>\t<verdict>`. The verdict is `on branch` (the file is there, but upstream ships it too), `allowed: <reason>`, or `MISSING`.
 - **Exit:** 0 when nothing unexplained is missing, 1 otherwise.
 
+### `missing_image_assets.py`
+
+Lists the image names in `StandardImageIdentifiers` and `ImageIdentifiers` that no asset catalog of the app provides. `UIImage(named:)` returns nil for them and the row or button draws no icon. Ecosia replaced Firefox's `Images.xcassets` in the 147 upgrade, so every icon Firefox adds later arrives as a name without an asset (160.1's `summarizerLarge`, MOB-5309). Declarations inside comments don't count. The catalogs are the app's (`Client/Assets`, `Client/Ecosia`) and OnboardingKit's, which loads the onboarding names from its own bundle. A set nested inside another set counts as missing, because actool skips it.
+
+- **Inputs:** `--ref <ref>` (default: `HEAD`) or `--worktree`, `--allow <file>` (default: [`missing-image-assets.allow`](missing-image-assets.allow)).
+- **Output:** `<name>\t<Swift constant>\t<verdict>`, the verdict being `allowed: <reason>` or `MISSING`. Allow-list entries that have an asset again, or that no identifier uses, are listed on stderr.
+- **Exit:** 0 when every missing name is allowed, 1 otherwise.
+
 ### `swallowed_declarations.py`
 
 Finds functions declared only inside a comment that live code in the same file still calls. Upstream methods inserted where an `/* Ecosia: */` block opens end up inside the comment.

@@ -26,6 +26,7 @@ git merge-tree --write-tree --name-only --merge-base="refs/tags/$(cut -f1 firefo
 ```bash
 $tools/missing_ecosia_files.sh                     # once main has UPSTREAM_BASE; before that add --main-base firefox-v147.2
 $tools/swallowed_declarations.py --worktree        # during conflict resolution; without the flag on a commit
+$tools/missing_image_assets.py                     # image names without an asset: blank icons
 $tools/symbol_map.py --base <old base> --target HEAD --extended
 ./tuist-setup.sh --no-open && $tools/build_drift.sh
 $tools/skipped_tests.py
@@ -38,6 +39,10 @@ git merge-tree --write-tree --name-only HEAD origin/main   # what the next main 
 ### Missing Ecosia files
 
 Check each `MISSING` path on every side (the blob columns). If the deletion is deliberate, add it to `missing-ecosia-files.allow` with a reason a reviewer can check. Otherwise restore the file from `main`. `on branch` is not a loss: upstream ships a file with the same path (for example `AGENTS.md`).
+
+### Missing image assets
+
+For each `MISSING` name, find where the Swift constant is used and whether Ecosia's build reaches that screen (feature flags on every channel, Ecosia's replacements). If it does, copy the imageset from the target tag: `git checkout refs/tags/<target> -- firefox-ios/Client/Assets/Images.xcassets/<name>.imageset`. If it doesn't, add the name to `missing-image-assets.allow` with the reason. Names in `ImageIdentifierAssetTests` are the ones Ecosia shows; add a restored name there too.
 
 ### Symbol flags
 
