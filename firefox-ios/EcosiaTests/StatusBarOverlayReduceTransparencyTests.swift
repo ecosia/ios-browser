@@ -23,6 +23,7 @@ final class StatusBarOverlayReduceTransparencyTests: XCTestCase {
     override func tearDown() {
         profile.shutdown()
         profile = nil
+        DependencyHelperMock().reset()
         super.tearDown()
     }
 
