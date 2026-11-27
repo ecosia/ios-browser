@@ -170,10 +170,8 @@ struct OmniboxUploadDrawerView: View {
                 signInFooter
             }
         }
-        .padding(.horizontal, .ecosia.space._m)
-        .padding(.top, .ecosia.space._2l)
-        // Matches the side margins, measured from the sheet's bottom edge.
-        .padding(.bottom, .ecosia.space._m)
+        // Same 16pt on every side; the bottom is measured from the sheet's edge.
+        .padding(.ecosia.space._m)
         .frame(maxWidth: .infinity)
         // Measure the intrinsic content height so the sheet detent fits exactly.
         .background(
