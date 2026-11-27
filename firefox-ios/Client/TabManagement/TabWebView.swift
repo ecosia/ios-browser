@@ -144,9 +144,18 @@ class TabWebView: WKWebView, MenuHelperWebViewInterface, ThemeApplicable, Notifi
                   traitCollection.verticalBarEdge != .unspecified else { return }
             usesVerticalBarInsets = true
             scrollView.contentInsetAdjustmentBehavior = .always
+            // WebKit needs an opaque web view to paint the page background into the vertical bar.
+            isOpaque = true
+            underPageBackgroundColor = nil
         }
 
         var obscuredInsets = safeAreaInsets
+        if let window, window.traitCollection.verticalBarEdge != .unspecified {
+            // Translating the web view (e.g. during the tab swipe) changes its own horizontal safe area insets,
+            // so use the window's, which match at rest, to keep the layout viewport from resizing.
+            obscuredInsets.left = window.safeAreaInsets.left
+            obscuredInsets.right = window.safeAreaInsets.right
+        }
         if traitCollection.duoExpanded {
             // Expanded mode handles the bottom safe area outside the web view's obscured region.
             obscuredInsets.bottom = 0
@@ -266,6 +275,16 @@ class TabWebView: WKWebView, MenuHelperWebViewInterface, ThemeApplicable, Notifi
 
     // MARK: - ThemeApplicable
 
+    func updateBackgroundForNightMode(_ enabled: Bool) {
+        #if compiler(>=6.4)
+        let useAutomaticBackground = !enabled || usesVerticalBarInsets
+        #else
+        let useAutomaticBackground = !enabled
+        #endif
+        isOpaque = useAutomaticBackground
+        underPageBackgroundColor = useAutomaticBackground ? nil : .black
+    }
+
     /// Updates the `background-color` of the webview to match
     /// the theme if the webview is showing "about:blank" (nil).
     func applyTheme(theme: Theme) {
@@ -289,7 +308,7 @@ class TabWebView: WKWebView, MenuHelperWebViewInterface, ThemeApplicable, Notifi
         class TABWEBVIEW_LEAK_DETECTED: UIButton { }
 
         guard let root = keyWindow.rootViewController else { fatalError() }
-        let uiTestScreen = UIScreen.main.bounds
+        let uiTestScreen = keyWindow.bounds
         let viewFrame = CGRect(x: uiTestScreen.width / 2.0,
                                y: uiTestScreen.height / 2.0,
                                width: 5,

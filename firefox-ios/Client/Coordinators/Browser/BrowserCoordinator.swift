@@ -40,6 +40,7 @@ final class BrowserCoordinator: BaseCoordinator,
                           ShareSheetCoordinatorDelegate,
                           WebCompatReportCoordinatorNavigationDelegate,
                           BrowsingSettingsDelegate,
+                          WallpaperEngagementCoordinatorDelegate,
                           FeatureFlaggable {
     private struct UX {
         static let searchEnginePopoverSize = CGSize(width: 250, height: 536)
@@ -215,6 +216,31 @@ final class BrowserCoordinator: BaseCoordinator,
         if didEmbed {
             // [FXIOS-13651] Fix for WKWebView memory leak. (See comments on related PR.)
             webviewController?.update(webView: nil)
+        }
+
+        showWallpaperEngagementIfNeeded()
+    }
+
+    private func showWallpaperEngagementIfNeeded() {
+        let hasBlockingChild = childCoordinators.contains {
+            $0 is TermsOfUseCoordinator || $0 is WallpaperEngagementCoordinator
+        }
+        guard !hasBlockingChild,
+              !router.isPresenting else { return }
+
+        let coordinator = WallpaperEngagementCoordinator(
+            router: router,
+            windowUUID: windowUUID,
+            tabManager: tabManager,
+            prefs: profile.prefs
+        )
+        guard coordinator.shouldShow() else { return }
+        coordinator.parentCoordinator = self
+        coordinator.delegate = self
+        add(child: coordinator)
+        browserViewController.view.endEditing(true)
+        DispatchQueue.main.async {
+            coordinator.start()
         }
     }
 
@@ -420,8 +446,8 @@ final class BrowserCoordinator: BaseCoordinator,
 
         logger.log("Handling a route", level: .info, category: .coordinator)
         switch route {
-        case let .searchQuery(query, isPrivate):
-            handle(query: query, isPrivate: isPrivate)
+        case let .searchQuery(query, isPrivate, options):
+            handle(query: query, isPrivate: isPrivate, options: options)
 
         case let .search(url, isPrivate, options):
             handle(url: url, isPrivate: isPrivate, options: options)
@@ -535,8 +561,8 @@ final class BrowserCoordinator: BaseCoordinator,
 
     // MARK: - Handle Deeplink Open URL / text
 
-    private func handle(query: String, isPrivate: Bool) {
-        browserViewController.handle(query: query, isPrivate: isPrivate)
+    private func handle(query: String, isPrivate: Bool, options: Set<Route.SearchOptions>?) {
+        browserViewController.handle(query: query, isPrivate: isPrivate, options: options)
     }
 
     private func handle(url: URL?, isPrivate: Bool, options: Set<Route.SearchOptions>? = nil) {
@@ -1620,6 +1646,13 @@ final class BrowserCoordinator: BaseCoordinator,
         present(bottomSheetVC)
     }
 
+    // MARK: - WallpaperEngagementCoordinatorDelegate
+
+    func wallpaperEngagementDidTapCTA(from coordinator: WallpaperEngagementCoordinator) {
+        remove(child: coordinator)
+        show(settings: .wallpaper)
+    }
+
     // MARK: - ParentCoordinatorDelegate
 
     func didFinish(from childCoordinator: Coordinator) {
@@ -1774,8 +1807,10 @@ final class BrowserCoordinator: BaseCoordinator,
             let result = try await webView.callAsyncJavaScript(readDocumentJS, contentWorld: .defaultClient)
             guard let base64 = result as? String,
                   let data = Data(base64Encoded: base64) else { return nil }
-            let fileURL = URL(fileURLWithPath: NSTemporaryDirectory())
+            let tempDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
+            let fileURL = tempDirectory
                 .appendingPathComponent(Self.shareableFilename(for: tabURL, mimeType: tab.mimeType))
+            guard FilenameSanitizer.isContained(fileURL, in: tempDirectory) else { return nil }
             try data.write(to: fileURL)
             return fileURL
         } catch {
@@ -1786,8 +1821,8 @@ final class BrowserCoordinator: BaseCoordinator,
         }
     }
 
-    private static func shareableFilename(for url: URL, mimeType: String?) -> String {
-        let lastComponent = url.lastPathComponent
+    static func shareableFilename(for url: URL, mimeType: String?) -> String {
+        let lastComponent = FilenameSanitizer.sanitize(url.lastPathComponent, fallback: "")
         if !lastComponent.isEmpty, !(lastComponent as NSString).pathExtension.isEmpty {
             return lastComponent
         }

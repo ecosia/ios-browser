@@ -46,6 +46,8 @@ extension BrowserViewController {
 
     /// See `HomepageViewController.resetNTPOmniboxSession()`.
     func ecosiaPrepareNTPOmniboxForDisplay() {
+        // The NTP is the shown content again, so let its wallpaper reach under the bars before the next frame.
+        ecosiaEmbeddedHomepage?.view.setNeedsLayout()
         guard let homepage = ecosiaEmbeddedHomepage,
               homepage.ntpSearchBar?.isFirstResponder == false else { return }
         homepage.ntpSearchBar?.refreshUploadControl()
@@ -55,6 +57,8 @@ extension BrowserViewController {
     /// See `HomepageViewController.resetNTPOmniboxSession()`.
     func ecosiaResetNTPOmniboxWhenLeavingNTP() {
         ecosiaEmbeddedHomepage?.resetNTPOmniboxSession()
+        // The NTP stays under the webview; pull its wallpaper back from the status bar and toolbar.
+        ecosiaEmbeddedHomepage?.view.setNeedsLayout()
     }
 }
 
@@ -423,8 +427,10 @@ extension BrowserViewController {
 extension BrowserViewController {
 
     /// The NTP wallpaper reaches behind the status bar, so its content stays light whatever the theme.
+    /// The omnibox suggestions cover the wallpaper, so they keep the theme's style.
     var ecosiaHomepageStatusBarStyle: UIStatusBarStyle? {
-        guard let homepage = contentContainer.contentController as? HomepageViewController,
+        guard !isShowingOmniboxSuggestions,
+              let homepage = contentContainer.contentController as? HomepageViewController,
               homepage.ecosiaAdapter?.headerViewModel?.glassAppearance == .wallpaper else { return nil }
         return .lightContent
     }

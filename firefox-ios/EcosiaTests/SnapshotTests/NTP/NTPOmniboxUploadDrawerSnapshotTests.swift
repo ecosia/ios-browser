@@ -26,7 +26,15 @@ final class NTPOmniboxUploadDrawerSnapshotTests: SnapshotBaseTests {
 
     func testOmniboxUploadDrawerSheet() {
         SnapshotTestHelper.assertSnapshot(
-            initializingWith: { self.makeOmniboxUploadDrawerHostingController() },
+            initializingWith: { self.makeOmniboxUploadDrawerHostingController(isAuthenticated: true) },
+            wait: 0.3,
+            precision: 0.97
+        )
+    }
+
+    func testOmniboxUploadDrawerSheetSignedOut() {
+        SnapshotTestHelper.assertSnapshot(
+            initializingWith: { self.makeOmniboxUploadDrawerHostingController(isAuthenticated: false) },
             wait: 0.3,
             precision: 0.97
         )
@@ -36,12 +44,12 @@ final class NTPOmniboxUploadDrawerSnapshotTests: SnapshotBaseTests {
 @available(iOS 16.0, *)
 private extension NTPOmniboxUploadDrawerSnapshotTests {
 
-    func makeOmniboxUploadDrawerHostingController() -> UIViewController {
+    func makeOmniboxUploadDrawerHostingController(isAuthenticated: Bool) -> UIViewController {
         let sheet = OmniboxUploadDrawerSheet(
             windowUUID: .snapshotTestDefaultUUID,
             provider: .ecosia,
             selectedChatMode: .standard,
-            isAuthenticated: true,
+            isAuthenticated: isAuthenticated,
             onSelect: { _ in },
             onSelectChatMode: { _ in },
             onLogin: {}

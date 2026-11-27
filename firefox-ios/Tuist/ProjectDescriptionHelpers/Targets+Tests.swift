@@ -80,6 +80,8 @@ public enum TestTargets {
                 "firefox-ios-tests/Tests/ClientTests/image.png",
                 "firefox-ios-tests/Tests/ClientTests/image.gif",
                 "firefox-ios-tests/Tests/ClientTests/Frontend/Browser/SearchEngines/SearchEngineTestAssets.xcassets",
+                // Ecosia: StoreKit test configuration for AppAcquisitionProviderTests (160.1), bundled upstream
+                "firefox-ios-tests/Tests/ClientTests/Redownloads/AppAcquisition.storekit",
             ],
             dependencies: [
                 .package(product: "VPNKit"),

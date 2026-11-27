@@ -168,6 +168,17 @@ public enum EcosiaSchemes {
         "BrowserViewControllerTests/testLocationBarContextMenu_withoutAvailableActions_returnsNil()",
         // - Asserts Firefox's MOZ_CHANNEL_developer flags; EcosiaTesting.xcconfig compiles with MOZ_CHANNEL_FENNEC:
         "CoreBuildFlagsTests/testExpectedCoreFeatures()",
+        // - Firefox 160.0: search-config-v3 partner codes in search URLs. Ecosia's `OpenSearchEngine.searchURLForQuery`
+        //   builds Ecosia's URL unless custom search providers are on, and search config v3 is off:
+        "OpenSearchEngineSearchConfigV3Tests/testSearchURLForQuery_v3Engine_usesPartnerCodeForAccessPoint()",
+        "OpenSearchEngineSearchConfigV3Tests/testSearchURLForQuery_defaultsToDefaultAccessPoint()",
+        "OpenSearchEngineSearchConfigV3Tests/testSearchURLForQuery_v3EngineWithoutCode_omitsPartnerCodeParameter()",
+        "OpenSearchEngineSearchConfigV3Tests/testSearchURLForQuery_placeholderWithoutPartners_omitsPartnerCodeParameter()",
+        "OpenSearchEngineSearchConfigV3Tests/testSearchURLForQuery_v2Engine_ignoresAccessPoint()",
+        // - Firefox 160.1: the reinstall check's StoreKit provider (the feature is out). With AppAcquisition.storekit
+        //   bundled, `AppTransaction.refresh()` still hangs past the 2-minute allowance in Ecosia's test host:
+        "AppAcquisitionProviderTests/testFetchReturnsVerifiedAppInformation()",
+        "AppAcquisitionProviderTests/testFetchHandlesStoreKitFailure()",
         // - The reset is compiled only for MOZ_CHANNEL_beta / MOZ_CHANNEL_developer, neither of which Ecosia defines:
         "ResetTipsSettingTests/test_resetDatastoreIfNeeded_whenResetIsScheduled_thenClearsPref()",
         // - Ecosia never enters overlay mode for `.topSites` new tabs; main had this test disabled as faulty:
@@ -190,6 +201,8 @@ public enum EcosiaSchemes {
         "PasswordGeneratorTelemetryTests",
         // Firefox 155.1: reads its Nimbus context back from Glean; passes alone, fails after other suites leave Glean disabled
         "RecordedNimbusContextTests/testObjectRecordedToGleanMatchesExpected()",
+        // Firefox 160.1: waits for the reinstall check's Glean `installation` ping (the feature is out for Ecosia)
+        "InstallationTelemetryServiceTests/testUpdateInstallationHistory_submitsInstallationPingOnce()",
         "SearchTelemetryTests",
         "SettingsTelemetryTests",
         "ShareExtensionTelemetryTests",

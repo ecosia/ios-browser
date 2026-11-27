@@ -12,7 +12,10 @@ class VPNDebugSetting: HiddenSetting {
     fileprivate let prefs: Prefs = { return (AppContainer.shared.resolve() as Profile).prefs }()
     fileprivate let creator: VPNAuthCreating
 
-    init(settings: SettingsTableViewController, creator: VPNAuthCreating = VPNAuthCreator()) {
+    init(
+        settings: SettingsTableViewController,
+        creator: VPNAuthCreating = VPNAuthCreator(telemetry: DefaultVPNTelemetry())
+    ) {
         self.creator = creator
         super.init(settings: settings)
     }
@@ -151,8 +154,8 @@ final class FetchVPNProxyTokenSetting: VPNDebugSetting {
 
         Task { @MainActor in
             do {
-                let proxyToken = try await service.fetchProxyToken()
-                present(title: "\(alertTitle) ✅", message: Self.describe(proxyToken))
+                let pass = try await service.fetchProxyPass()
+                present(title: "\(alertTitle) ✅", message: Self.describe(pass))
             } catch VPNAuthError.noStoredSession {
                 present(title: "\(alertTitle) ❌",
                         message: "No stored session. Run Authenticate first.\n\nStrict mode: this button never enrolls.")
@@ -162,12 +165,12 @@ final class FetchVPNProxyTokenSetting: VPNDebugSetting {
         }
     }
 
-    private static func describe(_ proxyToken: VPNProxyToken) -> String {
-        let claims = decodeClaims(proxyToken.token)
+    private static func describe(_ pass: VPNProxyPass) -> String {
+        let claims = decodeClaims(pass.bearerToken)
         // Falls back to the signature tail, which is the only part that differs between two
         // otherwise-identical tokens.
         let identifier = claims["jti"] as? String
-            ?? String(proxyToken.token.split(separator: ".").last ?? "?")
+            ?? String(pass.bearerToken.split(separator: ".").last ?? "?")
 
         var lines = ["token id: \(identifier.prefix(12))…"]
         if let exp = claims["exp"] as? TimeInterval {

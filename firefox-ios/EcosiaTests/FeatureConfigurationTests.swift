@@ -71,6 +71,33 @@ final class FeatureConfigurationTests: XCTestCase {
         XCTAssertFalse(isEnabled(.novaDesign), "Ecosia keeps its own design")
     }
 
+    /// The report is a Glean ping to Mozilla, and Ecosia's Glean never uploads. On by default upstream since 157.0.
+    func testReportBrokenSiteIsOff() {
+        XCTAssertFalse(isEnabled(.reportBrokenSite), "A report would never reach anyone")
+    }
+
+    func testPrivacyDashboardIsOff() {
+        XCTAssertFalse(isEnabled(.privacyDashboard), "Ecosia's homepage has its own impact and privacy content")
+    }
+
+    func testMultiDayOnboardingIsOff() {
+        XCTAssertFalse(isEnabled(.multiDayOnboarding), "Ecosia has its own onboarding")
+    }
+
+    /// Since 160.0 only this flag keeps search config v3 off: `SearchEnginesManager` lost its hardcoded `false`.
+    func testSearchConfigV3IsOff() {
+        XCTAssertFalse(isEnabled(.searchConfigV3), "Ecosia's default engine depends on the current configuration")
+    }
+
+    /// The reinstall check keeps an install history in the keychain and sends it to Mozilla through Glean.
+    func testCheckForReinstallsIsOff() {
+        XCTAssertFalse(isEnabled(.checkForReinstalls), "No reinstall telemetry")
+    }
+
+    func testWallpaperEngagementSheetIsOff() {
+        XCTAssertFalse(isEnabled(.wallpaperEngagementSheet), "Ecosia has its own wallpapers and homepage")
+    }
+
     // MARK: - Helpers
 
     private func isEnabled(_ featureID: FeatureFlagID) -> Bool {

@@ -163,17 +163,17 @@ final class LocationView: UIView,
     }
 
     override func becomeFirstResponder() -> Bool {
-        super.becomeFirstResponder()
         // Skip if urlTextField is already first responder to avoid triggering duplicate delegate callbacks
         guard !urlTextField.isFirstResponder else { return true }
         urlTextField.isUserInteractionEnabled = true
+        super.becomeFirstResponder()
         return urlTextField.becomeFirstResponder()
     }
 
     override func resignFirstResponder() -> Bool {
-        super.resignFirstResponder()
         // Skip if urlTextField has already resigned to avoid redundant state changes
         guard urlTextField.isFirstResponder else { return true }
+        super.resignFirstResponder()
         return urlTextField.resignFirstResponder()
     }
 
@@ -647,13 +647,16 @@ final class LocationView: UIView,
         // Ecosia: Keyboard hidden while overlay editing continues — do not commit inline
         // autocomplete on resign (avoids trailing spaces when scrolling suggestions).
         urlTextField.commitsAutocompleteOnEndEditing = shouldShowKeyboard
-        /* Ecosia: Firefox toggles first responder unconditionally on shouldShowKeyboard.
-        _ = shouldShowKeyboard ? becomeFirstResponder() : resignFirstResponder()
-        */
+        // Only touch the responder chain when the state actually changes.
         if shouldShowKeyboard {
-            _ = becomeFirstResponder()
-        } else if configurationIsEditing && !config.didStartTyping {
-            // Do not resign while the user is typing — suggestion highlight updates
+            if !urlTextField.isFirstResponder {
+                _ = becomeFirstResponder()
+            }
+        /* Ecosia: Firefox resigns whenever the field is first responder and the keyboard should hide.
+        } else if urlTextField.isFirstResponder {
+        */
+        } else if urlTextField.isFirstResponder, configurationIsEditing && !config.didStartTyping {
+            // Ecosia: Do not resign while the user is typing — suggestion highlight updates
             // can clear shouldShowKeyboard after keyboard drag-dismiss.
             _ = resignFirstResponder()
         }
@@ -907,6 +910,10 @@ final class LocationView: UIView,
 
     func locationTextFieldDidDisplayEditingAccessoryButton(_ button: UIButton, contextualHintType: String) {
         delegate?.locationViewDidDisplayEditingAccessoryButton(button, contextualHintType: contextualHintType)
+    }
+
+    func locationTextFieldDidHideEditingAccessoryButton() {
+        delegate?.locationViewDidHideEditingAccessoryButton()
     }
 
     // MARK: - Accessibility

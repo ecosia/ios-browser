@@ -20,8 +20,9 @@ final class AppSettingsTableViewControllerEcosiaTests: XCTestCase {
         Unleash.clearInstanceModel()
         await DependencyHelperMock().bootstrapDependencies()
         profile = MockProfile.unmanaged()
-        tabManager = await TabManagerImplementation(profile: profile,
-                                                    uuid: ReservedWindowUUID(uuid: .XCTestDefaultUUID, isNew: false))
+        // A real TabManagerImplementation observes `searchSettingsChanged` and resolves dependencies
+        // asynchronously, which crashed a later test once tearDown had reset them.
+        tabManager = MockTabManager()
         delegate = MockSettingsFlowDelegate()
         settingsDelegate = MockSettingsDelegate()
     }
@@ -29,9 +30,6 @@ final class AppSettingsTableViewControllerEcosiaTests: XCTestCase {
     override func tearDown() async throws {
         Unleash.clearInstanceModel()
         User.shared.aiFreeSearching = nil
-        // Changing the AI-free value posts `searchSettingsChanged` asynchronously, and the tab
-        // manager's observer resolves dependencies: let it run before they are reset.
-        try await Task.sleep(nanoseconds: 50_000_000)
         DependencyHelperMock().reset()
         profile = nil
         tabManager = nil

@@ -48,6 +48,14 @@ public class BrowserAddressToolbar: UIView,
     }
 
     public var notificationCenter: any NotificationProtocol = NotificationCenter.default
+    /// Removes the trailing margin and button inset of a top toolbar whose trailing edge
+    /// is already kept clear of system UI, such as iPhone Duo's status bar.
+    public var alignsTrailingContentToEdge = false {
+        didSet {
+            guard oldValue != alignsTrailingContentToEdge else { return }
+            updateToolbarContainerHorizontalConstraints(for: addressBarPosition)
+        }
+    }
     private weak var toolbarDelegate: AddressToolbarDelegate?
     private var theme: Theme?
     private var droppableUrl: URL?
@@ -89,6 +97,17 @@ public class BrowserAddressToolbar: UIView,
     private var toolbarContainerSafeAreaTrailingConstraint: NSLayoutConstraint?
     private var toolbarContainerWindowControlLeadingConstraint: NSLayoutConstraint?
     private var toolbarContainerWindowControlTrailingConstraint: NSLayoutConstraint?
+    private var toolbarContainerFixedInsetsLeftConstraint: NSLayoutConstraint?
+    private var toolbarContainerFixedInsetsRightConstraint: NSLayoutConstraint?
+
+    /// Horizontal insets used instead of the toolbar's own safe area insets when the toolbar is at the bottom.
+    /// Translating the toolbar changes its safe area insets, setting stable insets keeps its layout stable(FXIOS-17137)
+    public var fixedHorizontalSafeAreaInsets: UIEdgeInsets? {
+        didSet {
+            guard fixedHorizontalSafeAreaInsets != oldValue else { return }
+            updateToolbarContainerHorizontalConstraints(for: addressBarPosition)
+        }
+    }
 
     // FXIOS-10210 Temporary to support updating the Unified Search feature flag during runtime
     private var previousConfiguration: AddressToolbarConfiguration? {
@@ -300,6 +319,8 @@ public class BrowserAddressToolbar: UIView,
         )
         toolbarContainerSafeAreaLeadingConstraint?.isActive = true
         toolbarContainerSafeAreaTrailingConstraint?.isActive = true
+        toolbarContainerFixedInsetsLeftConstraint = toolbarContainerView.leftAnchor.constraint(equalTo: leftAnchor)
+        toolbarContainerFixedInsetsRightConstraint = toolbarContainerView.rightAnchor.constraint(equalTo: rightAnchor)
 
         if #available(iOS 26.0, *) {
             let windowControlLayoutGuide = layoutGuide(for: .margins(cornerAdaptation: .horizontal))
@@ -353,14 +374,46 @@ public class BrowserAddressToolbar: UIView,
     }
 
     private func updateToolbarContainerHorizontalConstraints(for toolbarPosition: AddressToolbarPosition) {
+        let useWindowControlGuide: Bool
         if #available(iOS 26.0, *), toolbarPosition == .top {
-            toolbarContainerSafeAreaLeadingConstraint?.isActive = false
-            toolbarContainerSafeAreaTrailingConstraint?.isActive = false
-            toolbarContainerWindowControlLeadingConstraint?.isActive = true
-            toolbarContainerWindowControlTrailingConstraint?.isActive = true
+            useWindowControlGuide = true
         } else {
-            toolbarContainerWindowControlLeadingConstraint?.isActive = false
-            toolbarContainerWindowControlTrailingConstraint?.isActive = false
+            useWindowControlGuide = false
+        }
+        let fixedInsets = toolbarPosition == .bottom ? fixedHorizontalSafeAreaInsets : nil
+
+        // Deactivate all sets first, only one of them can be active at a time.
+        toolbarContainerWindowControlLeadingConstraint?.isActive = false
+        toolbarContainerWindowControlTrailingConstraint?.isActive = false
+        toolbarContainerSafeAreaLeadingConstraint?.isActive = false
+        toolbarContainerSafeAreaTrailingConstraint?.isActive = false
+        toolbarContainerFixedInsetsLeftConstraint?.isActive = false
+        toolbarContainerFixedInsetsRightConstraint?.isActive = false
+        toolbarContainerSafeAreaTrailingConstraint?.constant = 0
+
+        if useWindowControlGuide {
+            // Top toolbar on iOS 26+: keep clear of the window controls (e.g. iPad windowing).
+            toolbarContainerWindowControlLeadingConstraint?.isActive = true
+            if alignsTrailingContentToEdge {
+                // Extends past the safe area by the last button's inset so its icon sits on the edge.
+                // The stack view has no trailing padding of its own; the gap is the button's content inset,
+                // which differs between icon and text buttons, so it is read from the button itself.
+                let lastButton = browserActionStack.arrangedSubviews.last as? UIButton
+                let trailingInset = lastButton?.configuration?.contentInsets.trailing ?? 0
+                toolbarContainerSafeAreaTrailingConstraint?.constant = trailingInset
+                toolbarContainerSafeAreaTrailingConstraint?.isActive = true
+            } else {
+                toolbarContainerWindowControlTrailingConstraint?.isActive = true
+            }
+        } else if let fixedInsets {
+            // Bottom toolbar with `fixedHorizontalSafeAreaInsets` set, used instead of its own safe area
+            // (e.g. tab swipe next to a vertical system bar on the folded iPhone Duo).
+            toolbarContainerFixedInsetsLeftConstraint?.constant = fixedInsets.left
+            toolbarContainerFixedInsetsRightConstraint?.constant = -fixedInsets.right
+            toolbarContainerFixedInsetsLeftConstraint?.isActive = true
+            toolbarContainerFixedInsetsRightConstraint?.isActive = true
+        } else {
+            // Every other case: keep clear of the toolbar's own safe area.
             toolbarContainerSafeAreaLeadingConstraint?.isActive = true
             toolbarContainerSafeAreaTrailingConstraint?.isActive = true
         }
@@ -394,6 +447,7 @@ public class BrowserAddressToolbar: UIView,
     internal func updateActions(config: AddressToolbarConfiguration, animated: Bool) {
         // Browser actions
         updateActionStack(stackView: browserActionStack, toolbarElements: config.browserActions)
+        updateToolbarContainerHorizontalConstraints(for: addressBarPosition)
 
         // Navigation actions
         updateActionStack(stackView: navigationActionStack, toolbarElements: config.navigationActions)
@@ -574,6 +628,10 @@ public class BrowserAddressToolbar: UIView,
 
     func locationViewDidDisplayEditingAccessoryButton(_ button: UIButton, contextualHintType: String) {
         toolbarDelegate?.configureContextualHint(self, for: button, with: contextualHintType)
+    }
+
+    func locationViewDidHideEditingAccessoryButton() {
+        toolbarDelegate?.addressToolbarDidHideEditingAccessoryButton(self)
     }
 
     // MARK: - ThemeApplicable

@@ -12,12 +12,12 @@ import XCTest
 final class NTPImpactCellTitleTests: XCTestCase {
     private typealias UX = NTPImpactCell.UX
 
-    func testTitleReservedHeight_portrait_fitsThreeLinesOfTheTitleFont() {
-        XCTAssertGreaterThanOrEqual(UX.titleReservedHeight, UX.titleFont.lineHeight * 3)
+    func testTitleReservedHeight_portrait_fitsThreeTitleLines() {
+        XCTAssertGreaterThanOrEqual(UX.titleReservedHeight, UX.titleLineHeight * 3)
     }
 
-    func testTitleReservedHeight_landscape_fitsTwoLinesOfTheTitleFont() {
-        XCTAssertGreaterThanOrEqual(UX.titleReservedHeightLandscape, UX.titleFont.lineHeight * 2)
+    func testTitleReservedHeight_landscape_fitsTwoTitleLines() {
+        XCTAssertGreaterThanOrEqual(UX.titleReservedHeightLandscape, UX.titleLineHeight * 2)
     }
 
     func testTitleLabel_portrait_isLimitedToThreeLinesAndCanShrink() throws {
@@ -48,6 +48,8 @@ final class NTPImpactCellTitleTests: XCTestCase {
 
         XCTAssertLessThanOrEqual(label.frame.height, UX.titleReservedHeight)
         XCTAssertGreaterThanOrEqual(label.frame.minY, 0)
+        // Still wraps: a truncating line break mode must not turn it into one line.
+        XCTAssertGreaterThan(label.frame.height, UX.titleLineHeight * 1.5)
     }
 
     // MARK: - Helpers

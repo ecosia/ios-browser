@@ -137,20 +137,22 @@ class SwallowedDeclarationTests(unittest.TestCase):
 
     def test_bookmarks_merge_defect(self):
         """The 155.1 experiment's defect, rebuilt from today's file: move the `/* Ecosia:` opener back
-        above the three methods 155.1 added, where the merge left it."""
+        above the layout methods 155.1 added, where the merge left it. Only the opener's first line
+        is moved, so a reworded comment doesn't break the test. 159.1 replaced
+        `updateLayoutForKeyboard` with the keyboard layout guide, so two methods are left."""
         root = Path(subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True,
                                    text=True, check=True).stdout.strip())
         text = (root / BOOKMARKS).read_text()
-        opener = "    /* Ecosia: Replace Firefox empty state setup with Ecosia empty bookmarks view."
+        opener = "    /* Ecosia: Replace Firefox empty state setup with Ecosia empty bookmarks view"
         self.assertEqual(swallowed_declarations.check(BOOKMARKS, text), [])
         start = text.index(opener)
-        end = text.index("\n", text.index("where this block used to open.", start)) + 1
+        end = text.index("\n", start) + 1
         block_opener = text[start:end]
         text = text[:start] + text[end:]
         anchor = text.index("    // MARK: - UI Setup\n    private func setupLayout()")
         broken = text[:anchor] + block_opener + text[anchor:]
         names = {name for _, name, _ in swallowed_declarations.check(BOOKMARKS, broken)}
-        self.assertEqual(names, {"setupLayout", "updateLayoutForKeyboard", "updateBottomSearchBarLayout"})
+        self.assertEqual(names, {"setupLayout", "updateBottomSearchBarLayout"})
 
 
 class ConflictRiskTests(unittest.TestCase):

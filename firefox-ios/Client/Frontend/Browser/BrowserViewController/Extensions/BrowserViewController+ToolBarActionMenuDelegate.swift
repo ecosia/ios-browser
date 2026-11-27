@@ -32,8 +32,8 @@ extension BrowserViewController {
             presentedUsing: { [weak self] in
                 self?.presentContextualHint(for: .navigation)
             },
-            actionOnDismiss: {
-                let action = ToolbarAction(windowUUID: self.windowUUID,
+            actionOnDismiss: { [windowUUID] in
+                let action = ToolbarAction(windowUUID: windowUUID,
                                            actionType: ToolbarActionType.navigationHintFinishedPresenting)
                 store.dispatch(action)
             },
@@ -141,6 +141,17 @@ extension BrowserViewController {
                 }
             }
         }
+    }
+
+    func dismissGoogleLensTip() {
+        googleLensTipObservationTask?.cancel()
+        googleLensTipObservationTask = nil
+
+        if let tipViewController = googleLensTipViewController,
+           presentedViewController === tipViewController {
+            dismiss(animated: true)
+        }
+        googleLensTipViewController = nil
     }
 
     private func presentContextualHint(for hintType: ContextualHintType) {

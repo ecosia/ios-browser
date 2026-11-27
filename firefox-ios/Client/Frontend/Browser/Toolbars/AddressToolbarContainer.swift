@@ -35,6 +35,8 @@ protocol AddressToolbarContainerDelegate: AnyObject {
     @MainActor
     func configureContextualHint(for button: UIButton, with contextualHintType: String)
     @MainActor
+    func addressToolbarDidHideEditingAccessoryButton()
+    @MainActor
     func addressToolbarDidBeginEditing(searchTerm: String, shouldShowSuggestions: Bool)
     @MainActor
     func addressToolbarContainerAccessibilityActions() -> [UIAccessibilityCustomAction]?
@@ -188,6 +190,14 @@ final class AddressToolbarContainer: UIView,
     init(toolbarHelper: ToolbarHelperInterface = ToolbarHelper()) {
         self.toolbarHelper = toolbarHelper
         super.init(frame: .zero)
+
+        #if compiler(>=6.4)
+        if #available(iOS 27.1, *) {
+            registerForTraitChanges(UITraitCollection.systemTraitsAffectingVerticalBarEdge) { (self: Self, _) in
+                self.updateSkeletonAddressBarsFixedHorizontalSafeAreaInsets()
+            }
+        }
+        #endif
     }
 
     required init?(coder: NSCoder) {
@@ -316,6 +326,7 @@ final class AddressToolbarContainer: UIView,
             || toolbarLeadingConstraint?.isActive != true
             || toolbarTrailingConstraint?.isActive != true
         systemTopBarLayoutGuide = guide
+        toolbar.alignsTrailingContentToEdge = guide != nil && traitCollection.duoExpanded
         if let model {
             toolbar.updateSpacing(
                 leading: calculateToolbarLeadingSpace(isEditing: model.isEditing,
@@ -401,6 +412,20 @@ final class AddressToolbarContainer: UIView,
         updateModel(addressToolbarContainerLens: state)
         if shouldShowAccessoryGradient(for: self.state) != wasShowingAccessoryGradient {
             setNeedsLayout()
+        }
+    }
+
+    override func safeAreaInsetsDidChange() {
+        super.safeAreaInsetsDidChange()
+        updateSkeletonAddressBarsFixedHorizontalSafeAreaInsets()
+    }
+
+    /// The skeleton bars sit off screen, where next to a vertical system bar (folded iPhone Duo) their own safe area
+    /// insets differ from the ones they get once on screen, so in that case they use the container's insets instead.
+    private func updateSkeletonAddressBarsFixedHorizontalSafeAreaInsets() {
+        let insets = traitCollection.hasVerticalSystemBar ? safeAreaInsets : nil
+        [leftSkeletonAddressBar, rightSkeletonAddressBar].forEach {
+            $0.fixedHorizontalSafeAreaInsets = insets
         }
     }
 
@@ -693,12 +718,22 @@ final class AddressToolbarContainer: UIView,
         let isZeroSearchEnabled = isRecentOrTrendingSearchEnabled && !isPrivateMode
 
         if shouldShowSuggestions || isZeroSearchEnabled {
-            delegate?.openSuggestions(searchTerm: locationText ?? "")
+            // This runs inside the text field's `becomeFirstResponder` frame, during the keyboard bring-up.
+            // Presenting the suggestions (which may build the search controller) is deferred by one runloop.
+            DispatchQueue.main.async { [weak self] in
+                guard let self, inOverlayMode, state?.addressToolbar.didStartTyping != true else { return }
+                delegate?.openSuggestions(searchTerm: locationText ?? "")
+            }
         }
     }
 
     func addressToolbarAccessibilityActions() -> [UIAccessibilityCustomAction]? {
         delegate?.addressToolbarContainerAccessibilityActions()
+    }
+
+    func addressToolbarDidHideEditingAccessoryButton(_ addressToolbar: BrowserAddressToolbar) {
+        guard addressToolbar === toolbar else { return }
+        delegate?.addressToolbarDidHideEditingAccessoryButton()
     }
 
     func configureContextualHint(
@@ -752,8 +787,8 @@ final class AddressToolbarContainer: UIView,
 
             delegate?.openSuggestions(searchTerm: locationText ?? "")
         } else {
+            store.dispatch(ToolbarModernAction.animationStateChanged(shouldAnimate: true), forWindowUUID: windowUUID)
             let action = ToolbarAction(searchTerm: locationText,
-                                       shouldAnimate: true,
                                        windowUUID: windowUUID,
                                        actionType: ToolbarActionType.didStartEditingUrl)
             store.dispatch(action)

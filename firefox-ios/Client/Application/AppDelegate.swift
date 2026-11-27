@@ -53,6 +53,7 @@ class AppDelegate: UIResponder,
     }()
     lazy var shareTelemetry = ShareTelemetry()
     lazy var gleanUsageReportingMetricsService = GleanUsageReportingMetricsService(profile: profile)
+    lazy var installationTelemetryService = InstallationTelemetryService(profilePrefs: profile.prefs)
     private var isLoadingBackgroundTabs = false
 
     private var shutdownWebServer: DispatchSourceTimer?
@@ -284,6 +285,8 @@ class AppDelegate: UIResponder,
         if profile.prefs.boolForKey(PendingAccountDisconnectedKey) ?? false {
             profile.removeAccount()
         }
+
+        installationTelemetryService.update()
 
         profile.syncManager?.applicationDidBecomeActive()
         webServerUtil?.setUpWebServer()

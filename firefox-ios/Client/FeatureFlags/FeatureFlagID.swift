@@ -21,6 +21,8 @@ enum FeatureFlagID: String, CaseIterable {
     case browserDataExport
     case browserDataImport
     case cellularDataRestrictedErrorPage
+    case checkForReinstalls
+    case configurationProfile
     case customReaderModeScheme
     case deeplinkOptimizationRefactor
     case downloadLiveActivities
@@ -52,6 +54,7 @@ enum FeatureFlagID: String, CaseIterable {
     case privacyDashboard
     case quickAnswers
     case quickAnswersOptInRedesign
+    case quickAnswersFollowUp
     case recentSearches
     case relayIntegration
     case reportBrokenSite
@@ -78,6 +81,7 @@ enum FeatureFlagID: String, CaseIterable {
     case unifiedSearch
     case videoIntroOnboarding
     case vpnFeature
+    case wallpaperEngagementSheet
     case waybackMachine
     case webViewDocumentFetchRefactor
 
@@ -98,6 +102,7 @@ enum FeatureFlagID: String, CaseIterable {
         case .sentFromFirefox: return FlagKeys.SentFromFirefox
         case .startAtHome: return FlagKeys.StartAtHome
         case .quickAnswers: return PrefsKeys.Settings.quickAnswersFeature
+        case .vpnFeature: return PrefsKeys.Settings.vpnFeature
         default: return nil
         }
     }
@@ -118,6 +123,8 @@ enum FeatureFlagID: String, CaseIterable {
                 .bookmarksSearchFeature,
                 .browserDataExport,
                 .browserDataImport,
+                .checkForReinstalls,
+                .configurationProfile,
                 .customReaderModeScheme,
                 .deeplinkOptimizationRefactor,
                 .downloadLiveActivities,
@@ -140,6 +147,7 @@ enum FeatureFlagID: String, CaseIterable {
                 .privacyDashboard,
                 .quickAnswers,
                 .quickAnswersOptInRedesign,
+                .quickAnswersFollowUp,
                 .recentSearches,
                 .relayIntegration,
                 .reportBrokenSite,

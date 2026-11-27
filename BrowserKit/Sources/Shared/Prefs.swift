@@ -31,6 +31,7 @@ public struct PrefsKeys {
     public static let KeyNoImageModeStatus = "NoImageModeStatus"
     public static let KeyMailToOption = "MailToOption"
     public static let IntroSeen = "IntroViewControllerSeen"
+    public static let installationProcessedKey = "installationProcessed"
     public static let OnboardingLastCardSeen = "OnboardingLastCardSeen"
     public static let TermsOfServiceAccepted = "TermsOfServiceAccepted"
     public static let TermsOfServiceAcceptedDate = "TermsOfServiceAcceptedDate"
@@ -105,6 +106,7 @@ public struct PrefsKeys {
         public static let MetadataLastCheckedDate = "WallpaperMetadataLastCheckedUserPrefsKey"
         public static let CurrentWallpaper = "CurrentWallpaperUserPrefsKey"
         public static let ThumbnailsAvailable = "ThumbnailsAvailableUserPrefsKey"
+        public static let EngagementSheetShownMarketingSlug = "WallpaperEngagementSheetShownMarketingSlugUserPrefsKey"
 
         public static let legacyAssetMigrationCheck = "legacyAssetMigrationCheckUserPrefsKey"
         public static let v1MigrationCheck = "v1MigrationCheckUserPrefsKey"
@@ -207,6 +209,7 @@ public struct PrefsKeys {
         public static let translationAutoTranslatePromptShown = "settings.translationAutoTranslatePromptShown"
         public static let aiKillSwitchFeature = "settings.aiKillSwitchFeature"
         public static let quickAnswersFeature = "settings.quickAnswersFeature"
+        public static let vpnFeature = "settings.vpnFeature"
     }
 
     // Activity Stream

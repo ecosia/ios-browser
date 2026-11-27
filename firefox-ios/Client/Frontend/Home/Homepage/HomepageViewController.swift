@@ -651,7 +651,10 @@ final class HomepageViewController: UIViewController,
     }
 
     private func configureCollectionView() {
+        /* Ecosia: Re-lay out all sections on size changes so TopSites stay in place (see NTPCollectionView)
         let collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
+        */
+        let collectionView = NTPCollectionView(frame: view.bounds, collectionViewLayout: createLayout())
 
         HomepageItem.cellTypes.forEach {
             collectionView.register($0, forCellWithReuseIdentifier: $0.cellIdentifier)
@@ -1004,11 +1007,15 @@ final class HomepageViewController: UIViewController,
             categories: homepageState.merinoState.availableCategories,
             selectedNewsfeedCategoryID: currentHomepageTabState.selectedNewsfeedCategoryID,
             newsfeedCategoryPickerOffsetX: currentHomepageTabState.newsfeedCategoryPickerOffsetX,
-            onCategoryPickerScroll: updateNewsfeedCategoryPickerOffsetX,
+            onCategoryPickerScroll: { [weak self] offsetX in
+                self?.updateNewsfeedCategoryPickerOffsetX(offsetX)
+            },
             onNewsAffordanceTap: { [weak self] in
                 self?.scrollNewsfeedToTop(onlyIfScrolledPastHeader: false, animated: true)
             },
-            onSelection: updatedSelectedNewsfeedCategory
+            onSelection: { [weak self] selectedNewsfeedCategoryID in
+                self?.updatedSelectedNewsfeedCategory(selectedNewsfeedCategoryID: selectedNewsfeedCategoryID)
+            }
         )
         newsTransitionHeaderCell.setTransitionProgress(newsTransitionProgress())
         return newsTransitionHeaderCell
@@ -1140,31 +1147,32 @@ final class HomepageViewController: UIViewController,
              */
             themeManager.getCurrentTheme(for: windowUUID).colors.ecosia.backgroundPrimaryDecorative.setFill()
             context.fill(CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height))
-            // Draw the wallpaper separately, so the potential safe area coordinates is filled with the
-            // wallpaper
             /* Ecosia: The wallpaper is now an inset card (child of `view`) rather than a full-bleed
                background, so a single drawHierarchy pass captures both the wallpaper card and the
-               collection content in their correct positions. Drawing the wallpaper separately at
-               (0,0) full-size caused a mirrored/stretched wallpaper artifact behind the offset content.
-            wallpaperView.drawHierarchy(
-                in: CGRect(
-                    x: 0,
-                    y: 0,
-                    width: bounds.width,
-                    height: bounds.height
-                ),
-                afterScreenUpdates: false
+               collection content in their correct positions. Drawing the wallpaper separately (which
+               upstream extends below its frame to fill the space under the homepage) would not match
+               the card's frame and corner mask.
+            let viewOrigin = CGPoint(x: bounds.origin.x, y: -bounds.origin.y)
+            let wallpaperFrame = wallpaperView.frame.offsetBy(dx: viewOrigin.x, dy: viewOrigin.y)
+            // Draw the wallpaper separately with the same geometry as on screen, so it matches the live homepage
+            // during tab transitions. The image keeps going below its frame to fill the space under the homepage.
+            wallpaperView.drawWallpaper(
+                aspectFilling: wallpaperFrame,
+                clippedTo: CGRect(
+                    x: wallpaperFrame.minX,
+                    y: wallpaperFrame.minY,
+                    width: wallpaperFrame.width,
+                    height: max(wallpaperFrame.height, bounds.height - wallpaperFrame.minY)
+                )
             )
 
-            view.drawHierarchy(
-                in: CGRect(
-                    x: bounds.origin.x,
-                    y: -bounds.origin.y,
-                    width: bounds.width,
-                    height: collectionView?.frame.height ?? 0.0
-                ),
-                afterScreenUpdates: false
-            )
+            // Skip the wallpaper view so it isn't drawn a second time with different geometry
+            for subview in view.subviews where subview !== wallpaperView && !subview.isHidden && subview.alpha > 0 {
+                subview.drawHierarchy(
+                    in: subview.frame.offsetBy(dx: viewOrigin.x, dy: viewOrigin.y),
+                    afterScreenUpdates: false
+                )
+            }
             */
             view.drawHierarchy(
                 in: CGRect(
@@ -1208,9 +1216,12 @@ final class HomepageViewController: UIViewController,
     // Ecosia: The content container sits between the status bar and the bottom toolbar, so size the wallpaper
     // to the window. Set by frame in the same layout pass: constraints to the window are dropped while a page
     // is shown and came back a frame late on return, making the NTP jump.
+    // Only while the NTP is the shown content: with tab swiping it stays in the hierarchy under the webview,
+    // and the overflow would shine through the translucent status bar area until the page has rendered.
     private func extendEcosiaWallpaperToWindow() {
         guard let window = view.window else { return }
-        let frame = view.convert(window.bounds, from: window)
+        let isShownContent = (view.superview as? ContentContainer)?.contentController === self
+        let frame = isShownContent ? view.convert(window.bounds, from: window) : view.bounds
         if wallpaperView.frame != frame { wallpaperView.frame = frame }
     }
 
@@ -1801,5 +1812,17 @@ final class HomepageViewController: UIViewController,
 
         let location = touch.location(in: collectionView)
         return collectionView.indexPathForItem(at: location) == nil
+    }
+}
+
+/// Uses the window's horizontal safe area insets so the layout doesn't change while the homepage is
+/// translated horizontally (FXIOS-17138).
+private final class HomepageCollectionView: UICollectionView {
+    override var safeAreaInsets: UIEdgeInsets {
+        var insets = super.safeAreaInsets
+        guard let window else { return insets }
+        insets.left = window.safeAreaInsets.left
+        insets.right = window.safeAreaInsets.right
+        return insets
     }
 }
