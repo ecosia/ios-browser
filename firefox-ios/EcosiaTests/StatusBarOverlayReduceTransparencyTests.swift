@@ -16,8 +16,8 @@ final class StatusBarOverlayReduceTransparencyTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        profile = MockProfile()
-        LegacyFeatureFlagsManager.shared.initializeDeveloperFeatures(with: profile)
+        profile = makeProfile()
+        DependencyHelperMock().bootstrapDependencies(injectedProfile: profile)
     }
 
     override func tearDown() {
