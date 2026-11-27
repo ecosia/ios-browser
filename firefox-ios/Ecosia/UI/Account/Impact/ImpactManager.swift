@@ -4,6 +4,7 @@
 
 @preconcurrency import Foundation
 import SwiftUI
+import Combine
 import Common
 
 /// Owns the user's seed count, level and progress: server-based when logged in, local when logged out.
@@ -30,15 +31,16 @@ public final class ImpactManager: ObservableObject {
     private var isLoggedIn = false
     /// Whether `isLoggedIn` is confirmed, or still the default from before the launch credentials check.
     private var hasResolvedAuthState = false
-    /// Set when `refreshSeedState()` runs before auth resolves; replayed on `authStateLoaded`.
+    /// Set when `refreshSeedState()` runs before auth resolves; replayed on `.stateResolved`.
     private var pendingSeedStateRefresh = false
     /// Guards against firing more than one initial `registerVisitIfNeeded()`/`handleLocalSeedCollection()`
-    /// for a single resolution: cold launch can dispatch both `userLoggedIn` and `authStateLoaded`
+    /// for a single resolution: cold launch can emit both `.loggedIn` and `.stateResolved`
     /// for the same "already logged in" event, in unspecified order, so whichever arrives first
     /// claims it and the other is a no-op. Reset on logout so a later login fires its own.
     private var hasHandledCurrentResolution = false
     private let accountsProvider: AccountsProviderProtocol
     private let auth: AuthSessionProviderProtocol
+    private var cancellables: Set<AnyCancellable> = []
     nonisolated(unsafe) private static var seedProgressManagerType: SeedProgressManagerProtocol.Type = UserDefaultsSeedProgressManager.self
     /// Not `private`: swapped for a mock from tests via `@testable import`.
     nonisolated(unsafe) static var loggedInImpactCacheType: LoggedInImpactCacheProtocol.Type = LoggedInImpactCache.self
@@ -48,9 +50,26 @@ public final class ImpactManager: ObservableObject {
     public init(accountsProvider: AccountsProviderProtocol, auth: AuthSessionProviderProtocol = EcosiaAuthSessionProvider()) {
         self.accountsProvider = accountsProvider
         self.auth = auth
+
+        auth.authEvents
+            .sink { [weak self] event in
+                MainActor.assumeIsolated {
+                    self?.handle(event)
+                }
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: Self.seedProgressManagerType.progressUpdatedNotification)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                MainActor.assumeIsolated {
+                    self?.handleSeedProgressUpdate()
+                }
+            }
+            .store(in: &cancellables)
     }
 
-    /// Must run after the auth observers are registered, so a resolution can't land unheard in between.
+    /// Reads auth after `init` subscribed to `authEvents`, so a resolution can't land unheard in between.
     func loadInitialSnapshot() {
         isLoggedIn = auth.isLoggedIn
         hasResolvedAuthState = auth.hasResolvedAuthState
@@ -78,20 +97,18 @@ public final class ImpactManager: ObservableObject {
 
     // MARK: - Auth Events
 
-    func handleAuthStateChange(actionType: EcosiaAuthActionType?) {
-        // Every auth notification means the service's isLoggedIn is now confirmed.
-        isLoggedIn = auth.isLoggedIn
+    private func handle(_ event: AuthEvent) {
+        // Every auth event carries a confirmed isLoggedIn.
+        isLoggedIn = event.isLoggedIn
         hasResolvedAuthState = true
 
-        switch actionType {
-        case .userLoggedIn:
+        switch event {
+        case .loggedIn:
             handleUserLoggedIn()
-        case .userLoggedOut:
+        case .loggedOut:
             handleUserLoggedOut()
-        case .authStateLoaded:
-            handleAuthStateLoaded()
-        case nil:
-            break
+        case .stateResolved:
+            handleStateResolved()
         }
     }
 
@@ -115,7 +132,7 @@ public final class ImpactManager: ObservableObject {
         handleLocalSeedCollection()
     }
 
-    private func handleAuthStateLoaded() {
+    private func handleStateResolved() {
         if !isLoggedIn, let snapshot = Self.resolveInitialImpactSnapshot(isLoggedIn: false) {
             // EcosiaAuthenticationService already clears the shared logged-in cache
             // whenever this resolves to logged-out following a logged-in session (e.g.
@@ -131,7 +148,7 @@ public final class ImpactManager: ObservableObject {
         refreshSeedState()
     }
 
-    func handleSeedProgressUpdate() {
+    private func handleSeedProgressUpdate() {
         guard !isLoggedIn else { return }
 
         let newSeedCount = Self.seedProgressManagerType.loadTotalSeedsCollected()
@@ -149,8 +166,8 @@ public final class ImpactManager: ObservableObject {
 
     /// Registers a visit when logged in, collects the daily local seed when logged out.
     public func refreshSeedState() {
-        // Catch up: the resolution notification only reaches registered browser windows, so auth
-        // may have resolved without this object hearing it.
+        // Catch up: the service marks itself resolved before its event reaches the main actor,
+        // so auth may have resolved without this object hearing it yet.
         if !hasResolvedAuthState {
             isLoggedIn = auth.isLoggedIn
             hasResolvedAuthState = auth.hasResolvedAuthState
