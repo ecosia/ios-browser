@@ -684,6 +684,9 @@ extension BrowserViewController {
             // the omnibox chip right away so the glyph appears while the drawer
             // is still sliding away rather than after it disappears.
             self?.ntpOmniboxAnchorView?.setSelectedChatMode(mode)
+        }, onChatModePicked: { [weak self] in
+            // Back on the NTP with the mode active, ready to type.
+            _ = self?.ntpOmniboxAnchorView?.becomeFirstResponder()
         }, onLogin: { [weak self] in
             self?.handleOmniboxLoginRequested()
         })
