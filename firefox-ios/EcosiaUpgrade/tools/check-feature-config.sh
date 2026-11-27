@@ -67,6 +67,7 @@ decisions=(
   "SearchConfigV3Feature enabled false Search config v3 out"
   "CheckForReinstallsFeature enabled false Reinstall check out"
   "WallpaperEngagementSheetFeature enabled false Wallpaper engagement sheet out"
+  "StartAtHomeFeature setting .afterFourHours Start screen: homepage after four hours"
 )
 
 out=$(mktemp -d)

@@ -6,7 +6,11 @@ features:
       setting:
         description: This property provides a default setting for the start at home feature
         type: StartAtHome
-        default: disabled
+        # Ecosia: Keep production's default on every channel, "Homepage after four hours". Upstream moved it
+        # to `disabled` ("Last tab") in 156.1, which changed the start screen setting of every user who never
+        # picked one, updates from production included (MOB-5307).
+        # default: disabled
+        default: afterFourHours
 
 # These different variants must match those of StartAtHomeSetting (including casing) in FlaggableFeatureOptions.swift
 enums:
