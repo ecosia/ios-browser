@@ -4,7 +4,17 @@
 
 import XCTest
 import SwiftUI
+import ViewInspector
 @testable import Client
+
+// MARK: - AnalyticsSpy
+
+func makeAnalyticsSpyContextSUT(status: UNAuthorizationStatus = .notDetermined) -> AnalyticsSpy {
+    let mockSettings = MockUNNotificationSettings(authorizationStatus: status)
+    let mockNotificationCenter = MockAnalyticsUserNotificationCenter(mockSettings: mockSettings)
+    let analyticsSpy = AnalyticsSpy(notificationCenter: mockNotificationCenter)
+    return analyticsSpy
+}
 
 @MainActor
 class AppIconViewTest: XCTestCase {
@@ -30,5 +40,16 @@ class AppIconViewTest: XCTestCase {
         for icon in AppIcon.allCases {
             XCTAssertNotNil(UIImage.ecosia(named: icon.imageSetAssetName), "Missing image for \(icon)")
         }
+    }
+
+    func test_appIconView_invokesEcosiaTrackingCallback() throws {
+        var callbackInvoked = false
+
+        let appIconView = AppIconView(appIcon: AppIcon.ecosiaDark, isSelected: true, windowUUID: UUID(), setAppIcon: { (AppIcon) -> Void in
+            callbackInvoked = true
+        })
+
+        try appIconView.inspect().find(ViewType.Button.self).tap()
+        XCTAssertTrue(callbackInvoked)
     }
 }
