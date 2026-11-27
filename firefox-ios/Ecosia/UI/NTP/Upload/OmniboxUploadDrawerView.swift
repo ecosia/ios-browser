@@ -373,8 +373,7 @@ struct OmniboxUploadDrawerView: View {
         // Leading inset matches the chat-mode rows so the footer lines up with their text.
         .padding(.leading, UX.chatModeRowHorizontalPadding)
         .padding(.trailing, .ecosia.space._s)
-        // No bottom padding: the sheet's bottom padding sets the gap to the edge.
-        .padding(.top, .ecosia.space._s)
+        .padding(.vertical, .ecosia.space._s)
         .frame(maxWidth: .infinity)
     }
 
