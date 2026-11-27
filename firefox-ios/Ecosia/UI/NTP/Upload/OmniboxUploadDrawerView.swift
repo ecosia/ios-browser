@@ -81,6 +81,15 @@ private struct OmniboxDrawerHeightKey: PreferenceKey {
     }
 }
 
+/// Reports the sheet's bottom safe-area inset (the home-indicator area).
+@available(iOS 16.0, *)
+private struct OmniboxDrawerBottomInsetKey: PreferenceKey {
+    static var defaultValue: CGFloat { 0 }
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
 @available(iOS 16.0, *)
 struct OmniboxUploadDrawerView: View {
     private typealias UX = OmniboxUploadDrawerUX
@@ -99,6 +108,7 @@ struct OmniboxUploadDrawerView: View {
     @SwiftUI.Environment(\.dismiss) private var dismiss
     @State private var theme = OmniboxUploadDrawerViewTheme()
     @State private var contentHeight = OmniboxUploadDrawerUX.fallbackHeight
+    @State private var bottomSafeAreaInset: CGFloat = 0
 
     init(windowUUID: WindowUUID,
          provider: SearchProvider,
@@ -160,9 +170,8 @@ struct OmniboxUploadDrawerView: View {
                 signInFooter
             }
         }
-        .padding(.horizontal, .ecosia.space._m)
-        .padding(.top, .ecosia.space._2l)
-        .padding(.bottom, .ecosia.space._2l)
+        // Same 16pt on every side; the bottom is measured from the sheet's edge.
+        .padding(.ecosia.space._m)
         .frame(maxWidth: .infinity)
         // Measure the intrinsic content height so the sheet detent fits exactly.
         .background(
@@ -174,11 +183,24 @@ struct OmniboxUploadDrawerView: View {
             if height > 0 { contentHeight = height }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        // Content runs into the home-indicator area so the bottom padding alone
+        // sets the gap to the sheet's edge.
+        .ignoresSafeArea(.container, edges: .bottom)
+        .background(
+            GeometryReader { proxy in
+                Color.clear.preference(key: OmniboxDrawerBottomInsetKey.self, value: proxy.safeAreaInsets.bottom)
+            }
+        )
+        .onPreferenceChange(OmniboxDrawerBottomInsetKey.self) { inset in
+            bottomSafeAreaInset = inset
+        }
         .background(theme.backgroundColor.ignoresSafeArea())
         .accessibilityElement(children: .contain)
         .accessibilityLabel(String.localized(.aiToolsTitle))
         .ecosiaThemed(windowUUID, $theme)
-        .presentationDetents([.height(contentHeight)])
+        // A height detent excludes the bottom safe area, which the sheet adds on
+        // top; subtract it because the content already extends into that area.
+        .presentationDetents([.height(max(contentHeight - bottomSafeAreaInset, 0))])
         .presentationDragIndicator(.visible)
         .presentationBackgroundIfAvailable(theme.backgroundColor)
     }
