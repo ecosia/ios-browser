@@ -37,12 +37,15 @@ final class NTPOmniboxSheetState: ObservableObject {
 
     private var onUploadOptionSelected: ((OmniboxUploadOption) -> Void)?
     private var onChatModeSelectionChanged: ((OmniboxChatMode?) -> Void)?
+    private var onChatModePicked: (() -> Void)?
     private var onLoginRequested: (() -> Void)?
     /// An upload selection (or a sign-in tap) is delivered only after the sheet
     /// finishes dismissing so the picker / auth flow it presents doesn't fight
     /// the dismissal. Chat-mode changes don't present anything, so they apply
-    /// immediately (see below).
+    /// immediately (see below); only the follow-up omnibox focus waits for the
+    /// dismissal, so the keyboard doesn't rise while the sheet is closing.
     private var pendingUploadOption: OmniboxUploadOption?
+    private var pendingChatModePicked = false
     private var pendingLogin = false
     private var pendingProviderRedirect: URL?
     private var onProviderRedirectConfirmed: ((URL) -> Void)?
@@ -126,14 +129,17 @@ final class NTPOmniboxSheetState: ObservableObject {
                              hasOptedOutOfChatThreads: Bool = false,
                              onSelectUpload: @escaping (OmniboxUploadOption) -> Void,
                              onChatModeSelectionChanged: @escaping (OmniboxChatMode?) -> Void,
+                             onChatModePicked: @escaping () -> Void,
                              onLogin: @escaping () -> Void) {
         pendingUploadOption = nil
+        pendingChatModePicked = false
         pendingLogin = false
         self.provider = provider
         self.isAuthenticated = isAuthenticated
         self.hasOptedOutOfChatThreads = hasOptedOutOfChatThreads
         onUploadOptionSelected = onSelectUpload
         self.onChatModeSelectionChanged = onChatModeSelectionChanged
+        self.onChatModePicked = onChatModePicked
         onLoginRequested = onLogin
         showUploadDrawer = true
     }
@@ -176,6 +182,9 @@ final class NTPOmniboxSheetState: ObservableObject {
         // drawer) — deselection happens by tapping the omnibox chip, not here.
         // Applied immediately (rather than on dismiss) so the drawer checkmark
         // and the omnibox chip update the instant the user taps.
+        // Any pick, including re-picking the active mode, ends with the omnibox
+        // focused once the drawer has closed, so the user can start typing.
+        pendingChatModePicked = true
         guard mode != selectedChatMode else {
             // Nothing changed, so don't re-notify the chip or report a `select`
             // that didn't actually alter the selection — just close the drawer.
@@ -201,16 +210,22 @@ final class NTPOmniboxSheetState: ObservableObject {
     func handleUploadDrawerDismissed() {
         let option = pendingUploadOption
         let uploadCallback = onUploadOptionSelected
+        let chatModePicked = pendingChatModePicked
+        let chatModePickedCallback = onChatModePicked
         let login = pendingLogin
         let loginCallback = onLoginRequested
         pendingUploadOption = nil
+        pendingChatModePicked = false
         pendingLogin = false
         onUploadOptionSelected = nil
         onChatModeSelectionChanged = nil
+        onChatModePicked = nil
         onLoginRequested = nil
 
         if let option {
             uploadCallback?(option)
+        } else if chatModePicked {
+            chatModePickedCallback?()
         } else if login {
             loginCallback?()
         }

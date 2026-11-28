@@ -150,12 +150,59 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
                          isAuthenticated: Bool = true,
                          onSelectUpload: @escaping (OmniboxUploadOption) -> Void = { _ in },
                          onChatModeSelectionChanged: @escaping (OmniboxChatMode?) -> Void = { _ in },
+                         onChatModePicked: @escaping () -> Void = {},
                          onLogin: @escaping () -> Void = {}) {
         state.presentUploadDrawer(provider: provider,
                                   isAuthenticated: isAuthenticated,
                                   onSelectUpload: onSelectUpload,
                                   onChatModeSelectionChanged: onChatModeSelectionChanged,
+                                  onChatModePicked: onChatModePicked,
                                   onLogin: onLogin)
+    }
+
+    func testPickingChatModeFocusesOmniboxOnlyAfterDrawerDismisses() {
+        let state = NTPOmniboxSheetState()
+        var pickedCount = 0
+        present(state, onChatModePicked: { pickedCount += 1 })
+
+        state.handleChatModeSelected(.thinkLonger)
+        XCTAssertEqual(pickedCount, 0)
+
+        state.handleUploadDrawerDismissed()
+        XCTAssertEqual(pickedCount, 1)
+    }
+
+    func testRePickingActiveChatModeAlsoFocusesOmnibox() {
+        let state = NTPOmniboxSheetState()
+        var pickedCount = 0
+        present(state, onChatModePicked: { pickedCount += 1 })
+        state.handleChatModeSelected(.learning)
+        state.handleUploadDrawerDismissed()
+
+        present(state, onChatModePicked: { pickedCount += 1 })
+        state.handleChatModeSelected(.learning)
+        state.handleUploadDrawerDismissed()
+
+        XCTAssertEqual(pickedCount, 2)
+    }
+
+    func testDismissingDrawerWithoutPickingModeDoesNotFocusOmnibox() {
+        let state = NTPOmniboxSheetState()
+        var pickedCount = 0
+        present(state, onChatModePicked: { pickedCount += 1 })
+
+        state.handleUploadDrawerDismissed()
+        XCTAssertEqual(pickedCount, 0)
+    }
+
+    func testChoosingUploadSourceDoesNotReportChatModePick() {
+        let state = NTPOmniboxSheetState()
+        var pickedCount = 0
+        present(state, onChatModePicked: { pickedCount += 1 })
+
+        state.handleUploadOptionSelected(.photos)
+        state.handleUploadDrawerDismissed()
+        XCTAssertEqual(pickedCount, 0)
     }
 
     func testSelectedOptionIsDeliveredAfterDrawerDismisses() {
@@ -283,6 +330,7 @@ final class NTPOmniboxSheetStateTests: XCTestCase {
                                   hasOptedOutOfChatThreads: true,
                                   onSelectUpload: { _ in },
                                   onChatModeSelectionChanged: { _ in },
+                                  onChatModePicked: {},
                                   onLogin: {})
         XCTAssertTrue(state.hasOptedOutOfChatThreads)
         XCTAssertTrue(state.isAuthenticated)
