@@ -55,15 +55,6 @@ enum HomepageSectionType: Int, CaseIterable {
 // Ecosia
 private let MinimumInsets: CGFloat = 16
 extension HomepageSectionType {
-    var customizableConfig: CustomizableNTPSettingConfig? {
-        switch self {
-        case .header, .libraryShortcuts, .ntpCustomization: return nil
-        case .topSites: return .topSites
-        case .impact: return .climateImpact
-        case .news: return nil
-        }
-    }
-
     func sectionInsets(_ traits: UITraitCollection,
                        topSpacing: CGFloat = 0,
                        bottomSpacing: CGFloat = 32) -> NSDirectionalEdgeInsets {

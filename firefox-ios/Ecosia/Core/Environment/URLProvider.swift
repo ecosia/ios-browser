@@ -83,8 +83,9 @@ public enum URLProvider {
         URL(string: "https://www.ecosia.org/privacy")!
     }
 
+    /// The Help Center in the user's language. Only German and French have their own help site.
     public var faq: URL {
-        URL(string: "https://ecosia.helpscoutdocs.com/")!
+        support
     }
 
     public var terms: URL {
