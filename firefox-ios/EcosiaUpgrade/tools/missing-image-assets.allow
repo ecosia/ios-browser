@@ -1,0 +1,18 @@
+# Image names with no asset in the Client app, on purpose. One per line: <name><TAB><reason>.
+# Read by missing_image_assets.py. The name is the asset name (the string), not the Swift constant.
+# Each reason says why Ecosia's build never asks for the image; restore the imageset from the
+# Firefox tag when that stops being true.
+arrowTrendingLarge	trending searches, `trendingSearches` is off outside the developer channel (MOB-5309)
+avatarWarningCircleFillMulticolorLargeDark	main menu account row, removed by Ecosia (MOB-5309)
+avatarWarningCircleFillMulticolorLargeLight	main menu account row, removed by Ecosia (MOB-5309)
+bookmarkTrayLarge	main menu Bookmarks row uses Ecosia's `bookmarksEmpty` instead (MOB-5309)
+emailMaskLarge	Relay keyboard button, needs a Mozilla account and Ecosia has no sign-in (MOB-5309)
+foxDefaultBrowser	main menu default-browser banner, a Firefox fox; Ecosia artwork needed, not this one (MOB-5309)
+moreHorizontalRoundLarge	toolbar menu button uses Ecosia's `elipsis` instead (MOB-5309)
+noBookmarksInFolder	bookmarks empty state is Ecosia's own view (MOB-5309)
+noBookmarksInRoot	bookmarks empty state is Ecosia's own view (MOB-5309)
+qrcode-scanBorder	QR scanner overlay; upstream nests the set inside lightningFillLarge.imageset, so actool skips it in Firefox 160.1 and on main too. Known gap, not fixed here (MOB-5309)
+qrcode-scanLine	QR scanner overlay; upstream nests the set inside lightningFillLarge.imageset, so actool skips it in Firefox 160.1 and on main too. Known gap, not fixed here (MOB-5309)
+securityError	native error page, `nativeErrorPage` is off on every channel (MOB-5309)
+shieldCheckmarkLarge	homepage tracker blocker module, Ecosia's NTP never shows it (MOB-5309)
+translateActive	restored by MOB-5282 on dc-mob-5282-qa-fixes; drop this line once that lands (MOB-5309)

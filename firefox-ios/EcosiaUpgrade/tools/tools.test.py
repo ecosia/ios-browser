@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Tests for source_scan.py, swallowed_declarations.py and conflict_risk.py.
+"""Tests for source_scan.py, swallowed_declarations.py, conflict_risk.py and
+missing_image_assets.py.
 
 Run: python3 -I firefox-ios/EcosiaUpgrade/tools/tools.test.py
 """
@@ -13,6 +14,7 @@ sys.dont_write_bytecode = True
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import conflict_risk  # noqa: E402
+import missing_image_assets as mia  # noqa: E402
 import source_scan as ss  # noqa: E402
 import swallowed_declarations  # noqa: E402
 
@@ -182,6 +184,53 @@ class ConflictRiskTests(unittest.TestCase):
                 row("busy", "silent", 50, 3), row("conflict", "conflict", 1, 1)]
         self.assertEqual([r["file"] for r in conflict_risk.rank(rows)],
                          ["conflict", "busy", "big", "small", "none"])
+
+
+class MissingImageAssetsTests(unittest.TestCase):
+    SOURCE = (
+        'public struct StandardImageIdentifiers {\n'
+        '    public struct Large {\n'
+        '        public static let summarizer = "summarizerLarge"\n'
+        '        /* Ecosia: hidden\n'
+        '        public static let gone = "goneLarge"\n'
+        '        */\n'
+        '    }\n'
+        '    public struct Small {\n'
+        '        public static let shield: String = "shieldSmall"\n'
+        '    }\n'
+        '}\n'
+        'let label = #"static let fake = "fakeLarge""#\n'
+    )
+
+    def test_identifiers_skip_comments_and_strings_and_carry_the_scope(self):
+        self.assertEqual(mia.identifiers(self.SOURCE), [
+            ("StandardImageIdentifiers.Large.summarizer", "summarizerLarge"),
+            ("StandardImageIdentifiers.Small.shield", "shieldSmall"),
+        ])
+
+    def test_asset_names_only_count_top_level_sets_in_bundled_catalogs(self):
+        paths = [
+            "firefox-ios/Client/Assets/Images.xcassets/summarizerLarge.imageset/Contents.json",
+            "firefox-ios/Client/Assets/Images.xcassets/Folder/pinLarge.imageset/",
+            "firefox-ios/Client/Ecosia/UI/Ecosia.xcassets/elipsis.symbolset/elipsis.svg",
+            # actool ignores a set nested in another set (upstream's qrcode-scan* images).
+            "firefox-ios/Client/Assets/Images.xcassets/lightningFillLarge.imageset/"
+            "qrcode-scanLine.imageset/qrcode-scanLine.png",
+            # Not in the app bundle.
+            "firefox-ios/Ecosia/UI/Common.xcassets/shieldSmall.imageset/Contents.json",
+        ]
+        self.assertEqual(mia.asset_names(paths),
+                         {"summarizerLarge", "pinLarge", "elipsis", "lightningFillLarge"})
+
+    def test_check_verdicts_and_stale_entries(self):
+        ids = [("Large.summarizer", "summarizerLarge"), ("Small.shield", "shieldSmall"),
+               ("Large.pin", "pinLarge")]
+        allowed = {"shieldSmall": "off", "pinLarge": "restored", "goneLarge": "removed"}
+        rows, failed, stale = mia.check(ids, {"pinLarge"}, allowed)
+        self.assertEqual(rows, [("shieldSmall", "Small.shield", "allowed: off"),
+                                ("summarizerLarge", "Large.summarizer", "MISSING")])
+        self.assertTrue(failed)
+        self.assertEqual(stale, ["goneLarge", "pinLarge"])
 
 
 if __name__ == "__main__":
