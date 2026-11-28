@@ -36,6 +36,20 @@ final class FeatureConfigurationTests: XCTestCase {
         XCTAssertFalse(isEnabled(.addressBarGestureToOpenTabTraySwipe), "The interactive gesture, not the plain swipe")
     }
 
+    // MARK: - Production defaults
+
+    /// Upstream's default is "Last tab" since 156.1. Users who never picked a start screen, including
+    /// those updating from production, store nothing, so Settings shows this default (MOB-5307).
+    func testStartScreenDefaultsToHomepageAfterFourHours() {
+        XCTAssertEqual(layer.checkStartAtHomeConfiguration(), .afterFourHours, "Production's default")
+        let userPreferences = UserFeaturePreferenceManager(prefs: prefs, backendLayer: layer, userInterfaceIdiom: .phone)
+        XCTAssertEqual(
+            userPreferences.startAtHomeSetting,
+            .afterFourHours,
+            "Settings shows the default when the user never picked a start screen"
+        )
+    }
+
     // MARK: - Summaries on-device only
 
     /// The hosted summarizer is also switched off in code (`OnDeviceSummariesTests`); this keeps the
