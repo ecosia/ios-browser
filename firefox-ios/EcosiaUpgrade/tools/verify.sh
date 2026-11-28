@@ -1,7 +1,8 @@
 #!/bin/bash
 # Builds, unit-tests and lints the current checkout the way CI's merge tests do.
 # Exit codes: 0 ok, 1 project generation or build failed, 2 tests failed, 3 lint failed,
-# 4 a feature decision does not hold on some Nimbus channel (check-feature-config.sh).
+# 4 a feature decision does not hold on some Nimbus channel (check-feature-config.sh),
+# 5 the upgrade test plan is malformed or incomplete (test_plan.py --check).
 set -uo pipefail
 
 root=$(git rev-parse --show-toplevel)
@@ -57,5 +58,9 @@ swiftlint --strict --quiet > "$logs/lint.log" 2>&1 || { echo "verify: lint faile
 echo "verify: checking the feature decisions on every channel (log: $logs/feature-config.log)"
 firefox-ios/EcosiaUpgrade/tools/check-feature-config.sh > "$logs/feature-config.log" 2>&1 \
   || { echo "verify: feature configuration check failed"; exit 4; }
+
+echo "verify: checking the upgrade test plan (log: $logs/test-plan.log)"
+firefox-ios/EcosiaUpgrade/tools/test_plan.py --check > "$logs/test-plan.log" 2>&1 \
+  || { echo "verify: test plan check failed"; exit 5; }
 
 echo "verify: OK"

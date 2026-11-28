@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Tests for source_scan.py, swallowed_declarations.py and conflict_risk.py.
+"""Tests for source_scan.py, swallowed_declarations.py, conflict_risk.py and test_plan.py.
 
 Run: python3 -I firefox-ios/EcosiaUpgrade/tools/tools.test.py
 """
 
+import os
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -15,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import conflict_risk  # noqa: E402
 import source_scan as ss  # noqa: E402
 import swallowed_declarations  # noqa: E402
+import test_plan  # noqa: E402
 
 BOOKMARKS = "firefox-ios/Client/Frontend/Library/Bookmarks/BookmarksViewController.swift"
 
@@ -182,6 +185,154 @@ class ConflictRiskTests(unittest.TestCase):
                 row("busy", "silent", 50, 3), row("conflict", "conflict", 1, 1)]
         self.assertEqual([r["file"] for r in conflict_risk.rank(rows)],
                          ["conflict", "busy", "big", "small", "none"])
+
+
+AREA = """# Settings
+
+Covers:
+- `firefox-ios/Client/Ecosia/Extensions/A+Ecosia.swift`
+
+```mermaid
+flowchart LR
+  s[Settings] --> settings.one
+  s --> settings.two
+```
+
+## settings.one
+p1 · origin MOB-1 · human: needs a real device
+
+One line.
+
+**Setup:** fresh install · de
+
+1. Do it.
+
+**Expect:** it works.
+
+## settings.two
+p2 · automated: SomeTests/testIt
+
+Two.
+
+**Setup:** existing · en
+
+1. CI runs it.
+
+**Expect:** it passes.
+"""
+
+
+class TestPlanTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.repo = self.tmp.name
+        self.plan = os.path.join(self.repo, test_plan.PLAN_DIR)
+        self.write("firefox-ios/Client/Ecosia/Extensions/A+Ecosia.swift", "extension A {}\n")
+        self.write("firefox-ios/EcosiaTests/SomeTests.swift", "class SomeTests { func testIt() {} }\n")
+        self.write(f"{test_plan.PLAN_DIR}/areas/settings.md", AREA)
+        self.required, test_plan.REQUIRED_AREAS = test_plan.REQUIRED_AREAS, ("settings",)
+
+    def tearDown(self):
+        test_plan.REQUIRED_AREAS = self.required
+        self.tmp.cleanup()
+
+    def write(self, rel, text):
+        path = os.path.join(self.repo, rel)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        Path(path).write_text(text)
+
+    def check(self):
+        Path(self.plan, "map.md").write_text(test_plan.render_map(test_plan.plan_files(self.plan), self.plan))
+        return test_plan.check(self.repo, self.plan)[0]
+
+    def test_parses_flows_and_runners(self):
+        pf = test_plan.parse_file(os.path.join(self.plan, "areas/settings.md"))
+        self.assertEqual(pf.title, "Settings")
+        self.assertEqual(pf.covers, ["firefox-ios/Client/Ecosia/Extensions/A+Ecosia.swift"])
+        one, two = pf.flows
+        self.assertEqual((one.id, one.priority, one.origin, one.runner), ("settings.one", "p1", "MOB-1", "human"))
+        self.assertEqual((two.runner, two.automated, two.steps), ("automated", "SomeTests/testIt", 1))
+        self.assertEqual(one.problems + two.problems, [])
+
+    def test_valid_plan_has_no_problems(self):
+        self.assertEqual(self.check(), [])
+
+    def test_flow_problems(self):
+        text = AREA.replace("human: needs a real device", "human: · automated: SomeTests") \
+                   .replace("**Expect:** it works.", "")
+        self.write(f"{test_plan.PLAN_DIR}/areas/settings.md", text)
+        problems = "\n".join(self.check())
+        self.assertIn("human needs a value", problems)
+        self.assertIn("either automated or human", problems)
+        self.assertIn("no **Expect:** line", problems)
+
+    def test_malformed_flow_heading_is_reported(self):
+        self.write(f"{test_plan.PLAN_DIR}/areas/settings.md",
+                   AREA.replace("## settings.two", "## settings.two!") + "\n## Migrations\n\nText.\n")
+        problems = "\n".join(self.check())
+        self.assertIn("'## settings.two!' is neither a flow id", problems)
+        self.assertIn("'## Migrations' is neither a flow id", problems)  # sections belong in targets/ only
+
+    def test_target_file_sections_are_allowed(self):
+        self.write(f"{test_plan.PLAN_DIR}/targets/1.0.md",
+                   AREA.replace("settings.", "target.") + "\n## Intended changes\n\nText.\n")
+        self.assertNotIn("Intended changes", "\n".join(self.check()))
+
+    def test_id_missing_from_diagram_and_duplicates(self):
+        self.write(f"{test_plan.PLAN_DIR}/areas/settings.md", AREA.replace("  s --> settings.two\n", ""))
+        self.write(f"{test_plan.PLAN_DIR}/areas/other.md", AREA.replace("# Settings", "# Other"))
+        problems = "\n".join(self.check())
+        self.assertIn("settings.two: not in the file's mermaid diagram", problems)
+        self.assertIn("id already used", problems)
+
+    def test_missing_test_and_uncovered_extension(self):
+        self.write(f"{test_plan.PLAN_DIR}/areas/settings.md",
+                   AREA.replace("testIt", "testGone").replace("A+Ecosia.swift`", "B+Ecosia.swift`"))
+        self.write("firefox-ios/Client/Ecosia/Extensions/B+Ecosia.swift", "")
+        problems = "\n".join(self.check())
+        self.assertIn("automated: SomeTests/testGone: no active test method testGone in SomeTests", problems)
+        self.assertIn("A+Ecosia.swift: +Ecosia extension with no flow", problems)
+
+    def test_allow_list_needs_reasons_and_goes_stale(self):
+        self.write(f"{test_plan.PLAN_DIR}/uncovered.allow",
+                   "firefox-ios/Client/Ecosia/Extensions/A+Ecosia.swift\tcovered anyway\n"
+                   "firefox-ios/Client/Ecosia/Extensions/Gone+Ecosia.swift\tdeleted\n")
+        problems = "\n".join(self.check())
+        self.assertIn("A+Ecosia.swift: covered by an area", problems)
+        self.assertIn("Gone+Ecosia.swift: not an extension file any more", problems)
+
+    def test_map_must_be_current_and_counts(self):
+        self.check()
+        Path(self.plan, "map.md").write_text("stale\n")
+        self.assertIn("out of date", "\n".join(test_plan.check(self.repo, self.plan)[0]))
+        self.assertEqual(test_plan.counts(test_plan.plan_files(self.plan)),
+                         "2 flows: 0 agent · 1 automated · 1 human")
+
+    def test_commented_out_and_unregistered_tests_do_not_count(self):
+        self.write("firefox-ios/EcosiaTests/SomeTests.swift", "class SomeTests {\n/* func testIt() {} */\n}\n")
+        self.assertIn("no active test method testIt", "\n".join(self.check()))
+        self.write("firefox-ios/EcosiaTests/SomeTests.swift", "")
+        self.write("firefox-ios/EcosiaTests/SnapshotTests/SomeTests.swift", "class SomeTests { func testIt() {} }\n")
+        self.assertIn("SomeTests is not in", "\n".join(self.check()))
+        self.write(test_plan.SNAPSHOT_CONFIG, '{"testClasses": [{"name": "SomeTests"}]}')
+        self.assertEqual(self.check(), [])
+
+    def test_flow_prefix_must_match_its_file(self):
+        self.write(f"{test_plan.PLAN_DIR}/areas/settings.md", AREA.replace("settings.two", "homepage.two"))
+        self.assertIn("homepage.two: id must start with 'settings.'", "\n".join(self.check()))
+
+    def test_map_nodes_stay_distinct(self):
+        self.assertNotEqual(test_plan.node("a-b.c"), test_plan.node("a.b-c"))
+        self.assertNotEqual(test_plan.node("a--b.c"), test_plan.node("a.b.c"))
+        self.assertNotEqual(test_plan.node("area.x", kind="A"), test_plan.node("area.x"))
+
+    def test_required_area_without_file(self):
+        test_plan.REQUIRED_AREAS = ("settings", "search")
+        self.assertIn("areas/search.md: required area has no file", "\n".join(self.check()))
+
+    def test_covered_matches_directories(self):
+        self.assertTrue(test_plan.covered("a/b/C.swift", ["a/b/"]))
+        self.assertFalse(test_plan.covered("a/bc/C.swift", ["a/b"]))
 
 
 if __name__ == "__main__":
