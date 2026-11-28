@@ -132,6 +132,12 @@ final class StatusBarOverlay: UIView,
     }
 
     private func updateStatusBarAlpha(isHomepage: Bool, needsNoStatusBar: Bool) {
+        // Ecosia: Reduce Transparency turns the glass off, but the NTP wallpaper still runs behind the status bar
+        if isHomepage && !toolbarHelper.shouldBlur() {
+            backgroundColor = savedBackgroundColor?.withAlphaComponent(0)
+            return
+        }
+
         let backgroundAlpha = toolbarHelper.novaToolbarGlassEffectAlpha
         if needsNoStatusBar {
             let alpha = scrollOffset > backgroundAlpha ? backgroundAlpha : scrollOffset

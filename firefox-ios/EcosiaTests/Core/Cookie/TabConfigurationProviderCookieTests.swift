@@ -19,6 +19,8 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
         Cookie.setURLProvider(.production)
+        // Building a configuration resolves the feature flag provider from `AppContainer`
+        DependencyHelperMock().bootstrapDependencies()
         let tabManager = MockTabManager()
         self.tabManager = tabManager
         provider = TabConfigurationProvider(profile: MockProfile.unmanaged(), tabManager: tabManager)
@@ -27,6 +29,7 @@ final class TabConfigurationProviderCookieTests: XCTestCase {
     override func tearDown() async throws {
         provider = nil
         tabManager = nil
+        DependencyHelperMock().reset()
         Cookie.resetURLProvider()
         try await super.tearDown()
     }
